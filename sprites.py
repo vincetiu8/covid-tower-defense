@@ -1,9 +1,10 @@
-from pathfinding import astar
 from settings import *
 from tilemap import collide_hit_rect, round_to_tilesize, tile_from_coords, tile_from_xcoords
+from enemies import *
+
+import random
 
 vec = pg.math.Vector2
-
 
 def collide_with_walls(sprite, group, dir):
     if dir == 'x':
@@ -39,7 +40,7 @@ class Start():
 
     def update(self):
         if (pg.time.get_ticks() >= self.next_spawn):
-            Enemy(self.game, self.x, self.y, self.game.goal.x / TILESIZE, self.game.goal.y / TILESIZE)
+            Enemy(self.game, self.x, self.y, tile_from_xcoords(self.game.goal.x), tile_from_xcoords(self.game.goal.y), random.randint(50, 500), random.randint(5, 15), ENEMY_IMG)
             self.next_spawn = pg.time.get_ticks() + self.spawn_rate * 1000
 
 
@@ -50,49 +51,6 @@ class Goal():
         self.rect = pg.Rect(x, y, w, h)
         self.rect.x = x
         self.rect.y = y
-
-
-class Enemy(pg.sprite.Sprite):
-    def __init__(self, game, x, y, end_x, end_y):
-        self.groups = game.enemies
-        pg.sprite.Sprite.__init__(self, self.groups)
-        self.game = game
-        self.x = x
-        self.y = y
-        self.speed = 250
-        self.rect = pg.Rect(self.x, self.y, TILESIZE, TILESIZE)
-        self.end_x = end_x
-        self.end_y = end_y
-        self.last_move = pg.time.get_ticks()
-        self.path = game.path.copy()
-        self.load_next_node()
-
-    def update(self):
-        passed_time = (pg.time.get_ticks() - self.last_move) / 1000
-        self.last_move = pg.time.get_ticks()
-
-        self.x += self.speed * passed_time * self.direction[0]
-        self.y += self.speed * passed_time * self.direction[1]
-
-        if ((self.x - self.new_node[0] * TILESIZE) * self.direction[0] >= 0 and (self.y - self.new_node[1] * TILESIZE) *
-                self.direction[1] >= 0):
-            self.x = self.new_node[0] * TILESIZE
-            self.y = self.new_node[1] * TILESIZE
-            self.load_next_node()
-
-        self.rect = pg.Rect(self.x, self.y, TILESIZE, TILESIZE)
-
-    def recreate_path(self):
-        self.path = astar(self.game.map.get_map(), (self.new_node[0], self.new_node[1]), (self.end_x, self.end_y))
-        self.load_next_node()
-
-    def load_next_node(self):
-        if (len(self.path) == 0):
-            self.kill()
-            return
-        self.new_node = self.path.pop(0)
-        self.direction = (self.new_node[0] - tile_from_xcoords(self.x), self.new_node[1] - tile_from_xcoords(self.y))
-
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, game, x, y):

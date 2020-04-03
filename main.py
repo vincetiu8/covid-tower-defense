@@ -14,9 +14,7 @@ class Game:
         self.load_data()
 
     def load_data(self):
-        img_folder = path.join(GAMEFOLDER, 'img')
-        map_folder = path.join(GAMEFOLDER, 'maps')
-        self.map = TiledMap(path.join(map_folder, 'test.tmx'))
+        self.map = TiledMap(path.join(MAP_FOLDER, 'test.tmx'))
         self.map_img = self.map.make_map()
         self.map_objects = self.map.make_objects()
         self.map_rect = self.map_img.get_rect()
@@ -68,12 +66,14 @@ class Game:
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.start.rect))
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.goal.rect))
 
-        for node in self.path:
-            pg.draw.rect(self.screen, YELLOW, self.camera.apply_rect(
-                pg.Rect(node[0] * TILESIZE, node[1] * TILESIZE, TILESIZE, TILESIZE)))
+        for i, node in enumerate(self.path):
+            if (i < len(self.path) - 1):
+                pg.draw.rect(self.screen, YELLOW, self.camera.apply_rect(
+                    pg.Rect(node[0] * TILESIZE, node[1] * TILESIZE, TILESIZE, TILESIZE)))
 
         for enemy in self.enemies:
-            pg.draw.rect(self.screen, WHITE, self.camera.apply_rect(enemy.rect))
+            self.screen.blit(enemy.image, self.camera.apply_rect(enemy.rect))
+            pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
 
         for obstacle in self.obstacles:
             pg.draw.rect(self.screen, RED, self.camera.apply_rect(obstacle.rect))
@@ -96,8 +96,8 @@ class Game:
                 pos = pg.mouse.get_pos()
                 temp_map = self.map.get_map()
                 temp_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 1
-                path = astar(temp_map, (tile_from_coords(self.start.x), tile_from_coords(self.start.y)),
-                                  (tile_from_coords(self.goal.x), tile_from_coords(self.goal.y)))
+                path = astar(temp_map, (tile_from_xcoords(self.start.x), tile_from_xcoords(self.start.y)),
+                                  (tile_from_xcoords(self.goal.x), tile_from_xcoords(self.goal.y)))
                 if (path != False):
                     self.path = path
                     print(tile_from_xcoords(round_to_tilesize(pos[0])))

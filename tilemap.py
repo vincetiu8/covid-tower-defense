@@ -11,10 +11,8 @@ def tile_from_xcoords(i):
 def round_to_tilesize(i):
     return TILESIZE * round((i - TILESIZE / 2) / TILESIZE)
 
-
 def collide_hit_rect(one, two):
     return one.hit_rect.colliderect(two.rect)
-
 
 class TiledMap:
     def __init__(self, filename):

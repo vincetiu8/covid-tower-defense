@@ -12,18 +12,18 @@ RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 
 # game settings
-WIDTH = 672  # 16 * 64 or 32 * 32 or 64 * 16
-HEIGHT = 504  # 16 * 48 or 32 * 24 or 64 * 12
 FPS = 60
 TITLE = "Tilemap Demo"
 BGCOLOR = DARKGREY
 
 TILESIZE = 42
-GRIDWIDTH = WIDTH / TILESIZE
-GRIDHEIGHT = HEIGHT / TILESIZE
+GRIDWIDTH = 16
+GRIDHEIGHT = 12
+WIDTH = GRIDWIDTH * TILESIZE
+HEIGHT = GRIDHEIGHT * TILESIZE
 
-GAMEFOLDER = path.abspath("D:\\Vince\\Documents\\BSMPyGame")
+GAME_FOLDER = path.abspath("D:\\Vince\\Documents\\BSMPyGame")
+IMG_FOLDER = path.join(GAME_FOLDER, "img")
+MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 
-PLAYER_SPEED = 300
-PLAYER_IMG = "mr_denton.png"
-PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
+ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))
