@@ -21,6 +21,10 @@ class Enemy(pg.sprite.Sprite):
         self.load_next_node()
 
     def update(self):
+        if (self.hp <= 0):
+            self.kill()
+            return
+
         passed_time = (pg.time.get_ticks() - self.last_move) / 1000
         self.last_move = pg.time.get_ticks()
 
