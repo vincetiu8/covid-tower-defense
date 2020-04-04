@@ -50,5 +50,6 @@ class Enemy(pg.sprite.Sprite):
         if (len(self.path) == 0):
             self.kill()
             return
+        self.end_dist = len(self.path)
         self.new_node = self.path.pop(0)
         self.direction = (self.new_node[0] - tile_from_xcoords(self.x), self.new_node[1] - tile_from_xcoords(self.y))

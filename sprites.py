@@ -40,7 +40,7 @@ class Start():
 
     def update(self):
         if (pg.time.get_ticks() >= self.next_spawn):
-            Enemy(self.game, self.x, self.y, tile_from_xcoords(self.game.goal.x), tile_from_xcoords(self.game.goal.y), random.randint(50, 500), random.randint(5, 15), ENEMY_IMG)
+            Enemy(self.game, self.x, self.y, tile_from_xcoords(self.game.goal.x), tile_from_xcoords(self.game.goal.y), random.randint(50, 150), random.randint(5, 15), ENEMY_IMG)
             self.next_spawn = pg.time.get_ticks() + self.spawn_rate * 1000
 
 
@@ -64,7 +64,6 @@ class Wall(pg.sprite.Sprite):
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
 
-
 class Obstacle(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
@@ -73,6 +72,4 @@ class Obstacle(pg.sprite.Sprite):
         self.x = x
         self.y = y
         self.rect = pg.Rect(x, y, TILESIZE, TILESIZE)
-        print(tile_from_coords(x))
-        print(tile_from_coords(y))
         self.game.map.change_node(tile_from_xcoords(x), tile_from_xcoords(y), 1)

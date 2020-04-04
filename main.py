@@ -2,7 +2,7 @@ import sys
 
 from sprites import *
 from tilemap import *
-
+from towers import *
 
 class Game:
     def __init__(self):
@@ -23,7 +23,9 @@ class Game:
         # initialize all variables and do all the setup for a new game
         self.all_sprites = pg.sprite.Group()
         self.obstacles = pg.sprite.Group()
+        self.towers = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
+        self.projectiles = pg.sprite.Group()
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
                 self.start = Start(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, 1)
@@ -51,6 +53,8 @@ class Game:
         self.all_sprites.update()
         self.start.update()
         self.enemies.update()
+        self.towers.update()
+        self.projectiles.update()
 
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
@@ -75,8 +79,13 @@ class Game:
             self.screen.blit(enemy.image, self.camera.apply_rect(enemy.rect))
             pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
 
-        for obstacle in self.obstacles:
-            pg.draw.rect(self.screen, RED, self.camera.apply_rect(obstacle.rect))
+        for tower in self.towers:
+            pg.draw.rect(self.screen, RED, self.camera.apply_rect(tower.rect))
+            if (tower.current_enemy != None):
+                pg.draw.line(self.screen, WHITE, (round_to_mtilesize(tower.x), round_to_mtilesize(tower.y)), (round_to_mtilesize(tower.current_enemy.x), round_to_mtilesize(tower.current_enemy.y)))
+
+        for projectile in self.projectiles:
+            pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
 
         # self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         # for sprite in self.all_sprites:
@@ -100,9 +109,7 @@ class Game:
                                   (tile_from_xcoords(self.goal.x), tile_from_xcoords(self.goal.y)))
                 if (path != False):
                     self.path = path
-                    print(tile_from_xcoords(round_to_tilesize(pos[0])))
-                    print(tile_from_xcoords(round_to_tilesize(pos[1])))
-                    Obstacle(self, round_to_tilesize(pos[0]), round_to_tilesize(pos[1]))
+                    Tower(self, round_to_tilesize(pos[0]), round_to_tilesize(pos[1]), 0.2, 25, 8, 5, 200)
                     for enemy in self.enemies:
                         enemy.recreate_path()
 
