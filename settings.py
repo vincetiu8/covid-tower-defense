@@ -25,6 +25,6 @@ HEIGHT = GRIDHEIGHT * TILESIZE
 # looks for img_folder and map_folder in the same folder as the code
 GAME_FOLDER = path.dirname(path.abspath(__file__))
 IMG_FOLDER = path.join(GAME_FOLDER, "img")
-MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
+MAP_FOLDER = path.join(GAME_FOLDER, "maps")
 
 ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))
