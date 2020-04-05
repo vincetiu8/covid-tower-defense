@@ -22,7 +22,8 @@ GRIDHEIGHT = 12
 WIDTH = GRIDWIDTH * TILESIZE
 HEIGHT = GRIDHEIGHT * TILESIZE
 
-GAME_FOLDER = path.abspath("D:\\Vince\\Documents\\BSMPyGame")
+# looks for img_folder and map_folder in the same folder as the code
+GAME_FOLDER = path.dirname(path.abspath(__file__))
 IMG_FOLDER = path.join(GAME_FOLDER, "img")
 MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 
