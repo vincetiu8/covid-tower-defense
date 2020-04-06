@@ -52,6 +52,7 @@ class Enemy(pg.sprite.Sprite):
 
     def load_next_node(self):
         if (len(self.path) == 0):
+            self.game.lives -= 1
             self.kill()
             return
         self.end_dist = len(self.path)
