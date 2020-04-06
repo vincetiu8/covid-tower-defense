@@ -2,6 +2,8 @@ from os import path
 
 import pygame as pg
 
+LIVES = 5
+
 # define some colors (R, G, B)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)

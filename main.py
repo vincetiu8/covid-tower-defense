@@ -26,6 +26,7 @@ class Game:
         self.towers = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
+        self.lives = LIVES
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
                 self.start = Start(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, 1)
@@ -50,6 +51,9 @@ class Game:
 
     def update(self):
         # update portion of the game loop
+        if (self.lives <= 0):
+            self.quit()
+
         self.all_sprites.update()
         self.start.update()
         self.enemies.update()
@@ -109,7 +113,7 @@ class Game:
                                   (tile_from_xcoords(self.goal.x), tile_from_xcoords(self.goal.y)))
                 if (path != False):
                     self.path = path
-                    Tower(self, round_to_tilesize(pos[0]), round_to_tilesize(pos[1]), 0.2, 25, 8, 5, 200)
+                    Tower(self, round_to_tilesize(pos[0]), round_to_tilesize(pos[1]), 0.2, 25, 8, 1, 200)
                     for enemy in self.enemies:
                         enemy.recreate_path()
 
