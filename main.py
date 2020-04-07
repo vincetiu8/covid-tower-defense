@@ -107,15 +107,17 @@ class Game:
                     self.quit()
             if event.type == pg.MOUSEBUTTONUP:
                 pos = pg.mouse.get_pos()
-                temp_map = self.map.get_map()
-                temp_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 1
-                path = astar(temp_map, (tile_from_xcoords(self.start.x), tile_from_xcoords(self.start.y)),
+                tile_map = self.map.get_map()
+                tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 1
+                path = astar(tile_map, (tile_from_xcoords(self.start.x), tile_from_xcoords(self.start.y)),
                                   (tile_from_xcoords(self.goal.x), tile_from_xcoords(self.goal.y)))
                 if (path != False):
                     self.path = path
                     Tower(self, round_to_tilesize(pos[0]), round_to_tilesize(pos[1]), 0.2, 25, 8, 1, 200)
                     for enemy in self.enemies:
                         enemy.recreate_path()
+                else: # reverts tile map to previous state if no enemy path could be found
+                    tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 0
 
 
 # create the game object
