@@ -35,7 +35,7 @@ class Game:
         self.camera = Camera(self.map.width, self.map.height)
         self.path = astar(self.map.get_map(), (int(self.start.x / TILESIZE), int(self.start.y / TILESIZE)),
                           (int(self.goal.x / TILESIZE), int(self.goal.y / TILESIZE)))
-
+    
     def run(self):
         # game loop - set self.playing = False to end the game
         self.playing = True
@@ -44,6 +44,13 @@ class Game:
             self.events()
             self.update()
             self.draw()
+        
+        # game over screen, loops until the user quits
+        # setting self.game_over = False restarts the game
+        self.game_over = True
+        while self.game_over:
+            self.draw_game_over()
+            self.events()
 
     def quit(self):
         pg.quit()
@@ -52,7 +59,7 @@ class Game:
     def update(self):
         # update portion of the game loop
         if (self.lives <= 0):
-            self.quit()
+            self.playing = False
 
         self.all_sprites.update()
         self.start.update()
@@ -70,9 +77,17 @@ class Game:
         pg.display.set_caption("{:.2f}".format(self.clock.get_fps()))
         self.screen.fill((0, 0, 0))
         self.draw_grid()
+        
+        applied_goal_rect = self.camera.apply_rect(self.goal.rect)
 
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.start.rect))
-        pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.goal.rect))
+        pg.draw.rect(self.screen, GREEN, applied_goal_rect)
+        
+        # draws # of lives left on goal
+        lives_font = pg.font.Font(None, TILESIZE)
+        lives_text = lives_font.render(str(self.lives), 1, BLACK)
+        self.screen.blit(lives_text, (applied_goal_rect.left + TILESIZE // 4,
+                                      applied_goal_rect.top + TILESIZE // 4))
 
         for i, node in enumerate(self.path):
             if (i < len(self.path) - 1):
@@ -96,7 +111,19 @@ class Game:
         #     self.screen.blit(sprite.image, self.camera.apply(sprite))
         # self.screen.blit(self.map_objects, self.camera.apply_rect(self.map_rect))
         pg.display.flip()
-
+        
+    def draw_game_over(self):
+        game_over_font_1 = pg.font.Font(None, 140)
+        game_over_font_2 = pg.font.Font(None, 60)
+            
+        game_over_text_1 = game_over_font_1.render("GAME OVER", 1, WHITE)
+        game_over_text_2 = game_over_font_2.render("Press R to Restart", 1, WHITE)
+           
+        self.screen.blit(game_over_text_1, (40, 40)) # hardcoding coords lol
+        self.screen.blit(game_over_text_2, (40, 140))
+            
+        pg.display.flip()
+        
     def events(self):
         # catch all events here
         for event in pg.event.get():
@@ -105,19 +132,25 @@ class Game:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.quit()
-            if event.type == pg.MOUSEBUTTONUP:
-                pos = pg.mouse.get_pos()
-                tile_map = self.map.get_map()
-                tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 1
-                path = astar(tile_map, (tile_from_xcoords(self.start.x), tile_from_xcoords(self.start.y)),
-                                  (tile_from_xcoords(self.goal.x), tile_from_xcoords(self.goal.y)))
-                if (path != False):
-                    self.path = path
-                    Tower(self, round_to_tilesize(pos[0]), round_to_tilesize(pos[1]), 0.2, 25, 8, 1, 200)
-                    for enemy in self.enemies:
-                        enemy.recreate_path()
-                else: # reverts tile map to previous state if no enemy path could be found
-                    tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 0
+                    
+            if self.playing:
+                if event.type == pg.MOUSEBUTTONUP:
+                    pos = pg.mouse.get_pos()
+                    tile_map = self.map.get_map()
+                    tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 1
+                    path = astar(tile_map, (tile_from_xcoords(self.start.x), tile_from_xcoords(self.start.y)),
+                                    (tile_from_xcoords(self.goal.x), tile_from_xcoords(self.goal.y)))
+                    if (path != False):
+                        self.path = path
+                        Tower(self, round_to_tilesize(pos[0]), round_to_tilesize(pos[1]), 0.2, 25, 8, 1, 200)
+                        for enemy in self.enemies:
+                            enemy.recreate_path()
+                    else: # reverts tile map to previous state if no enemy path could be found
+                        tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 0
+            else:
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_r:
+                        self.game_over = False
 
 
 # create the game object
