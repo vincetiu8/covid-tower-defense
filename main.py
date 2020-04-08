@@ -7,7 +7,7 @@ from towers import *
 class Game:
     def __init__(self):
         pg.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pg.display.set_mode((1280, 720))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         pg.key.set_repeat(500, 100)
@@ -32,10 +32,12 @@ class Game:
                 self.start = Start(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, 1)
             if tile_object.name == "goal":
                 self.goal = Goal(tile_object.x, tile_object.y, tile_object.width, tile_object.height)
-        self.camera = Camera(self.map.width, self.map.height)
-        self.path = astar(self.map.get_map(), (int(self.start.x / TILESIZE), int(self.start.y / TILESIZE)),
-                          (int(self.goal.x / TILESIZE), int(self.goal.y / TILESIZE)))
-    
+            if tile_object.name == "wall":
+                Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+        self.camera = Camera(self.map, self.map.width, self.map.height)
+        self.path = astar(self.map.get_map(), (int(self.start.x / self.map.tilesize), int(self.start.y / self.map.tilesize)),
+                          (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
+
     def run(self):
         # game loop - set self.playing = False to end the game
         self.playing = True
@@ -44,7 +46,7 @@ class Game:
             self.events()
             self.update()
             self.draw()
-        
+
         # game over screen, loops until the user quits
         # setting self.game_over = False restarts the game
         self.game_over = True
@@ -68,62 +70,63 @@ class Game:
         self.projectiles.update()
 
     def draw_grid(self):
-        for x in range(0, WIDTH, TILESIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
-        for y in range(0, HEIGHT, TILESIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
+        for x in range(0, self.map.width, self.map.tilesize):
+            pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, self.map.height))
+        for y in range(0, self.map.height, self.map.tilesize):
+            pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
     def draw(self):
         pg.display.set_caption("{:.2f}".format(self.clock.get_fps()))
         self.screen.fill((0, 0, 0))
         self.draw_grid()
-        
+
+        self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         applied_goal_rect = self.camera.apply_rect(self.goal.rect)
 
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.start.rect))
         pg.draw.rect(self.screen, GREEN, applied_goal_rect)
-        
+
         # draws # of lives left on goal
-        lives_font = pg.font.Font(None, TILESIZE)
+        lives_font = pg.font.Font(None, self.map.tilesize)
         lives_text = lives_font.render(str(self.lives), 1, BLACK)
-        self.screen.blit(lives_text, (applied_goal_rect.left + TILESIZE // 4,
-                                      applied_goal_rect.top + TILESIZE // 4))
+        self.screen.blit(lives_text, (applied_goal_rect.left + self.map.tilesize // 4,
+                                      applied_goal_rect.top + self.map.tilesize // 4))
 
         for i, node in enumerate(self.path):
             if (i < len(self.path) - 1):
                 pg.draw.rect(self.screen, YELLOW, self.camera.apply_rect(
-                    pg.Rect(node[0] * TILESIZE, node[1] * TILESIZE, TILESIZE, TILESIZE)))
+                    pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
 
         for enemy in self.enemies:
             self.screen.blit(enemy.image, self.camera.apply_rect(enemy.rect))
             pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
 
         for tower in self.towers:
-            pg.draw.rect(self.screen, RED, self.camera.apply_rect(tower.rect))
+            pg.draw.rect(self.screen, RED,
+                         self.camera.apply_rect(tower.rect))
             if (tower.current_enemy != None):
-                pg.draw.line(self.screen, WHITE, (round_to_mtilesize(tower.x), round_to_mtilesize(tower.y)), (round_to_mtilesize(tower.current_enemy.x), round_to_mtilesize(tower.current_enemy.y)))
+                pg.draw.line(self.screen, WHITE, (round_to_mtilesize(tower.x, self.map.tilesize), round_to_mtilesize(tower.y, self.map.tilesize)), (round_to_mtilesize(tower.current_enemy.x, self.map.tilesize), round_to_mtilesize(tower.current_enemy.y, self.map.tilesize)))
 
         for projectile in self.projectiles:
             pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
 
-        # self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         # for sprite in self.all_sprites:
         #     self.screen.blit(sprite.image, self.camera.apply(sprite))
         # self.screen.blit(self.map_objects, self.camera.apply_rect(self.map_rect))
         pg.display.flip()
-        
+
     def draw_game_over(self):
         game_over_font_1 = pg.font.Font(None, 140)
         game_over_font_2 = pg.font.Font(None, 60)
-            
+
         game_over_text_1 = game_over_font_1.render("GAME OVER", 1, WHITE)
         game_over_text_2 = game_over_font_2.render("Press R to Restart", 1, WHITE)
-           
+
         self.screen.blit(game_over_text_1, (40, 40)) # hardcoding coords lol
         self.screen.blit(game_over_text_2, (40, 140))
-            
+
         pg.display.flip()
-        
+
     def events(self):
         # catch all events here
         for event in pg.event.get():
@@ -132,17 +135,17 @@ class Game:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.quit()
-                    
+
             if self.playing:
                 if event.type == pg.MOUSEBUTTONUP:
                     pos = pg.mouse.get_pos()
                     tile_map = self.map.get_map()
-                    tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 1
-                    path = astar(tile_map, (tile_from_xcoords(self.start.x), tile_from_xcoords(self.start.y)),
-                                    (tile_from_xcoords(self.goal.x), tile_from_xcoords(self.goal.y)))
+                    tile_map[tile_from_coords(pos[0], self.map.tilesize)][tile_from_coords(pos[1], self.map.tilesize)] = 1
+                    path = astar(tile_map, (tile_from_xcoords(self.start.x, self.map.tilesize), tile_from_xcoords(self.start.y, self.map.tilesize)),
+                                    (tile_from_xcoords(self.goal.x, self.map.tilesize), tile_from_xcoords(self.goal.y, self.map.tilesize)))
                     if (path != False):
                         self.path = path
-                        Tower(self, round_to_tilesize(pos[0]), round_to_tilesize(pos[1]), 0.2, 25, 8, 1, 200)
+                        Tower(self, round_to_tilesize(pos[0], self.map.tilesize), round_to_tilesize(pos[1], self.map.tilesize), self.map.tilesize, self.map.tilesize, 0.2, 25, 8, 1, 200)
                         for enemy in self.enemies:
                             enemy.recreate_path()
                     else: # reverts tile map to previous state if no enemy path could be found

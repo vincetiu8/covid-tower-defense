@@ -10,8 +10,8 @@ class Projectile(pg.sprite.Sprite):
         self.groups = game.projectiles
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.x = round_to_mtilesize(x) - w / 2
-        self.y = round_to_mtilesize(y) - h / 2
+        self.x = round_to_mtilesize(x, game.map.tilesize) - w / 2
+        self.y = round_to_mtilesize(y, game.map.tilesize) - h / 2
         self.w = w
         self.h = h
         self.speed = speed
@@ -29,8 +29,8 @@ class Projectile(pg.sprite.Sprite):
             self.kill()
 
 class Tower(Obstacle):
-    def __init__(self, game, x, y, speed, bullet_speed, bullet_size, damage, range):
-        super().__init__(game, x, y)
+    def __init__(self, game, x, y, w, h, speed, bullet_speed, bullet_size, damage, range):
+        super().__init__(game, x, y, w, h)
         self.groups = game.towers
         pg.sprite.Sprite.__init__(self, self.groups)
         self.speed = speed

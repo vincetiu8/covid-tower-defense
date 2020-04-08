@@ -11,6 +11,7 @@ def astar(aray, start, goal):
 
     close_set = set()
     came_from = {}
+
     gscore = {start: 0}
     fscore = {start: heuristic(start, goal)}
     oheap = []

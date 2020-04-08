@@ -2,17 +2,17 @@ from pytmx.util_pygame import load_pygame
 
 from settings import *
 
-def tile_from_coords(i):
-    return int(round((i - TILESIZE / 2) / TILESIZE))
+def tile_from_coords(i, tilesize):
+    return int(round((i - tilesize / 2) / tilesize))
 
-def tile_from_xcoords(i):
-    return int(round(i / TILESIZE))
+def tile_from_xcoords(i, tilesize):
+    return int(round(i / tilesize))
 
-def round_to_tilesize(i):
-    return TILESIZE * round((i - TILESIZE / 2) / TILESIZE)
+def round_to_tilesize(i, tilesize):
+    return tilesize * round((i - tilesize / 2) / tilesize)
 
-def round_to_mtilesize(i):
-    return TILESIZE * (round((i) / TILESIZE) + 1 / 2)
+def round_to_mtilesize(i, tilesize):
+    return tilesize * (round((i) / tilesize) + 1 / 2)
 
 def collide_hit_rect(one, two):
     return one.hit_rect.colliderect(two.rect)
@@ -22,6 +22,7 @@ class TiledMap:
         tm = load_pygame(filename, pixelalpha=True)
         self.width = tm.width * tm.tilewidth
         self.height = tm.height * tm.tileheight
+        self.tilesize = tm.tilewidth
         self.tmxdata = tm
         self.map = [[0 for row in range(tm.height)] for col in range(tm.width)]
 
@@ -54,7 +55,7 @@ class TiledMap:
 
 
 class Camera:
-    def __init__(self, width, height):
+    def __init__(self, map, width, height):
         self.camera = pg.Rect(0, 0, width, height)
         self.width = width
         self.height = height
@@ -66,8 +67,8 @@ class Camera:
         return rect.move(self.camera.topleft)
 
     def update(self, target):
-        x = -target.rect.centerx + int(WIDTH / 2)
-        y = -target.rect.centery + int(HEIGHT / 2)
+        x = -target.rect.centerx + int(self.map.get_width() / 2)
+        y = -target.rect.centery + int(self.map.get_height() / 2)
 
         x = min(0, x)
         y = min(0, y)

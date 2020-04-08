@@ -11,7 +11,7 @@ class Enemy(pg.sprite.Sprite):
         self.x = x
         self.y = y
         self.speed = speed
-        self.rect = pg.Rect(self.x, self.y, TILESIZE, TILESIZE)
+        self.rect = pg.Rect(self.x, self.y, self.game.map.tilesize, self.game.map.tilesize)
         self.end_x = end_x
         self.end_y = end_y
         self.last_move = pg.time.get_ticks()
@@ -31,18 +31,18 @@ class Enemy(pg.sprite.Sprite):
         self.x += self.speed * passed_time * self.direction[0]
         self.y += self.speed * passed_time * self.direction[1]
 
-        if ((self.x - self.new_node[0] * TILESIZE) * self.direction[0] >= 0 and (self.y - self.new_node[1] * TILESIZE) *
+        if ((self.x - self.new_node[0] * self.game.map.tilesize) * self.direction[0] >= 0 and (self.y - self.new_node[1] * self.game.map.tilesize) *
                 self.direction[1] >= 0):
-            self.x = self.new_node[0] * TILESIZE
-            self.y = self.new_node[1] * TILESIZE
+            self.x = self.new_node[0] * self.game.map.tilesize
+            self.y = self.new_node[1] * self.game.map.tilesize
             self.load_next_node()
 
-        self.rect = pg.Rect(self.x, self.y, TILESIZE, TILESIZE)
+        self.rect = pg.Rect(self.x, self.y, self.game.map.tilesize, self.game.map.tilesize)
 
     def get_hp_rect(self):
         h = 5
         w = self.hp * 2
-        x = self.x + (TILESIZE - w) / 2
+        x = self.x + (self.game.map.tilesize - w) / 2
         y = self.y - 12
         return pg.Rect(x, y, w, h)
 
@@ -57,4 +57,4 @@ class Enemy(pg.sprite.Sprite):
             return
         self.end_dist = len(self.path)
         self.new_node = self.path.pop(0)
-        self.direction = (self.new_node[0] - tile_from_xcoords(self.x), self.new_node[1] - tile_from_xcoords(self.y))
+        self.direction = (self.new_node[0] - tile_from_xcoords(self.x, self.game.map.tilesize), self.new_node[1] - tile_from_xcoords(self.y, self.game.map.tilesize))

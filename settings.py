@@ -18,12 +18,6 @@ FPS = 60
 TITLE = "Tilemap Demo"
 BGCOLOR = DARKGREY
 
-TILESIZE = 42
-GRIDWIDTH = 16
-GRIDHEIGHT = 12
-WIDTH = GRIDWIDTH * TILESIZE
-HEIGHT = GRIDHEIGHT * TILESIZE
-
 # looks for img_folder and map_folder in the same folder as the code
 GAME_FOLDER = path.dirname(path.abspath(__file__))
 IMG_FOLDER = path.join(GAME_FOLDER, "img")
