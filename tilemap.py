@@ -17,6 +17,9 @@ def round_to_mtilesize(i, tilesize):
 def collide_hit_rect(one, two):
     return one.hit_rect.colliderect(two.rect)
 
+def clamp(x, s, b):
+    return max(min(x, b), s)
+
 class TiledMap:
     def __init__(self, filename):
         tm = load_pygame(filename, pixelalpha=True)
@@ -56,9 +59,15 @@ class TiledMap:
 
 class Camera:
     def __init__(self, map, width, height):
-        self.camera = pg.Rect(0, 0, width, height)
         self.width = width
         self.height = height
+        self.map_width = map.width
+        self.map_height = map.height
+        self.current_zoom = min(width / map.width, height / map.height)
+        self.minzoom = self.current_zoom
+        self.critical_ratio = max(width / map.width, height / map.height) + 0.1
+        print(self.critical_ratio)
+        self.update(width / 2, height / 2)
 
     def apply(self, entity):
         return entity.rect.move(self.camera.topleft)
@@ -66,12 +75,28 @@ class Camera:
     def apply_rect(self, rect):
         return rect.move(self.camera.topleft)
 
-    def update(self, target):
-        x = -target.rect.centerx + int(self.map.get_width() / 2)
-        y = -target.rect.centery + int(self.map.get_height() / 2)
+    def apply_image(self, image):
+        size = image.get_rect().size
+        return pg.transform.scale(image, ([round(self.current_zoom * x) for x in size]))
 
-        x = min(0, x)
-        y = min(0, y)
-        x = max(-(self.width - WIDTH), x)
-        y = max(-(self.height - HEIGHT), y)
-        self.camera = pg.Rect(x, y, self.width, self.height)
+    def update(self, x, y):
+        if (self.current_zoom < self.critical_ratio):
+            newx = 0
+            newy = 0
+
+        else:
+            percentage = (self.current_zoom - self.critical_ratio) / (self.minzoom + 1 - self.critical_ratio)
+            maxw = self.map_width * self.current_zoom - self.width
+            maxh = self.map_height * self.current_zoom - self.height
+            newx = clamp(percentage * (x - self.width / 2) * self.current_zoom, -maxw, maxw)
+            newy = clamp(percentage * (y - self.height / 2) * self.current_zoom, -maxh, maxh)
+        adjwidth = (self.width - newx - self.map_width * self.current_zoom) / 2
+        adjheight = (self.height - newy - self.map_height * self.current_zoom) / 2
+        self.camera = pg.Rect(adjwidth, adjheight, self.width, self.height)
+
+    def zoom(self, amount, pos):
+        if (amount > 0 and self.current_zoom >= self.minzoom + 1 or amount < 0 and self.current_zoom <= self.minzoom):
+            return
+
+        self.current_zoom += amount
+        self.update(pos[0], pos[1])
