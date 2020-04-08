@@ -1,6 +1,6 @@
 from pathfinding import *
 from settings import *
-from tilemap import tile_from_xcoords
+from tilemap import tile_from_xcoords, coords_from_xtile
 
 class Enemy(pg.sprite.Sprite):
     def __init__(self, game, x, y, end_x, end_y, speed, hp, image):
@@ -31,10 +31,10 @@ class Enemy(pg.sprite.Sprite):
         self.x += self.speed * passed_time * self.direction[0]
         self.y += self.speed * passed_time * self.direction[1]
 
-        if ((self.x - self.new_node[0] * TILESIZE) * self.direction[0] >= 0 and (self.y - self.new_node[1] * TILESIZE) *
+        if ((self.x - coords_from_xtile(self.new_node[0])) * self.direction[0] >= 0 and (self.y - coords_from_xtile(self.new_node[1])) *
                 self.direction[1] >= 0):
-            self.x = self.new_node[0] * TILESIZE
-            self.y = self.new_node[1] * TILESIZE
+            self.x = coords_from_xtile(self.new_node[0])
+            self.y = coords_from_xtile(self.new_node[1])
             self.load_next_node()
 
         self.rect = pg.Rect(self.x, self.y, TILESIZE, TILESIZE)
@@ -47,6 +47,7 @@ class Enemy(pg.sprite.Sprite):
         return pg.Rect(x, y, w, h)
 
     def recreate_path(self):
+        print((self.new_node[0], self.new_node[1]))
         self.path = astar(self.game.map.get_map(), (self.new_node[0], self.new_node[1]), (self.end_x, self.end_y))
         self.load_next_node()
 
@@ -57,4 +58,25 @@ class Enemy(pg.sprite.Sprite):
             return
         self.end_dist = len(self.path)
         self.new_node = self.path.pop(0)
-        self.direction = (self.new_node[0] - tile_from_xcoords(self.x), self.new_node[1] - tile_from_xcoords(self.y))
+
+        xval = coords_from_xtile(self.new_node[0]) - self.x
+        if (xval > 0):
+            direction_x = 1
+
+        elif (xval < 0):
+            direction_x = -1
+
+        else:
+            direction_x = 0
+
+        yval = coords_from_xtile(self.new_node[1]) - self.y
+        if (yval > 0):
+            direction_y = 1
+
+        elif (yval < 0):
+            direction_y = -1
+
+        else:
+            direction_y = 0
+
+        self.direction = (direction_x, direction_y)
