@@ -18,7 +18,6 @@ class Enemy(pg.sprite.Sprite):
         self.path = game.path.copy()
         self.hp = hp
         self.image = image
-        self.new_node = (tile_from_xcoords(x, game.map.tilesize), tile_from_xcoords(y, game.map.tilesize))
         self.load_next_node()
 
     def update(self):
@@ -32,8 +31,8 @@ class Enemy(pg.sprite.Sprite):
         self.x += self.speed * passed_time * self.direction[0]
         self.y += self.speed * passed_time * self.direction[1]
 
-        if ((self.x - self.new_node[0] * self.game.map.tilesize) * self.direction[0] > 0 and (self.y - self.new_node[1] * self.game.map.tilesize) *
-                self.direction[1] > 0):
+        if ((self.x - self.new_node[0] * self.game.map.tilesize) * self.direction[0] >= 0 and (self.y - self.new_node[1] * self.game.map.tilesize) *
+                self.direction[1] >= 0):
             self.x = self.new_node[0] * self.game.map.tilesize
             self.y = self.new_node[1] * self.game.map.tilesize
             self.load_next_node()
@@ -48,10 +47,7 @@ class Enemy(pg.sprite.Sprite):
         return pg.Rect(x, y, w, h)
 
     def recreate_path(self):
-        print((self.new_node[0], self.new_node[1]))
         self.path = astar(self.game.map.get_map(), (self.new_node[0], self.new_node[1]), (self.end_x, self.end_y))
-        if (len(self.path) > 1 and self.path[1] == self.last_node):
-            self.path.pop(0)
         self.load_next_node()
 
     def load_next_node(self):
@@ -60,8 +56,21 @@ class Enemy(pg.sprite.Sprite):
             self.kill()
             return
         self.end_dist = len(self.path)
-        self.last_node = self.new_node
         self.new_node = self.path.pop(0)
-        self.direction = (self.new_node[0] - tile_from_coords(self.x, self.game.map.tilesize), self.new_node[1] - tile_from_coords(self.y, self.game.map.tilesize))
-        if (self.direction == (0, 0)):
+        if (self.new_node[0] * self.game.map.tilesize - self.x > 0):
+            xdir = 1
+        elif (self.new_node[0] * self.game.map.tilesize - self.x < 0):
+            xdir = -1
+        else:
+            xdir = 0
+
+        if (self.new_node[1] * self.game.map.tilesize - self.y > 0):
+            ydir = 1
+        elif (self.new_node[1] * self.game.map.tilesize - self.y < 0):
+            ydir = -1
+        else:
+            ydir = 0
+
+        self.direction = (xdir, ydir)
+        while (self.direction == (0, 0)):
             self.load_next_node()

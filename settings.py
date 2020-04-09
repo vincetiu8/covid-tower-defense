@@ -16,7 +16,7 @@ YELLOW = (255, 255, 0)
 # game settings
 FPS = 60
 
-SPAWN_RATE = 100
+SPAWN_RATE = 1
 
 # looks for img_folder and map_folder in the same folder as the code
 GAME_FOLDER = path.dirname(path.abspath(__file__))
