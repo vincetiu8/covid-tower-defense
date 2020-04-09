@@ -92,7 +92,7 @@ class Game:
                                       self.goal.rect.top + self.map.tilesize // 4)))
 
         for i, node in enumerate(self.path):
-            if (i < len(self.path) - 1):
+            if (i > 0 and i < len(self.path) - 1):
                 pg.draw.rect(self.screen, YELLOW, self.camera.apply_rect(
                     pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
 

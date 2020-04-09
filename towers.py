@@ -3,6 +3,7 @@ import math
 import pygame as pg
 from tilemap import round_to_mtilesize
 from pathfinding import heuristic
+from settings import TILESIZE
 from heapq import *
 
 class Projectile(pg.sprite.Sprite):
@@ -17,6 +18,7 @@ class Projectile(pg.sprite.Sprite):
         self.speed = speed
         self.direction = direction
         self.damage = damage
+        self.current_enemy = None
 
     def update(self):
         self.x += self.speed * math.cos(self.direction)
@@ -42,6 +44,7 @@ class Tower(Obstacle):
         self.base_image = base_image
         self.gun_image = gun_image
         self.rotation = 0
+        self.current_enemy = None
         self.search_for_enemy()
 
     def update(self):
@@ -49,8 +52,8 @@ class Tower(Obstacle):
             if (not self.current_enemy.alive() or heuristic((self.current_enemy.x, self.current_enemy.y), (self.x, self.y)) > self.range):
                 self.current_enemy = None
             else:
-                temp_x = self.current_enemy.x
-                temp_y = self.current_enemy.y
+                temp_x = self.current_enemy.x + self.current_enemy.direction[0] * TILESIZE / 2 * self.current_enemy.speed / 500
+                temp_y = self.current_enemy.y + self.current_enemy.direction[1] * TILESIZE / 2 * self.current_enemy.speed / 500
 
                 if (temp_x - self.x == 0):
                     if (temp_y - self.y > 0):
@@ -71,7 +74,6 @@ class Tower(Obstacle):
             self.search_for_enemy()
 
     def search_for_enemy(self):
-        self.current_enemy = None
         for enemy in self.game.enemies:
             if (heuristic((enemy.x, enemy.y), (self.x, self.y)) <= self.range and (self.current_enemy == None or enemy.end_dist < self.current_enemy.end_dist)):
                 self.current_enemy = enemy

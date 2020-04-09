@@ -1,6 +1,6 @@
 from pathfinding import *
 from settings import *
-from tilemap import tile_from_xcoords, tile_from_coords
+from tilemap import tile_from_xcoords, tile_from_coords, coords_from_xtile
 
 class Enemy(pg.sprite.Sprite):
     def __init__(self, game, x, y, end_x, end_y, speed, hp, image):
@@ -34,7 +34,6 @@ class Enemy(pg.sprite.Sprite):
 
         if ((self.x - self.new_node[0] * self.game.map.tilesize) * self.direction[0] > 0 and (self.y - self.new_node[1] * self.game.map.tilesize) *
                 self.direction[1] > 0):
-            print((self.x - self.new_node[0] * self.game.map.tilesize))
             self.x = self.new_node[0] * self.game.map.tilesize
             self.y = self.new_node[1] * self.game.map.tilesize
             self.load_next_node()
@@ -49,6 +48,7 @@ class Enemy(pg.sprite.Sprite):
         return pg.Rect(x, y, w, h)
 
     def recreate_path(self):
+        print((self.new_node[0], self.new_node[1]))
         self.path = astar(self.game.map.get_map(), (self.new_node[0], self.new_node[1]), (self.end_x, self.end_y))
         if (len(self.path) > 1 and self.path[1] == self.last_node):
             self.path.pop(0)

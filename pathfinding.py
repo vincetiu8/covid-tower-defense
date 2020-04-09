@@ -4,7 +4,6 @@ from heapq import *
 def heuristic(a, b):
     return abs(b[0] - a[0]) + abs(b[1] - a[1])
 
-
 def astar(aray, start, goal):
     array = numpy.array(aray)
     neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0)]
