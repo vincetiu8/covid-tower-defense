@@ -1,6 +1,6 @@
 from pathfinding import *
 from settings import *
-from tilemap import tile_from_xcoords
+from tilemap import tile_from_xcoords, tile_from_coords
 
 class Enemy(pg.sprite.Sprite):
     def __init__(self, game, x, y, end_x, end_y, speed, hp, image):
@@ -18,6 +18,7 @@ class Enemy(pg.sprite.Sprite):
         self.path = game.path.copy()
         self.hp = hp
         self.image = image
+        self.new_node = (tile_from_xcoords(x, game.map.tilesize), tile_from_xcoords(y, game.map.tilesize))
         self.load_next_node()
 
     def update(self):
@@ -31,8 +32,9 @@ class Enemy(pg.sprite.Sprite):
         self.x += self.speed * passed_time * self.direction[0]
         self.y += self.speed * passed_time * self.direction[1]
 
-        if ((self.x - self.new_node[0] * self.game.map.tilesize) * self.direction[0] >= 0 and (self.y - self.new_node[1] * self.game.map.tilesize) *
-                self.direction[1] >= 0):
+        if ((self.x - self.new_node[0] * self.game.map.tilesize) * self.direction[0] > 0 and (self.y - self.new_node[1] * self.game.map.tilesize) *
+                self.direction[1] > 0):
+            print((self.x - self.new_node[0] * self.game.map.tilesize))
             self.x = self.new_node[0] * self.game.map.tilesize
             self.y = self.new_node[1] * self.game.map.tilesize
             self.load_next_node()
@@ -48,6 +50,8 @@ class Enemy(pg.sprite.Sprite):
 
     def recreate_path(self):
         self.path = astar(self.game.map.get_map(), (self.new_node[0], self.new_node[1]), (self.end_x, self.end_y))
+        if (len(self.path) > 1 and self.path[1] == self.last_node):
+            self.path.pop(0)
         self.load_next_node()
 
     def load_next_node(self):
@@ -56,5 +60,9 @@ class Enemy(pg.sprite.Sprite):
             self.kill()
             return
         self.end_dist = len(self.path)
+        self.last_node = self.new_node
         self.new_node = self.path.pop(0)
-        self.direction = (self.new_node[0] - tile_from_xcoords(self.x, self.game.map.tilesize), self.new_node[1] - tile_from_xcoords(self.y, self.game.map.tilesize))
+        self.direction = (self.new_node[0] - tile_from_coords(self.x, self.game.map.tilesize), self.new_node[1] - tile_from_coords(self.y, self.game.map.tilesize))
+        print(self.direction)
+        if (self.direction == (0, 0)):
+            self.load_next_node()

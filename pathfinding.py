@@ -27,6 +27,7 @@ def astar(aray, start, goal):
             while current in came_from:
                 data.append(current)
                 current = came_from[current]
+            data.append(current)
             return data[::-1]
 
         close_set.add(current)

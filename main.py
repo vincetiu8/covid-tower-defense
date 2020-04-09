@@ -8,7 +8,6 @@ class Game:
     def __init__(self):
         pg.init()
         self.screen = pg.display.set_mode((1280, 720))
-        pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         pg.key.set_repeat(500, 100)
         self.load_data()
@@ -29,7 +28,7 @@ class Game:
         self.lives = LIVES
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
-                self.start = Start(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, 1)
+                self.start = Start(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, SPAWN_RATE)
             if tile_object.name == "goal":
                 self.goal = Goal(tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "wall":
