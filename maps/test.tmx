@@ -34,7 +34,7 @@
 </data>
  </layer>
  <objectgroup id="4" name="obstacles">
-  <object id="27" name="start" x="0" y="420" width="42" height="42"/>
+  <object id="27" name="start" x="0" y="252" width="42" height="42"/>
   <object id="36" name="goal" x="630" y="252" width="42.5" height="42.5"/>
  </objectgroup>
 </map>
