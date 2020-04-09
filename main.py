@@ -78,7 +78,7 @@ class Game:
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
 
     def draw(self):
-        pg.display.set_caption("{:.2f}".format(self.clock.get_fps()) + " " + str(self.protein))
+        pg.display.set_caption("FPS: {:.2f}  Protein: {}".format(self.clock.get_fps(), self.protein))
         self.screen.fill((0, 0, 0))
         self.draw_grid()
         
@@ -150,7 +150,8 @@ class Game:
                         
                         if (path != False and self.protein >= BUY_COST):
                             self.path = path
-                            Tower(game = self, 
+                            Tower(
+                                game = self, 
                                 x = round_to_tilesize(pos[0]),
                                 y = round_to_tilesize(pos[1]),
                                 bullet_spawn_speed = 0.2, 
@@ -158,8 +159,9 @@ class Game:
                                 bullet_size = 8, 
                                 damage = [1, 2, 3],
                                 range = 200,
-                                upgrade = 5)
+                                upgrade_cost = 5)
                             self.protein -= BUY_COST
+                            
                             for enemy in self.enemies:
                                 enemy.recreate_path()
                         else: # reverts tile map to previous state if no enemy path could be found
