@@ -96,10 +96,6 @@ class Game:
                 pg.draw.rect(self.screen, YELLOW, self.camera.apply_rect(
                     pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
 
-        for enemy in self.enemies:
-            self.screen.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
-            pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
-
         for tower in self.towers:
             self.screen.blit(self.camera.apply_image(tower.base_image), self.camera.apply_rect(tower.rect))
             rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
@@ -109,6 +105,10 @@ class Game:
                 tower_pos = self.camera.apply_tuple((round_to_mtilesize(tower.x, self.map.tilesize), round_to_mtilesize(tower.y, self.map.tilesize)))
                 target_pos = self.camera.apply_tuple((round_to_mtilesize(tower.current_enemy.x, self.map.tilesize), round_to_mtilesize(tower.current_enemy.y, self.map.tilesize)))
                 pg.draw.line(self.screen, WHITE, tower_pos, target_pos)
+
+        for enemy in self.enemies:
+            self.screen.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
+            pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
 
         for projectile in self.projectiles:
             pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))

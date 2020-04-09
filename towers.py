@@ -3,7 +3,6 @@ import math
 import pygame as pg
 from tilemap import round_to_mtilesize
 from pathfinding import heuristic
-from settings import TILESIZE
 from heapq import *
 
 class Projectile(pg.sprite.Sprite):
@@ -52,8 +51,8 @@ class Tower(Obstacle):
             if (not self.current_enemy.alive() or heuristic((self.current_enemy.x, self.current_enemy.y), (self.x, self.y)) > self.range):
                 self.current_enemy = None
             else:
-                temp_x = self.current_enemy.x + self.current_enemy.direction[0] * TILESIZE / 2 * self.current_enemy.speed / 500
-                temp_y = self.current_enemy.y + self.current_enemy.direction[1] * TILESIZE / 2 * self.current_enemy.speed / 500
+                temp_x = self.current_enemy.x + self.current_enemy.direction[0] * self.game.map.tilesize / 2 * self.current_enemy.speed / 500
+                temp_y = self.current_enemy.y + self.current_enemy.direction[1] * self.game.map.tilesize / 2 * self.current_enemy.speed / 500
 
                 if (temp_x - self.x == 0):
                     if (temp_y - self.y > 0):
