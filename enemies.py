@@ -34,7 +34,6 @@ class Enemy(pg.sprite.Sprite):
 
         if ((self.x - self.new_node[0] * self.game.map.tilesize) * self.direction[0] > 0 and (self.y - self.new_node[1] * self.game.map.tilesize) *
                 self.direction[1] > 0):
-            print((self.x - self.new_node[0] * self.game.map.tilesize))
             self.x = self.new_node[0] * self.game.map.tilesize
             self.y = self.new_node[1] * self.game.map.tilesize
             self.load_next_node()
@@ -63,6 +62,5 @@ class Enemy(pg.sprite.Sprite):
         self.last_node = self.new_node
         self.new_node = self.path.pop(0)
         self.direction = (self.new_node[0] - tile_from_coords(self.x, self.game.map.tilesize), self.new_node[1] - tile_from_coords(self.y, self.game.map.tilesize))
-        print(self.direction)
         if (self.direction == (0, 0)):
             self.load_next_node()
