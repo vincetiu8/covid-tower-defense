@@ -14,6 +14,9 @@ def round_to_tilesize(i, tilesize):
 def round_to_mtilesize(i, tilesize):
     return tilesize * (round((i) / tilesize) + 1 / 2)
 
+def coords_from_xtile(i):
+    return int(round(i * TILESIZE))
+
 def collide_hit_rect(one, two):
     return one.hit_rect.colliderect(two.rect)
 
