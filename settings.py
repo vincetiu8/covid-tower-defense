@@ -3,6 +3,9 @@ from os import path
 import pygame as pg
 
 LIVES = 5
+PROTEIN = 40
+BUY_COST = 10 # should be kept outside of the class so that the buy_cost can be
+              # checked against the protein without needing to instantiate the tower
 
 # define some colors (R, G, B)
 WHITE = (255, 255, 255)

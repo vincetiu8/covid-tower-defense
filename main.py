@@ -26,12 +26,16 @@ class Game:
         self.towers = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
+        
+        self.protein = PROTEIN
         self.lives = LIVES
+        
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
                 self.start = Start(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, 1)
             if tile_object.name == "goal":
                 self.goal = Goal(tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                
         self.camera = Camera(self.map.width, self.map.height)
         self.path = astar(self.map.get_map(), (int(self.start.x / TILESIZE), int(self.start.y / TILESIZE)),
                           (int(self.goal.x / TILESIZE), int(self.goal.y / TILESIZE)))
@@ -74,7 +78,7 @@ class Game:
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
 
     def draw(self):
-        pg.display.set_caption("{:.2f}".format(self.clock.get_fps()))
+        pg.display.set_caption("{:.2f}".format(self.clock.get_fps()) + " " + str(self.protein))
         self.screen.fill((0, 0, 0))
         self.draw_grid()
         
@@ -129,6 +133,7 @@ class Game:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
+                
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.quit()
@@ -137,16 +142,33 @@ class Game:
                 if event.type == pg.MOUSEBUTTONUP:
                     pos = pg.mouse.get_pos()
                     tile_map = self.map.get_map()
-                    tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 1
-                    path = astar(tile_map, (tile_from_xcoords(self.start.x), tile_from_xcoords(self.start.y)),
-                                    (tile_from_xcoords(self.goal.x), tile_from_xcoords(self.goal.y)))
-                    if (path != False):
-                        self.path = path
-                        Tower(self, round_to_tilesize(pos[0]), round_to_tilesize(pos[1]), 0.2, 25, 8, 1, 200)
-                        for enemy in self.enemies:
-                            enemy.recreate_path()
-                    else: # reverts tile map to previous state if no enemy path could be found
-                        tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 0
+                    
+                    if tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] == 0:
+                        tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 1
+                        path = astar(tile_map, (tile_from_xcoords(self.start.x), tile_from_xcoords(self.start.y)),
+                                        (tile_from_xcoords(self.goal.x), tile_from_xcoords(self.goal.y)))
+                        
+                        if (path != False and self.protein >= BUY_COST):
+                            self.path = path
+                            Tower(game = self, 
+                                x = round_to_tilesize(pos[0]),
+                                y = round_to_tilesize(pos[1]),
+                                bullet_spawn_speed = 0.2, 
+                                bullet_speed = 25, 
+                                bullet_size = 8, 
+                                damage = [1, 2, 3],
+                                range = 200,
+                                upgrade = 5)
+                            self.protein -= BUY_COST
+                            for enemy in self.enemies:
+                                enemy.recreate_path()
+                        else: # reverts tile map to previous state if no enemy path could be found
+                            tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 0
+                    else:
+                        for tower in self.towers: # Checks each tower if the mouse is hovering over it
+                            if tower.rect.collidepoint(pos):
+                                tower.upgrade()
+                        
             else:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_r:

@@ -3,7 +3,7 @@ from settings import *
 from tilemap import tile_from_xcoords, coords_from_xtile
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, game, x, y, end_x, end_y, speed, hp, image):
+    def __init__(self, game, x, y, end_x, end_y, speed, hp, image, dropped_protein):
         self.groups = game.enemies
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -18,11 +18,13 @@ class Enemy(pg.sprite.Sprite):
         self.path = game.path.copy()
         self.hp = hp
         self.image = image
+        self.dropped_protein = dropped_protein
         self.load_next_node()
 
     def update(self):
         if (self.hp <= 0):
             self.kill()
+            self.game.protein += self.dropped_protein
             return
 
         passed_time = (pg.time.get_ticks() - self.last_move) / 1000

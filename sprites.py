@@ -40,7 +40,7 @@ class Start():
 
     def update(self):
         if (pg.time.get_ticks() >= self.next_spawn):
-            Enemy(self.game, self.x, self.y, tile_from_xcoords(self.game.goal.x), tile_from_xcoords(self.game.goal.y), 200, 1, ENEMY_IMG)
+            Enemy(self.game, self.x, self.y, tile_from_xcoords(self.game.goal.x), tile_from_xcoords(self.game.goal.y), 200, 12, ENEMY_IMG, 1)
             self.next_spawn = pg.time.get_ticks() + self.spawn_rate * 1000
 
 
