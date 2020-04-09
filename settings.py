@@ -24,3 +24,5 @@ IMG_FOLDER = path.join(GAME_FOLDER, "img")
 MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 
 ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))
+ANITBODY_GUN_IMG = pg.image.load(path.join(IMG_FOLDER, "antibody_gun.png"))
+ANITBODY_BASE_IMG = pg.image.load(path.join(IMG_FOLDER, "antibody_base.png"))

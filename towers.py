@@ -29,8 +29,8 @@ class Projectile(pg.sprite.Sprite):
             self.kill()
 
 class Tower(Obstacle):
-    def __init__(self, game, x, y, w, h, speed, bullet_speed, bullet_size, damage, range):
-        super().__init__(game, x, y, w, h)
+    def __init__(self, game, x, y, base_image, gun_image, speed, bullet_speed, bullet_size, damage, range):
+        super().__init__(game, x, y, game.map.tilesize, game.map.tilesize)
         self.groups = game.towers
         pg.sprite.Sprite.__init__(self, self.groups)
         self.speed = speed
@@ -39,6 +39,9 @@ class Tower(Obstacle):
         self.damage = damage
         self.next_spawn = pg.time.get_ticks()
         self.range = range
+        self.base_image = base_image
+        self.gun_image = gun_image
+        self.rotation = 0
         self.search_for_enemy()
 
     def update(self):
@@ -60,6 +63,7 @@ class Tower(Obstacle):
                     if (temp_x - self.x < 0):
                         angle += math.pi
 
+                self.rotation = 180 - math.degrees(angle)
                 Projectile(self.game, self.x, self.y, self.bullet_size, self.bullet_size, self.bullet_speed, angle, self.damage)
                 self.next_spawn = pg.time.get_ticks() + self.speed * 1000
 

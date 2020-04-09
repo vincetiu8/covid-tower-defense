@@ -29,7 +29,7 @@ class Game:
         self.lives = LIVES
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
-                self.start = Start(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, 100)
+                self.start = Start(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, 1)
             if tile_object.name == "goal":
                 self.goal = Goal(tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "wall":
@@ -89,8 +89,8 @@ class Game:
         # draws # of lives left on goal
         lives_font = pg.font.Font(None, self.map.tilesize)
         lives_text = lives_font.render(str(self.lives), 1, BLACK)
-        self.screen.blit(lives_text, (applied_goal_rect.left + self.map.tilesize // 4,
-                                      applied_goal_rect.top + self.map.tilesize // 4))
+        self.screen.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple((self.goal.rect.left + self.map.tilesize // 4,
+                                      self.goal.rect.top + self.map.tilesize // 4)))
 
         for i, node in enumerate(self.path):
             if (i < len(self.path) - 1):
@@ -102,8 +102,10 @@ class Game:
             pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
 
         for tower in self.towers:
-            pg.draw.rect(self.screen, RED,
-                         self.camera.apply_rect(tower.rect))
+            self.screen.blit(self.camera.apply_image(tower.base_image), self.camera.apply_rect(tower.rect))
+            rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
+            new_rect = rotated_image.get_rect(center=tower.rect.center)
+            self.screen.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
             if (tower.current_enemy != None):
                 tower_pos = self.camera.apply_tuple((round_to_mtilesize(tower.x, self.map.tilesize), round_to_mtilesize(tower.y, self.map.tilesize)))
                 target_pos = self.camera.apply_tuple((round_to_mtilesize(tower.current_enemy.x, self.map.tilesize), round_to_mtilesize(tower.current_enemy.y, self.map.tilesize)))
@@ -142,22 +144,37 @@ class Game:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         pos = self.camera.correct_mouse(event.pos)
+                        x_coord = tile_from_coords(pos[0], self.map.tilesize)
+                        y_coord = tile_from_coords(pos[1], self.map.tilesize)
                         tile_map = self.map.get_map()
-                        tile_map[tile_from_coords(pos[0], self.map.tilesize)][
-                            tile_from_coords(pos[1], self.map.tilesize)] = 1
+                        if (tile_map[x_coord][y_coord] == 1 or self.map.change_node(x_coord, y_coord, 1) == False):
+                            continue
+
                         path = astar(tile_map, (tile_from_xcoords(self.start.x, self.map.tilesize),
                                                 tile_from_xcoords(self.start.y, self.map.tilesize)),
-                                     (tile_from_xcoords(self.goal.x, self.map.tilesize),
+                                    (tile_from_xcoords(self.goal.x, self.map.tilesize),
                                       tile_from_xcoords(self.goal.y, self.map.tilesize)))
                         if (path != False):
                             self.path = path
-                            Tower(self, round_to_tilesize(pos[0], self.map.tilesize),
-                                  round_to_tilesize(pos[1], self.map.tilesize), self.map.tilesize, self.map.tilesize,
-                                  0.2, 25, 8, 1, 200)
+                            self.map.add_tower(x_coord, y_coord, Tower(self, round_to_tilesize(pos[0], self.map.tilesize),
+                                  round_to_tilesize(pos[1], self.map.tilesize), ANITBODY_BASE_IMG, ANITBODY_GUN_IMG,
+                                  0.2, 25, 8, 1, 200))
                             for enemy in self.enemies:
                                 enemy.recreate_path()
                         else:  # reverts tile map to previous state if no enemy path could be found
-                            tile_map[tile_from_coords(pos[0])][tile_from_coords(pos[1])] = 0
+                            tile_map[x_coord][y_coord] = 0
+
+                    elif event.button == 3:
+                        pos = self.camera.correct_mouse(event.pos)
+                        x_coord = tile_from_coords(pos[0], self.map.tilesize)
+                        y_coord = tile_from_coords(pos[1], self.map.tilesize)
+                        self.map.remove_tower(x_coord, y_coord)
+                        self.path = astar(tile_map, (tile_from_xcoords(self.start.x, self.map.tilesize),
+                                                tile_from_xcoords(self.start.y, self.map.tilesize)),
+                                    (tile_from_xcoords(self.goal.x, self.map.tilesize),
+                                      tile_from_xcoords(self.goal.y, self.map.tilesize)))
+                        for enemy in self.enemies:
+                            enemy.recreate_path()
 
                     elif event.button == 4:
                         self.camera.zoom(0.05, event.pos)
@@ -169,6 +186,7 @@ class Game:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_r:
                         self.game_over = False
+                        self.map.clear_map()
 
 
 # create the game object

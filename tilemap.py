@@ -28,6 +28,7 @@ class TiledMap:
         self.tilesize = tm.tilewidth
         self.tmxdata = tm
         self.map = [[0 for row in range(tm.height)] for col in range(tm.width)]
+        self.tower_map = [[None for row in range(tm.height)] for col in range(tm.width)]
 
     def render(self, surface, layers):
         ti = self.tmxdata.get_tile_image_by_gid
@@ -53,8 +54,26 @@ class TiledMap:
             return False
         self.map[x][y] = state
 
+    def add_tower(self, x, y, tower):
+        if (x < 0 or x > self.width or y < 0 or y > self.height):
+            return False
+        self.tower_map[x][y] = tower
+
+    def remove_tower(self, x, y):
+        if (x < 0 or x > self.width or y < 0 or y > self.height or self.tower_map[x][y] == None):
+            return False
+        self.tower_map[x][y].kill()
+        self.change_node(x, y, 0)
+
     def get_map(self):
         return self.map
+
+    def get_tower_map(self):
+        return self.tower_map
+
+    def clear_map(self):
+        self.map = [[0 for row in range(self.height)] for col in range(self.width)]
+        self.tower_map = [[None for row in range(self.height)] for col in range(self.width)]
 
 
 class Camera:
