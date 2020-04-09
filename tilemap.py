@@ -63,40 +63,64 @@ class Camera:
         self.height = height
         self.map_width = map.width
         self.map_height = map.height
+        self.tilesize = map.tilesize
         self.current_zoom = min(width / map.width, height / map.height)
+        if (width / map.width > height / map.height):
+            self.short_width = True
+        else:
+            self.short_width = False
         self.minzoom = self.current_zoom
         self.critical_ratio = max(width / map.width, height / map.height) + 0.1
-        print(self.critical_ratio)
-        self.update(width / 2, height / 2)
+        self.camera = pg.Rect((self.width - self.map_width * (self.current_zoom + 0.05)) / 2, (self.height- self.map_height * self.current_zoom) / 2, width, height)
 
     def apply(self, entity):
         return entity.rect.move(self.camera.topleft)
 
+    def apply_tuple(self, tuple):
+        return ([x * self.current_zoom + self.camera.topleft[i] for i, x in enumerate(tuple)])
+
     def apply_rect(self, rect):
-        return rect.move(self.camera.topleft)
+        x = rect.x * self.current_zoom + self.camera.topleft[0]
+        y = rect.y * self.current_zoom + self.camera.topleft[1]
+        w = rect.w * self.current_zoom
+        h = rect.h * self.current_zoom
+        return pg.Rect(x, y, w, h)
+
+    # # For testing purposes only
+    # def apply_template(self, rect):
 
     def apply_image(self, image):
         size = image.get_rect().size
         return pg.transform.scale(image, ([round(self.current_zoom * x) for x in size]))
 
-    def update(self, x, y):
-        if (self.current_zoom < self.critical_ratio):
-            newx = 0
-            newy = 0
+    def correct_mouse(self, pos):
+        return ([round((x - self.camera.topleft[i]) / self.current_zoom) for i, x in enumerate(pos)])
 
-        else:
-            percentage = (self.current_zoom - self.critical_ratio) / (self.minzoom + 1 - self.critical_ratio)
-            maxw = self.map_width * self.current_zoom - self.width
-            maxh = self.map_height * self.current_zoom - self.height
-            newx = clamp(percentage * (x - self.width / 2) * self.current_zoom, -maxw, maxw)
-            newy = clamp(percentage * (y - self.height / 2) * self.current_zoom, -maxh, maxh)
-        adjwidth = (self.width - newx - self.map_width * self.current_zoom) / 2
-        adjheight = (self.height - newy - self.map_height * self.current_zoom) / 2
-        self.camera = pg.Rect(adjwidth, adjheight, self.width, self.height)
+    def update(self, x, y, amount):
+        self.current_zoom += amount
+
+        newx = x - self.width / 2
+        newy = y - self.height / 2
+
+        self.camera = self.camera.move(amount * (self.map_width - self.width - newx) / 2,
+                                       amount * (self.map_height - self.height - newy))
+
+        minx = self.width - self.map_width * self.current_zoom
+        miny = self.height - self.map_height * self.current_zoom
+        self.camera.x = clamp(self.camera.x, minx, 0)
+        self.camera.y = clamp(self.camera.y, miny, 0)
+
+        if (self.current_zoom < self.critical_ratio):
+            if self.short_width:
+                self.camera.x = (self.width - self.map_width * self.current_zoom) / 2
+
+            else:
+                self.camera.y = (self.height - self.map_height * self.current_zoom) / 2
+
 
     def zoom(self, amount, pos):
         if (amount > 0 and self.current_zoom >= self.minzoom + 1 or amount < 0 and self.current_zoom <= self.minzoom):
             return
 
-        self.current_zoom += amount
-        self.update(pos[0], pos[1])
+
+        self.update(pos[0], pos[1], amount)

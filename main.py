@@ -81,38 +81,40 @@ class Game:
         # self.draw_grid()
 
         self.screen.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
-        # applied_goal_rect = self.camera.apply_rect(self.goal.rect)
-        #
-        # pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.start.rect))
-        # pg.draw.rect(self.screen, GREEN, applied_goal_rect)
-        #
-        # # draws # of lives left on goal
-        # lives_font = pg.font.Font(None, self.map.tilesize)
-        # lives_text = lives_font.render(str(self.lives), 1, BLACK)
-        # self.screen.blit(lives_text, (applied_goal_rect.left + self.map.tilesize // 4,
-        #                               applied_goal_rect.top + self.map.tilesize // 4))
-        #
-        # for i, node in enumerate(self.path):
-        #     if (i < len(self.path) - 1):
-        #         pg.draw.rect(self.screen, YELLOW, self.camera.apply_rect(
-        #             pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
-        #
-        # for enemy in self.enemies:
-        #     self.screen.blit(enemy.image, self.camera.apply_rect(enemy.rect))
-        #     pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
-        #
-        # for tower in self.towers:
-        #     pg.draw.rect(self.screen, RED,
-        #                  self.camera.apply_rect(tower.rect))
-        #     if (tower.current_enemy != None):
-        #         pg.draw.line(self.screen, WHITE, (round_to_mtilesize(tower.x, self.map.tilesize), round_to_mtilesize(tower.y, self.map.tilesize)), (round_to_mtilesize(tower.current_enemy.x, self.map.tilesize), round_to_mtilesize(tower.current_enemy.y, self.map.tilesize)))
-        #
-        # for projectile in self.projectiles:
-        #     pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
+        applied_goal_rect = self.camera.apply_rect(self.goal.rect)
 
-        # for sprite in self.all_sprites:
-        #     self.screen.blit(sprite.image, self.camera.apply(sprite))
-        # self.screen.blit(self.map_objects, self.camera.apply_rect(self.map_rect))
+        pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.start.rect))
+        pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.goal.rect))
+
+        # draws # of lives left on goal
+        lives_font = pg.font.Font(None, self.map.tilesize)
+        lives_text = lives_font.render(str(self.lives), 1, BLACK)
+        self.screen.blit(lives_text, (applied_goal_rect.left + self.map.tilesize // 4,
+                                      applied_goal_rect.top + self.map.tilesize // 4))
+
+        for i, node in enumerate(self.path):
+            if (i < len(self.path) - 1):
+                pg.draw.rect(self.screen, YELLOW, self.camera.apply_rect(
+                    pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
+
+        for enemy in self.enemies:
+            self.screen.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
+            pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
+
+        for tower in self.towers:
+            pg.draw.rect(self.screen, RED,
+                         self.camera.apply_rect(tower.rect))
+            if (tower.current_enemy != None):
+                tower_pos = self.camera.apply_tuple((round_to_mtilesize(tower.x, self.map.tilesize), round_to_mtilesize(tower.y, self.map.tilesize)))
+                target_pos = self.camera.apply_tuple((round_to_mtilesize(tower.current_enemy.x, self.map.tilesize), round_to_mtilesize(tower.current_enemy.y, self.map.tilesize)))
+                pg.draw.line(self.screen, WHITE, tower_pos, target_pos)
+
+        for projectile in self.projectiles:
+            pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
+
+        for sprite in self.all_sprites:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
+        self.screen.blit(self.map_objects, self.camera.apply_rect(self.map_rect))
         pg.display.flip()
 
     def draw_game_over(self):
@@ -139,7 +141,7 @@ class Game:
             if self.playing:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        pos = pg.mouse.get_pos()
+                        pos = self.camera.correct_mouse(event.pos)
                         tile_map = self.map.get_map()
                         tile_map[tile_from_coords(pos[0], self.map.tilesize)][
                             tile_from_coords(pos[1], self.map.tilesize)] = 1
