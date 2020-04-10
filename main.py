@@ -164,6 +164,7 @@ class Game:
                             tile_map[x_coord][y_coord] = 0
 
                     elif event.button == 3:
+                        tile_map = self.map.get_map()
                         pos = self.camera.correct_mouse(event.pos)
                         x_coord = tile_from_coords(pos[0], self.map.tilesize)
                         y_coord = tile_from_coords(pos[1], self.map.tilesize)
