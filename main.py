@@ -100,10 +100,14 @@ class Game:
                     pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
 
         for tower in self.towers:
-            self.screen.blit(self.camera.apply_image(tower.base_image), self.camera.apply_rect(tower.rect))
-            rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
+            base_image = tower.base_images[tower.stage]
+            gun_image = tower.gun_images[tower.stage]
+            
+            self.screen.blit(self.camera.apply_image(base_image), self.camera.apply_rect(tower.rect))
+            rotated_image = pg.transform.rotate(gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             self.screen.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
+            
             if (tower.current_enemy != None):
                 tower_pos = self.camera.apply_tuple((round_to_mtilesize(tower.x, self.map.tilesize), round_to_mtilesize(tower.y, self.map.tilesize)))
                 target_pos = self.camera.apply_tuple((round_to_mtilesize(tower.current_enemy.x, self.map.tilesize), round_to_mtilesize(tower.current_enemy.y, self.map.tilesize)))
@@ -151,11 +155,14 @@ class Game:
                         x_coord = tile_from_coords(pos[0], self.map.tilesize)
                         y_coord = tile_from_coords(pos[1], self.map.tilesize)
                         
-                        if (tile_map[x_coord][y_coord] == 1 or self.map.change_node(x_coord, y_coord, 1) == False):
+                        if tile_map[x_coord][y_coord] == 1:
                             self.map.upgrade_tower(x_coord, y_coord) # don't need to upgrade tower if clicking on empty space
                             continue
                         
-                        if (self.protein < BUY_COST):
+                        if self.protein < BUY_COST:
+                            continue
+                        
+                        if self.map.change_node(x_coord, y_coord, 1) == False:
                             continue
 
                         path = astar(tile_map, (tile_from_xcoords(self.start.x, self.map.tilesize),
@@ -163,28 +170,29 @@ class Game:
                                     (tile_from_xcoords(self.goal.x, self.map.tilesize),
                                       tile_from_xcoords(self.goal.y, self.map.tilesize)))
                                     
-                        if (path != False):
+                        if path != False:
                             self.path = path
                             
                             new_tower = Tower(
                                 game = self,
                                 x = round_to_tilesize(pos[0], self.map.tilesize),
                                 y = round_to_tilesize(pos[1], self.map.tilesize),
-                                base_image = ANITBODY_BASE_IMG,
-                                gun_image = ANITBODY_GUN_IMG,
+                                base_images = ANTIBODY_BASE_IMGS,
+                                gun_images = ANTIBODY_GUN_IMGS,
                                 bullet_spawn_speed = 0.2,
                                 bullet_speed = 25,
                                 bullet_size = 8,
-                                damage = [1, 2, 3],
+                                damage = [(i + 1) for i in range(MAX_STAGE)],
                                 range = 200,
-                                upgrade_cost = 5)
+                                upgrade_cost = 5,
+                                max_stage = MAX_STAGE)
                             self.map.add_tower(x_coord, y_coord, new_tower)
                             
                             self.protein -= BUY_COST
                             for enemy in self.enemies:
                                 enemy.recreate_path()
                         else:  # reverts tile map to previous state if no enemy path could be found
-                            tile_map[x_coord][y_coord] = 0
+                            self.map.change_node(x_coord, y_coord, 1)
 
                     elif event.button == 3:
                         tile_map = self.map.get_map()

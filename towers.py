@@ -30,10 +30,13 @@ class Projectile(pg.sprite.Sprite):
             self.kill()
 
 class Tower(Obstacle):
-    def __init__(self, game, x, y, base_image, gun_image, bullet_spawn_speed, bullet_speed, bullet_size, damage, range, upgrade_cost):
+    def __init__(self, game, x, y, base_images, gun_images, bullet_spawn_speed, bullet_speed, bullet_size, damage, range, upgrade_cost, max_stage):
         super().__init__(game, x, y, game.map.tilesize, game.map.tilesize)
         self.groups = game.towers
         pg.sprite.Sprite.__init__(self, self.groups)
+        
+        self.base_images = base_images
+        self.gun_images = gun_images
         
         self.bullet_spawn_speed = bullet_spawn_speed
         self.bullet_speed = bullet_speed
@@ -41,11 +44,11 @@ class Tower(Obstacle):
         self.damage = damage
         self.range = range
         self.upgrade_cost = upgrade_cost
+        self.max_stage = max_stage
+        
+        
         self.stage = 0
-        self.max_stage = 2
         self.next_spawn = pg.time.get_ticks()
-        self.base_image = base_image
-        self.gun_image = gun_image
         self.rotation = 0
         self.current_enemy = None
         self.search_for_enemy()
