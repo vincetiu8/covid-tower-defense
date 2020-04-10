@@ -1,5 +1,6 @@
 import sys
 
+from UI import *
 from sprites import *
 from tilemap import *
 from towers import *
@@ -39,7 +40,7 @@ class Game:
         self.camera = Camera(self.map, 1280, 720)
         self.path = astar(self.map.get_map(), (int(self.start.x / self.map.tilesize), int(self.start.y / self.map.tilesize)),
                           (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
-        
+        self.UI = UI(self)
     def run(self):
         # game loop - set self.playing = False to end the game
         self.playing = True
@@ -78,7 +79,7 @@ class Game:
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
     def draw(self):
-        pg.display.set_caption("FPS: {:.2f}  Protein: {}".format(self.clock.get_fps(), self.protein))
+        pg.display.set_caption("FPS: {:.2f}".format(self.clock.get_fps()))
         self.screen.fill((0, 0, 0))
         # self.draw_grid()
 
@@ -89,10 +90,6 @@ class Game:
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.goal.rect))
 
         # draws # of lives left on goal
-        lives_font = pg.font.Font(None, self.map.tilesize)
-        lives_text = lives_font.render(str(self.lives), 1, BLACK)
-        self.screen.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple((self.goal.rect.left + self.map.tilesize // 4,
-                                      self.goal.rect.top + self.map.tilesize // 4)))
 
         for i, node in enumerate(self.path):
             if (i > 0 and i < len(self.path) - 1):
@@ -116,9 +113,15 @@ class Game:
         for projectile in self.projectiles:
             pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
 
-        for sprite in self.all_sprites:
-            self.screen.blit(sprite.image, self.camera.apply(sprite))
-        self.screen.blit(self.map_objects, self.camera.apply_rect(self.map_rect))
+        lives_font = pg.font.Font(None, self.map.tilesize)
+        lives_text = lives_font.render("Lives: " + str(self.lives), 1, BLACK)
+        self.screen.blit(self.camera.apply_image(lives_text),
+                         self.camera.apply_tuple((self.UI.offset, self.UI.offset)))
+
+        protein_font = pg.font.Font(None, self.map.tilesize)
+        protein_text = protein_font.render("Protein: " + str(self.protein), 1, BLACK)
+        self.screen.blit(self.camera.apply_image(protein_text),
+                         self.camera.apply_tuple((self.UI.offset, self.map.tilesize + self.UI.offset)))
         pg.display.flip()
 
     def draw_game_over(self):
