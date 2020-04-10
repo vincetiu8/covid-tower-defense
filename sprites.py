@@ -40,7 +40,16 @@ class Start():
 
     def update(self):
         if (pg.time.get_ticks() >= self.next_spawn):
-            Enemy(self.game, self.x, self.y, tile_from_xcoords(self.game.goal.x, self.game.map.tilesize), tile_from_xcoords(self.game.goal.y, self.game.map.tilesize), random.randint(50, 100), random.randint(5, 15), ENEMY_IMG)
+            Enemy(
+                game = self.game,
+                x = self.x,
+                y = self.y,
+                end_x = tile_from_xcoords(self.game.goal.x, self.game.map.tilesize),
+                end_y = tile_from_xcoords(self.game.goal.y, self.game.map.tilesize),
+                speed = random.randint(50, 100),
+                hp = random.randint(5, 15),
+                image = ENEMY_IMG,
+                dropped_protein = 1)
             self.next_spawn = pg.time.get_ticks() + self.spawn_rate * 1000
 
 

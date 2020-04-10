@@ -148,22 +148,38 @@ class Game:
                     if event.button == 1:
                         if (self.protein < BUY_COST):
                             continue
+                        
+                        tile_map = self.map.get_map()
                         pos = self.camera.correct_mouse(event.pos)
                         x_coord = tile_from_coords(pos[0], self.map.tilesize)
                         y_coord = tile_from_coords(pos[1], self.map.tilesize)
-                        tile_map = self.map.get_map()
+                        
                         if (tile_map[x_coord][y_coord] == 1 or self.map.change_node(x_coord, y_coord, 1) == False):
+                            self.map.upgrade_tower(x_coord, y_coord) # don't need to upgrade tower if clicking on empty space
                             continue
 
                         path = astar(tile_map, (tile_from_xcoords(self.start.x, self.map.tilesize),
                                                 tile_from_xcoords(self.start.y, self.map.tilesize)),
                                     (tile_from_xcoords(self.goal.x, self.map.tilesize),
                                       tile_from_xcoords(self.goal.y, self.map.tilesize)))
+                                    
                         if (path != False):
                             self.path = path
-                            self.map.add_tower(x_coord, y_coord, Tower(self, round_to_tilesize(pos[0], self.map.tilesize),
-                                  round_to_tilesize(pos[1], self.map.tilesize), ANITBODY_BASE_IMG, ANITBODY_GUN_IMG,
-                                  0.2, 25, 8, [1, 2, 3], 200, 5))
+                            
+                            new_tower = Tower(
+                                game = self,
+                                x = round_to_tilesize(pos[0], self.map.tilesize),
+                                y = round_to_tilesize(pos[1], self.map.tilesize),
+                                base_image = ANITBODY_BASE_IMG,
+                                gun_image = ANITBODY_GUN_IMG,
+                                bullet_spawn_speed = 0.2,
+                                bullet_speed = 25,
+                                bullet_size = 8,
+                                damage = [1, 2, 3],
+                                range = 200,
+                                upgrade_cost = 5)
+                            self.map.add_tower(x_coord, y_coord, new_tower)
+                            
                             self.protein -= BUY_COST
                             for enemy in self.enemies:
                                 enemy.recreate_path()
@@ -175,6 +191,7 @@ class Game:
                         pos = self.camera.correct_mouse(event.pos)
                         x_coord = tile_from_coords(pos[0], self.map.tilesize)
                         y_coord = tile_from_coords(pos[1], self.map.tilesize)
+                        
                         self.map.remove_tower(x_coord, y_coord)
                         self.path = astar(tile_map, (tile_from_xcoords(self.start.x, self.map.tilesize),
                                                 tile_from_xcoords(self.start.y, self.map.tilesize)),

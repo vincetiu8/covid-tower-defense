@@ -71,7 +71,7 @@ class Tower(Obstacle):
 
                 self.rotation = 180 - math.degrees(angle)
                 Projectile(self.game, self.x, self.y, self.bullet_size, self.bullet_size, self.bullet_speed, angle, self.damage[self.stage])
-                self.next_spawn = pg.time.get_ticks() + self.speed * 1000
+                self.next_spawn = pg.time.get_ticks() + self.bullet_spawn_speed * 1000
 
         if (self.current_enemy == None):
             self.search_for_enemy()
