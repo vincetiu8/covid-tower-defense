@@ -1,6 +1,6 @@
 from pathfinding import *
 from settings import *
-from tilemap import tile_from_xcoords, coords_from_xtile
+from tilemap import tile_from_xcoords, tile_from_coords, coords_from_xtile
 
 class Enemy(pg.sprite.Sprite):
     def __init__(self, game, x, y, end_x, end_y, speed, hp, image):
@@ -11,7 +11,7 @@ class Enemy(pg.sprite.Sprite):
         self.x = x
         self.y = y
         self.speed = speed
-        self.rect = pg.Rect(self.x, self.y, TILESIZE, TILESIZE)
+        self.rect = pg.Rect(self.x, self.y, self.game.map.tilesize, self.game.map.tilesize)
         self.end_x = end_x
         self.end_y = end_y
         self.last_move = pg.time.get_ticks()
@@ -31,23 +31,22 @@ class Enemy(pg.sprite.Sprite):
         self.x += self.speed * passed_time * self.direction[0]
         self.y += self.speed * passed_time * self.direction[1]
 
-        if ((self.x - coords_from_xtile(self.new_node[0])) * self.direction[0] >= 0 and (self.y - coords_from_xtile(self.new_node[1])) *
+        if ((self.x - self.new_node[0] * self.game.map.tilesize) * self.direction[0] >= 0 and (self.y - self.new_node[1] * self.game.map.tilesize) *
                 self.direction[1] >= 0):
-            self.x = coords_from_xtile(self.new_node[0])
-            self.y = coords_from_xtile(self.new_node[1])
+            self.x = self.new_node[0] * self.game.map.tilesize
+            self.y = self.new_node[1] * self.game.map.tilesize
             self.load_next_node()
 
-        self.rect = pg.Rect(self.x, self.y, TILESIZE, TILESIZE)
+        self.rect = pg.Rect(self.x, self.y, self.game.map.tilesize, self.game.map.tilesize)
 
     def get_hp_rect(self):
         h = 5
         w = self.hp * 2
-        x = self.x + (TILESIZE - w) / 2
+        x = self.x + (self.game.map.tilesize - w) / 2
         y = self.y - 12
         return pg.Rect(x, y, w, h)
 
     def recreate_path(self):
-        print((self.new_node[0], self.new_node[1]))
         self.path = astar(self.game.map.get_map(), (self.new_node[0], self.new_node[1]), (self.end_x, self.end_y))
         self.load_next_node()
 
@@ -58,25 +57,20 @@ class Enemy(pg.sprite.Sprite):
             return
         self.end_dist = len(self.path)
         self.new_node = self.path.pop(0)
-
-        xval = coords_from_xtile(self.new_node[0]) - self.x
-        if (xval > 0):
-            direction_x = 1
-
-        elif (xval < 0):
-            direction_x = -1
-
+        if (self.new_node[0] * self.game.map.tilesize - self.x > 0):
+            xdir = 1
+        elif (self.new_node[0] * self.game.map.tilesize - self.x < 0):
+            xdir = -1
         else:
-            direction_x = 0
+            xdir = 0
 
-        yval = coords_from_xtile(self.new_node[1]) - self.y
-        if (yval > 0):
-            direction_y = 1
-
-        elif (yval < 0):
-            direction_y = -1
-
+        if (self.new_node[1] * self.game.map.tilesize - self.y > 0):
+            ydir = 1
+        elif (self.new_node[1] * self.game.map.tilesize - self.y < 0):
+            ydir = -1
         else:
-            direction_y = 0
+            ydir = 0
 
-        self.direction = (direction_x, direction_y)
+        self.direction = (xdir, ydir)
+        while (self.direction == (0, 0)):
+            self.load_next_node()
