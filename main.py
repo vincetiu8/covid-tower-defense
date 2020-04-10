@@ -25,7 +25,10 @@ class Game:
         self.towers = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
+        
+        self.protein = PROTEIN
         self.lives = LIVES
+        
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
                 self.start = Start(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, SPAWN_RATE)
@@ -36,7 +39,7 @@ class Game:
         self.camera = Camera(self.map, 1280, 720)
         self.path = astar(self.map.get_map(), (int(self.start.x / self.map.tilesize), int(self.start.y / self.map.tilesize)),
                           (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
-
+        
     def run(self):
         # game loop - set self.playing = False to end the game
         self.playing = True
@@ -75,7 +78,7 @@ class Game:
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
     def draw(self):
-        pg.display.set_caption("{:.2f}".format(self.clock.get_fps()))
+        pg.display.set_caption("FPS: {:.2f}  Protein: {}".format(self.clock.get_fps(), self.protein))
         self.screen.fill((0, 0, 0))
         # self.draw_grid()
 
@@ -135,6 +138,7 @@ class Game:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
+                
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.quit()
@@ -142,6 +146,8 @@ class Game:
             if self.playing:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if event.button == 1:
+                        if (self.protein < BUY_COST):
+                            continue
                         pos = self.camera.correct_mouse(event.pos)
                         x_coord = tile_from_coords(pos[0], self.map.tilesize)
                         y_coord = tile_from_coords(pos[1], self.map.tilesize)
@@ -157,7 +163,8 @@ class Game:
                             self.path = path
                             self.map.add_tower(x_coord, y_coord, Tower(self, round_to_tilesize(pos[0], self.map.tilesize),
                                   round_to_tilesize(pos[1], self.map.tilesize), ANITBODY_BASE_IMG, ANITBODY_GUN_IMG,
-                                  0.2, 25, 8, 1, 200))
+                                  0.2, 25, 8, [1, 2, 3], 200, 5))
+                            self.protein -= BUY_COST
                             for enemy in self.enemies:
                                 enemy.recreate_path()
                         else:  # reverts tile map to previous state if no enemy path could be found
@@ -181,7 +188,6 @@ class Game:
 
                     elif event.button == 5:
                         self.camera.zoom(-0.05, event.pos)
-
             else:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_r:

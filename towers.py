@@ -30,16 +30,20 @@ class Projectile(pg.sprite.Sprite):
             self.kill()
 
 class Tower(Obstacle):
-    def __init__(self, game, x, y, base_image, gun_image, speed, bullet_speed, bullet_size, damage, range):
+    def __init__(self, game, x, y, base_image, gun_image, bullet_spawn_speed, bullet_speed, bullet_size, damage, range, upgrade_cost):
         super().__init__(game, x, y, game.map.tilesize, game.map.tilesize)
         self.groups = game.towers
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.speed = speed
+        
+        self.bullet_spawn_speed = bullet_spawn_speed
         self.bullet_speed = bullet_speed
         self.bullet_size = bullet_size
         self.damage = damage
-        self.next_spawn = pg.time.get_ticks()
         self.range = range
+        self.upgrade_cost = upgrade_cost
+        self.stage = 0
+        self.max_stage = 2
+        self.next_spawn = pg.time.get_ticks()
         self.base_image = base_image
         self.gun_image = gun_image
         self.rotation = 0
@@ -66,11 +70,16 @@ class Tower(Obstacle):
                         angle += math.pi
 
                 self.rotation = 180 - math.degrees(angle)
-                Projectile(self.game, self.x, self.y, self.bullet_size, self.bullet_size, self.bullet_speed, angle, self.damage)
+                Projectile(self.game, self.x, self.y, self.bullet_size, self.bullet_size, self.bullet_speed, angle, self.damage[self.stage])
                 self.next_spawn = pg.time.get_ticks() + self.speed * 1000
 
         if (self.current_enemy == None):
             self.search_for_enemy()
+            
+    def upgrade(self):
+        if self.game.protein >= self.upgrade_cost and self.stage < self.max_stage:
+            self.game.protein -= self.upgrade_cost
+            self.stage += 1
 
     def search_for_enemy(self):
         for enemy in self.game.enemies:
