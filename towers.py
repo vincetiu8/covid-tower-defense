@@ -3,7 +3,6 @@ import math
 import pygame as pg
 from tilemap import round_to_mtilesize
 from pathfinding import heuristic
-from settings import TILESIZE
 from heapq import *
 
 class Projectile(pg.sprite.Sprite):
@@ -11,8 +10,8 @@ class Projectile(pg.sprite.Sprite):
         self.groups = game.projectiles
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.x = round_to_mtilesize(x) - w / 2
-        self.y = round_to_mtilesize(y) - h / 2
+        self.x = round_to_mtilesize(x, game.map.tilesize) - w / 2
+        self.y = round_to_mtilesize(y, game.map.tilesize) - h / 2
         self.w = w
         self.h = h
         self.speed = speed
@@ -31,8 +30,8 @@ class Projectile(pg.sprite.Sprite):
             self.kill()
 
 class Tower(Obstacle):
-    def __init__(self, game, x, y, bullet_spawn_speed, bullet_speed, bullet_size, damage, range, upgrade_cost):
-        super().__init__(game, x, y)
+    def __init__(self, game, x, y, base_image, gun_image, bullet_spawn_speed, bullet_speed, bullet_size, damage, range, upgrade_cost):
+        super().__init__(game, x, y, game.map.tilesize, game.map.tilesize)
         self.groups = game.towers
         pg.sprite.Sprite.__init__(self, self.groups)
         
@@ -41,13 +40,13 @@ class Tower(Obstacle):
         self.bullet_size = bullet_size
         self.damage = damage
         self.range = range
-        
         self.upgrade_cost = upgrade_cost
-        
         self.stage = 0
         self.max_stage = 2
-        
         self.next_spawn = pg.time.get_ticks()
+        self.base_image = base_image
+        self.gun_image = gun_image
+        self.rotation = 0
         self.current_enemy = None
         self.search_for_enemy()
 
@@ -56,8 +55,8 @@ class Tower(Obstacle):
             if (not self.current_enemy.alive() or heuristic((self.current_enemy.x, self.current_enemy.y), (self.x, self.y)) > self.range):
                 self.current_enemy = None
             else:
-                temp_x = self.current_enemy.x + self.current_enemy.direction[0] * TILESIZE / 2 * self.current_enemy.speed / 500
-                temp_y = self.current_enemy.y + self.current_enemy.direction[1] * TILESIZE / 2 * self.current_enemy.speed / 500
+                temp_x = self.current_enemy.x + self.current_enemy.direction[0] * self.game.map.tilesize / 2 * self.current_enemy.speed / 500
+                temp_y = self.current_enemy.y + self.current_enemy.direction[1] * self.game.map.tilesize / 2 * self.current_enemy.speed / 500
 
                 if (temp_x - self.x == 0):
                     if (temp_y - self.y > 0):
@@ -70,8 +69,9 @@ class Tower(Obstacle):
                     if (temp_x - self.x < 0):
                         angle += math.pi
 
+                self.rotation = 180 - math.degrees(angle)
                 Projectile(self.game, self.x, self.y, self.bullet_size, self.bullet_size, self.bullet_speed, angle, self.damage[self.stage])
-                self.next_spawn = pg.time.get_ticks() + self.bullet_spawn_speed * 1000
+                self.next_spawn = pg.time.get_ticks() + self.speed * 1000
 
         if (self.current_enemy == None):
             self.search_for_enemy()
