@@ -145,10 +145,7 @@ class Game:
 
             if self.playing:
                 if event.type == pg.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        if (self.protein < BUY_COST):
-                            continue
-                        
+                    if event.button == 1:                        
                         tile_map = self.map.get_map()
                         pos = self.camera.correct_mouse(event.pos)
                         x_coord = tile_from_coords(pos[0], self.map.tilesize)
@@ -156,6 +153,9 @@ class Game:
                         
                         if (tile_map[x_coord][y_coord] == 1 or self.map.change_node(x_coord, y_coord, 1) == False):
                             self.map.upgrade_tower(x_coord, y_coord) # don't need to upgrade tower if clicking on empty space
+                            continue
+                        
+                        if (self.protein < BUY_COST):
                             continue
 
                         path = astar(tile_map, (tile_from_xcoords(self.start.x, self.map.tilesize),
@@ -201,10 +201,10 @@ class Game:
                             enemy.recreate_path()
 
                     elif event.button == 4:
-                        self.camera.zoom(0.05, event.pos)
+                        self.camera.zoom(ZOOM_AMOUNT, event.pos)
 
                     elif event.button == 5:
-                        self.camera.zoom(-0.05, event.pos)
+                        self.camera.zoom(-ZOOM_AMOUNT, event.pos)
             else:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_r:
