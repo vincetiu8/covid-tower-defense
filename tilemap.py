@@ -14,9 +14,6 @@ def round_to_tilesize(i, tilesize):
 def round_to_mtilesize(i, tilesize):
     return tilesize * (round((i) / tilesize) + 1 / 2)
 
-def coords_from_xtile(i):
-    return int(round(i * TILESIZE))
-
 def collide_hit_rect(one, two):
     return one.hit_rect.colliderect(two.rect)
 
@@ -83,25 +80,20 @@ class TiledMap:
         self.map = [[0 for row in range(self.height)] for col in range(self.width)]
         self.tower_map = [[None for row in range(self.height)] for col in range(self.width)]
 
-
-class Camera:
-    def __init__(self, map, width, height):
+class Camera():
+    def __init__(self, width, height, map_width, map_height):
         self.width = width
         self.height = height
-        self.map_width = map.width
-        self.map_height = map.height
-        self.tilesize = map.tilesize
-        self.current_zoom = min(width / map.width, height / map.height)
-        if (width / map.width > height / map.height):
+        self.map_width = map_width
+        self.map_height = map_height
+        self.current_zoom = min(width / map_width, height / map_height)
+        if (width / map_width > height / map_height):
             self.short_width = True
         else:
             self.short_width = False
         self.minzoom = self.current_zoom
-        self.critical_ratio = max(width / map.width, height / map.height) + 0.1
+        self.critical_ratio = max(width / map_width, height / map_height) + 0.1
         self.camera = pg.Rect((self.width - self.map_width * (self.current_zoom + 0.05)) / 2, (self.height- self.map_height * self.current_zoom) / 2, width, height)
-
-    def apply(self, entity):
-        return entity.rect.move(self.camera.topleft)
 
     def apply_tuple(self, tuple):
         return ([x * self.current_zoom + self.camera.topleft[i] for i, x in enumerate(tuple)])
@@ -112,9 +104,6 @@ class Camera:
         w = rect.w * self.current_zoom
         h = rect.h * self.current_zoom
         return pg.Rect(x, y, w, h)
-
-    # # For testing purposes only
-    # def apply_template(self, rect):
 
     def apply_image(self, image):
         size = image.get_rect().size
