@@ -18,7 +18,8 @@ YELLOW = (255, 255, 0)
 
 # game settings
 FPS = 60
-
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 SPAWN_RATE = 1
 
 # looks for img_folder and map_folder in the same folder as the code
@@ -29,3 +30,5 @@ MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))
 ANITBODY_GUN_IMG = pg.image.load(path.join(IMG_FOLDER, "antibody_gun.png"))
 ANITBODY_BASE_IMG = pg.image.load(path.join(IMG_FOLDER, "antibody_base.png"))
+
+START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
