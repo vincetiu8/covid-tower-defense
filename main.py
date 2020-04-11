@@ -110,7 +110,7 @@ class Game:
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.path = astar(self.map.get_map(), (int(self.start.x / self.map.tilesize), int(self.start.y / self.map.tilesize)),
                           (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
-        print(self.path)
+        #print(self.path)
 
     def update(self):
         # update portion of the game loop
