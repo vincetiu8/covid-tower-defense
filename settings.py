@@ -6,7 +6,7 @@ LIVES = 5
 PROTEIN = 40
 BUY_COST = 10 # should be kept outside of the class so that the buy_cost can be
               # checked against the protein without needing to instantiate the tower
-MAX_STAGE = 3
+MAX_STAGE = 2
               
 ZOOM_AMOUNT = 0.05
 
@@ -33,6 +33,6 @@ ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))
 ANTIBODY_GUN_IMGS = []
 ANTIBODY_BASE_IMGS = []
 
-for i in range(MAX_STAGE):
+for i in range(MAX_STAGE + 1):
     ANTIBODY_GUN_IMGS.append(pg.image.load(path.join(IMG_FOLDER, "naive_t_cell_gun{}.png".format(i))))
     ANTIBODY_BASE_IMGS.append(pg.image.load(path.join(IMG_FOLDER, "naive_t_cell_base{}.png".format(i))))
