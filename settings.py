@@ -21,7 +21,8 @@ YELLOW = (255, 255, 0)
 
 # game settings
 FPS = 60
-
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 SPAWN_RATE = 1
 
 # looks for img_folder and map_folder in the same folder as the code
@@ -36,3 +37,5 @@ ANTIBODY_BASE_IMGS = []
 for i in range(MAX_STAGE + 1):
     ANTIBODY_GUN_IMGS.append(pg.image.load(path.join(IMG_FOLDER, "naive_t_cell_gun{}.png".format(i))))
     ANTIBODY_BASE_IMGS.append(pg.image.load(path.join(IMG_FOLDER, "naive_t_cell_base{}.png".format(i))))
+
+START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))

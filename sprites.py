@@ -26,7 +26,6 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
-
 class Start():
     def __init__(self, game, x, y, w, h, spawn_rate):
         self.game = game
@@ -46,7 +45,7 @@ class Start():
                 y = self.y,
                 end_x = tile_from_xcoords(self.game.goal.x, self.game.map.tilesize),
                 end_y = tile_from_xcoords(self.game.goal.y, self.game.map.tilesize),
-                speed = random.randint(50, 100),
+                speed = random.randint(200, 250),
                 hp = random.randint(5, 15),
                 image = ENEMY_IMG,
                 dropped_protein = 1)
