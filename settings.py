@@ -32,3 +32,10 @@ ANITBODY_GUN_IMG = pg.image.load(path.join(IMG_FOLDER, "antibody_gun.png"))
 ANITBODY_BASE_IMG = pg.image.load(path.join(IMG_FOLDER, "antibody_base.png"))
 
 START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
+
+PATH_VERTICAL_IMG = pg.image.load(path.join(IMG_FOLDER, "path/vertical.png"))
+PATH_HORIZONTAL_IMG = pg.image.load(path.join(IMG_FOLDER, "path/horizontal.png"))
+PATH_CORNER1_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner1.png"))
+PATH_CORNER2_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner2.png"))
+PATH_CORNER3_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner3.png"))
+PATH_CORNER4_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner4.png"))
