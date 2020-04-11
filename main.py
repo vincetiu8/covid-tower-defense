@@ -45,19 +45,20 @@ class Main:
             if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                 self.quit()
 
-            elif not self.started and self.start.event(event) == False:
-                self.started = True
-                self.playing = True
-
-
-            elif self.playing:
-                self.game.event(event)
+            elif not self.started:
+                if self.start.event(event) == False:
+                    self.started = True
+                    self.playing = True
 
             else:
-                if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_r:
-                        self.playing = True
-                        self.game.reset_map()
+                if self.playing:
+                    self.game.event(event)
+
+                else:
+                    if event.type == pg.KEYDOWN:
+                        if event.key == pg.K_r:
+                            self.playing = True
+                            self.game.reset_map()
 
     def quit(self):
         pg.quit()
