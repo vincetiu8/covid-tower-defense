@@ -121,16 +121,15 @@ class Game:
         self.towers.update()
         self.projectiles.update()
 
-    def draw_grid(self):
-        for x in range(0, self.map.width, self.map.tilesize):
-            pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, self.map.height))
-        for y in range(0, self.map.height, self.map.tilesize):
-            pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
+#     def draw_grid(self):
+#         for x in range(0, self.map.width, self.map.tilesize):
+#             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, self.map.height))
+#         for y in range(0, self.map.height, self.map.tilesize):
+#             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
     def draw(self):
         pg.display.set_caption("FPS: {:.2f}  Protein: {}".format(self.clock.get_fps(), self.protein))
         self.screen.fill((0, 0, 0))
-        # self.draw_grid()
 
         self.screen.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
         applied_goal_rect = self.camera.apply_rect(self.goal.rect)
@@ -143,11 +142,8 @@ class Game:
         lives_text = lives_font.render(str(self.lives), 1, BLACK)
         self.screen.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple((self.goal.rect.left + self.map.tilesize // 4,
                                       self.goal.rect.top + self.map.tilesize // 4)))
-
-        for i, node in enumerate(self.path):
-            if (i > 0 and i < len(self.path) - 1):
-                pg.draw.rect(self.screen, YELLOW, self.camera.apply_rect(
-                    pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
+        
+        self.draw_path()
 
         for tower in self.towers:
             base_image = tower.base_images[tower.stage]
@@ -171,6 +167,33 @@ class Game:
             pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
 
         self.screen.blit(self.map_objects, self.camera.apply_rect(self.map_rect))
+        
+    def draw_path(self):
+        for i, node in enumerate(self.path):
+            if (i > 0 and i < len(self.path) - 1):
+                image = None
+                diff_x_before = self.path[i - 1][0] - node[0]
+                diff_x_after = self.path[i + 1][0] - node[0]
+                diff_y_before = self.path[i - 1][1] - node[1]
+                diff_y_after = self.path[i + 1][1] - node[1]
+                
+                if diff_x_before == 0 and diff_x_after == 0: # up <--> down
+                    image = PATH_VERTICAL_IMG
+                elif diff_y_before == 0 and diff_y_after == 0: # left <--> right
+                    image = PATH_HORIZONTAL_IMG
+                elif (diff_x_before == 1 and diff_y_after == 1) or (diff_y_before == 1 and diff_x_after == 1): # right <--> down
+                    image = PATH_CORNER1_IMG
+                elif (diff_x_before == -1 and diff_y_after == 1) or (diff_y_before == 1 and diff_x_after == -1): # left <--> down
+                    image = PATH_CORNER2_IMG
+                elif (diff_x_before == 1 and diff_y_after == -1) or (diff_y_before == -1 and diff_x_after == 1): # right <--> up
+                    image = PATH_CORNER3_IMG
+                elif (diff_x_before == -1 and diff_y_after == -1) or (diff_y_before == -1 and diff_x_after == -1): # left <--> up
+                    image = PATH_CORNER4_IMG
+                else:
+                    print("PATH DRAWING ERROR") # this should never occur
+                    
+                self.screen.blit(self.camera.apply_image(image), self.camera.apply_rect(
+                    pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
 
     def draw_game_over(self):
         game_over_font_1 = pg.font.Font(None, 140)
