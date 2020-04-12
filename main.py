@@ -1,4 +1,5 @@
 import sys
+import json
 
 from sprites import *
 from tilemap import *
@@ -16,7 +17,7 @@ class Main:
             self.events()
 
     def run_game(self):
-        self.game = Game(pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)))
+        self.game = Game(pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)), 1)
         self.game.new()
         while self.playing:
             self.events()
@@ -30,6 +31,7 @@ class Main:
         if self.game.update() == False:
             self.game.draw_game_over()
             self.playing = False
+        
 
     def draw(self):
         if not self.started:
@@ -79,16 +81,29 @@ class StartScreen:
 
 
 class Game:
-    def __init__(self, screen):
+    def __init__(self, screen, level):
         self.screen = screen
+        self.level = level # to be used when more levels are added
+        self.wave = 0 # only updated at the end of new_wave()
+        
+        self.starts = []
+        self.start_data = None
         self.clock = pg.time.Clock()
-        self.load_data()
+        
+        self.load_map_data()
+        self.load_level_data()
 
-    def load_data(self):
+    def load_map_data(self):
         self.map = TiledMap(path.join(MAP_FOLDER, 'test.tmx'))
         self.map_img = self.map.make_map()
         self.map_objects = self.map.make_objects()
         self.map_rect = self.map_img.get_rect()
+        
+    def load_level_data(self):
+        self.level_data = None
+        
+        with open(SAMPLE_LEVEL_DATA, "r") as data_file:
+            self.level_data = json.load(data_file)
 
     def new(self):
         # initialize all variables and do all the setup for a new game
@@ -102,24 +117,49 @@ class Game:
         
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
-                self.start = Start(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, SPAWN_RATE)
+                self.start_data = {"x": tile_object.x, "y": tile_object.y, "w": tile_object.width, "h": tile_object.height}
+                self.new_wave()
             if tile_object.name == "goal":
                 self.goal = Goal(tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "wall":
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
-        self.path = astar(self.map.get_map(), (int(self.start.x / self.map.tilesize), int(self.start.y / self.map.tilesize)),
+        self.path = astar(self.map.get_map(), (int(self.starts[0].x / self.map.tilesize), int(self.starts[0].y / self.map.tilesize)),
                           (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
 
     def update(self):
         # update portion of the game loop
         if (self.lives <= 0):
             return False
-
-        self.start.update()
+        
+        for start in self.starts:
+            start.update()
         self.enemies.update()
         self.towers.update()
         self.projectiles.update()
+        
+        if self.current_wave_done():
+            if self.wave < len(self.level_data):
+                self.new_wave()
+            else:
+                pass
+        
+    def current_wave_done(self):
+        for start in self.starts:
+            if not start.is_done_spawning():
+                return False
+        return True
+    
+    def new_wave(self):
+        self.starts.clear()
+        
+        wave_data = self.level_data[self.wave]
+                
+        for i in range(len(wave_data["enemy_type"])):
+            self.starts.append(Start(self, self.start_data["x"], self.start_data["y"], self.start_data["w"], self.start_data["h"], wave_data["enemy_type"][i], wave_data["enemy_count"][i], wave_data["spawn_delay"][i], wave_data["spawn_rate"][i]))
+            
+        self.wave += 1
 
 #     def draw_grid(self):
 #         for x in range(0, self.map.width, self.map.tilesize):
@@ -128,13 +168,13 @@ class Game:
 #             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
     def draw(self):
-        pg.display.set_caption("FPS: {:.2f}  Protein: {}".format(self.clock.get_fps(), self.protein))
+        pg.display.set_caption("FPS: {:.2f}  Protein: {}  Wave: {}".format(self.clock.get_fps(), self.protein, self.wave))
         self.screen.fill((0, 0, 0))
 
         self.screen.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
         applied_goal_rect = self.camera.apply_rect(self.goal.rect)
 
-        pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.start.rect))
+        pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.starts[0].rect))
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.goal.rect))
 
         # draws # of lives left on goal
@@ -198,8 +238,13 @@ class Game:
     def draw_game_over(self):
         game_over_font_1 = pg.font.Font(None, 140)
         game_over_font_2 = pg.font.Font(None, 60)
-
-        game_over_text_1 = game_over_font_1.render("GAME OVER", 1, WHITE)
+        
+        if won_game:
+            text = "YOU WON!"
+        else:
+            text = "GAME OVER"
+            
+        game_over_text_1 = game_over_font_1.render(text, 1, WHITE)
         game_over_text_2 = game_over_font_2.render("Press R to Restart", 1, WHITE)
 
         self.screen.blit(game_over_text_1, (40, 40)) # hardcoding coords lol
@@ -235,8 +280,8 @@ class Game:
                         if self.map.change_node(x_coord, y_coord, 1) == False:
                             continue
 
-                        path = astar(tile_map, (tile_from_xcoords(self.start.x, self.map.tilesize),
-                                                tile_from_xcoords(self.start.y, self.map.tilesize)),
+                        path = astar(tile_map, (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
+                                                tile_from_xcoords(self.starts[0].y, self.map.tilesize)),
                                     (tile_from_xcoords(self.goal.x, self.map.tilesize),
                                       tile_from_xcoords(self.goal.y, self.map.tilesize)))
                                     
@@ -271,8 +316,8 @@ class Game:
                         y_coord = tile_from_coords(pos[1], self.map.tilesize)
                         
                         self.map.remove_tower(x_coord, y_coord)
-                        self.path = astar(tile_map, (tile_from_xcoords(self.start.x, self.map.tilesize),
-                                                tile_from_xcoords(self.start.y, self.map.tilesize)),
+                        self.path = astar(tile_map, (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
+                                                tile_from_xcoords(self.starts[0].y, self.map.tilesize)),
                                     (tile_from_xcoords(self.goal.x, self.map.tilesize),
                                       tile_from_xcoords(self.goal.y, self.map.tilesize)))
                         for enemy in self.enemies:
@@ -310,8 +355,8 @@ class Game:
                 if self.map.change_node(x_coord, y_coord, 1) == False:
                     return
                 
-                path = astar(tile_map, (tile_from_xcoords(self.start.x, self.map.tilesize),
-                                        tile_from_xcoords(self.start.y, self.map.tilesize)),
+                path = astar(tile_map, (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
+                                        tile_from_xcoords(self.starts[0].y, self.map.tilesize)),
                             (tile_from_xcoords(self.goal.x, self.map.tilesize),
                                 tile_from_xcoords(self.goal.y, self.map.tilesize)))
                                     
@@ -346,8 +391,8 @@ class Game:
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
                 self.map.remove_tower(x_coord, y_coord)
-                self.path = astar(tile_map, (tile_from_xcoords(self.start.x, self.map.tilesize),
-                                        tile_from_xcoords(self.start.y, self.map.tilesize)),
+                self.path = astar(tile_map, (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
+                                        tile_from_xcoords(self.starts[0].y, self.map.tilesize)),
                             (tile_from_xcoords(self.goal.x, self.map.tilesize),
                               tile_from_xcoords(self.goal.y, self.map.tilesize)))
                 for enemy in self.enemies:

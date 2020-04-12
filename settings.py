@@ -29,6 +29,9 @@ SPAWN_RATE = 1
 GAME_FOLDER = path.dirname(path.abspath(__file__))
 IMG_FOLDER = path.join(GAME_FOLDER, "img")
 MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
+LEVELS_FOLDER = path.join(GAME_FOLDER, "levels")
+
+SAMPLE_LEVEL_DATA = path.join(LEVELS_FOLDER, "sample.json")
 
 ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))
 ANTIBODY_GUN_IMGS = []
@@ -43,6 +46,5 @@ PATH_CORNER1_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner1.png"))
 PATH_CORNER2_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner2.png"))
 PATH_CORNER3_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner3.png"))
 PATH_CORNER4_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner4.png"))
-
 
 START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
