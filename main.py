@@ -110,7 +110,6 @@ class Game:
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.path = astar(self.map.get_map(), (int(self.start.x / self.map.tilesize), int(self.start.y / self.map.tilesize)),
                           (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
-        #print(self.path)
 
     def update(self):
         # update portion of the game loop
@@ -122,16 +121,15 @@ class Game:
         self.towers.update()
         self.projectiles.update()
 
-    def draw_grid(self):
-        for x in range(0, self.map.width, self.map.tilesize):
-            pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, self.map.height))
-        for y in range(0, self.map.height, self.map.tilesize):
-            pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
+#     def draw_grid(self):
+#         for x in range(0, self.map.width, self.map.tilesize):
+#             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, self.map.height))
+#         for y in range(0, self.map.height, self.map.tilesize):
+#             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
     def draw(self):
         pg.display.set_caption("FPS: {:.2f}  Protein: {}".format(self.clock.get_fps(), self.protein))
         self.screen.fill((0, 0, 0))
-        # self.draw_grid()
 
         self.screen.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
         applied_goal_rect = self.camera.apply_rect(self.goal.rect)
