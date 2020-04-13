@@ -58,7 +58,8 @@ class Main:
                     if event.type == pg.KEYDOWN:
                         if event.key == pg.K_r:
                             self.playing = True
-                            self.game.reset_map()
+                            self.game.playing = True
+                            self.game.new()
 
     def quit(self):
         pg.quit()
@@ -122,7 +123,7 @@ class Game:
         self.projectiles = pg.sprite.Group()
         self.protein = PROTEIN
         self.lives = LIVES
-        
+        self.reset_map()
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
                 self.start = Start(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height, SPAWN_RATE)
