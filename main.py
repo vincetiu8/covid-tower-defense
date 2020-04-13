@@ -1,5 +1,7 @@
 import sys
 
+import pygame
+
 from UI import *
 from sprites import *
 from tilemap import *
@@ -113,15 +115,17 @@ class Game:
         for projectile in self.projectiles:
             pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
 
+        self.screen.get_size()[1]
+        pygame.draw.rect(self.screen, DARKGREY, (self.UI.offset + 1010, self.UI.offset, 250, 60))
         lives_font = pg.font.Font(None, self.map.tilesize)
         lives_text = lives_font.render("Lives: " + str(self.lives), 1, BLACK)
-        self.screen.blit(self.camera.apply_image(lives_text),
-                         self.camera.apply_tuple((self.UI.offset, self.UI.offset)))
+        self.screen.blit((lives_text),
+        (self.UI.offset + 1015, self.UI.offset))
 
         protein_font = pg.font.Font(None, self.map.tilesize)
         protein_text = protein_font.render("Protein: " + str(self.protein), 1, BLACK)
-        self.screen.blit(self.camera.apply_image(protein_text),
-                         self.camera.apply_tuple((self.UI.offset, self.map.tilesize + self.UI.offset)))
+        self.screen.blit((protein_text),
+        (self.UI.offset + 1015, self.UI.offset + 30))
         pg.display.flip()
 
     def draw_game_over(self):
