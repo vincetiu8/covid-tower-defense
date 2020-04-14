@@ -11,13 +11,15 @@ MAX_STAGE = 2
 ZOOM_AMOUNT = 0.05
 
 # define some colors (R, G, B)
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-DARKGREY = (40, 40, 40)
-LIGHTGREY = (100, 100, 100)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
-YELLOW = (255, 255, 0)
+WHITE = pg.Color(255, 255, 255)
+BLACK = pg.Color(0, 0, 0)
+DARKGREY = pg.Color(40, 40, 40)
+LIGHTGREY = pg.Color(100, 100, 100)
+GREEN = pg.Color(0, 255, 0)
+RED = pg.Color(255, 0, 0)
+YELLOW = pg.Color(255, 255, 0)
+HALF_WHITE = pg.Color(255, 255, 255, 127)
+HALF_RED = pg.Color(255, 0, 0, 127)
 
 # game settings
 FPS = 60
@@ -36,6 +38,7 @@ LEFT_ARROW_IMG = pg.image.load(path.join(IMG_FOLDER, "left.png"))
 RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(IMG_FOLDER, "left.png")).copy(), 180)
 
 ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))
+LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
 ANTIBODY_GUN_IMGS = []
 ANTIBODY_BASE_IMGS = []
 for i in range(MAX_STAGE + 1):
