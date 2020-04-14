@@ -1,7 +1,4 @@
 import sys
-
-import pygame
-
 from UI import *
 from sprites import *
 from tilemap import *
