@@ -173,12 +173,11 @@ class Game:
             if pos != -1:
                 tower_img = self.camera.apply_image(ANTIBODY_BASE_IMGS[0]).copy()
                 tower_img.blit(self.camera.apply_image(ANTIBODY_GUN_IMGS[0]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
-                #
-                # if pos == 0:
-                #     tower_img.fill(HALF_WHITE, None, pg.BLEND_RGB_MULT)
-                #
-                # else:
-                #     tower_img.fill(HALF_RED, None, pg.BLEND_MULT)
+                if pos == 0:
+                    tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
+
+                else:
+                    tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
 
                 tower_pos = pg.Rect(towerxy, ANTIBODY_BASE_IMGS[0].get_size())
                 self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
