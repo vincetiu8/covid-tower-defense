@@ -9,16 +9,14 @@ class Main:
     def __init__(self):
         pg.init()
         pg.key.set_repeat(500, 100)
-        self.started = False
+        self.menu = Menu(pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)))
         self.playing = False
-        self.start = StartScreen(pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)))
-        self.draw()
-        while not self.started:
+        self.started_game = False
+        while not self.started_game:
             self.events()
+            self.draw()
 
-    def run_game(self):
-        self.game = Game(pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)), 1)
-        self.game.new()
+    def run_game(self): 
         while self.playing:
             self.events()
             self.update()
@@ -29,17 +27,19 @@ class Main:
 
     def update(self):
         if self.game.update() == False:
-            self.game.draw_game_over()
             self.playing = False
         
-
     def draw(self):
-        if not self.started:
-            self.start.draw()
-
-        if self.playing:
+        if not self.started_game:
+            self.menu.draw()
+            
+        elif self.playing:
             self.game.draw()
-
+            
+        else:
+            self.game.draw() # updates game_screen one last time
+            self.game.draw_game_over(self.game.get_lives() == 0)
+            
         pg.display.flip()
 
     def events(self):
@@ -47,9 +47,12 @@ class Main:
             if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                 self.quit()
 
-            elif not self.started:
-                if self.start.event(event) == False:
-                    self.started = True
+            elif not self.started_game:
+                level = self.menu.event(event)
+                if (level != False):
+                    self.game = Game(pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)), level)
+                    self.game.new()
+                    self.started_game = True
                     self.playing = True
 
             else:
@@ -60,41 +63,65 @@ class Main:
                     if event.type == pg.KEYDOWN:
                         if event.key == pg.K_r:
                             self.playing = True
-                            self.game.reset_map()
+                            self.game.playing = True
+                            self.game.new()
 
     def quit(self):
         pg.quit()
         sys.exit()
 
-class StartScreen:
+class Menu:
     def __init__(self, screen):
         self.screen = screen
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, START_SCREEN_IMG.get_rect().w, START_SCREEN_IMG.get_rect().h)
+        self.started = False
+        self.level_buttons = [pg.Rect(20, 120, LEVEL_BUTTON_IMG.get_rect().w, LEVEL_BUTTON_IMG.get_rect().h)]
 
     def draw(self):
-        self.screen.blit(self.camera.apply_image(START_SCREEN_IMG), self.camera.apply_rect(pg.Rect(0, 0, START_SCREEN_IMG.get_rect().w, START_SCREEN_IMG.get_rect().h)))
+        self.screen.fill((0, 0, 0))
+
+        if not self.started:
+            self.screen.blit(self.camera.apply_image(START_SCREEN_IMG), self.camera.apply_rect(pg.Rect(0, 0, START_SCREEN_IMG.get_rect().w, START_SCREEN_IMG.get_rect().h)))
+            return
+
+        lives_font = pg.font.Font(None, LEVEL_BUTTON_IMG.get_rect().w)
+        level_text = lives_font.render("Levels", 1, WHITE)
+        self.screen.blit(self.camera.apply_image(level_text), self.camera.apply_tuple((START_SCREEN_IMG.get_rect().w / 2 - level_text.get_rect().center[0], 75 - level_text.get_rect().center[1])))
+
+        for i, button in enumerate(self.level_buttons):
+            self.screen.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(button))
+            lives_text = lives_font.render(str(i + 1), 1, WHITE)
+            self.screen.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple((button.center[0] - lives_text.get_rect().center[0], button.center[1] - lives_text.get_rect().center[1])))
 
     def event(self, event):
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_SPACE:
-                return False
+            if event.key == pg.K_SPACE and not self.started:
+                self.started = True
+
+        elif event.type == pg.MOUSEBUTTONDOWN:
+            mouse_pos = event.pos
+
+            for i, button in enumerate(self.level_buttons):
+                if button.collidepoint(self.camera.correct_mouse(mouse_pos)):
+                    return i + 1
+
+        return False
 
 
 class Game:
     def __init__(self, screen, level):
         self.screen = screen
         self.level = level # to be used when more levels are added
-        self.wave = 0 # only updated at the end of new_wave()
         
         self.starts = []
         self.start_data = None
         self.clock = pg.time.Clock()
         
-        self.load_map_data()
+        self.map = TiledMap(path.join(MAP_FOLDER, "map{}.tmx".format(self.level)))
+        self.load_data()
         self.load_level_data()
 
-    def load_map_data(self):
-        self.map = TiledMap(path.join(MAP_FOLDER, 'test.tmx'))
+    def load_data(self):
         self.map_img = self.map.make_map()
         self.map_objects = self.map.make_objects()
         self.map_rect = self.map_img.get_rect()
@@ -114,6 +141,10 @@ class Game:
         
         self.protein = PROTEIN
         self.lives = LIVES
+        
+        self.wave = 0 # only updated at the end of new_wave()
+        
+        self.reset_map()
         
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
@@ -142,8 +173,8 @@ class Game:
         if self.current_wave_done():
             if self.wave < len(self.level_data):
                 self.new_wave()
-            else:
-                pass
+            elif len(self.enemies) == 0:
+                return False
         
     def current_wave_done(self):
         for start in self.starts:
@@ -235,13 +266,12 @@ class Game:
                 self.screen.blit(self.camera.apply_image(image), self.camera.apply_rect(
                     pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
 
-    def draw_game_over(self):
+    def draw_game_over(self, lost_game):
         game_over_font_1 = pg.font.Font(None, 140)
         game_over_font_2 = pg.font.Font(None, 60)
         
-        if won_game:
-            text = "YOU WON!"
-        else:
+        text = "YOU WON!"
+        if lost_game:
             text = "GAME OVER"
             
         game_over_text_1 = game_over_font_1.render(text, 1, WHITE)
@@ -336,6 +366,9 @@ class Game:
 
     def reset_map(self):
         self.map.clear_map()
+        
+    def get_lives(self):
+        return self.lives
 
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -402,7 +435,7 @@ class Game:
                 self.camera.zoom(0.05, event.pos)
 
             elif event.button == 5:
-                self.camera.zoom(-0.05, event.pos)\
+                self.camera.zoom(-0.05, event.pos)
 
 # create the game object
 g = Main()

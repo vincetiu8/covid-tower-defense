@@ -34,6 +34,7 @@ LEVELS_FOLDER = path.join(GAME_FOLDER, "levels")
 SAMPLE_LEVEL_DATA = path.join(LEVELS_FOLDER, "sample.json")
 
 ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))
+LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
 ANTIBODY_GUN_IMGS = []
 ANTIBODY_BASE_IMGS = []
 for i in range(MAX_STAGE + 1):
