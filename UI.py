@@ -7,7 +7,17 @@ class UI:
         self.offset = offset
         self.lives = game.lives
         self.protein = game.protein
+        self.active = True
         self.ui = self.get_ui()
+        self.set_active(self.active)
+
+    def set_active(self, bool):
+        self.active = bool
+        if bool:
+            self.rect = RIGHT_ARROW_IMG.get_rect(topright = (self.game.screen.get_size()[0] - self.width - self.offset, self.offset))
+
+        else:
+            self.rect = LEFT_ARROW_IMG.get_rect(topright = (self.game.screen.get_size()[0] - self.offset, self.offset))
 
     def update(self):
         if (self.lives != self.game.lives or self.protein != self.game.protein):

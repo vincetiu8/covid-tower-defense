@@ -32,6 +32,8 @@ MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 
 HEART_IMG = pg.image.load(path.join(IMG_FOLDER, "heart.png"))
 PROTEIN_IMG = pg.image.load(path.join(IMG_FOLDER, "protein.png"))
+LEFT_ARROW_IMG = pg.image.load(path.join(IMG_FOLDER, "left.png"))
+RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(IMG_FOLDER, "left.png")).copy(), 180)
 
 ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))
 ANTIBODY_GUN_IMGS = []
