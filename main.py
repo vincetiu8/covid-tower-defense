@@ -115,16 +115,19 @@ class Game:
         for projectile in self.projectiles:
             pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
 
-        self.screen.get_size()[1]
+        size = HEART_IMG.get_size()[0]
         UI = pg.Surface((self.UI.width, self.screen.get_size()[1] - 2 * self.UI.offset))
         UI.fill(DARKGREY)
-        lives_font = pg.font.Font(None, self.map.tilesize)
-        lives_text = lives_font.render("Lives: " + str(self.lives), 1, BLACK)
-        UI.blit(lives_text, (self.UI.offset, self.UI.offset))
+        UI.blit(HEART_IMG, (self.UI.offset, self.UI.offset))
+        UI.blit(PROTEIN_IMG, (self.UI.offset, self.UI.offset * 2 + size))
+        font = pg.font.Font(None, size * 2)
+        lives_text = font.render(str(self.lives), 1, BLACK)
+        lives_text = pg.transform.scale(lives_text, (round(lives_text.get_size()[0] * size / lives_text.get_size()[1]), size))
+        UI.blit(lives_text, (self.UI.offset * 2 + size, self.UI.offset))
 
-        protein_font = pg.font.Font(None, self.map.tilesize)
-        protein_text = protein_font.render("Protein: " + str(self.protein), 1, BLACK)
-        UI.blit(protein_text, (self.UI.offset, self.UI.offset + 30))
+        protein_text = font.render(str(self.protein), 1, BLACK)
+        protein_text = pg.transform.scale(protein_text, (round(protein_text.get_size()[0] * size / protein_text.get_size()[1]), size))
+        UI.blit(protein_text, (self.UI.offset * 2 + size, self.UI.offset * 2 + size))
         self.screen.blit(UI, UI.get_rect(topright = (self.screen.get_size()[0] - self.UI.offset, self.UI.offset)))
 
         pg.display.flip()

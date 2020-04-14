@@ -26,6 +26,9 @@ GAME_FOLDER = path.dirname(path.abspath(__file__))
 IMG_FOLDER = path.join(GAME_FOLDER, "img")
 MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 
+HEART_IMG = pg.image.load(path.join(IMG_FOLDER, "heart.png"))
+PROTEIN_IMG = pg.image.load(path.join(IMG_FOLDER, "protein.png"))
+
 ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))
 ANITBODY_GUN_IMG = pg.image.load(path.join(IMG_FOLDER, "antibody_gun.png"))
 ANITBODY_BASE_IMG = pg.image.load(path.join(IMG_FOLDER, "antibody_base.png"))
