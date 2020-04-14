@@ -166,6 +166,23 @@ class Game:
         for projectile in self.projectiles:
             pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
 
+        if self.protein >= BUY_COST:
+            mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
+            towerxy = (round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
+            pos = self.map.get_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
+            if pos != -1:
+                tower_img = self.camera.apply_image(ANTIBODY_BASE_IMGS[0]).copy()
+                tower_img.blit(self.camera.apply_image(ANTIBODY_GUN_IMGS[0]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
+                #
+                # if pos == 0:
+                #     tower_img.fill(HALF_WHITE, None, pg.BLEND_RGB_MULT)
+                #
+                # else:
+                #     tower_img.fill(HALF_RED, None, pg.BLEND_MULT)
+
+                tower_pos = pg.Rect(towerxy, ANTIBODY_BASE_IMGS[0].get_size())
+                self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
+
         self.screen.blit(self.map_objects, self.camera.apply_rect(self.map_rect))
         
     def draw_path(self):

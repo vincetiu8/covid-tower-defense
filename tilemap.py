@@ -76,6 +76,11 @@ class TiledMap:
     def get_tower_map(self):
         return self.tower_map
 
+    def get_node(self, x, y):
+        if (x < 0 or x >= len(self.map) or y < 0 or y >= len(self.map[0])):
+            return -1
+        return self.map[x][y]
+
     def clear_map(self):
         self.map = [[0 for row in range(self.height)] for col in range(self.width)]
         self.tower_map = [[None for row in range(self.height)] for col in range(self.width)]
