@@ -174,7 +174,16 @@ class Game:
                 tower_img = self.camera.apply_image(ANTIBODY_BASE_IMGS[0]).copy()
                 tower_img.blit(self.camera.apply_image(ANTIBODY_GUN_IMGS[0]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
                 if pos == 0:
-                    tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
+                    print(tile_from_xcoords(towerxy[1], self.map.tilesize))
+                    self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
+                    if astar(self.map.get_map(), (tile_from_xcoords(self.start.x, self.map.tilesize),
+                                                tile_from_xcoords(self.start.y, self.map.tilesize)),
+                                    (tile_from_xcoords(self.goal.x, self.map.tilesize),
+                                      tile_from_xcoords(self.goal.y, self.map.tilesize))) != False:
+                        tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
+                    else:
+                        tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+                    self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
 
                 else:
                     tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)

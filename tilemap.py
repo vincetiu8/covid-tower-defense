@@ -50,7 +50,7 @@ class TiledMap:
         return temp_surface
 
     def change_node(self, x, y, state):
-        if (x < 0 or x > self.width or y < 0 or y > self.height):
+        if (x < 0 or x >= len(self.map) or y < 0 or y >= len(self.map[0])):
             return False
         self.map[x][y] = state
 
