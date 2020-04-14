@@ -110,7 +110,7 @@ class Game:
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.path = astar(self.map.get_map(), (int(self.start.x / self.map.tilesize), int(self.start.y / self.map.tilesize)),
                           (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
-        self.UI = UI(self)
+        self.ui = UI(self, 200, 10)
         
     def run(self):
         # game loop - set self.playing = False to end the game
@@ -141,6 +141,7 @@ class Game:
         self.enemies.update()
         self.towers.update()
         self.projectiles.update()
+        self.ui.update()
 
 #     def draw_grid(self):
 #         for x in range(0, self.map.width, self.map.tilesize):
@@ -187,20 +188,8 @@ class Game:
         for projectile in self.projectiles:
             pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
 
-        size = HEART_IMG.get_size()[0]
-        UI = pg.Surface((self.UI.width, self.screen.get_size()[1] - 2 * self.UI.offset))
-        UI.fill(DARKGREY)
-        UI.blit(HEART_IMG, (self.UI.offset, self.UI.offset))
-        UI.blit(PROTEIN_IMG, (self.UI.offset, self.UI.offset * 2 + size))
-        font = pg.font.Font(None, size * 2)
-        lives_text = font.render(str(self.lives), 1, BLACK)
-        lives_text = pg.transform.scale(lives_text, (round(lives_text.get_size()[0] * size / lives_text.get_size()[1]), size))
-        UI.blit(lives_text, (self.UI.offset * 2 + size, self.UI.offset))
-
-        protein_text = font.render(str(self.protein), 1, BLACK)
-        protein_text = pg.transform.scale(protein_text, (round(protein_text.get_size()[0] * size / protein_text.get_size()[1]), size))
-        UI.blit(protein_text, (self.UI.offset * 2 + size, self.UI.offset * 2 + size))
-        self.screen.blit(UI, UI.get_rect(topright = (self.screen.get_size()[0] - self.UI.offset, self.UI.offset)))
+        ui = self.ui.ui
+        self.screen.blit(ui, ui.get_rect(topright = (self.screen.get_size()[0] - self.ui.offset, self.ui.offset)))
 
         pg.display.flip()
         
