@@ -244,6 +244,7 @@ class Game:
             mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
             towerxy = (round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
             pos = self.map.get_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
+
             if pos != -1:
                 tower_img = self.camera.apply_image(ANTIBODY_BASE_IMGS[0]).copy()
                 tower_img.blit(self.camera.apply_image(ANTIBODY_GUN_IMGS[0]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
