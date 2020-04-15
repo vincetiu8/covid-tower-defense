@@ -27,8 +27,7 @@ class TiledMap:
         self.height = tm.height * tm.tileheight
         self.tilesize = tm.tilewidth
         self.tmxdata = tm
-        self.map = [[0 for row in range(tm.height)] for col in range(tm.width)]
-        self.tower_map = [[None for row in range(tm.height)] for col in range(tm.width)]
+        self.clear_map()
 
     def render(self, surface, layers):
         ti = self.tmxdata.get_tile_image_by_gid
@@ -82,8 +81,8 @@ class TiledMap:
         return self.map[x][y]
 
     def clear_map(self):
-        self.map = [[0 for row in range(self.height)] for col in range(self.width)]
-        self.tower_map = [[None for row in range(self.height)] for col in range(self.width)]
+        self.map = [[0 for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
+        self.tower_map = [[None for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
 
 class Camera():
     def __init__(self, width, height, map_width, map_height):

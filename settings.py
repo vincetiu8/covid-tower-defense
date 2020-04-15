@@ -33,6 +33,11 @@ IMG_FOLDER = path.join(GAME_FOLDER, "img")
 MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 LEVELS_FOLDER = path.join(GAME_FOLDER, "levels")
 
+HEART_IMG = pg.image.load(path.join(IMG_FOLDER, "heart.png"))
+PROTEIN_IMG = pg.image.load(path.join(IMG_FOLDER, "protein.png"))
+LEFT_ARROW_IMG = pg.image.load(path.join(IMG_FOLDER, "left.png"))
+RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(IMG_FOLDER, "left.png")).copy(), 180)
+
 SAMPLE_LEVEL_DATA = path.join(LEVELS_FOLDER, "sample.json")
 
 ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))

@@ -1,6 +1,7 @@
 import sys
 import json
 
+from ui import *
 from sprites import *
 from tilemap import *
 from towers import *
@@ -159,6 +160,8 @@ class Game:
         self.path = astar(self.map.get_map(), (int(self.starts[0].x / self.map.tilesize), int(self.starts[0].y / self.map.tilesize)),
                           (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
 
+        self.ui = UI(self, 200, 10)
+
     def update(self):
         # update portion of the game loop
         if (self.lives <= 0):
@@ -169,6 +172,7 @@ class Game:
         self.enemies.update()
         self.towers.update()
         self.projectiles.update()
+        self.ui.update()
         
         if self.current_wave_done():
             if self.wave < len(self.level_data):
@@ -241,6 +245,7 @@ class Game:
             mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
             towerxy = (round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
             pos = self.map.get_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
+
             if pos != -1:
                 tower_img = self.camera.apply_image(ANTIBODY_BASE_IMGS[0]).copy()
                 tower_img.blit(self.camera.apply_image(ANTIBODY_GUN_IMGS[0]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
@@ -263,6 +268,16 @@ class Game:
                 self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
 
         self.screen.blit(self.map_objects, self.camera.apply_rect(self.map_rect))
+
+        ui_pos = (self.screen.get_size()[0] - self.ui.offset, self.ui.offset)
+        if self.ui.active:
+            ui = self.ui.ui
+            ui_rect = ui.get_rect(topright = ui_pos)
+            self.screen.blit(ui, ui_rect)
+            self.screen.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright = ui_rect.topleft))
+
+        else:
+            self.screen.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = ui_pos))
         
     def draw_path(self):
         for i, node in enumerate(self.path):
@@ -319,7 +334,11 @@ class Game:
 
             if self.playing:
                 if event.type == pg.MOUSEBUTTONDOWN:
-                    if event.button == 1:                        
+                    if event.button == 1:
+                        if self.ui.rect.collidepoint(event.pos):
+                            self.ui.set_active(not self.ui.active)
+                            return
+
                         tile_map = self.map.get_map()
                         pos = self.camera.correct_mouse(event.pos)
                         x_coord = tile_from_coords(pos[0], self.map.tilesize)
@@ -397,7 +416,11 @@ class Game:
 
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
-            if event.button == 1:                        
+            if event.button == 1:
+                if self.ui.rect.collidepoint(event.pos):
+                    self.ui.set_active(not self.ui.active)
+                    return
+
                 tile_map = self.map.get_map()
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
