@@ -5,6 +5,8 @@ class UI:
         self.game = game
         self.width = width
         self.offset = offset
+        self.wave = game.wave
+        self.max_wave = game.max_wave
         self.lives = game.lives
         self.protein = game.protein
         self.active = True
@@ -22,24 +24,31 @@ class UI:
 
     def update(self):
         if (self.lives != self.game.lives or self.protein != self.game.protein):
+            self.wave = self.game.wave
             self.lives = self.game.lives
             self.protein = self.game.protein
             self.ui = self.get_ui()
 
     def get_ui(self):
         size = HEART_IMG.get_size()[0]
+        font = pg.font.Font(None, size * 2)
+        
         ui = pg.Surface((self.width, self.game.screen.get_size()[1] - 2 * self.offset))
         ui.fill(DARKGREY)
-        ui.blit(HEART_IMG, (self.offset, self.offset))
-        ui.blit(PROTEIN_IMG, (self.offset, self.offset * 2 + size))
-        font = pg.font.Font(None, size * 2)
+        
+        waves_text = font.render("Wave {}/{}".format(self.wave, self.max_wave), 1, WHITE)
+        
+        ui.blit(waves_text, (self.offset, self.offset))
+        ui.blit(HEART_IMG, (self.offset, self.offset * 3 + size))
+        ui.blit(PROTEIN_IMG, (self.offset, self.offset * 4 + size * 2))
+        
         lives_text = font.render(str(self.game.lives), 1, WHITE)
         lives_text = pg.transform.scale(lives_text,
                                         (round(lives_text.get_size()[0] * size / lives_text.get_size()[1]), size))
-        ui.blit(lives_text, (self.offset * 2 + size, self.offset))
+        ui.blit(lives_text, (self.offset * 2 + size, self.offset * 3 + size))
 
         protein_text = font.render(str(self.game.protein), 1, WHITE)
         protein_text = pg.transform.scale(protein_text,
                                           (round(protein_text.get_size()[0] * size / protein_text.get_size()[1]), size))
-        ui.blit(protein_text, (self.offset * 2 + size, self.offset * 2 + size))
+        ui.blit(protein_text, (self.offset * 2 + size, self.offset * 4 + size * 2))
         return ui

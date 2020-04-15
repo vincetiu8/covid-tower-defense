@@ -7,38 +7,38 @@
             20
         ],
         "spawn_delay": [
-            0.7
+            1
         ],
         "spawn_rate": [
-            1
+            0.8
         ]
     },
     {
         "enemy_type": [
-            "hep"
+            "hep_a", "cold"
         ],
         "enemy_count": [
-            10
+            10, 16
         ],
         "spawn_delay": [
-            3
+            3, 3 
         ],
         "spawn_rate": [
-            0.3
+            0.6, 0.3
         ]
     },
     {
         "enemy_type": [
-            "corona"
+            "corona", "cold"
         ],
         "enemy_count": [
-            2
+            5, 20
         ],
         "spawn_delay": [
-            3
+            3, 4
         ],
         "spawn_rate": [
-            1
+            1, 0.2
         ]
     }
 ]

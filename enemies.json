@@ -1,20 +1,20 @@
 {
   "corona": {
     "hp": 50,
-    "speed": 50,
+    "speed": 70,
     "protein": 10,
     "image": "corona.png"
   },
   "cold": {
-    "hp": 2,
+    "hp": 5,
     "speed": 200,
     "protein": 1,
     "image": "cold.png"
   },
-  "hep": {
-    "hp": 5,
-    "speed": 100,
+  "hep_a": {
+    "hp": 10,
+    "speed": 110,
     "protein": 2,
-    "image": "hep.png"
+    "image": "hep_a.png"
   }
 }
