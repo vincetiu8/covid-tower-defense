@@ -247,8 +247,8 @@ class Game:
                 if pos == 0:
                     #print(tile_from_xcoords(towerxy[1], self.map.tilesize))
                     self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
-                    if astar(self.map.get_map(), (tile_from_xcoords(self.start.x, self.map.tilesize),
-                                                tile_from_xcoords(self.start.y, self.map.tilesize)),
+                    if astar(self.map.get_map(), (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
+                                                tile_from_xcoords(self.starts[0].y, self.map.tilesize)),
                                     (tile_from_xcoords(self.goal.x, self.map.tilesize),
                                       tile_from_xcoords(self.goal.y, self.map.tilesize))) != False:
                         tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
