@@ -52,10 +52,7 @@ class Start():
                 y = self.y,
                 end_x = tile_from_xcoords(self.game.goal.x, self.game.map.tilesize),
                 end_y = tile_from_xcoords(self.game.goal.y, self.game.map.tilesize),
-                speed = random.randint(150, 200),
-                hp = random.randint(10, 20),
-                image = ENEMY_IMG,
-                dropped_protein = 1)
+                name = self.enemy_type)
             self.next_spawn = pg.time.get_ticks() + self.spawn_rate * 1000
             self.enemy_count -= 1
             

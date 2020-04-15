@@ -1,0 +1,8 @@
+{
+  "corona": {
+    "hp": 5,
+    "speed": 100,
+    "protein": 2,
+    "image": "corona.png"
+  }
+}

@@ -1,7 +1,7 @@
 [
     {
         "enemy_type": [
-            "Coronavirus"
+            "corona"
         ],
         "enemy_count": [
             20
@@ -15,7 +15,7 @@
     },
     {
         "enemy_type": [
-            "Coronavirus"
+            "corona"
         ],
         "enemy_count": [
             10
