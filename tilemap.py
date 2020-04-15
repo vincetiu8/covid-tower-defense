@@ -52,6 +52,7 @@ class TiledMap:
         if (x < 0 or x >= len(self.map) or y < 0 or y >= len(self.map[0])):
             return False
         self.map[x][y] = state
+        self.valid_tower_tiles[x][y] = state - 1 # 1 --> 0, 0 --> -1
 
     def add_tower(self, x, y, tower):
         if (x < 0 or x >= len(self.tower_map) or y < 0 or y >= len(self.tower_map[0])):
@@ -83,10 +84,24 @@ class TiledMap:
         if (x < 0 or x >= len(self.map) or y < 0 or y >= len(self.map[0])):
             return -1
         return self.map[x][y]
+    
+    def reset_valid_tower_tiles(self, x, y):
+        for x in range(len(self.valid_tower_tiles)):
+            for y in range(len(self.valid_tower_tiles[0])):
+                self.valid_tower_tiles[x][y] = self.map[x][y] - 1
+    
+    def is_valid_tower_tile(self, x, y):
+        if (x < 0 or x >= len(self.valid_tower_tiles) or y < 0 or y >= len(self.valid_tower_tiles[0])):
+            return False
+        return self.valid_tower_tiles[x][y]
+    
+    def set_valid_tower_tile(self, x, y, state):
+        self.valid_tower_tiles[x][y] = state
 
     def clear_map(self):
         self.map = [[0 for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
         self.tower_map = [[None for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
+        self.valid_tower_tiles = [[-1 for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
 
 class Camera():
     def __init__(self, width, height, map_width, map_height):

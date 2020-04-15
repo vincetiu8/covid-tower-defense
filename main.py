@@ -244,23 +244,30 @@ class Game:
         if self.protein >= BUY_COST:
             mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
             towerxy = (round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
-            pos = self.map.get_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
+            tower_tile = (tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
+            pos = self.map.get_node(tower_tile[0], tower_tile[1])
 
             if pos != -1:
                 tower_img = self.camera.apply_image(ANTIBODY_BASE_IMGS[0]).copy()
                 tower_img.blit(self.camera.apply_image(ANTIBODY_GUN_IMGS[0]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
-                if pos == 0:
-                    #print(tile_from_xcoords(towerxy[1], self.map.tilesize))
+                validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
+                
+                if validity == 1:
+                    tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
+                elif validity == -1:
                     self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
-                    if astar(self.map.get_map(), (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
+                    result = astar(self.map.get_map(), (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
                                                 tile_from_xcoords(self.starts[0].y, self.map.tilesize)),
                                     (tile_from_xcoords(self.goal.x, self.map.tilesize),
-                                      tile_from_xcoords(self.goal.y, self.map.tilesize))) != False:
+                                      tile_from_xcoords(self.goal.y, self.map.tilesize)))
+                    self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
+                    
+                    if result != False:
                         tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
+                        self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
                     else:
                         tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
-                    self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
-
+                        self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 0)
                 else:
                     tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
 
