@@ -1,0 +1,30 @@
+[
+    {
+        "enemy_type": [
+            "Coronavirus"
+        ],
+        "enemy_count": [
+            20
+        ],
+        "spawn_delay": [
+            0.7
+        ],
+        "spawn_rate": [
+            1
+        ]
+    },
+    {
+        "enemy_type": [
+            "Coronavirus"
+        ],
+        "enemy_count": [
+            10
+        ],
+        "spawn_delay": [
+            3
+        ],
+        "spawn_rate": [
+            0.3
+        ]
+    }
+]

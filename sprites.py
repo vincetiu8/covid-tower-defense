@@ -27,30 +27,46 @@ def collide_with_walls(sprite, group, dir):
             sprite.hit_rect.centery = sprite.pos.y
 
 class Start():
-    def __init__(self, game, x, y, w, h, spawn_rate):
+    def __init__(self, game, x, y, w, h, enemy_type, enemy_count, spawn_delay, spawn_rate):
         self.game = game
         self.x = x
         self.y = y
         self.rect = pg.Rect(x, y, w, h)
         self.rect.x = x
         self.rect.y = y
-        self.next_spawn = pg.time.get_ticks()
+        
+        self.enemy_type = enemy_type
+        self.enemy_count = enemy_count
+        self.spawn_delay = spawn_delay
         self.spawn_rate = spawn_rate
+        
+        self.next_spawn = pg.time.get_ticks() + self.spawn_delay * 1000
+        
+        self.done_spawning = False
 
     def update(self):
-        if (pg.time.get_ticks() >= self.next_spawn):
+        if (pg.time.get_ticks() >= self.next_spawn and self.enemy_count > 0):
             Enemy(
                 game = self.game,
                 x = self.x,
                 y = self.y,
                 end_x = tile_from_xcoords(self.game.goal.x, self.game.map.tilesize),
                 end_y = tile_from_xcoords(self.game.goal.y, self.game.map.tilesize),
-                speed = random.randint(200, 250),
-                hp = random.randint(5, 15),
+                speed = random.randint(150, 200),
+                hp = random.randint(10, 20),
                 image = ENEMY_IMG,
                 dropped_protein = 1)
             self.next_spawn = pg.time.get_ticks() + self.spawn_rate * 1000
-
+            self.enemy_count -= 1
+            
+            if self.enemy_count == 0:
+                self.done_spawning = True
+    
+    def is_done_spawning(self):
+        return self.done_spawning
+    
+    def get_rect(self):
+        return self.rect
 
 class Goal():
     def __init__(self, x, y, w, h):
