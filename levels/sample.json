@@ -1,7 +1,7 @@
 [
     {
         "enemy_type": [
-            "Coronavirus"
+            "cold"
         ],
         "enemy_count": [
             20
@@ -15,7 +15,7 @@
     },
     {
         "enemy_type": [
-            "Coronavirus"
+            "hep"
         ],
         "enemy_count": [
             10
@@ -25,6 +25,20 @@
         ],
         "spawn_rate": [
             0.3
+        ]
+    },
+    {
+        "enemy_type": [
+            "corona"
+        ],
+        "enemy_count": [
+            2
+        ],
+        "spawn_delay": [
+            3
+        ],
+        "spawn_rate": [
+            1
         ]
     }
 ]

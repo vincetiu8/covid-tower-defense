@@ -1,5 +1,6 @@
 from os import path
 
+import json
 import pygame as pg
 
 LIVES = 5
@@ -40,7 +41,11 @@ RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(IMG_FOLDER, "left.
 
 SAMPLE_LEVEL_DATA = path.join(LEVELS_FOLDER, "sample.json")
 
-ENEMY_IMG = pg.image.load(path.join(IMG_FOLDER, "corona.png"))
+with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
+    ENEMY_DATA = json.load(data_file)
+    for enemy in ENEMY_DATA:
+        ENEMY_DATA[enemy]["image"] = pg.image.load(path.join(IMG_FOLDER, ENEMY_DATA[enemy]["image"]))
+
 LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
 ANTIBODY_GUN_IMGS = []
 ANTIBODY_BASE_IMGS = []

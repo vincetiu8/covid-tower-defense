@@ -3,22 +3,23 @@ from settings import *
 from tilemap import tile_from_xcoords, tile_from_coords
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, game, x, y, end_x, end_y, speed, hp, image, dropped_protein):
+    def __init__(self, game, x, y, end_x, end_y, name):
+        data = ENEMY_DATA[name]
         self.groups = game.enemies
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.screen = game.screen
         self.x = x
         self.y = y
-        self.speed = speed
+        self.speed = data["speed"]
         self.rect = pg.Rect(self.x, self.y, self.game.map.tilesize, self.game.map.tilesize)
         self.end_x = end_x
         self.end_y = end_y
         self.last_move = pg.time.get_ticks()
         self.path = game.path.copy()
-        self.hp = hp
-        self.image = image
-        self.dropped_protein = dropped_protein
+        self.hp = data["hp"]
+        self.image = data["image"]
+        self.dropped_protein = data["protein"]
         self.load_next_node()
 
     def update(self):
