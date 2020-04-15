@@ -172,6 +172,7 @@ class Game:
         self.enemies.update()
         self.towers.update()
         self.projectiles.update()
+        self.ui.update()
         
         if self.current_wave_done():
             if self.wave < len(self.level_data):

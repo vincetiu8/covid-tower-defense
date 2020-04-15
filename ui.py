@@ -33,12 +33,12 @@ class UI:
         ui.blit(HEART_IMG, (self.offset, self.offset))
         ui.blit(PROTEIN_IMG, (self.offset, self.offset * 2 + size))
         font = pg.font.Font(None, size * 2)
-        lives_text = font.render(str(self.game.lives), 1, BLACK)
+        lives_text = font.render(str(self.game.lives), 1, WHITE)
         lives_text = pg.transform.scale(lives_text,
                                         (round(lives_text.get_size()[0] * size / lives_text.get_size()[1]), size))
         ui.blit(lives_text, (self.offset * 2 + size, self.offset))
 
-        protein_text = font.render(str(self.game.protein), 1, BLACK)
+        protein_text = font.render(str(self.game.protein), 1, WHITE)
         protein_text = pg.transform.scale(protein_text,
                                           (round(protein_text.get_size()[0] * size / protein_text.get_size()[1]), size))
         ui.blit(protein_text, (self.offset * 2 + size, self.offset * 2 + size))
