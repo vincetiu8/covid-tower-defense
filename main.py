@@ -322,92 +322,6 @@ class Game:
 
         pg.display.flip()
 
-    def events(self):
-        # catch all events here
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                self.quit()
-                
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    self.quit()
-
-            if self.playing:
-                if event.type == pg.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        if self.ui.rect.collidepoint(event.pos):
-                            self.ui.set_active(not self.ui.active)
-                            return
-
-                        tile_map = self.map.get_map()
-                        pos = self.camera.correct_mouse(event.pos)
-                        x_coord = tile_from_coords(pos[0], self.map.tilesize)
-                        y_coord = tile_from_coords(pos[1], self.map.tilesize)
-                        
-                        if tile_map[x_coord][y_coord] == 1:
-                            self.map.upgrade_tower(x_coord, y_coord) # don't need to upgrade tower if clicking on empty space
-                            continue
-                        
-                        if self.protein < BUY_COST:
-                            continue
-                        
-                        if self.map.change_node(x_coord, y_coord, 1) == False:
-                            continue
-
-                        path = astar(tile_map, (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
-                                                tile_from_xcoords(self.starts[0].y, self.map.tilesize)),
-                                    (tile_from_xcoords(self.goal.x, self.map.tilesize),
-                                      tile_from_xcoords(self.goal.y, self.map.tilesize)))
-                                    
-                        if path != False:
-                            self.path = path
-                            
-                            new_tower = Tower(
-                                game = self,
-                                x = round_to_tilesize(pos[0], self.map.tilesize),
-                                y = round_to_tilesize(pos[1], self.map.tilesize),
-                                base_images = ANTIBODY_BASE_IMGS,
-                                gun_images = ANTIBODY_GUN_IMGS,
-                                bullet_spawn_speed = 0.2,
-                                bullet_speed = 25,
-                                bullet_size = 8,
-                                damage = [(i + 1) for i in range(MAX_STAGE + 1)],
-                                range = 200,
-                                upgrade_cost = 5,
-                                max_stage = MAX_STAGE)
-                            self.map.add_tower(x_coord, y_coord, new_tower)
-                            
-                            self.protein -= BUY_COST
-                            for enemy in self.enemies:
-                                enemy.recreate_path()
-                        else:  # reverts tile map to previous state if no enemy path could be found
-                            self.map.change_node(x_coord, y_coord, 1)
-
-                    elif event.button == 3:
-                        tile_map = self.map.get_map()
-                        pos = self.camera.correct_mouse(event.pos)
-                        x_coord = tile_from_coords(pos[0], self.map.tilesize)
-                        y_coord = tile_from_coords(pos[1], self.map.tilesize)
-                        
-                        self.map.remove_tower(x_coord, y_coord)
-                        self.path = astar(tile_map, (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
-                                                tile_from_xcoords(self.starts[0].y, self.map.tilesize)),
-                                    (tile_from_xcoords(self.goal.x, self.map.tilesize),
-                                      tile_from_xcoords(self.goal.y, self.map.tilesize)))
-                        for enemy in self.enemies:
-                            enemy.recreate_path()
-
-                    elif event.button == 4:
-                        self.camera.zoom(ZOOM_AMOUNT, event.pos)
-
-                    elif event.button == 5:
-                        self.camera.zoom(-ZOOM_AMOUNT, event.pos)
-            else:
-                if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_r:
-                        self.game_over = False
-                        self.map.clear_map()
-
     def reset_map(self):
         self.map.clear_map()
         
@@ -426,7 +340,7 @@ class Game:
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
                 
-                if tile_map[x_coord][y_coord] == 1:
+                if self.map.get_node(x_coord, y_coord) != 0:
                     self.map.upgrade_tower(x_coord, y_coord) # don't need to upgrade tower if clicking on empty space
                     return
                     

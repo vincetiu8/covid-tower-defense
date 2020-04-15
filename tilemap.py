@@ -54,17 +54,21 @@ class TiledMap:
         self.map[x][y] = state
 
     def add_tower(self, x, y, tower):
-        if (x < 0 or x > self.width or y < 0 or y > self.height):
+        if (x < 0 or x >= len(self.tower_map) or y < 0 or y >= len(self.tower_map[0])):
             return False
         self.tower_map[x][y] = tower
         
     def upgrade_tower(self, x, y):
-        if (x < 0 or x > self.width or y < 0 or y > self.height or self.tower_map[x][y] == None):
+        if (x < 0 or x >= len(self.tower_map) or y < 0 or y >= len(self.tower_map[0])):
+            return False
+        elif self.tower_map[x][y] == None:
             return False
         self.tower_map[x][y].upgrade()
 
     def remove_tower(self, x, y):
-        if (x < 0 or x > self.width or y < 0 or y > self.height or self.tower_map[x][y] == None):
+        if (x < 0 or x >= len(self.tower_map) or y < 0 or y >= len(self.tower_map[0])):
+            return False
+        elif self.tower_map[x][y] == None:
             return False
         self.tower_map[x][y].kill()
         self.change_node(x, y, 0)
