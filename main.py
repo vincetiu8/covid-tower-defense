@@ -234,11 +234,6 @@ class Game:
             rotated_image = pg.transform.rotate(gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             self.screen.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
-            
-            if (tower.current_enemy != None):
-                tower_pos = self.camera.apply_tuple((round_to_mtilesize(tower.x, self.map.tilesize), round_to_mtilesize(tower.y, self.map.tilesize)))
-                target_pos = self.camera.apply_tuple((round_to_mtilesize(tower.current_enemy.x, self.map.tilesize), round_to_mtilesize(tower.current_enemy.y, self.map.tilesize)))
-                pg.draw.line(self.screen, WHITE, tower_pos, target_pos)
 
         for enemy in self.enemies:
             self.screen.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
@@ -380,6 +375,7 @@ class Game:
                         bullet_spawn_speed = 0.2,
                         bullet_speed = 25,
                         bullet_size = 8,
+                        bullet_lifetime = 1,
                         damage = [(i + 1) for i in range(MAX_STAGE + 1)],
                         range = 200,
                         upgrade_cost = 5,
