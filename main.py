@@ -13,6 +13,8 @@ class Main:
         self.menu = Menu(pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)))
         self.playing = False
         self.started_game = False
+        
+    def run_pregame(self):
         while not self.started_game:
             self.events()
             self.draw()
@@ -23,7 +25,7 @@ class Main:
             self.update()
             self.draw()
 
-        while not self.playing:
+        while not self.playing and self.started_game:
             self.events()
 
     def update(self):
@@ -66,6 +68,8 @@ class Main:
                             self.playing = True
                             self.game.playing = True
                             self.game.new()
+                        elif event.key == pg.K_e:
+                            self.started_game = False
 
     def quit(self):
         pg.quit()
@@ -324,9 +328,11 @@ class Game:
             
         game_over_text_1 = game_over_font_1.render(text, 1, WHITE)
         game_over_text_2 = game_over_font_2.render("Press R to Restart", 1, WHITE)
+        game_over_text_3 = game_over_font_2.render("or E to Return to the Level Select Menu", 1, WHITE)
 
         self.screen.blit(game_over_text_1, (40, 40)) # hardcoding coords lol
         self.screen.blit(game_over_text_2, (40, 140))
+        self.screen.blit(game_over_text_3, (40, 190))
 
         pg.display.flip()
 
@@ -411,4 +417,5 @@ class Game:
 # create the game object
 g = Main()
 while True:
+    g.run_pregame()
     g.run_game()
