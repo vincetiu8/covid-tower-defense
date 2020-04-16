@@ -23,7 +23,7 @@ HALF_WHITE = pg.Color(255, 255, 255, 127)
 HALF_RED = pg.Color(255, 0, 0, 127)
 
 # game settings
-FPS = 60
+FPS = 10
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 SPAWN_RATE = 1

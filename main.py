@@ -228,11 +228,6 @@ class Game:
             rotated_image = pg.transform.rotate(gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             self.screen.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
-            
-            if (tower.current_enemy != None):
-                tower_pos = self.camera.apply_tuple((round_to_mtilesize(tower.x, self.map.tilesize), round_to_mtilesize(tower.y, self.map.tilesize)))
-                target_pos = self.camera.apply_tuple((tower.current_enemy.rect.center[0], tower.current_enemy.rect.center[1]))
-                pg.draw.line(self.screen, WHITE, tower_pos, target_pos)
 
         for enemy in self.enemies:
             self.screen.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))

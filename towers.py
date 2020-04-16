@@ -6,7 +6,7 @@ from pathfinding import heuristic
 from heapq import *
 
 class Projectile(pg.sprite.Sprite):
-    def __init__(self, game, x, y, w, h, speed, direction, damage):
+    def __init__(self, game, x, y, w, h, speed, enemy, damage):
         self.groups = game.projectiles
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -15,11 +15,11 @@ class Projectile(pg.sprite.Sprite):
         self.w = w
         self.h = h
         self.speed = speed
-        self.direction = direction
         self.damage = damage
-        self.current_enemy = None
+        self.enemy = enemy
 
     def update(self):
+        self.direction = math.atan2(self.enemy.rect.y - self.y, self.enemy.rect.x - self.x)
         self.x += self.speed * math.cos(self.direction)
         self.y += self.speed * math.sin(self.direction)
         self.rect = pg.Rect(self.x, self.y, self.w, self.h)
@@ -51,6 +51,7 @@ class Tower(Obstacle):
         self.next_spawn = pg.time.get_ticks()
         self.rotation = 0
         self.current_enemy = None
+
         self.search_for_enemy()
 
     def update(self):
@@ -59,8 +60,8 @@ class Tower(Obstacle):
             if (not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.x, self.y)) > self.range):
                 self.current_enemy = None
             else:
-                temp_x = enemy_center[0] + self.current_enemy.node_dir[0] * self.current_enemy.speed / 350
-                temp_y = enemy_center[1] + self.current_enemy.node_dir[1] * self.current_enemy.speed / 350
+                temp_x = enemy_center[0]
+                temp_y = enemy_center[1]
 
                 if (temp_x - self.x == 0):
                     if (temp_y - self.y > 0):
@@ -74,7 +75,8 @@ class Tower(Obstacle):
                         angle += math.pi
 
                 self.rotation = 180 - math.degrees(angle)
-                Projectile(self.game, self.x, self.y, self.bullet_size, self.bullet_size, self.bullet_speed, angle, self.damage[self.stage])
+                Projectile(self.game, self.x, self.y, self.bullet_size, self.bullet_size, self.bullet_speed, self.current_enemy, self.damage[self.stage])
+                self.shot = True
                 self.next_spawn = pg.time.get_ticks() + self.bullet_spawn_speed * 1000
 
         if (self.current_enemy == None):

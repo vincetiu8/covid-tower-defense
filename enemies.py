@@ -77,5 +77,4 @@ class Enemy(pg.sprite.Sprite):
             return
         self.end_dist = len(self.path)
         self.new_node = self.path.pop(0)
-        self.node_dir = (self.new_node[0] - tile_from_coords(self.rect.x, self.game.map.tilesize), self.new_node[1] - tile_from_coords(self.rect.y, self.game.map.tilesize))
         self.new_node_rect = pg.Rect(self.new_node[0] * self.game.map.tilesize, self.new_node[1] * self.game.map.tilesize, self.game.map.tilesize, self.game.map.tilesize)
