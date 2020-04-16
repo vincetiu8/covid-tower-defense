@@ -21,6 +21,8 @@ class Enemy(pg.sprite.Sprite):
         image_size = self.image.get_size()
         self.rect = pg.Rect(x, y, image_size[0], image_size[1])
         self.direction = [1 if random.random() < 0.5 else -1, 1 if random.random() < 0.5 else -1]
+        self.carry_x = 0
+        self.carry_y = 0
         self.load_next_node()
 
     def update(self):
@@ -44,8 +46,15 @@ class Enemy(pg.sprite.Sprite):
         elif (self.rect.bottom >= self.new_node_rect.bottom):
             self.direction[1] = -abs(self.direction[1])
 
-        self.rect.x += self.speed * passed_time * self.direction[0]
-        self.rect.y += self.speed * passed_time * self.direction[1]
+        self.carry_x += round(self.speed * passed_time * self.direction[0])
+        self.carry_y += round(self.speed * passed_time * self.direction[1])
+
+        if (abs(self.carry_x) >= 1):
+            self.rect.x += self.carry_x
+            self.carry_x = 0
+        if (abs(self.carry_y) >= 1):
+            self.rect.y += self.carry_y
+            self.carry_y = 0
 
         if (self.new_node_rect.collidepoint(self.rect.topleft) and self.new_node_rect.collidepoint(self.rect.bottomright)):
             self.load_next_node()
@@ -68,4 +77,5 @@ class Enemy(pg.sprite.Sprite):
             return
         self.end_dist = len(self.path)
         self.new_node = self.path.pop(0)
+        self.node_dir = (self.new_node[0] - tile_from_coords(self.rect.x, self.game.map.tilesize), self.new_node[1] - tile_from_coords(self.rect.y, self.game.map.tilesize))
         self.new_node_rect = pg.Rect(self.new_node[0] * self.game.map.tilesize, self.new_node[1] * self.game.map.tilesize, self.game.map.tilesize, self.game.map.tilesize)

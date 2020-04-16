@@ -59,8 +59,8 @@ class Tower(Obstacle):
             if (not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.x, self.y)) > self.range):
                 self.current_enemy = None
             else:
-                temp_x = enemy_center[0] + self.current_enemy.direction[0] * self.current_enemy.speed / self.bullet_speed / 10
-                temp_y = enemy_center[1] + self.current_enemy.direction[1] * self.current_enemy.speed / self.bullet_speed / 10
+                temp_x = enemy_center[0] + self.current_enemy.node_dir[0] * self.current_enemy.speed / 350
+                temp_y = enemy_center[1] + self.current_enemy.node_dir[1] * self.current_enemy.speed / 350
 
                 if (temp_x - self.x == 0):
                     if (temp_y - self.y > 0):
