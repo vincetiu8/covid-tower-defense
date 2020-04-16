@@ -132,6 +132,8 @@ class Game:
         
         with open(SAMPLE_LEVEL_DATA, "r") as data_file:
             self.level_data = json.load(data_file)
+            
+        self.max_wave = len(self.level_data)
 
     def new(self):
         # initialize all variables and do all the setup for a new game
@@ -175,7 +177,7 @@ class Game:
         self.ui.update()
         
         if self.current_wave_done():
-            if self.wave < len(self.level_data):
+            if self.wave < self.max_wave:
                 self.new_wave()
             elif len(self.enemies) == 0:
                 return False
