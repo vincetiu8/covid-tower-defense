@@ -6,7 +6,7 @@ from pathfinding import heuristic
 from heapq import *
 
 class Projectile(pg.sprite.Sprite):
-    def __init__(self, game, x, y, w, h, speed, enemy, damage):
+    def __init__(self, game, x, y, w, h, speed, lifetime, enemy, damage):
         self.groups = game.projectiles
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -17,9 +17,14 @@ class Projectile(pg.sprite.Sprite):
         self.speed = speed
         self.damage = damage
         self.enemy = enemy
+        self.end = pg.time.get_ticks() + lifetime * 1000
 
     def update(self):
-        self.direction = math.atan2(self.enemy.rect.y - self.y, self.enemy.rect.x - self.x)
+        if pg.time.get_ticks() > self.end:
+            self.kill()
+
+        if self.enemy.alive():
+            self.direction = math.atan2(self.enemy.rect.y - self.y, self.enemy.rect.x - self.x)
         self.x += self.speed * math.cos(self.direction)
         self.y += self.speed * math.sin(self.direction)
         self.rect = pg.Rect(self.x, self.y, self.w, self.h)
@@ -31,7 +36,7 @@ class Projectile(pg.sprite.Sprite):
             self.kill()
 
 class Tower(Obstacle):
-    def __init__(self, game, x, y, base_images, gun_images, bullet_spawn_speed, bullet_speed, bullet_size, damage, range, upgrade_cost, max_stage):
+    def __init__(self, game, x, y, base_images, gun_images, bullet_spawn_speed, bullet_speed, bullet_size, bullet_lifetime, damage, range, upgrade_cost, max_stage):
         super().__init__(game, x, y, game.map.tilesize, game.map.tilesize)
         self.groups = game.towers
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -42,6 +47,7 @@ class Tower(Obstacle):
         self.bullet_spawn_speed = bullet_spawn_speed
         self.bullet_speed = bullet_speed
         self.bullet_size = bullet_size
+        self.bullet_lifetime = bullet_lifetime
         self.damage = damage
         self.range = range
         self.upgrade_cost = upgrade_cost
@@ -75,7 +81,7 @@ class Tower(Obstacle):
                         angle += math.pi
 
                 self.rotation = 180 - math.degrees(angle)
-                Projectile(self.game, self.x, self.y, self.bullet_size, self.bullet_size, self.bullet_speed, self.current_enemy, self.damage[self.stage])
+                Projectile(self.game, self.x, self.y, self.bullet_size, self.bullet_size, self.bullet_speed, self.bullet_lifetime, self.current_enemy, self.damage[self.stage])
                 self.shot = True
                 self.next_spawn = pg.time.get_ticks() + self.bullet_spawn_speed * 1000
 

@@ -369,6 +369,7 @@ class Game:
                         bullet_spawn_speed = 0.2,
                         bullet_speed = 25,
                         bullet_size = 8,
+                        bullet_lifetime = 1,
                         damage = [(i + 1) for i in range(MAX_STAGE + 1)],
                         range = 200,
                         upgrade_cost = 5,
