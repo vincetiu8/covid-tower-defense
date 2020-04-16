@@ -34,30 +34,41 @@ IMG_FOLDER = path.join(GAME_FOLDER, "img")
 MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 LEVELS_FOLDER = path.join(GAME_FOLDER, "levels")
 
-HEART_IMG = pg.image.load(path.join(IMG_FOLDER, "heart.png"))
-PROTEIN_IMG = pg.image.load(path.join(IMG_FOLDER, "protein.png"))
-LEFT_ARROW_IMG = pg.image.load(path.join(IMG_FOLDER, "left.png"))
-RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(IMG_FOLDER, "left.png")).copy(), 180)
+PATH_FOLDER = path.join(IMG_FOLDER, "path")
+UI_FOLDER = path.join(IMG_FOLDER, "ui")
+ENEMIES_FOLDER = path.join(IMG_FOLDER, "enemies")
+TOWERS_FOLDER = path.join(IMG_FOLDER, "towers")
 
+# load ui images
+HEART_IMG = pg.image.load(path.join(UI_FOLDER, "heart.png"))
+PROTEIN_IMG = pg.image.load(path.join(UI_FOLDER, "protein.png"))
+LEFT_ARROW_IMG = pg.image.load(path.join(UI_FOLDER, "left.png"))
+RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_FOLDER, "left.png")).copy(), 180)
+
+# load level data
 SAMPLE_LEVEL_DATA = path.join(LEVELS_FOLDER, "sample.json")
 
+# load enemy data
 with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
     ENEMY_DATA = json.load(data_file)
     for enemy in ENEMY_DATA:
-        ENEMY_DATA[enemy]["image"] = pg.image.load(path.join(IMG_FOLDER, ENEMY_DATA[enemy]["image"]))
+        ENEMY_DATA[enemy]["image"] = pg.image.load(path.join(ENEMIES_FOLDER, ENEMY_DATA[enemy]["image"]))
 
-LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
+# load tower images
 ANTIBODY_GUN_IMGS = []
 ANTIBODY_BASE_IMGS = []
 for i in range(MAX_STAGE + 1):
-    ANTIBODY_GUN_IMGS.append(pg.image.load(path.join(IMG_FOLDER, "naive_t_cell_gun{}.png".format(i))))
-    ANTIBODY_BASE_IMGS.append(pg.image.load(path.join(IMG_FOLDER, "naive_t_cell_base{}.png".format(i))))
+    ANTIBODY_GUN_IMGS.append(pg.image.load(path.join(TOWERS_FOLDER, "naive_t_cell_gun{}.png".format(i))))
+    ANTIBODY_BASE_IMGS.append(pg.image.load(path.join(TOWERS_FOLDER, "naive_t_cell_base{}.png".format(i))))
 
-PATH_VERTICAL_IMG = pg.image.load(path.join(IMG_FOLDER, "path/vertical.png"))
-PATH_HORIZONTAL_IMG = pg.image.load(path.join(IMG_FOLDER, "path/horizontal.png"))
-PATH_CORNER1_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner1.png"))
-PATH_CORNER2_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner2.png"))
-PATH_CORNER3_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner3.png"))
-PATH_CORNER4_IMG = pg.image.load(path.join(IMG_FOLDER, "path/corner4.png"))
+# load path images
+PATH_VERTICAL_IMG = pg.image.load(path.join(PATH_FOLDER, "vertical.png"))
+PATH_HORIZONTAL_IMG = pg.image.load(path.join(PATH_FOLDER, "horizontal.png"))
+PATH_CORNER1_IMG = pg.image.load(path.join(PATH_FOLDER, "corner1.png"))
+PATH_CORNER2_IMG = pg.image.load(path.join(PATH_FOLDER, "corner2.png"))
+PATH_CORNER3_IMG = pg.image.load(path.join(PATH_FOLDER, "corner3.png"))
+PATH_CORNER4_IMG = pg.image.load(path.join(PATH_FOLDER, "corner4.png"))
 
+# load menu and start images
 START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
+LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
