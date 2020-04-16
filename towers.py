@@ -26,6 +26,7 @@ class Projectile(pg.sprite.Sprite):
 
         hits = pg.sprite.spritecollide(self, self.game.enemies, False)
         if (hits):
+            print(hits[0].rect)
             hits[0].hp -= self.damage
             self.kill()
 
@@ -46,7 +47,6 @@ class Tower(Obstacle):
         self.upgrade_cost = upgrade_cost
         self.max_stage = max_stage
         
-        
         self.stage = 0
         self.next_spawn = pg.time.get_ticks()
         self.rotation = 0
@@ -55,11 +55,12 @@ class Tower(Obstacle):
 
     def update(self):
         if (pg.time.get_ticks() >= self.next_spawn and self.current_enemy != None):
-            if (not self.current_enemy.alive() or heuristic((self.current_enemy.x, self.current_enemy.y), (self.x, self.y)) > self.range):
+            enemy_center = self.current_enemy.rect.center
+            if (not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.x, self.y)) > self.range):
                 self.current_enemy = None
             else:
-                temp_x = self.current_enemy.x + self.current_enemy.direction[0] * self.game.map.tilesize / 2 * self.current_enemy.speed / 500
-                temp_y = self.current_enemy.y + self.current_enemy.direction[1] * self.game.map.tilesize / 2 * self.current_enemy.speed / 500
+                temp_x = enemy_center[0] + self.current_enemy.direction[0] * self.current_enemy.speed / self.bullet_speed / 10
+                temp_y = enemy_center[1] + self.current_enemy.direction[1] * self.current_enemy.speed / self.bullet_speed / 10
 
                 if (temp_x - self.x == 0):
                     if (temp_y - self.y > 0):
@@ -86,5 +87,5 @@ class Tower(Obstacle):
 
     def search_for_enemy(self):
         for enemy in self.game.enemies:
-            if (heuristic((enemy.x, enemy.y), (self.x, self.y)) <= self.range and (self.current_enemy == None or enemy.end_dist < self.current_enemy.end_dist)):
+            if (heuristic((enemy.rect.center[0], enemy.rect.center[1]), (self.x, self.y)) <= self.range and (self.current_enemy == None or enemy.end_dist < self.current_enemy.end_dist)):
                 self.current_enemy = enemy

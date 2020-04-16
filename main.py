@@ -231,7 +231,7 @@ class Game:
             
             if (tower.current_enemy != None):
                 tower_pos = self.camera.apply_tuple((round_to_mtilesize(tower.x, self.map.tilesize), round_to_mtilesize(tower.y, self.map.tilesize)))
-                target_pos = self.camera.apply_tuple((round_to_mtilesize(tower.current_enemy.x, self.map.tilesize), round_to_mtilesize(tower.current_enemy.y, self.map.tilesize)))
+                target_pos = self.camera.apply_tuple((tower.current_enemy.rect.center[0], tower.current_enemy.rect.center[1]))
                 pg.draw.line(self.screen, WHITE, tower_pos, target_pos)
 
         for enemy in self.enemies:
