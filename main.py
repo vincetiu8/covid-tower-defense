@@ -152,6 +152,10 @@ class Game:
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
                 self.start_data = {"x": tile_object.x, "y": tile_object.y, "w": tile_object.width, "h": tile_object.height}
+                self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize),
+                                     tile_from_xcoords(tile_object.y, self.map.tilesize),
+                                     1) # make start tile a wall so you can't place a tower on it
+                                        # this does not affect the path finding algo
                 self.new_wave()
             if tile_object.name == "goal":
                 self.goal = Goal(tile_object.x, tile_object.y, tile_object.width, tile_object.height)
@@ -386,7 +390,7 @@ class Game:
                     for enemy in self.enemies:
                         enemy.recreate_path()
                 else:  # reverts tile map to previous state if no enemy path could be found
-                    tile_map[x_coord][y_coord] = 0
+                    self.map.change_node(x_coord, y_coord, 0)
 
             elif event.button == 3:
                 tile_map = self.map.get_map()
