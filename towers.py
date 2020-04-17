@@ -62,7 +62,7 @@ class Tower(Obstacle):
     def update(self):
         if (pg.time.get_ticks() >= self.next_spawn and self.current_enemy != None):
             enemy_center = self.current_enemy.rect.center
-            if (not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.x, self.y)) > self.range):
+            if (not self.current_enemy.damagable or not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.x, self.y)) > self.range):
                 self.current_enemy = None
             else:
                 temp_x = enemy_center[0]

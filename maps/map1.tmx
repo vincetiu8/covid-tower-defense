@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="42" tileheight="42" infinite="0" nextlayerid="10" nextobjectid="63">
+<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="42" tileheight="42" infinite="0" nextlayerid="11" nextobjectid="68">
  <tileset firstgid="1" source="body_tiles.tsx"/>
  <tileset firstgid="33" source="artery_and_vein.tsx"/>
  <layer id="1" name="background" width="16" height="12">
@@ -79,20 +79,35 @@
   <object id="44" name="wall" x="378" y="378" width="210" height="42"/>
   <object id="45" name="wall" x="546" y="336" width="42" height="42"/>
   <object id="46" name="wall" x="630" y="42" width="42" height="42"/>
-  <object id="47" name="wall" x="210" y="210" width="42" height="42"/>
-  <object id="48" name="wall" x="462" y="126" width="42" height="42"/>
-  <object id="49" name="wall" x="378" y="420" width="42" height="42"/>
   <object id="51" name="artery" x="210" y="210" width="294" height="42"/>
   <object id="52" name="artery" x="462" y="252" width="42" height="210"/>
   <object id="53" name="artery" x="504" y="420" width="42" height="42"/>
   <object id="54" name="vein" x="378" y="420" width="84" height="42"/>
   <object id="55" name="vein" x="420" y="126" width="42" height="294"/>
   <object id="56" name="vein" x="462" y="126" width="42" height="42"/>
-  <object id="57" name="wall" x="504" y="420" width="42" height="42"/>
-  <object id="58" name="wall" x="378" y="420" width="42" height="42"/>
-  <object id="59" name="artery_entrance" x="168" y="210" width="84" height="42"/>
-  <object id="60" name="artery_entrance" x="504" y="420" width="84" height="42"/>
-  <object id="61" name="vein_entrance" x="336" y="420" width="84" height="42"/>
-  <object id="62" name="vein_entrance" x="462" y="126" width="84" height="42"/>
+  <object id="59" name="artery_entrance" x="168" y="210" width="84" height="42">
+   <properties>
+    <property name="positive" value="false"/>
+   </properties>
+  </object>
+  <object id="60" name="artery_entrance" x="504" y="420" width="84" height="42">
+   <properties>
+    <property name="positive" value="true"/>
+   </properties>
+  </object>
+  <object id="61" name="vein_entrance" x="336" y="420" width="84" height="42">
+   <properties>
+    <property name="positive" value="false"/>
+   </properties>
+  </object>
+  <object id="62" name="vein_entrance" x="462" y="126" width="84" height="42">
+   <properties>
+    <property name="positive" value="true"/>
+   </properties>
+  </object>
+  <object id="64" name="wall" x="210" y="210" width="42" height="42"/>
+  <object id="65" name="wall" x="378" y="420" width="42" height="42"/>
+  <object id="66" name="wall" x="504" y="420" width="42" height="42"/>
+  <object id="67" name="wall" x="462" y="126" width="42" height="42"/>
  </objectgroup>
 </map>
