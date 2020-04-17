@@ -31,16 +31,18 @@ class TiledMap:
 
     def render(self, surface, layers):
         ti = self.tmxdata.get_tile_image_by_gid
+        props = self.tmxdata.get_tile_properties_by_gid
         for layer in layers:
             for x, y, gid in self.tmxdata.get_layer_by_name(layer):
                 tile = ti(gid)
+                rot = props(gid)
                 if tile:
-                    surface.blit(tile, (x * self.tmxdata.tilewidth,
+                    surface.blit(pg.transform.rotate(tile, 0), (x * self.tmxdata.tilewidth,
                                         y * self.tmxdata.tileheight))
 
     def make_map(self):
         temp_surface = pg.Surface((self.width, self.height), pg.SRCALPHA, 32).convert_alpha()
-        self.render(temp_surface, ["background"])
+        self.render(temp_surface, ["background", "arteries", "veins"])
         return temp_surface
 
     def make_objects(self):

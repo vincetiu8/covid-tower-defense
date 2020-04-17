@@ -1,6 +1,7 @@
 import sys
 import json
 
+from pathfinding import *
 from ui import *
 from sprites import *
 from tilemap import *
@@ -152,7 +153,14 @@ class Game:
         self.wave = 0 # only updated at the end of new_wave()
         
         self.reset_map()
-        
+
+        width = round(self.map.width / self.map.tilesize)
+        height = round(self.map.height / self.map.tilesize)
+        arteries = [[1 for row in range(height)] for col in range(width)]
+        veins = [[1 for row in range(height)] for col in range(width)]
+        artery_entrances = [[1 for row in range(height)] for col in range(width)]
+        vein_entrances = [[1 for row in range(height)] for col in range(width)]
+
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
                 self.start_data = {"x": tile_object.x, "y": tile_object.y, "w": tile_object.width, "h": tile_object.height}
@@ -165,10 +173,28 @@ class Game:
                 self.goal = Goal(tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "wall":
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
-                
+            if tile_object.name == "artery":
+                for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
+                    for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
+                        arteries[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+            elif tile_object.name == "vein":
+                for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
+                    for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
+                        veins[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+            elif tile_object.name == "artery_entrance":
+                for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
+                    for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
+                        artery_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+            elif tile_object.name == "vein_entrance":
+                for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
+                    for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
+                        vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+
+        self.pathfinder = Pathfinder(arteries, artery_entrances, veins, vein_entrances)
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
-        self.path = astar(self.map.get_map(), (int(self.starts[0].x / self.map.tilesize), int(self.starts[0].y / self.map.tilesize)),
+        self.path = self.pathfinder.astar(self.map.get_map(), ((int(self.starts[0].x / self.map.tilesize), int(self.starts[0].y / self.map.tilesize)), 0),
                           (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
+        self.make_stripped_path()
 
         self.ui = UI(self, 200, 10)
 
@@ -261,8 +287,8 @@ class Game:
                     tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
                 elif validity == -1:
                     self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
-                    result = astar(self.map.get_map(), (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
-                                                tile_from_xcoords(self.starts[0].y, self.map.tilesize)),
+                    result = self.pathfinder.astar(self.map.get_map(), ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
+                                                tile_from_xcoords(self.starts[0].y, self.map.tilesize)), 0),
                                     (tile_from_xcoords(self.goal.x, self.map.tilesize),
                                       tile_from_xcoords(self.goal.y, self.map.tilesize)))
                     self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
@@ -279,7 +305,7 @@ class Game:
                 tower_pos = pg.Rect(towerxy, ANTIBODY_BASE_IMGS[0].get_size())
                 self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
 
-        self.screen.blit(self.map_objects, self.camera.apply_rect(self.map_rect))
+        self.screen.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
 
         ui_pos = (self.screen.get_size()[0] - self.ui.offset, self.ui.offset)
         if self.ui.active:
@@ -290,16 +316,26 @@ class Game:
 
         else:
             self.screen.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = ui_pos))
-        
-    def draw_path(self):
+
+    def make_stripped_path(self):
+        self.stripped_path = []
         for i, node in enumerate(self.path):
-            if (i > 0 and i < len(self.path) - 1):
+            if (i < len(self.path) - 1):
+                diff_x_after = self.path[i + 1][0][0] - node[0][0]
+                diff_y_after = self.path[i + 1][0][1] - node[0][1]
+                if (diff_x_after == 0 and diff_y_after == 0):
+                    continue
+            self.stripped_path.append(node[0])
+
+    def draw_path(self):
+        for i, node in enumerate(self.stripped_path):
+            if (i > 0 and i < len(self.stripped_path) - 1):
                 image = None
-                diff_x_before = self.path[i - 1][0] - node[0]
-                diff_x_after = self.path[i + 1][0] - node[0]
-                diff_y_before = self.path[i - 1][1] - node[1]
-                diff_y_after = self.path[i + 1][1] - node[1]
-                
+                diff_x_before = self.stripped_path[i - 1][0] - node[0]
+                diff_x_after = self.stripped_path[i + 1][0] - node[0]
+                diff_y_before = self.stripped_path[i - 1][1] - node[1]
+                diff_y_after = self.stripped_path[i + 1][1] - node[1]
+
                 if diff_x_before == 0 and diff_x_after == 0: # up <--> down
                     image = PATH_VERTICAL_IMG
                 elif diff_y_before == 0 and diff_y_after == 0: # left <--> right
@@ -314,7 +350,7 @@ class Game:
                     image = PATH_CORNER4_IMG
                 else:
                     print("PATH DRAWING ERROR") # this should never occur
-                    
+
                 self.screen.blit(self.camera.apply_image(image), self.camera.apply_rect(
                     pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
 
@@ -364,14 +400,15 @@ class Game:
                 if self.map.change_node(x_coord, y_coord, 1) == False:
                     return
                 
-                path = astar(tile_map, (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
-                                        tile_from_xcoords(self.starts[0].y, self.map.tilesize)),
+                path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
+                                        tile_from_xcoords(self.starts[0].y, self.map.tilesize)), 0),
                             (tile_from_xcoords(self.goal.x, self.map.tilesize),
                                 tile_from_xcoords(self.goal.y, self.map.tilesize)))
                                     
                 if path != False:
                     self.path = path
-                    
+                    self.make_stripped_path()
+
                     new_tower = Tower(
                         game = self,
                         x = round_to_tilesize(pos[0], self.map.tilesize),
@@ -401,10 +438,11 @@ class Game:
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
                 self.map.remove_tower(x_coord, y_coord)
-                self.path = astar(tile_map, (tile_from_xcoords(self.starts[0].x, self.map.tilesize),
-                                        tile_from_xcoords(self.starts[0].y, self.map.tilesize)),
+                self.path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
+                                        tile_from_xcoords(self.starts[0].y, self.map.tilesize)), 0),
                             (tile_from_xcoords(self.goal.x, self.map.tilesize),
                               tile_from_xcoords(self.goal.y, self.map.tilesize)))
+                self.make_stripped_path()
                 for enemy in self.enemies:
                     enemy.recreate_path()
 

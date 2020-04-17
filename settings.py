@@ -4,7 +4,7 @@ import json
 import pygame as pg
 
 LIVES = 5
-PROTEIN = 40
+PROTEIN = 50
 BUY_COST = 10 # should be kept outside of the class so that the buy_cost can be
               # checked against the protein without needing to instantiate the tower
 MAX_STAGE = 2
@@ -23,7 +23,7 @@ HALF_WHITE = pg.Color(255, 255, 255, 127)
 HALF_RED = pg.Color(255, 0, 0, 127)
 
 # game settings
-FPS = 10
+FPS = 60
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 SPAWN_RATE = 1
