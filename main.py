@@ -442,6 +442,7 @@ class Game:
                                         tile_from_xcoords(self.starts[0].y, self.map.tilesize)), 0),
                             (tile_from_xcoords(self.goal.x, self.map.tilesize),
                               tile_from_xcoords(self.goal.y, self.map.tilesize)))
+                self.make_stripped_path()
                 for enemy in self.enemies:
                     enemy.recreate_path()
 
