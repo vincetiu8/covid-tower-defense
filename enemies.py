@@ -67,7 +67,7 @@ class Enemy(pg.sprite.Sprite):
         return pg.Rect(x, y, w, h)
 
     def recreate_path(self):
-        self.path = astar(self.game.map.get_map(), (self.new_node[0], self.new_node[1]), (self.end_x, self.end_y))
+        self.path = self.game.pathfinder.astar(self.game.map.get_map(), (self.new_node[0], self.new_node[1]), (self.end_x, self.end_y))
         self.load_next_node()
 
     def load_next_node(self):
@@ -77,4 +77,4 @@ class Enemy(pg.sprite.Sprite):
             return
         self.end_dist = len(self.path)
         self.new_node = self.path.pop(0)
-        self.new_node_rect = pg.Rect(self.new_node[0] * self.game.map.tilesize, self.new_node[1] * self.game.map.tilesize, self.game.map.tilesize, self.game.map.tilesize)
+        self.new_node_rect = pg.Rect(self.new_node[0][0] * self.game.map.tilesize, self.new_node[0][1] * self.game.map.tilesize, self.game.map.tilesize, self.game.map.tilesize)

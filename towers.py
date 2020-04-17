@@ -31,7 +31,6 @@ class Projectile(pg.sprite.Sprite):
 
         hits = pg.sprite.spritecollide(self, self.game.enemies, False)
         if (hits):
-            print(hits[0].rect)
             hits[0].hp -= self.damage
             self.kill()
 
