@@ -1,17 +1,17 @@
 {
-  "corona": {
+  "coronavirus": {
     "hp": 50,
     "speed": 70,
     "protein": 10,
     "image": "corona.png"
   },
-  "cold": {
+  "common cold": {
     "hp": 2,
     "speed": 200,
     "protein": 1,
     "image": "cold.png"
   },
-  "hep_a": {
+  "hepatitis a": {
     "hp": 10,
     "speed": 110,
     "protein": 2,
