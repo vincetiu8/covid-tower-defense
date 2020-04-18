@@ -1,0 +1,12 @@
+{
+  "t_cell": [
+    {
+      "damage": 1,
+      "bullet_spawn_speed": 0.5,
+      "bullet_speed": 0.5,
+      "bullet_lifetime": 0.3,
+      "range": 3,
+      "upgrade_cost": 5
+    }
+  ]
+}

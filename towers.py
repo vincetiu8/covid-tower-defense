@@ -3,6 +3,7 @@ import math
 import pygame as pg
 from tilemap import round_to_mtilesize
 from pathfinding import heuristic
+from settings import TOWER_DATA
 from heapq import *
 
 class Projectile(pg.sprite.Sprite):
@@ -35,22 +36,11 @@ class Projectile(pg.sprite.Sprite):
             self.kill()
 
 class Tower(Obstacle):
-    def __init__(self, game, x, y, base_images, gun_images, bullet_spawn_speed, bullet_speed, bullet_size, bullet_lifetime, damage, range, upgrade_cost, max_stage):
+    def __init__(self, game, x, y, name):
         super().__init__(game, x, y, game.map.tilesize, game.map.tilesize)
         self.groups = game.towers
         pg.sprite.Sprite.__init__(self, self.groups)
-        
-        self.base_images = base_images
-        self.gun_images = gun_images
-        
-        self.bullet_spawn_speed = bullet_spawn_speed
-        self.bullet_speed = bullet_speed
-        self.bullet_size = bullet_size
-        self.bullet_lifetime = bullet_lifetime
-        self.damage = damage
-        self.range = range
-        self.upgrade_cost = upgrade_cost
-        self.max_stage = max_stage
+        self.name = name
         
         self.stage = 0
         self.next_spawn = pg.time.get_ticks()
@@ -58,6 +48,16 @@ class Tower(Obstacle):
         self.current_enemy = None
 
         self.search_for_enemy()
+
+    def load_tower_data(self):
+        data = TOWER_DATA[self.name][self.stage]
+        self.bullet_spawn_speed = data.bullet_spawn_speed
+        self.bullet_speed = data.bullet_speed
+        self.bullet_lifetime = data.bullet_lifetime
+        self.damage = data.damage
+        self.range = data.range
+        self.upgrade_cost = data.upgrade_cost
+
 
     def update(self):
         if (pg.time.get_ticks() >= self.next_spawn and self.current_enemy != None):
@@ -88,9 +88,10 @@ class Tower(Obstacle):
             self.search_for_enemy()
             
     def upgrade(self):
-        if self.game.protein >= self.upgrade_cost and self.stage < self.max_stage:
+        if self.game.protein >= self.upgrade_cost and self.stage < 2:
             self.game.protein -= self.upgrade_cost
             self.stage += 1
+            self.load_tower_data()
 
     def search_for_enemy(self):
         for enemy in self.game.enemies:
