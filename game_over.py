@@ -1,13 +1,14 @@
 from settings import *
 
 class GameOver(pg.Surface):
-    def __init__(self, cause_of_death, main_screen):
+    def __init__(self, lost, main_screen, cause_of_death):
         super().__init__((SCREEN_WIDTH, SCREEN_HEIGHT))
         
+        self.lost = lost
         self.cause_of_death = cause_of_death
         self.main_screen = main_screen
         
-        self.restart_rect = pg.Rect(300, 400, RESTART_BTN_IMG.get_width(), RESTART_BTN_IMG.get_height())
+        self.restart_rect = pg.Rect(250, 400, RESTART_BTN_IMG.get_width(), RESTART_BTN_IMG.get_height())
         self.back_rect = pg.Rect(700, 400, BACK_BTN_IMG.get_width(), BACK_BTN_IMG.get_height())
         self.alpha = 0
     
@@ -17,13 +18,22 @@ class GameOver(pg.Surface):
         
         font_1 = pg.font.Font(GAME_OVER_FONT, 200)
         font_2 = pg.font.Font(GAME_OVER_FONT, 60)
-            
-        text_1 = font_1.render("YOU DIED", 1, RED)
-        text_2 = font_2.render("Cause of death: " + self.cause_of_death.title(), 1, RED)
         
-        restart_text = font_2.render("Restart", 1, RED)
-        back_text_1 = font_2.render("Back to", 1, RED)
-        back_text_2 = font_2.render("Level Select", 1, RED)
+        color = WHITE
+        str_1 = "YOU SURVIVED"
+        str_2 = "But the infection still continues..."
+        
+        if self.lost:
+            color = RED
+            str_1 = "YOU DIED"
+            str_2 = "Cause of death: " + self.cause_of_death.title()
+            
+        text_1 = font_1.render(str_1, 1, color)
+        text_2 = font_2.render(str_2, 1, color)
+        
+        restart_text = font_2.render("Restart", 1, color)
+        back_text_1 = font_2.render("Back to", 1, color)
+        back_text_2 = font_2.render("Level Select", 1, color)
         
         restart_btn_img = RESTART_BTN_IMG
         back_btn_img = BACK_BTN_IMG
