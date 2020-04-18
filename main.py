@@ -147,6 +147,7 @@ class Game:
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
 
+        self.available_towers = ["t_cell", "b_cell"]
         self.current_tower = "t_cell"
         self.protein = PROTEIN
         self.lives = LIVES
@@ -382,6 +383,8 @@ class Game:
                 if self.ui.rect.collidepoint(event.pos):
                     self.ui.set_active(not self.ui.active)
                     return
+
+
 
                 tile_map = self.map.get_map()
                 pos = self.camera.correct_mouse(event.pos)

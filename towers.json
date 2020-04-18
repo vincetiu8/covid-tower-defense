@@ -24,5 +24,31 @@
       "range": 250,
       "upgrade_cost": 5
     }
+  ],
+  "b_cell": [
+    {
+      "damage": 2,
+      "bullet_spawn_speed": 0.25,
+      "bullet_speed": 25,
+      "bullet_lifetime": 0.3,
+      "range": 200,
+      "upgrade_cost": 5
+    },
+    {
+      "damage": 3,
+      "bullet_spawn_speed": 0.2,
+      "bullet_speed": 35,
+      "bullet_lifetime": 0.3,
+      "range": 220,
+      "upgrade_cost": 10
+    },
+    {
+      "damage": 4,
+      "bullet_spawn_speed": 0.15,
+      "bullet_speed": 45,
+      "bullet_lifetime": 0.3,
+      "range": 250,
+      "upgrade_cost": 5
+    }
   ]
 }
