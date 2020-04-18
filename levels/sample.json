@@ -1,7 +1,7 @@
 [
     {
         "enemy_type": [
-            "cold"
+            "common cold"
         ],
         "enemy_count": [
             20
@@ -15,7 +15,7 @@
     },
     {
         "enemy_type": [
-            "hep_a", "cold"
+            "hepatitis a", "common cold"
         ],
         "enemy_count": [
             10, 16
@@ -29,7 +29,7 @@
     },
     {
         "enemy_type": [
-            "corona", "cold"
+            "coronavirus", "common cold"
         ],
         "enemy_count": [
             5, 20
