@@ -146,7 +146,8 @@ class Game:
         self.towers = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
-        
+
+        self.current_tower = "t_cell"
         self.protein = PROTEIN
         self.lives = LIVES
         
@@ -257,11 +258,8 @@ class Game:
         self.draw_path()
 
         for tower in self.towers:
-            base_image = tower.base_images[tower.stage]
-            gun_image = tower.gun_images[tower.stage]
-            
-            self.screen.blit(self.camera.apply_image(base_image), self.camera.apply_rect(tower.rect))
-            rotated_image = pg.transform.rotate(gun_image, tower.rotation)
+            self.screen.blit(self.camera.apply_image(tower.base_image), self.camera.apply_rect(tower.rect))
+            rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             self.screen.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
 
@@ -270,7 +268,7 @@ class Game:
             pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
 
         for projectile in self.projectiles:
-            pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
+            self.screen.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
 
         if self.protein >= BUY_COST:
             mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
@@ -279,8 +277,8 @@ class Game:
             pos = self.map.get_node(tower_tile[0], tower_tile[1])
 
             if pos != -1:
-                tower_img = self.camera.apply_image(ANTIBODY_BASE_IMGS[0]).copy()
-                tower_img.blit(self.camera.apply_image(ANTIBODY_GUN_IMGS[0]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
+                tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower][0]["base_image"]).copy()
+                tower_img.blit(self.camera.apply_image(TOWER_DATA[self.current_tower][0]["gun_image"]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
                 validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
                 
                 if validity == 1:
@@ -302,7 +300,7 @@ class Game:
                 else:
                     tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
 
-                tower_pos = pg.Rect(towerxy, ANTIBODY_BASE_IMGS[0].get_size())
+                tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower][0]["base_image"].get_size())
                 self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
 
         self.screen.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
@@ -413,16 +411,7 @@ class Game:
                         game = self,
                         x = round_to_tilesize(pos[0], self.map.tilesize),
                         y = round_to_tilesize(pos[1], self.map.tilesize),
-                        base_images = ANTIBODY_BASE_IMGS,
-                        gun_images = ANTIBODY_GUN_IMGS,
-                        bullet_spawn_speed = 0.2,
-                        bullet_speed = 25,
-                        bullet_size = 8,
-                        bullet_lifetime = 1,
-                        damage = [(i + 1) for i in range(MAX_STAGE + 1)],
-                        range = 200,
-                        upgrade_cost = 5,
-                        max_stage = MAX_STAGE)
+                        name = self.current_tower)
                     self.map.add_tower(x_coord, y_coord, new_tower)
                     self.protein -= BUY_COST
                     
