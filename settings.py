@@ -73,7 +73,10 @@ PATH_CORNER4_IMG = pg.image.load(path.join(PATH_FOLDER, "corner4.png"))
 # load other images
 START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
 LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
-RESTART_IMG = pg.image.load(path.join(IMG_FOLDER, "restart.png"))
+RESTART_BTN_IMG = pg.image.load(path.join(IMG_FOLDER, "restart_btn.png"))
+RESTART_BTN_HOVER_IMG = pg.image.load(path.join(IMG_FOLDER, "restart_btn_hover.png"))
+BACK_BTN_IMG = pg.image.load(path.join(IMG_FOLDER, "back_btn.png"))
+BACK_BTN_HOVER_IMG = pg.image.load(path.join(IMG_FOLDER, "back_btn_hover.png"))
 
 # load fonts path
 GAME_OVER_FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")

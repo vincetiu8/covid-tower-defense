@@ -13,7 +13,6 @@ class Main:
         pg.init()
         pg.key.set_repeat(500, 100)
         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.game_over = None
         self.menu = Menu(self.screen)
         self.playing = False
         self.started_game = False
@@ -23,7 +22,9 @@ class Main:
             self.events()
             self.draw()
 
-    def run_game(self): 
+    def run_game(self):
+        self.game_over = None
+        
         while self.playing:
             self.events()
             self.update()
