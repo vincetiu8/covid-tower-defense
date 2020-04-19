@@ -387,7 +387,7 @@ class Game:
                         if temp_rect.collidepoint(event.pos):
                             self.current_tower = self.available_towers[i]
 
-                elif self.current_tower != None:
+                if self.current_tower == None:
                     return
 
                 tile_map = self.map.get_map()
