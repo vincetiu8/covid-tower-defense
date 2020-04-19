@@ -7,7 +7,7 @@ from settings import TOWER_DATA
 from heapq import *
 
 class Projectile(pg.sprite.Sprite):
-    def __init__(self, game, x, y, image, speed, lifetime, enemy, damage):
+    def __init__(self, game, x, y, image, speed, lifetime, direction, damage):
         self.groups = game.projectiles
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -18,15 +18,13 @@ class Projectile(pg.sprite.Sprite):
         self.image = image
         self.speed = speed
         self.damage = damage
-        self.enemy = enemy
+        self.direction = direction
         self.end = pg.time.get_ticks() + lifetime * 1000
 
     def update(self):
         if pg.time.get_ticks() > self.end:
             self.kill()
 
-        if self.enemy.alive():
-            self.direction = math.atan2(self.enemy.rect.y - self.y, self.enemy.rect.x - self.x)
         self.rect.x += self.speed * math.cos(self.direction)
         self.rect.y += self.speed * math.sin(self.direction)
 
@@ -34,6 +32,16 @@ class Projectile(pg.sprite.Sprite):
         if (hits):
             hits[0].hp -= self.damage
             self.kill()
+
+class TrackingProjectile(Projectile):
+    def __init__(self, game, x, y, image, speed, lifetime, direction, damage, enemy):
+        super().__init__(game, x, y, image, speed, lifetime, direction, damage)
+        self.enemy = enemy
+
+    def update(self):
+        if self.enemy != None and self.enemy.alive():
+            self.direction = math.atan2(self.enemy.rect.center[1] - self.y, self.enemy.rect.center[0] - self.x)
+        super().update()
 
 class Tower(Obstacle):
     def __init__(self, game, x, y, name):
@@ -60,6 +68,8 @@ class Tower(Obstacle):
         self.base_image = data["base_image"]
         self.gun_image = data["gun_image"]
         self.bullet_image = data["bullet_image"]
+        self.directions = data["directions"]
+        self.tracking = data["tracking"]
 
         if (self.stage < 2):
             data = TOWER_DATA[self.name][self.stage + 1]
@@ -71,23 +81,33 @@ class Tower(Obstacle):
             if (not self.current_enemy.damagable or not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.x, self.y)) > self.range):
                 self.current_enemy = None
             else:
-                temp_x = enemy_center[0]
-                temp_y = enemy_center[1]
+                if self.tracking:
+                    temp_x = enemy_center[0]
+                    temp_y = enemy_center[1]
 
-                if (temp_x - self.x == 0):
-                    if (temp_y - self.y > 0):
-                        angle = math.pi / 2
+                    if (temp_x - self.x == 0):
+                        if (temp_y - self.y > 0):
+                            angle = math.pi / 2
+                        else:
+                            angle = math.pi / 2 * 3
+
                     else:
-                        angle = math.pi / 2 * 3
+                        angle = math.atan((temp_y - self.y) / (temp_x - self.x))
+                        if (temp_x - self.x < 0):
+                            angle += math.pi
 
-                else:
-                    angle = math.atan((temp_y - self.y) / (temp_x - self.x))
-                    if (temp_x - self.x < 0):
-                        angle += math.pi
+                    self.rotation = 180 - math.degrees(angle)
 
-                self.rotation = 180 - math.degrees(angle)
-                print("yo")
-                Projectile(self.game, self.x, self.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.current_enemy, self.damage)
+                rotation = self.rotation
+                increment = math.pi * 2 / self.directions
+                for i in range(self.directions):
+                    rotation += increment
+                    if self.tracking:
+                        TrackingProjectile(self.game, self.x, self.y, self.bullet_image, self.bullet_speed,
+                                   self.bullet_lifetime, rotation, self.damage, self.current_enemy)
+                    else:
+                        Projectile(self.game, self.x, self.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, rotation, self.damage)
+
                 self.shot = True
                 self.next_spawn = pg.time.get_ticks() + self.bullet_spawn_speed * 1000
 
