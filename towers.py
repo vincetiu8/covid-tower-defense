@@ -57,10 +57,13 @@ class Tower(Obstacle):
         self.bullet_lifetime = data["bullet_lifetime"]
         self.damage = data["damage"]
         self.range = data["range"]
-        self.upgrade_cost = data["upgrade_cost"]
         self.base_image = data["base_image"]
         self.gun_image = data["gun_image"]
         self.bullet_image = data["bullet_image"]
+
+        if (self.stage < 2):
+            data = TOWER_DATA[self.name][self.stage + 1]
+            self.upgrade_cost = data["upgrade_cost"]
 
     def update(self):
         if (pg.time.get_ticks() >= self.next_spawn and self.current_enemy != None):

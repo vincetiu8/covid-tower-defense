@@ -11,7 +11,7 @@ class UI:
         self.protein = game.protein
         self.active = True
         self.tower_size = round((width - 2 * offset) / 2)
-        self.tower_rect = [self.offset * 5 + HEART_IMG.get_size()[0] * 3 + i * (self.offset + self.tower_size) for i, tower in enumerate(self.game.available_towers)]
+        self.tower_rects = [pg.Rect(self.offset, self.offset * 5 + HEART_IMG.get_size()[0] * 3 + i * (self.offset + self.tower_size), self.tower_size, self.tower_size) for i, tower in enumerate(self.game.available_towers)]
         self.ui = self.get_ui()
         self.set_active(self.active)
 
@@ -55,8 +55,14 @@ class UI:
         ui.blit(protein_text, (self.offset * 2 + size, self.offset * 4 + size * 2))
 
         for i, tower in enumerate(self.game.available_towers):
-            tower_img = pg.transform.scale(TOWER_DATA[tower][0]["base_image"], (self.tower_size, self.tower_size))
-            tower_img.blit(pg.transform.scale(TOWER_DATA[tower][0]["gun_image"], (self.tower_size, self.tower_size)), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
-            ui.blit(tower_img, (self.offset, self.tower_rect[i]))
+            tower_img = pg.transform.scale(TOWER_DATA[tower][0]["base_image"], self.tower_rects[i].size)
+            tower_img.blit(pg.transform.scale(TOWER_DATA[tower][0]["gun_image"], self.tower_rects[i].size), (0, 0))
+            ui.blit(tower_img, self.tower_rects[i])
+            temp_rect = self.tower_rects[i].copy()
+            temp_rect.x += self.tower_size + self.offset
+            ui.blit(PROTEIN_IMG, temp_rect)
+            cost_text = font.render(str(TOWER_DATA[tower][0]["upgrade_cost"]), 1, WHITE)
+            temp_rect.y += size + self.offset
+            ui.blit(cost_text, temp_rect)
 
         return ui

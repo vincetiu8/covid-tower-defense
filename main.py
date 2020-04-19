@@ -271,7 +271,7 @@ class Game:
         for projectile in self.projectiles:
             self.screen.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
 
-        if self.protein >= BUY_COST:
+        if self.protein >= TOWER_DATA[self.current_tower][0]["upgrade_cost"]:
             mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
             towerxy = (round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
             tower_tile = (tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
@@ -384,7 +384,12 @@ class Game:
                     self.ui.set_active(not self.ui.active)
                     return
 
-
+                elif self.ui.active:
+                    for i, tower_rect in enumerate(self.ui.tower_rects):
+                        temp_rect = tower_rect.copy()
+                        temp_rect.x += self.screen.get_size()[0] - self.ui.width
+                        if temp_rect.collidepoint(event.pos):
+                            self.current_tower = self.available_towers[i]
 
                 tile_map = self.map.get_map()
                 pos = self.camera.correct_mouse(event.pos)
@@ -395,7 +400,7 @@ class Game:
                     self.map.upgrade_tower(x_coord, y_coord) # don't need to upgrade tower if clicking on empty space
                     return
                     
-                if self.protein < BUY_COST:
+                if self.protein < TOWER_DATA[self.current_tower][0]["upgrade_cost"]:
                     return
                 
                 if self.map.change_node(x_coord, y_coord, 1) == False:
@@ -416,7 +421,7 @@ class Game:
                         y = round_to_tilesize(pos[1], self.map.tilesize),
                         name = self.current_tower)
                     self.map.add_tower(x_coord, y_coord, new_tower)
-                    self.protein -= BUY_COST
+                    self.protein -= TOWER_DATA[self.current_tower][0]["upgrade_cost"]
                     
                     for enemy in self.enemies:
                         enemy.recreate_path()
