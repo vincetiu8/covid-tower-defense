@@ -30,6 +30,7 @@ GAME_FOLDER = path.dirname(path.abspath(__file__))
 IMG_FOLDER = path.join(GAME_FOLDER, "img")
 MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 LEVELS_FOLDER = path.join(GAME_FOLDER, "levels")
+FONTS_FOLDER = path.join(GAME_FOLDER, "fonts")
 
 PATH_FOLDER = path.join(IMG_FOLDER, "path")
 UI_FOLDER = path.join(IMG_FOLDER, "ui")
@@ -68,6 +69,13 @@ PATH_CORNER2_IMG = pg.image.load(path.join(PATH_FOLDER, "corner2.png"))
 PATH_CORNER3_IMG = pg.image.load(path.join(PATH_FOLDER, "corner3.png"))
 PATH_CORNER4_IMG = pg.image.load(path.join(PATH_FOLDER, "corner4.png"))
 
-# load menu and start images
+# load other images
 START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
 LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
+RESTART_BTN_IMG = pg.image.load(path.join(IMG_FOLDER, "restart_btn.png"))
+RESTART_BTN_HOVER_IMG = pg.image.load(path.join(IMG_FOLDER, "restart_btn_hover.png"))
+BACK_BTN_IMG = pg.image.load(path.join(IMG_FOLDER, "back_btn.png"))
+BACK_BTN_HOVER_IMG = pg.image.load(path.join(IMG_FOLDER, "back_btn_hover.png"))
+
+# load fonts path
+GAME_OVER_FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")

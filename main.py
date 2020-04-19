@@ -6,12 +6,14 @@ from ui import *
 from sprites import *
 from tilemap import *
 from towers import *
+from game_over import *
 
 class Main:
     def __init__(self):
         pg.init()
         pg.key.set_repeat(500, 100)
-        self.menu = Menu(pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)))
+        self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.menu = Menu(self.screen)
         self.playing = False
         self.started_game = False
         
@@ -20,14 +22,16 @@ class Main:
             self.events()
             self.draw()
 
-    def run_game(self): 
+    def run_game(self):
+        self.game_over = None
+        
         while self.playing:
             self.events()
             self.update()
             self.draw()
-
         while not self.playing and self.started_game:
             self.events()
+            self.draw()
 
     def update(self):
         if self.game.update() == False:
@@ -39,10 +43,16 @@ class Main:
             
         elif self.playing:
             self.game.draw()
-            
+        
         else:
-            self.game.draw() # updates game_screen one last time
-            self.game.draw_game_over(self.game.get_lives() == 0)
+            if self.game_over == None:
+                self.game_over = GameOver(self.game.lives == 0, self.screen, self.game.get_cause_of_death())
+                
+            if self.game_over.is_done_fading():
+                self.game_over.draw()
+            else:
+                self.game.draw()
+                self.game_over.draw()
             
         pg.display.flip()
 
@@ -54,7 +64,7 @@ class Main:
             elif not self.started_game:
                 level = self.menu.event(event)
                 if (level != False):
-                    self.game = Game(pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)), level)
+                    self.game = Game(self.screen, level)
                     self.game.new()
                     self.started_game = True
                     self.playing = True
@@ -64,13 +74,15 @@ class Main:
                     self.game.event(event)
 
                 else:
-                    if event.type == pg.KEYDOWN:
-                        if event.key == pg.K_r:
-                            self.playing = True
-                            self.game.playing = True
-                            self.game.new()
-                        elif event.key == pg.K_e:
-                            self.started_game = False
+                    result = self.game_over.event(event)
+                    
+                    if result == "restart":
+                        self.playing = True
+                        self.game.playing = True
+                        self.game.new()
+                    elif result == "back to level select":
+                        self.started_game = False
+                        
 
     def quit(self):
         pg.quit()
@@ -153,6 +165,9 @@ class Game:
         self.lives = LIVES
         
         self.wave = 0 # only updated at the end of new_wave()
+        
+        self.game_over_counter = 0 # for animating game over and win screens
+        self.cause_of_death = "IB"
         
         self.reset_map()
 
@@ -250,12 +265,6 @@ class Game:
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.starts[0].rect))
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.goal.rect))
 
-        # draws # of lives left on goal
-        lives_font = pg.font.Font(None, self.map.tilesize)
-        lives_text = lives_font.render(str(self.lives), 1, BLACK)
-        self.screen.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple((self.goal.rect.left + self.map.tilesize // 4,
-                                      self.goal.rect.top + self.map.tilesize // 4)))
-        
         self.draw_path()
 
         for tower in self.towers:
@@ -272,37 +281,7 @@ class Game:
             self.screen.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
 
         if self.current_tower != None and self.protein >= TOWER_DATA[self.current_tower][0]["upgrade_cost"]:
-            mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
-            towerxy = (round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
-            tower_tile = (tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
-            pos = self.map.get_node(tower_tile[0], tower_tile[1])
-
-            if pos != -1:
-                tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower][0]["base_image"]).copy()
-                tower_img.blit(self.camera.apply_image(TOWER_DATA[self.current_tower][0]["gun_image"]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
-                validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
-                
-                if validity == 1:
-                    tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
-                elif validity == -1:
-                    self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
-                    result = self.pathfinder.astar(self.map.get_map(), ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
-                                                tile_from_xcoords(self.starts[0].y, self.map.tilesize)), 0),
-                                    (tile_from_xcoords(self.goal.x, self.map.tilesize),
-                                      tile_from_xcoords(self.goal.y, self.map.tilesize)))
-                    self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
-                    
-                    if result != False:
-                        tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
-                        self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
-                    else:
-                        tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
-                        self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 0)
-                else:
-                    tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
-
-                tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower][0]["base_image"].get_size())
-                self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
+            self.draw_tower_preview()
 
         self.screen.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
 
@@ -312,10 +291,9 @@ class Game:
             ui_rect = ui.get_rect(topright = ui_pos)
             self.screen.blit(ui, ui_rect)
             self.screen.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright = ui_rect.topleft))
-
         else:
             self.screen.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = ui_pos))
-
+    
     def make_stripped_path(self):
         self.stripped_path = []
         for i, node in enumerate(self.path):
@@ -325,6 +303,39 @@ class Game:
                 if (diff_x_after == 0 and diff_y_after == 0):
                     continue
             self.stripped_path.append(node[0])
+    
+    def draw_tower_preview(self):
+        mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
+        towerxy = (round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
+        tower_tile = (tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
+        pos = self.map.get_node(tower_tile[0], tower_tile[1])
+
+        if pos != -1:
+            tower_img = self.camera.apply_image(ANTIBODY_BASE_IMGS[0]).copy()
+            tower_img.blit(self.camera.apply_image(ANTIBODY_GUN_IMGS[0]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
+            validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
+            
+            if validity == 1:
+                tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
+            elif validity == -1:
+                self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
+                result = self.pathfinder.astar(self.map.get_map(), ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
+                                            tile_from_xcoords(self.starts[0].y, self.map.tilesize)), 0),
+                                (tile_from_xcoords(self.goal.x, self.map.tilesize),
+                                tile_from_xcoords(self.goal.y, self.map.tilesize)))
+                self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
+                    
+                if result != False:
+                    tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
+                    self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
+                else:
+                    tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+                    self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 0)
+            else:
+                tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+
+            tower_pos = pg.Rect(towerxy, ANTIBODY_BASE_IMGS[0].get_size())
+            self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
 
     def draw_path(self):
         for i, node in enumerate(self.stripped_path):
@@ -353,29 +364,14 @@ class Game:
                 self.screen.blit(self.camera.apply_image(image), self.camera.apply_rect(
                     pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
 
-    def draw_game_over(self, lost_game):
-        game_over_font_1 = pg.font.Font(None, 140)
-        game_over_font_2 = pg.font.Font(None, 60)
-        
-        text = "YOU WON!"
-        if lost_game:
-            text = "GAME OVER"
-            
-        game_over_text_1 = game_over_font_1.render(text, 1, WHITE)
-        game_over_text_2 = game_over_font_2.render("Press R to Restart", 1, WHITE)
-        game_over_text_3 = game_over_font_2.render("or E to Return to the Level Select Menu", 1, WHITE)
-
-        self.screen.blit(game_over_text_1, (40, 40)) # hardcoding coords lol
-        self.screen.blit(game_over_text_2, (40, 140))
-        self.screen.blit(game_over_text_3, (40, 190))
-
-        pg.display.flip()
-
     def reset_map(self):
         self.map.clear_map()
         
     def get_lives(self):
         return self.lives
+    
+    def get_cause_of_death(self):
+        return self.cause_of_death
 
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:

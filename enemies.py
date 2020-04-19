@@ -5,29 +5,36 @@ from tilemap import tile_from_xcoords, tile_from_coords
 
 class Enemy(pg.sprite.Sprite):
     def __init__(self, game, x, y, end_x, end_y, name):
-        data = ENEMY_DATA[name]
         self.groups = game.enemies
         super().__init__()
+        
         self.game = game
         self.screen = game.screen
-        self.speed = data["speed"]
         self.end_x = end_x
         self.end_y = end_y
+        self.name = name
         self.last_move = pg.time.get_ticks()
         self.path = game.path.copy()
+        
+        data = ENEMY_DATA[name]
+        self.name = name
         self.hp = data["hp"]
+        self.speed = data["speed"]
         self.dropped_protein = data["protein"]
         self.raw_image = data["image"]
+        
         self.image = data["image"].copy()
         self.image_size = self.image.get_size()[0]
         image_size = self.image.get_size()
         self.rect = pg.Rect(x, y, image_size[0], image_size[1])
+        
         self.direction = [1 if random.random() < 0.5 else -1, 1 if random.random() < 0.5 else -1]
         self.carry_x = 0
         self.carry_y = 0
         self.new_node = ((0, 0), 0)
         self.maximising = 0
         self.damagable = True
+        
         self.load_next_node()
 
     def update(self):
@@ -86,10 +93,16 @@ class Enemy(pg.sprite.Sprite):
         if (len(self.path) == 0):
             self.game.lives -= 1
             self.kill()
+            
+            if self.game.lives == 0:
+                self.game.cause_of_death = self.name
+                
             return
+        
         self.end_dist = len(self.path)
         prevlayer = self.new_node[1]
         self.new_node = self.path.pop(0)
+        
         if abs(prevlayer) == 1 and abs(self.new_node[1]) == 2:
             self.maximising = -1
             self.damagable = False
