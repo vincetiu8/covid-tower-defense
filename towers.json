@@ -8,6 +8,7 @@
       "range": 200,
       "upgrade_cost": 10,
       "directions": 1,
+      "rotating": true,
       "tracking": true
     },
     {
@@ -18,6 +19,7 @@
       "range": 220,
       "upgrade_cost": 5,
       "directions": 1,
+      "rotating": true,
       "tracking": true
     },
     {
@@ -28,6 +30,7 @@
       "range": 250,
       "upgrade_cost": 10,
       "directions": 1,
+      "rotating": true,
       "tracking": true
     }
   ],
@@ -40,6 +43,7 @@
       "range": 500,
       "upgrade_cost": 20,
       "directions": 4,
+      "rotating": false,
       "tracking": false
     },
     {
@@ -50,6 +54,7 @@
       "range": 550,
       "upgrade_cost": 10,
       "directions": 4,
+      "rotating": false,
       "tracking": false
     },
     {
@@ -60,6 +65,7 @@
       "range": 600,
       "upgrade_cost": 10,
       "directions": 4,
+      "rotating": true,
       "tracking": false
     }
   ]

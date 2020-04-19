@@ -311,8 +311,8 @@ class Game:
         pos = self.map.get_node(tower_tile[0], tower_tile[1])
 
         if pos != -1:
-            tower_img = self.camera.apply_image(ANTIBODY_BASE_IMGS[0]).copy()
-            tower_img.blit(self.camera.apply_image(ANTIBODY_GUN_IMGS[0]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
+            tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower][0]["base_image"]).copy()
+            tower_img.blit(self.camera.apply_image(TOWER_DATA[self.current_tower][0]["gun_image"]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
             validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
             
             if validity == 1:
@@ -334,7 +334,7 @@ class Game:
             else:
                 tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
 
-            tower_pos = pg.Rect(towerxy, ANTIBODY_BASE_IMGS[0].get_size())
+            tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower][0]["base_image"].get_size())
             self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
 
     def draw_path(self):

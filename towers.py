@@ -69,6 +69,7 @@ class Tower(Obstacle):
         self.gun_image = data["gun_image"]
         self.bullet_image = data["bullet_image"]
         self.directions = data["directions"]
+        self.rotating = data["rotating"]
         self.tracking = data["tracking"]
 
         if (self.stage < 2):
@@ -81,7 +82,7 @@ class Tower(Obstacle):
             if (not self.current_enemy.damagable or not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.x, self.y)) > self.range):
                 self.current_enemy = None
             else:
-                if self.tracking:
+                if self.rotating:
                     temp_x = enemy_center[0]
                     temp_y = enemy_center[1]
 
