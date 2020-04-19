@@ -387,9 +387,6 @@ class Game:
                         if temp_rect.collidepoint(event.pos):
                             self.current_tower = self.available_towers[i]
 
-                elif self.current_tower != None:
-                    return
-
                 tile_map = self.map.get_map()
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
@@ -398,11 +395,14 @@ class Game:
                 if self.map.get_node(x_coord, y_coord) != 0:
                     self.map.upgrade_tower(x_coord, y_coord) # don't need to upgrade tower if clicking on empty space
                     return
-                    
-                if self.protein < TOWER_DATA[self.current_tower][0]["upgrade_cost"]:
+
+                if self.current_tower == None:
                     return
-                
+
                 if self.map.change_node(x_coord, y_coord, 1) == False:
+                    return
+
+                if self.protein < TOWER_DATA[self.current_tower][0]["upgrade_cost"]:
                     return
                 
                 path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
