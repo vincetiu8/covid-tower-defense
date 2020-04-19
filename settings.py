@@ -3,11 +3,8 @@ from os import path
 import json
 import pygame as pg
 
-LIVES = 1
-PROTEIN = 40
-BUY_COST = 10 # should be kept outside of the class so that the buy_cost can be
-              # checked against the protein without needing to instantiate the tower
-MAX_STAGE = 2
+LIVES = 5
+PROTEIN = 50
               
 ZOOM_AMOUNT = 0.05
 
@@ -55,12 +52,14 @@ with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
     for enemy in ENEMY_DATA:
         ENEMY_DATA[enemy]["image"] = pg.image.load(path.join(ENEMIES_FOLDER, ENEMY_DATA[enemy]["image"]))
 
-# load tower images
-ANTIBODY_GUN_IMGS = []
-ANTIBODY_BASE_IMGS = []
-for i in range(MAX_STAGE + 1):
-    ANTIBODY_GUN_IMGS.append(pg.image.load(path.join(TOWERS_FOLDER, "naive_t_cell_gun{}.png".format(i))))
-    ANTIBODY_BASE_IMGS.append(pg.image.load(path.join(TOWERS_FOLDER, "naive_t_cell_base{}.png".format(i))))
+# load tower data
+with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
+    TOWER_DATA = json.load(data_file)
+    for tower in TOWER_DATA:
+        for level in range(3):
+            TOWER_DATA[tower][level]["gun_image"] = pg.image.load(path.join(TOWERS_FOLDER, tower + "_gun" + str(level) + ".png"))
+            TOWER_DATA[tower][level]["base_image"] = pg.image.load(path.join(TOWERS_FOLDER, tower + "_base" + str(level) + ".png"))
+            TOWER_DATA[tower][level]["bullet_image"] = pg.image.load(path.join(TOWERS_FOLDER, tower + "_bullet" + str(level) + ".png"))
 
 # load path images
 PATH_VERTICAL_IMG = pg.image.load(path.join(PATH_FOLDER, "vertical.png"))

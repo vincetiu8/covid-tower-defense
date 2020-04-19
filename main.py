@@ -158,7 +158,9 @@ class Game:
         self.towers = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
-        
+
+        self.available_towers = ["t_cell", "b_cell"]
+        self.current_tower = None
         self.protein = PROTEIN
         self.lives = LIVES
         
@@ -266,11 +268,8 @@ class Game:
         self.draw_path()
 
         for tower in self.towers:
-            base_image = tower.base_images[tower.stage]
-            gun_image = tower.gun_images[tower.stage]
-            
-            self.screen.blit(self.camera.apply_image(base_image), self.camera.apply_rect(tower.rect))
-            rotated_image = pg.transform.rotate(gun_image, tower.rotation)
+            self.screen.blit(self.camera.apply_image(tower.base_image), self.camera.apply_rect(tower.rect))
+            rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             self.screen.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
 
@@ -279,9 +278,9 @@ class Game:
             pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
 
         for projectile in self.projectiles:
-            pg.draw.rect(self.screen, LIGHTGREY, self.camera.apply_rect(projectile.rect))
+            self.screen.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
 
-        if self.protein >= BUY_COST:
+        if self.current_tower != None and self.protein >= TOWER_DATA[self.current_tower][0]["upgrade_cost"]:
             self.draw_tower_preview()
 
         self.screen.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
@@ -312,8 +311,8 @@ class Game:
         pos = self.map.get_node(tower_tile[0], tower_tile[1])
 
         if pos != -1:
-            tower_img = self.camera.apply_image(ANTIBODY_BASE_IMGS[0]).copy()
-            tower_img.blit(self.camera.apply_image(ANTIBODY_GUN_IMGS[0]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
+            tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower][0]["base_image"]).copy()
+            tower_img.blit(self.camera.apply_image(TOWER_DATA[self.current_tower][0]["gun_image"]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
             validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
             
             if validity == 1:
@@ -335,7 +334,7 @@ class Game:
             else:
                 tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
 
-            tower_pos = pg.Rect(towerxy, ANTIBODY_BASE_IMGS[0].get_size())
+            tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower][0]["base_image"].get_size())
             self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
 
     def draw_path(self):
@@ -381,6 +380,13 @@ class Game:
                     self.ui.set_active(not self.ui.active)
                     return
 
+                elif self.ui.active:
+                    for i, tower_rect in enumerate(self.ui.tower_rects):
+                        temp_rect = tower_rect.copy()
+                        temp_rect.x += self.screen.get_size()[0] - self.ui.width
+                        if temp_rect.collidepoint(event.pos):
+                            self.current_tower = self.available_towers[i]
+
                 tile_map = self.map.get_map()
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
@@ -389,11 +395,14 @@ class Game:
                 if self.map.get_node(x_coord, y_coord) != 0:
                     self.map.upgrade_tower(x_coord, y_coord) # don't need to upgrade tower if clicking on empty space
                     return
-                    
-                if self.protein < BUY_COST:
+
+                if self.current_tower == None:
                     return
-                
+
                 if self.map.change_node(x_coord, y_coord, 1) == False:
+                    return
+
+                if self.protein < TOWER_DATA[self.current_tower][0]["upgrade_cost"]:
                     return
                 
                 path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
@@ -409,20 +418,11 @@ class Game:
                         game = self,
                         x = round_to_tilesize(pos[0], self.map.tilesize),
                         y = round_to_tilesize(pos[1], self.map.tilesize),
-                        base_images = ANTIBODY_BASE_IMGS,
-                        gun_images = ANTIBODY_GUN_IMGS,
-                        bullet_spawn_speed = 0.2,
-                        bullet_speed = 25,
-                        bullet_size = 8,
-                        bullet_lifetime = 1,
-                        damage = [(i + 1) for i in range(MAX_STAGE + 1)],
-                        range = 200,
-                        upgrade_cost = 5,
-                        max_stage = MAX_STAGE)
+                        name = self.current_tower)
                     self.map.add_tower(x_coord, y_coord, new_tower)
-                    self.protein -= BUY_COST
-                    
-                    for enemy in self.enemies:
+                    self.protein -= TOWER_DATA[self.current_tower][0]["upgrade_cost"]
+                    self.current_tower = None
+                    for enemy  in self.enemies:
                         enemy.recreate_path()
                 else:  # reverts tile map to previous state if no enemy path could be found
                     self.map.change_node(x_coord, y_coord, 0)

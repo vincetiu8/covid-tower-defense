@@ -1,0 +1,72 @@
+{
+  "t_cell": [
+    {
+      "damage": 2,
+      "bullet_spawn_speed": 0.25,
+      "bullet_speed": 25,
+      "bullet_lifetime": 0.3,
+      "range": 200,
+      "upgrade_cost": 10,
+      "directions": 1,
+      "rotating": true,
+      "tracking": true
+    },
+    {
+      "damage": 3,
+      "bullet_spawn_speed": 0.2,
+      "bullet_speed": 35,
+      "bullet_lifetime": 0.3,
+      "range": 220,
+      "upgrade_cost": 5,
+      "directions": 1,
+      "rotating": true,
+      "tracking": true
+    },
+    {
+      "damage": 4,
+      "bullet_spawn_speed": 0.15,
+      "bullet_speed": 45,
+      "bullet_lifetime": 0.3,
+      "range": 250,
+      "upgrade_cost": 10,
+      "directions": 1,
+      "rotating": true,
+      "tracking": true
+    }
+  ],
+  "b_cell": [
+    {
+      "damage": 5,
+      "bullet_spawn_speed": 0.5,
+      "bullet_speed": 20,
+      "bullet_lifetime": 0.5,
+      "range": 500,
+      "upgrade_cost": 20,
+      "directions": 4,
+      "rotating": false,
+      "tracking": false
+    },
+    {
+      "damage": 6,
+      "bullet_spawn_speed": 0.45,
+      "bullet_speed": 25,
+      "bullet_lifetime": 0.5,
+      "range": 550,
+      "upgrade_cost": 10,
+      "directions": 4,
+      "rotating": false,
+      "tracking": false
+    },
+    {
+      "damage": 7,
+      "bullet_spawn_speed": 0.4,
+      "bullet_speed": 30,
+      "bullet_lifetime": 0.5,
+      "range": 600,
+      "upgrade_cost": 10,
+      "directions": 4,
+      "rotating": true,
+      "tracking": false
+    }
+  ]
+}
