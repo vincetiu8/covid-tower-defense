@@ -17,7 +17,9 @@ BLACK = pg.Color(0, 0, 0)
 DARKGREY = pg.Color(40, 40, 40)
 LIGHTGREY = pg.Color(100, 100, 100)
 GREEN = pg.Color(0, 255, 0)
+DARK_GREEN = pg.Color(0, 60, 0)
 RED = pg.Color(255, 0, 0)
+DARK_RED = pg.Color(60, 0, 0)
 YELLOW = pg.Color(255, 255, 0)
 HALF_WHITE = pg.Color(255, 255, 255, 127)
 HALF_RED = pg.Color(255, 0, 0, 127)
@@ -34,11 +36,13 @@ IMG_FOLDER = path.join(GAME_FOLDER, "img")
 MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 LEVELS_FOLDER = path.join(GAME_FOLDER, "levels")
 FONTS_FOLDER = path.join(GAME_FOLDER, "fonts")
+AUDIO_FOLDER = path.join(GAME_FOLDER, "audio")
 
 PATH_FOLDER = path.join(IMG_FOLDER, "path")
 UI_FOLDER = path.join(IMG_FOLDER, "ui")
 ENEMIES_FOLDER = path.join(IMG_FOLDER, "enemies")
 TOWERS_FOLDER = path.join(IMG_FOLDER, "towers")
+GAME_OVER_FOLDER = path.join(IMG_FOLDER, "game_over")
 
 # load ui images
 HEART_IMG = pg.image.load(path.join(UI_FOLDER, "heart.png"))
@@ -73,10 +77,18 @@ PATH_CORNER4_IMG = pg.image.load(path.join(PATH_FOLDER, "corner4.png"))
 # load other images
 START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
 LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
-RESTART_BTN_IMG = pg.image.load(path.join(IMG_FOLDER, "restart_btn.png"))
-RESTART_BTN_HOVER_IMG = pg.image.load(path.join(IMG_FOLDER, "restart_btn_hover.png"))
-BACK_BTN_IMG = pg.image.load(path.join(IMG_FOLDER, "back_btn.png"))
-BACK_BTN_HOVER_IMG = pg.image.load(path.join(IMG_FOLDER, "back_btn_hover.png"))
+
+# load game over images
+RESTART_BTN_IMGS = [[None, None], [None, None]]
+BACK_BTN_IMGS = [[None, None], [None, None]]
+
+for i, to_concat_1 in enumerate(["", "_lost"]):
+    for j, to_concat_2 in enumerate(["", "_hover"]):
+        RESTART_BTN_IMGS[i][j] = pg.image.load(path.join(GAME_OVER_FOLDER, "restart_btn{}{}.png".format(to_concat_1, to_concat_2)))
+        BACK_BTN_IMGS[i][j] = pg.image.load(path.join(GAME_OVER_FOLDER, "back_btn{}{}.png".format(to_concat_1, to_concat_2)))
+        
+HEART_MONITOR_NORMAL_IMG = pg.image.load(path.join(GAME_OVER_FOLDER, "heart_monitor_normal.png"))
+HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_OVER_FOLDER, "heart_monitor_flatline.png"))
 
 # load fonts path
 GAME_OVER_FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")

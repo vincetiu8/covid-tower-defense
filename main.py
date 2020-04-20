@@ -11,6 +11,7 @@ from game_over import *
 class Main:
     def __init__(self):
         pg.init()
+        pg.mixer.init()
         pg.key.set_repeat(500, 100)
         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.menu = Menu(self.screen)
@@ -254,6 +255,7 @@ class Game:
 #             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
     def draw(self):
+        self.clock.tick(60)
         pg.display.set_caption("FPS: {:.2f}  Protein: {}  Wave: {}".format(self.clock.get_fps(), self.protein, self.wave))
         self.screen.fill((0, 0, 0))
 
