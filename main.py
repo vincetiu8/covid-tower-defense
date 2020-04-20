@@ -11,7 +11,9 @@ from game_over import *
 class Main:
     def __init__(self):
         pg.init()
+        pg.mixer.init()
         pg.key.set_repeat(500, 100)
+        self.clock = pg.time.Clock()
         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.menu = Menu(self.screen)
         self.playing = False
@@ -39,6 +41,9 @@ class Main:
             self.playing = False
         
     def draw(self):
+        self.clock.tick(FPS)
+        pg.display.set_caption("FPS: {:.2f}".format(self.clock.get_fps()))
+        
         if not self.started_game:
             self.menu.draw()
             
@@ -134,7 +139,6 @@ class Game:
         
         self.starts = []
         self.start_data = None
-        self.clock = pg.time.Clock()
         
         self.map = TiledMap(path.join(MAP_FOLDER, "map{}.tmx".format(self.level)))
         self.load_data()
@@ -217,7 +221,6 @@ class Game:
         self.ui = UI(self, 200, 10)
 
     def update(self):
-        self.clock.tick(FPS)
         # update portion of the game loop
         if (self.lives <= 0):
             return False
@@ -258,7 +261,6 @@ class Game:
 #             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
     def draw(self):
-        pg.display.set_caption("FPS: {:.2f}".format(self.clock.get_fps(), self.protein, self.wave))
         self.screen.fill((0, 0, 0))
 
         self.screen.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
