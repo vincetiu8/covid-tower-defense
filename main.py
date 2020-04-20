@@ -42,7 +42,7 @@ class Main:
         
     def draw(self):
         self.clock.tick(FPS)
-        pg.display.set_caption("FPS: {:.2f}".format(self.clock.get_fps(), self.protein, self.wave))
+        pg.display.set_caption("FPS: {:.2f}".format(self.clock.get_fps()))
         
         if not self.started_game:
             self.menu.draw()
