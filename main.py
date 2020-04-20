@@ -29,6 +29,7 @@ class Main:
             self.events()
             self.update()
             self.draw()
+
         while not self.playing and self.started_game:
             self.events()
             self.draw()
@@ -216,6 +217,7 @@ class Game:
         self.ui = UI(self, 200, 10)
 
     def update(self):
+        self.clock.tick(FPS)
         # update portion of the game loop
         if (self.lives <= 0):
             return False
