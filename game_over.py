@@ -4,7 +4,6 @@ class GameOver(pg.Surface):
     def __init__(self, lost, main_screen, cause_of_death):
         super().__init__((SCREEN_WIDTH, SCREEN_HEIGHT))
         
-        self.clock = pg.time.Clock()
         self.lost = lost
         self.cause_of_death = cause_of_death
         self.main_screen = main_screen
@@ -47,7 +46,6 @@ class GameOver(pg.Surface):
         self.flatline_sfx.stop()
     
     def draw(self):
-        self.clock.tick(80)
         self.fill(BLACK)
         
         self.alpha = min(255, self.alpha + 3)
