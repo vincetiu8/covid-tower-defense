@@ -35,7 +35,6 @@ class TiledMap:
         for layer in layers:
             for x, y, gid in self.tmxdata.get_layer_by_name(layer):
                 tile = ti(gid)
-                rot = props(gid)
                 if tile:
                     surface.blit(pg.transform.rotate(tile, 0), (x * self.tmxdata.tilewidth,
                                         y * self.tmxdata.tileheight))
