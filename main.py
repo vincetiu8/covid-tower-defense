@@ -280,7 +280,7 @@ class Game:
         for projectile in self.projectiles:
             self.screen.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
 
-        if self.current_tower != None and self.protein >= TOWER_DATA[self.current_tower][0]["upgrade_cost"]:
+        if self.current_tower != None:
             self.draw_tower_preview()
 
         self.screen.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
@@ -382,6 +382,8 @@ class Game:
 
                 elif self.ui.active:
                     for i, tower_rect in enumerate(self.ui.tower_rects):
+                        if (self.protein < TOWER_DATA[self.available_towers[i]][0]["upgrade_cost"]):
+                            continue
                         temp_rect = tower_rect.copy()
                         temp_rect.x += self.screen.get_size()[0] - self.ui.width
                         if temp_rect.collidepoint(event.pos):
@@ -400,9 +402,6 @@ class Game:
                     return
 
                 if self.map.change_node(x_coord, y_coord, 1) == False:
-                    return
-
-                if self.protein < TOWER_DATA[self.current_tower][0]["upgrade_cost"]:
                     return
                 
                 path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
