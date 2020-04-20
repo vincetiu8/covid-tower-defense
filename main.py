@@ -258,11 +258,10 @@ class Game:
 #             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
     def draw(self):
-        pg.display.set_caption("FPS: {:.2f}  Protein: {}  Wave: {}".format(self.clock.get_fps(), self.protein, self.wave))
+        pg.display.set_caption("FPS: {:.2f}".format(self.clock.get_fps(), self.protein, self.wave))
         self.screen.fill((0, 0, 0))
 
         self.screen.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
-        applied_goal_rect = self.camera.apply_rect(self.goal.rect)
 
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.starts[0].rect))
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.goal.rect))
