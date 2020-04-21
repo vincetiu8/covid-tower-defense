@@ -44,6 +44,9 @@ ENEMIES_FOLDER = path.join(IMG_FOLDER, "enemies")
 TOWERS_FOLDER = path.join(IMG_FOLDER, "towers")
 GAME_OVER_FOLDER = path.join(IMG_FOLDER, "game_over")
 
+MENU_OFFSET = 10
+MENU_TEXT_SIZE = 25
+
 # load ui images
 HEART_IMG = pg.image.load(path.join(UI_FOLDER, "heart.png"))
 PROTEIN_IMG = pg.image.load(path.join(UI_FOLDER, "protein.png"))

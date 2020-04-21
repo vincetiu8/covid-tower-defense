@@ -137,23 +137,22 @@ class Menu:
                 self.screen.blit(self.camera.apply_image(self.level_descs[self.over_level]), self.camera.apply_rect(self.level_descs[self.over_level].get_rect(topright = self.level_buttons[self.over_level].topleft)))
 
     def get_level_info(self, level):
-        offset = 10 # Hardcoding for now hmm
-        height = offset
+        height = MENU_OFFSET
 
         level_data = LEVEL_DATA[level]
-        title_font = pg.font.Font(None, 50)
+        title_font = pg.font.Font(None, MENU_TEXT_SIZE * 2)
         texts = []
         title_text = title_font.render(level_data["title"], 1, WHITE)
         texts.append(title_text)
-        height += title_text.get_height() + offset
+        height += title_text.get_height() + MENU_OFFSET
 
-        description_font = pg.font.Font(None, 25)
-        text = textwrap.fill(level_data["description"], 27) # Hardcoding for now oops
+        description_font = pg.font.Font(None, MENU_TEXT_SIZE)
+        text = textwrap.fill(level_data["description"], 28 - round(MENU_TEXT_SIZE / 30)) # No idea how to really calculate this.
         counter = 0
         for part in text.split('\n'):
             rendered_text = description_font.render(part, 1, WHITE)
             texts.append(rendered_text)
-            height += rendered_text.get_height() + offset
+            height += rendered_text.get_height() + MENU_OFFSET
             counter += 1
 
         if level_data["difficulty"] == 0:
@@ -167,27 +166,27 @@ class Menu:
         elif level_data["difficulty"] == 4:
             difficulty_text = description_font.render("Extreme", 1, MAROON)
         texts.append(difficulty_text)
-        height += difficulty_text.get_height() + offset
+        height += difficulty_text.get_height() + MENU_OFFSET
 
         waves_text = description_font.render("{} Waves".format(len(level_data["waves"])), 1, WHITE)
         texts.append(waves_text)
-        height += waves_text.get_height() + offset
+        height += waves_text.get_height() + MENU_OFFSET
 
-        enemy_surf = pg.Surface((title_text.get_size()[0] + offset * 2, 25))
+        enemy_surf = pg.Surface((title_text.get_size()[0] + MENU_OFFSET * 2, MENU_TEXT_SIZE))
         enemy_surf.fill(DARKGREY)
         for i, enemy in enumerate(level_data["enemies"]):
-            enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (25, 25))
-            enemy_surf.blit(enemy_image, (i * (25 + offset), 0))
+            enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE))
+            enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + MENU_OFFSET), 0))
 
         texts.append(enemy_surf)
         height += enemy_surf.get_height()
 
-        level_surf = pg.Surface((title_text.get_width() + offset * 2, height + offset))
+        level_surf = pg.Surface((title_text.get_width() + MENU_OFFSET * 2, height + MENU_OFFSET))
         level_surf.fill(DARKGREY)
-        temp_height = offset
+        temp_height = MENU_OFFSET
         for text in texts:
-            level_surf.blit(text, (offset, temp_height))
-            temp_height += text.get_height() + offset
+            level_surf.blit(text, (MENU_OFFSET, temp_height))
+            temp_height += text.get_height() + MENU_OFFSET
 
         self.level_descs[level] = level_surf
 
