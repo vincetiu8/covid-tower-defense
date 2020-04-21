@@ -1,56 +1,56 @@
 {
-    "title": "Testing Ground",
-    "description": "A place to test out the game. Relax and code on!",
-    "difficulty": 0,
+    "title": "Testing Ground 3",
+    "description": "Extreme testing ground! Prepare to die!",
+    "difficulty": 4,
     "waves": [
         {
             "enemy_type": [
                 "common cold"
             ],
             "enemy_count": [
-                20
+                500
             ],
             "spawn_delay": [
-                3
+                7
             ],
             "spawn_rate": [
-                0.2
-            ]
-        },
-        {
-            "enemy_type": [
-                "hepatitis a",
-                "common cold"
-            ],
-            "enemy_count": [
-                10,
-                16
-            ],
-            "spawn_delay": [
-                3,
-                3
-            ],
-            "spawn_rate": [
-                0.6,
-                0.3
+                0.05
             ]
         },
         {
             "enemy_type": [
                 "coronavirus",
+                "hepatitis a",
                 "common cold"
             ],
             "enemy_count": [
-                5,
-                20
+                100,
+                250,
+                500
             ],
             "spawn_delay": [
-                3,
-                4
+                10,
+                5,
+                3
             ],
             "spawn_rate": [
-                1,
-                0.2
+                0.01,
+                0.02,
+                0.05
+            ]
+        },
+        {
+            "enemy_type": [
+                "coronavirus"
+            ],
+            "enemy_count": [
+                6969
+            ],
+            "spawn_delay": [
+                3
+            ],
+            "spawn_rate": [
+                0.0042
             ]
         }
     ]

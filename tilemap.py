@@ -31,7 +31,6 @@ class TiledMap:
 
     def render(self, surface, layers):
         ti = self.tmxdata.get_tile_image_by_gid
-        props = self.tmxdata.get_tile_properties_by_gid
         for layer in layers:
             for x, y, gid in self.tmxdata.get_layer_by_name(layer):
                 tile = ti(gid)

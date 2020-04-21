@@ -105,7 +105,7 @@ class Menu:
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, START_SCREEN_IMG.get_rect().w, START_SCREEN_IMG.get_rect().h)
         self.started = False
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
-        self.level_buttons = [pg.Rect((20, 120), self.level_button_rect.size)]
+        self.level_buttons = [pg.Rect((20, 120), self.level_button_rect.size), pg.Rect((160, 120), self.level_button_rect.size), pg.Rect((300, 120), self.level_button_rect.size)]
         self.level_descs = [None for i in range(len(LEVEL_DATA))]
         self.over_level = -1
 
@@ -147,7 +147,7 @@ class Menu:
         height += title_text.get_height() + MENU_OFFSET
 
         description_font = pg.font.Font(None, MENU_TEXT_SIZE)
-        text = textwrap.fill(level_data["description"], 28 - round(MENU_TEXT_SIZE / 30)) # No idea how to really calculate this.
+        text = textwrap.fill(level_data["description"], 30 - round(MENU_TEXT_SIZE / 30)) # No idea how to really calculate this.
         counter = 0
         for part in text.split('\n'):
             rendered_text = description_font.render(part, 1, WHITE)
