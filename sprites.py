@@ -46,8 +46,6 @@ class Start():
                 game = self.game,
                 x = self.rect.x + random.randint(0, self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width()),
                 y = self.rect.y + random.randint(0, self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height()),
-                end_x = tile_from_xcoords(self.game.goal.x, self.game.map.tilesize),
-                end_y = tile_from_xcoords(self.game.goal.y, self.game.map.tilesize),
                 name = self.enemy_type))
             self.next_spawn = pg.time.get_ticks() + self.spawn_rate * 1000
             self.enemy_count -= 1
@@ -61,13 +59,12 @@ class Start():
     def get_rect(self):
         return self.rect
 
-class Goal():
-    def __init__(self, x, y, w, h):
-        self.x = x
-        self.y = y
+class Goal(pg.sprite.Sprite):
+    def __init__(self, game, x, y, w, h):
+        self.game = game
+        self.groups = game.goal_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.rect = pg.Rect(x, y, w, h)
-        self.rect.x = x
-        self.rect.y = y
 
 # class Wall(pg.sprite.Sprite):
 #     def __init__(self, game, x, y):

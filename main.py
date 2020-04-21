@@ -237,6 +237,7 @@ class Game:
         self.towers = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
+        self.goal_sprites = pg.sprite.Group()
 
         self.available_towers = ["t_cell", "b_cell"]
         self.current_tower = None
@@ -249,7 +250,7 @@ class Game:
         self.cause_of_death = "IB"
         
         self.map.clear_map()
-
+        self.goals = []
         width = round(self.map.width / self.map.tilesize)
         height = round(self.map.height / self.map.tilesize)
         arteries = [[1 for row in range(height)] for col in range(width)]
@@ -266,9 +267,11 @@ class Game:
                                      tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
                                      0) # make start tile a wall so you can't place a tower on it
                                         # this does not affect the path finding algo
-                self.new_wave()
             if tile_object.name == "goal":
-                self.goal = Goal(tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
+                    for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
+                        goal = Goal(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                        self.goals.append(((round(goal.rect.x / self.map.tilesize) + i, round(goal.rect.y / self.map.tilesize) + j), 0))
             if tile_object.name == "wall":
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "artery":
@@ -288,10 +291,11 @@ class Game:
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
 
+        print(self.goals)
+        self.new_wave()
         self.pathfinder = Pathfinder(arteries, artery_entrances, veins, vein_entrances)
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
-        self.path = self.pathfinder.astar(self.map.get_map(), ((int(self.starts[0].rect.x / self.map.tilesize), int(self.starts[0].rect.y / self.map.tilesize)), 0),
-                          (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
+        self.path = self.pathfinder.astar(self.map.get_map(), ((int(self.starts[0].rect.x / self.map.tilesize), int(self.starts[0].rect.y / self.map.tilesize)), 0), self.goals)
         self.make_stripped_path()
 
         self.ui = UI(self, 200, 10)
@@ -342,7 +346,8 @@ class Game:
         self.screen.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.starts[0].rect))
-        pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.goal.rect))
+        for goal in self.goal_sprites:
+            pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(goal.rect))
 
         self.draw_path()
 
@@ -400,8 +405,7 @@ class Game:
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
                 result = self.pathfinder.astar(self.map.get_map(), ((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
                                             tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
-                                (tile_from_xcoords(self.goal.x, self.map.tilesize),
-                                tile_from_xcoords(self.goal.y, self.map.tilesize)))
+                                self.goals)
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
                     
                 if result != False:
@@ -487,8 +491,7 @@ class Game:
                 
                 path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
                                         tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
-                            (tile_from_xcoords(self.goal.x, self.map.tilesize),
-                                tile_from_xcoords(self.goal.y, self.map.tilesize)))
+                            self.goals)
                                     
                 if path != False:
                     self.path = path
