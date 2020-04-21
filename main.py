@@ -22,6 +22,7 @@ class Main:
     def run_pregame(self):
         while not self.started_game:
             self.events()
+            self.update()
             self.draw()
 
     def run_game(self):
@@ -37,7 +38,10 @@ class Main:
             self.draw()
 
     def update(self):
-        if self.game.update() == False:
+        if not self.started_game:
+            self.menu.update()
+
+        elif self.game.update() == False:
             self.playing = False
         
     def draw(self):
@@ -69,7 +73,7 @@ class Main:
 
             elif not self.started_game:
                 level = self.menu.event(event)
-                if (level != False):
+                if (level != -1):
                     self.game = Game(self.screen, level)
                     self.game.new()
                     self.started_game = True
@@ -100,6 +104,10 @@ class Menu:
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, START_SCREEN_IMG.get_rect().w, START_SCREEN_IMG.get_rect().h)
         self.started = False
         self.level_buttons = [pg.Rect(20, 120, LEVEL_BUTTON_IMG.get_rect().w, LEVEL_BUTTON_IMG.get_rect().h)]
+        self.over_level = -1
+
+    def update(self):
+        self.update_level()
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -117,19 +125,24 @@ class Menu:
             lives_text = lives_font.render(str(i + 1), 1, WHITE)
             self.screen.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple((button.center[0] - lives_text.get_rect().center[0], button.center[1] - lives_text.get_rect().center[1])))
 
+    def update_level(self):
+        mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
+        for i, button in enumerate(self.level_buttons):
+            if button.collidepoint(mouse_pos):
+                self.over_level = i
+                return
+        self.over_level = -1
+
     def event(self, event):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_SPACE and not self.started:
                 self.started = True
 
         elif event.type == pg.MOUSEBUTTONDOWN:
-            mouse_pos = event.pos
+            if event.button == 1:
+                return self.over_level
 
-            for i, button in enumerate(self.level_buttons):
-                if button.collidepoint(self.camera.correct_mouse(mouse_pos)):
-                    return i + 1
-
-        return False
+        return -1
 
 
 class Game:
@@ -150,9 +163,10 @@ class Game:
         self.map_rect = self.map_img.get_rect()
         
     def load_level_data(self):
+        level_data = path.join(LEVELS_FOLDER, "level{}.json".format(self.level))
         self.level_data = None
         
-        with open(SAMPLE_LEVEL_DATA, "r") as data_file:
+        with open(level_data, "r") as data_file:
             self.level_data = json.load(data_file)
             
         self.max_wave = len(self.level_data)

@@ -47,9 +47,6 @@ PROTEIN_IMG = pg.image.load(path.join(UI_FOLDER, "protein.png"))
 LEFT_ARROW_IMG = pg.image.load(path.join(UI_FOLDER, "left.png"))
 RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_FOLDER, "left.png")).copy(), 180)
 
-# load level data
-SAMPLE_LEVEL_DATA = path.join(LEVELS_FOLDER, "sample.json")
-
 # load enemy data
 with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
     ENEMY_DATA = json.load(data_file)
