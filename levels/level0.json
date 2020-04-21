@@ -1,7 +1,7 @@
 {
     "title": "Testing Grounds",
     "description": "A place to test out the game. Relax and code on!",
-    "difficulty": "Easy",
+    "difficulty": 0,
     "waves": [
         {
             "enemy_type": [

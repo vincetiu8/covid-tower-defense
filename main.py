@@ -150,6 +150,19 @@ class Menu:
             height += rendered_text.get_height() + offset
             counter += 1
 
+        if level_data["difficulty"] == 0:
+            difficulty_text = description_font.render("Easy", 1, GREEN)
+        elif level_data["difficulty"] == 1:
+            difficulty_text = description_font.render("Medium", 1, YELLOW)
+        elif level_data["difficulty"] == 2:
+            difficulty_text = description_font.render("Hard", 1, ORANGE)
+        elif level_data["difficulty"] == 3:
+            difficulty_text = description_font.render("Very Hard", 1, RED)
+        elif level_data["difficulty"] == 4:
+            difficulty_text = description_font.render("Extreme", 1, MAROON)
+        texts.append(difficulty_text)
+        height += difficulty_text.get_height() + offset
+
         waves_text = description_font.render("{} Waves".format(len(level_data["waves"])), 1, WHITE)
         texts.append(waves_text)
         height += waves_text.get_height() + offset

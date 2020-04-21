@@ -19,6 +19,8 @@ DARK_GREEN = pg.Color(0, 60, 0)
 RED = pg.Color(255, 0, 0)
 DARK_RED = pg.Color(60, 0, 0)
 YELLOW = pg.Color(255, 255, 0)
+ORANGE = pg.Color(255, 127, 0)
+MAROON = pg.Color(127, 0, 0)
 HALF_WHITE = pg.Color(255, 255, 255, 127)
 HALF_RED = pg.Color(255, 0, 0, 127)
 
