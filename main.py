@@ -106,6 +106,7 @@ class Menu:
         self.started = False
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
         self.level_buttons = [pg.Rect((20, 120), self.level_button_rect.size)]
+        self.level_descs = [None for i in range(len(LEVEL_DATA))]
         self.over_level = -1
 
     def update(self):
@@ -128,7 +129,9 @@ class Menu:
             self.screen.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple((button.center[0] - lives_text.get_rect().center[0], button.center[1] - lives_text.get_rect().center[1])))
 
         if self.over_level != -1:
-            self.screen.blit(self.get_level_info(self.over_level), self.camera.apply_tuple((self.level_buttons[self.over_level][0] + self.level_button_rect.size[0], self.level_buttons[self.over_level][1])))
+            if self.level_descs[self.over_level] == None:
+                self.get_level_info(self.over_level)
+            self.screen.blit(self.level_descs[self.over_level], self.camera.apply_tuple((self.level_buttons[self.over_level][0] + self.level_button_rect.size[0], self.level_buttons[self.over_level][1])))
 
     def get_level_info(self, level):
         offset = 10 # Hardcoding for now hmm
@@ -183,7 +186,7 @@ class Menu:
             level_surf.blit(text, (offset, temp_height))
             temp_height += text.get_height() + offset
 
-        return level_surf
+        self.level_descs[level] = level_surf
 
 
     def update_level(self):
