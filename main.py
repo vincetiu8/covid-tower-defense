@@ -132,26 +132,43 @@ class Menu:
 
     def get_level_info(self, level):
         offset = 10 # Hardcoding for now hmm
+        height = offset
 
         level_data = LEVEL_DATA[level]
         title_font = pg.font.Font(None, 50)
+        texts = []
         title_text = title_font.render(level_data["title"], 1, WHITE)
+        texts.append(title_text)
+        height += title_text.get_height() + offset
 
         description_font = pg.font.Font(None, 25)
         text = textwrap.fill(level_data["description"], 27) # Hardcoding for now oops
-        description_texts = []
         counter = 0
         for part in text.split('\n'):
-            description_texts.append(description_font.render(part, 1, WHITE))
+            rendered_text = description_font.render(part, 1, WHITE)
+            texts.append(rendered_text)
+            height += rendered_text.get_height() + offset
             counter += 1
 
-        level_surf = pg.Surface((title_text.get_size()[0] + offset * 2, title_text.get_size()[1] + offset * 2 + counter * (description_texts[0].get_size()[1] + offset)))
+        waves_text = description_font.render("{} Waves".format(len(level_data["waves"])), 1, WHITE)
+        texts.append(waves_text)
+        height += waves_text.get_height() + offset
+
+        enemy_surf = pg.Surface((title_text.get_size()[0] + offset * 2, 25))
+        enemy_surf.fill(DARKGREY)
+        for i, enemy in enumerate(level_data["enemies"]):
+            enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (25, 25))
+            enemy_surf.blit(enemy_image, (i * (25 + offset), 0))
+
+        texts.append(enemy_surf)
+        height += enemy_surf.get_height()
+
+        level_surf = pg.Surface((title_text.get_width() + offset * 2, height + offset))
         level_surf.fill(DARKGREY)
-        level_surf.blit(title_text, (offset, offset))
-        counter = title_text.get_size()[1] + offset * 2
-        for text in description_texts:
-            level_surf.blit(text, (offset, counter))
-            counter += text.get_size()[1] + offset
+        temp_height = offset
+        for text in texts:
+            level_surf.blit(text, (offset, temp_height))
+            temp_height += text.get_height() + offset
 
         return level_surf
 
