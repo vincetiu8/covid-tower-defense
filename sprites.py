@@ -29,11 +29,7 @@ def collide_with_walls(sprite, group, dir):
 class Start():
     def __init__(self, game, x, y, w, h, enemy_type, enemy_count, spawn_delay, spawn_rate):
         self.game = game
-        self.x = x
-        self.y = y
         self.rect = pg.Rect(x, y, w, h)
-        self.rect.x = x
-        self.rect.y = y
         
         self.enemy_type = enemy_type
         self.enemy_count = enemy_count
@@ -48,8 +44,8 @@ class Start():
         if (pg.time.get_ticks() >= self.next_spawn and self.enemy_count > 0):
             self.game.enemies.add(Enemy(
                 game = self.game,
-                x = self.x,
-                y = self.y,
+                x = self.rect.x + random.randint(0, self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width()),
+                y = self.rect.y + random.randint(0, self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height()),
                 end_x = tile_from_xcoords(self.game.goal.x, self.game.map.tilesize),
                 end_y = tile_from_xcoords(self.game.goal.y, self.game.map.tilesize),
                 name = self.enemy_type))

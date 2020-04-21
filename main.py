@@ -248,7 +248,7 @@ class Game:
         self.game_over_counter = 0 # for animating game over and win screens
         self.cause_of_death = "IB"
         
-        self.reset_map()
+        self.map.clear_map()
 
         width = round(self.map.width / self.map.tilesize)
         height = round(self.map.height / self.map.tilesize)
@@ -260,9 +260,11 @@ class Game:
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "start":
                 self.start_data = {"x": tile_object.x, "y": tile_object.y, "w": tile_object.width, "h": tile_object.height}
-                self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize),
-                                     tile_from_xcoords(tile_object.y, self.map.tilesize),
-                                     1) # make start tile a wall so you can't place a tower on it
+                for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
+                    for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
+                        self.map.set_valid_tower_tile(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
+                                     tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
+                                     0) # make start tile a wall so you can't place a tower on it
                                         # this does not affect the path finding algo
                 self.new_wave()
             if tile_object.name == "goal":
@@ -288,7 +290,7 @@ class Game:
 
         self.pathfinder = Pathfinder(arteries, artery_entrances, veins, vein_entrances)
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
-        self.path = self.pathfinder.astar(self.map.get_map(), ((int(self.starts[0].x / self.map.tilesize), int(self.starts[0].y / self.map.tilesize)), 0),
+        self.path = self.pathfinder.astar(self.map.get_map(), ((int(self.starts[0].rect.x / self.map.tilesize), int(self.starts[0].rect.y / self.map.tilesize)), 0),
                           (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
         self.make_stripped_path()
 
@@ -396,8 +398,8 @@ class Game:
                 tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
             elif validity == -1:
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
-                result = self.pathfinder.astar(self.map.get_map(), ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
-                                            tile_from_xcoords(self.starts[0].y, self.map.tilesize)), 0),
+                result = self.pathfinder.astar(self.map.get_map(), ((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
+                                            tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
                                 (tile_from_xcoords(self.goal.x, self.map.tilesize),
                                 tile_from_xcoords(self.goal.y, self.map.tilesize)))
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
@@ -440,9 +442,6 @@ class Game:
 
                 self.screen.blit(self.camera.apply_image(image), self.camera.apply_rect(
                     pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
-
-    def reset_map(self):
-        self.map.clear_map()
         
     def get_lives(self):
         return self.lives
@@ -465,14 +464,19 @@ class Game:
                         temp_rect.x += self.screen.get_size()[0] - self.ui.width
                         if temp_rect.collidepoint(event.pos):
                             self.current_tower = self.available_towers[i]
+                            return
 
                 tile_map = self.map.get_map()
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
-                
-                if self.map.get_node(x_coord, y_coord) != 0:
+
+                val = self.map.get_node(x_coord, y_coord)
+                if self.map.get_node(x_coord, y_coord) == 1:
                     self.map.upgrade_tower(x_coord, y_coord) # don't need to upgrade tower if clicking on empty space
+                    return
+
+                if self.map.is_valid_tower_tile(x_coord, y_coord) == 0:
                     return
 
                 if self.current_tower == None:
@@ -481,8 +485,8 @@ class Game:
                 if self.map.change_node(x_coord, y_coord, 1) == False:
                     return
                 
-                path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
-                                        tile_from_xcoords(self.starts[0].y, self.map.tilesize)), 0),
+                path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
+                                        tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
                             (tile_from_xcoords(self.goal.x, self.map.tilesize),
                                 tile_from_xcoords(self.goal.y, self.map.tilesize)))
                                     

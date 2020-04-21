@@ -14,7 +14,6 @@ class Enemy(pg.sprite.Sprite):
         self.end_y = end_y
         self.name = name
         self.last_move = pg.time.get_ticks()
-        self.path = game.path.copy()
         
         data = ENEMY_DATA[name]
         self.name = name
@@ -31,11 +30,11 @@ class Enemy(pg.sprite.Sprite):
         self.direction = [1 if random.random() < 0.5 else -1, 1 if random.random() < 0.5 else -1]
         self.carry_x = 0
         self.carry_y = 0
-        self.new_node = ((0, 0), 0)
+        self.new_node = ((tile_from_xcoords(x, self.game.map.tilesize), tile_from_xcoords(y, self.game.map.tilesize)), 0)
         self.maximising = 0
         self.damagable = True
         
-        self.load_next_node()
+        self.recreate_path()
 
     def update(self):
         if (self.hp <= 0):
