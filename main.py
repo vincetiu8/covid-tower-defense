@@ -131,7 +131,10 @@ class Menu:
         if self.over_level != -1:
             if self.level_descs[self.over_level] == None:
                 self.get_level_info(self.over_level)
-            self.screen.blit(self.level_descs[self.over_level], self.camera.apply_tuple((self.level_buttons[self.over_level][0] + self.level_button_rect.size[0], self.level_buttons[self.over_level][1])))
+            if self.level_buttons[self.over_level].centerx < self.screen.get_width() / 2:
+                self.screen.blit(self.camera.apply_image(self.level_descs[self.over_level]), self.camera.apply_tuple(self.level_buttons[self.over_level].topright))
+            else:
+                self.screen.blit(self.camera.apply_image(self.level_descs[self.over_level]), self.camera.apply_rect(self.level_descs[self.over_level].get_rect(topright = self.level_buttons[self.over_level].topleft)))
 
     def get_level_info(self, level):
         offset = 10 # Hardcoding for now hmm
