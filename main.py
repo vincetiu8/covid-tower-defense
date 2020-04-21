@@ -1,5 +1,6 @@
 import sys
 import json
+import textwrap
 
 from pathfinding import *
 from ui import *
@@ -103,7 +104,8 @@ class Menu:
         self.screen = screen
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, START_SCREEN_IMG.get_rect().w, START_SCREEN_IMG.get_rect().h)
         self.started = False
-        self.level_buttons = [pg.Rect(20, 120, LEVEL_BUTTON_IMG.get_rect().w, LEVEL_BUTTON_IMG.get_rect().h)]
+        self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
+        self.level_buttons = [pg.Rect((20, 120), self.level_button_rect.size)]
         self.over_level = -1
 
     def update(self):
@@ -125,6 +127,35 @@ class Menu:
             lives_text = lives_font.render(str(i + 1), 1, WHITE)
             self.screen.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple((button.center[0] - lives_text.get_rect().center[0], button.center[1] - lives_text.get_rect().center[1])))
 
+        if self.over_level != -1:
+            self.screen.blit(self.get_level_info(self.over_level), self.camera.apply_tuple((self.level_buttons[self.over_level][0] + self.level_button_rect.size[0], self.level_buttons[self.over_level][1])))
+
+    def get_level_info(self, level):
+        offset = 10 # Hardcoding for now hmm
+
+        level_data = LEVEL_DATA[level]
+        title_font = pg.font.Font(None, 50)
+        title_text = title_font.render(level_data["title"], 1, WHITE)
+
+        description_font = pg.font.Font(None, 25)
+        text = textwrap.fill(level_data["description"], 27) # Hardcoding for now oops
+        description_texts = []
+        counter = 0
+        for part in text.split('\n'):
+            description_texts.append(description_font.render(part, 1, WHITE))
+            counter += 1
+
+        level_surf = pg.Surface((title_text.get_size()[0] + offset * 2, title_text.get_size()[1] + offset * 2 + counter * (description_texts[0].get_size()[1] + offset)))
+        level_surf.fill(DARKGREY)
+        level_surf.blit(title_text, (offset, offset))
+        counter = title_text.get_size()[1] + offset * 2
+        for text in description_texts:
+            level_surf.blit(text, (offset, counter))
+            counter += text.get_size()[1] + offset
+
+        return level_surf
+
+
     def update_level(self):
         mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
         for i, button in enumerate(self.level_buttons):
@@ -144,7 +175,6 @@ class Menu:
 
         return -1
 
-
 class Game:
     def __init__(self, screen, level):
         self.screen = screen
@@ -163,13 +193,8 @@ class Game:
         self.map_rect = self.map_img.get_rect()
         
     def load_level_data(self):
-        level_data = path.join(LEVELS_FOLDER, "level{}.json".format(self.level))
-        self.level_data = None
-        
-        with open(level_data, "r") as data_file:
-            self.level_data = json.load(data_file)
-            
-        self.max_wave = len(self.level_data)
+        self.level_data = LEVEL_DATA[self.level]
+        self.max_wave = len(self.level_data["waves"])
 
     def new(self):
         # initialize all variables and do all the setup for a new game
@@ -261,7 +286,7 @@ class Game:
     def new_wave(self):
         self.starts.clear()
         
-        wave_data = self.level_data[self.wave]
+        wave_data = self.level_data["waves"][self.wave]
                 
         for i in range(len(wave_data["enemy_type"])):
             self.starts.append(Start(self, self.start_data["x"], self.start_data["y"], self.start_data["w"], self.start_data["h"], wave_data["enemy_type"][i], wave_data["enemy_count"][i], wave_data["spawn_delay"][i], wave_data["spawn_rate"][i]))

@@ -1,4 +1,5 @@
-from os import path
+from os import path, listdir
+
 
 import json
 import pygame as pg
@@ -46,6 +47,18 @@ HEART_IMG = pg.image.load(path.join(UI_FOLDER, "heart.png"))
 PROTEIN_IMG = pg.image.load(path.join(UI_FOLDER, "protein.png"))
 LEFT_ARROW_IMG = pg.image.load(path.join(UI_FOLDER, "left.png"))
 RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_FOLDER, "left.png")).copy(), 180)
+
+LEVEL_DATA = []
+for file in listdir(LEVELS_FOLDER):
+    with open(path.join(LEVELS_FOLDER, file)) as data_file:
+        level = json.load(data_file)
+        enemies = []
+        for wave in level["waves"]:
+            for enemy in wave["enemy_type"]:
+                if enemy not in enemies:
+                    enemies.append(enemy)
+        level["enemies"] = enemies
+        LEVEL_DATA.append(level)
 
 # load enemy data
 with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:

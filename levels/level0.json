@@ -1,44 +1,57 @@
-[
-    {
-        "enemy_type": [
-            "common cold"
-        ],
-        "enemy_count": [
-            20
-        ],
-        "spawn_delay": [
-            0.5
-        ],
-        "spawn_rate": [
-            0.2
-        ]
-    },
-    {
-        "enemy_type": [
-            "hepatitis a", "common cold"
-        ],
-        "enemy_count": [
-            10, 16
-        ],
-        "spawn_delay": [
-            3, 3 
-        ],
-        "spawn_rate": [
-            0.6, 0.3
-        ]
-    },
-    {
-        "enemy_type": [
-            "coronavirus", "common cold"
-        ],
-        "enemy_count": [
-            5, 20
-        ],
-        "spawn_delay": [
-            3, 4
-        ],
-        "spawn_rate": [
-            1, 0.2
-        ]
-    }
-]
+{
+    "title": "Testing Grounds",
+    "description": "A place to test out the game. Relax and code on!",
+    "difficulty": "Easy",
+    "waves": [
+        {
+            "enemy_type": [
+                "common cold"
+            ],
+            "enemy_count": [
+                20
+            ],
+            "spawn_delay": [
+                3
+            ],
+            "spawn_rate": [
+                0.2
+            ]
+        },
+        {
+            "enemy_type": [
+                "hepatitis a",
+                "common cold"
+            ],
+            "enemy_count": [
+                10,
+                16
+            ],
+            "spawn_delay": [
+                3,
+                3
+            ],
+            "spawn_rate": [
+                0.6,
+                0.3
+            ]
+        },
+        {
+            "enemy_type": [
+                "coronavirus",
+                "common cold"
+            ],
+            "enemy_count": [
+                5,
+                20
+            ],
+            "spawn_delay": [
+                3,
+                4
+            ],
+            "spawn_rate": [
+                1,
+                0.2
+            ]
+        }
+    ]
+}
