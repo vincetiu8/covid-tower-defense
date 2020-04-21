@@ -1,4 +1,5 @@
-from os import path
+from os import path, listdir
+
 
 import json
 import pygame as pg
@@ -18,6 +19,8 @@ DARK_GREEN = pg.Color(0, 60, 0)
 RED = pg.Color(255, 0, 0)
 DARK_RED = pg.Color(60, 0, 0)
 YELLOW = pg.Color(255, 255, 0)
+ORANGE = pg.Color(255, 127, 0)
+MAROON = pg.Color(127, 0, 0)
 HALF_WHITE = pg.Color(255, 255, 255, 127)
 HALF_RED = pg.Color(255, 0, 0, 127)
 
@@ -41,14 +44,26 @@ ENEMIES_FOLDER = path.join(IMG_FOLDER, "enemies")
 TOWERS_FOLDER = path.join(IMG_FOLDER, "towers")
 GAME_OVER_FOLDER = path.join(IMG_FOLDER, "game_over")
 
+MENU_OFFSET = 10
+MENU_TEXT_SIZE = 25
+
 # load ui images
 HEART_IMG = pg.image.load(path.join(UI_FOLDER, "heart.png"))
 PROTEIN_IMG = pg.image.load(path.join(UI_FOLDER, "protein.png"))
 LEFT_ARROW_IMG = pg.image.load(path.join(UI_FOLDER, "left.png"))
 RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_FOLDER, "left.png")).copy(), 180)
 
-# load level data
-SAMPLE_LEVEL_DATA = path.join(LEVELS_FOLDER, "sample.json")
+LEVEL_DATA = []
+for file in listdir(LEVELS_FOLDER):
+    with open(path.join(LEVELS_FOLDER, file)) as data_file:
+        level = json.load(data_file)
+        enemies = []
+        for wave in level["waves"]:
+            for enemy in wave["enemy_type"]:
+                if enemy not in enemies:
+                    enemies.append(enemy)
+        level["enemies"] = enemies
+        LEVEL_DATA.append(level)
 
 # load enemy data
 with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
