@@ -296,7 +296,7 @@ class Game:
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.path = self.pathfinder.astar(self.map.get_map(), ((int(self.starts[0].rect.x / self.map.tilesize), int(self.starts[0].rect.y / self.map.tilesize)), 0), self.goals)
         self.make_stripped_path()
-
+        self.draw_tower_bases()
         self.ui = UI(self, 200, 10)
 
     def update(self):
@@ -348,10 +348,10 @@ class Game:
         for goal in self.goal_sprites:
             pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(goal.rect))
 
-        self.draw_path()
+        self.screen.blit(self.camera.apply_image(self.path_surf), self.camera.apply_rect(self.path_surf.get_rect()))
+        self.screen.blit(self.camera.apply_image(self.tower_bases_surf), self.camera.apply_rect(self.tower_bases_surf.get_rect()))
 
         for tower in self.towers:
-            self.screen.blit(self.camera.apply_image(tower.base_image), self.camera.apply_rect(tower.rect))
             rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             self.screen.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
@@ -386,40 +386,9 @@ class Game:
                 if (diff_x_after == 0 and diff_y_after == 0):
                     continue
             self.stripped_path.append(node[0])
-    
-    def draw_tower_preview(self):
-        mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
-        towerxy = (round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
-        tower_tile = (tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
-        pos = self.map.get_node(tower_tile[0], tower_tile[1])
 
-        if pos != -1:
-            tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower][0]["base_image"]).copy()
-            tower_img.blit(self.camera.apply_image(TOWER_DATA[self.current_tower][0]["gun_image"]), (tower_img.get_rect()[0] / 2, tower_img.get_rect()[1] / 2))
-            validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
-            
-            if validity == 1:
-                tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
-            elif validity == -1:
-                self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
-                result = self.pathfinder.astar(self.map.get_map(), ((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
-                                            tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
-                                self.goals)
-                self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
-                    
-                if result != False:
-                    tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
-                    self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
-                else:
-                    tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
-                    self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 0)
-            else:
-                tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
-
-            tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower][0]["base_image"].get_size())
-            self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
-
-    def draw_path(self):
+        self.path_surf = pg.Surface((self.screen.get_width(), self.screen.get_height()), pg.SRCALPHA)
+        self.path_surf.fill((0, 0, 0, 0))
         for i, node in enumerate(self.stripped_path):
             if (i > 0 and i < len(self.stripped_path) - 1):
                 image = None
@@ -443,8 +412,44 @@ class Game:
                 else:
                     print("PATH DRAWING ERROR") # this should never occur
 
-                self.screen.blit(self.camera.apply_image(image), self.camera.apply_rect(
-                    pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize)))
+                self.path_surf.blit(image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize))
+
+    def draw_tower_bases(self):
+        self.tower_bases_surf = pg.Surface((self.screen.get_width(), self.screen.get_height()), pg.SRCALPHA)
+        self.tower_bases_surf.fill((0, 0, 0, 0))
+        for tower in self.towers:
+            self.tower_bases_surf.blit(tower.base_image, tower.rect)
+
+    def draw_tower_preview(self):
+        mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
+        towerxy = (round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
+        tower_tile = (tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
+        pos = self.map.get_node(tower_tile[0], tower_tile[1])
+
+        if pos != -1:
+            tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower][0]["image"].copy())
+            validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
+            
+            if validity == 1:
+                tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
+            elif validity == -1:
+                self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
+                result = self.pathfinder.astar(self.map.get_map(), ((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
+                                            tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
+                                self.goals)
+                self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
+                    
+                if result != False:
+                    tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
+                    self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
+                else:
+                    tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+                    self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 0)
+            else:
+                tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+
+            tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower][0]["base_image"].get_size())
+            self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
         
     def get_lives(self):
         return self.lives
@@ -504,6 +509,7 @@ class Game:
                     self.map.add_tower(x_coord, y_coord, new_tower)
                     self.protein -= TOWER_DATA[self.current_tower][0]["upgrade_cost"]
                     self.current_tower = None
+                    self.draw_tower_bases()
                     for enemy  in self.enemies:
                         enemy.recreate_path()
                 else:  # reverts tile map to previous state if no enemy path could be found
