@@ -37,20 +37,30 @@ LEVELS_FOLDER = path.join(GAME_FOLDER, "levels")
 FONTS_FOLDER = path.join(GAME_FOLDER, "fonts")
 AUDIO_FOLDER = path.join(GAME_FOLDER, "audio")
 
-PATH_FOLDER = path.join(IMG_FOLDER, "path")
-UI_FOLDER = path.join(IMG_FOLDER, "ui")
-ENEMIES_FOLDER = path.join(IMG_FOLDER, "enemies")
-TOWERS_FOLDER = path.join(IMG_FOLDER, "towers")
-GAME_OVER_FOLDER = path.join(IMG_FOLDER, "game_over")
+PATH_IMG_FOLDER = path.join(IMG_FOLDER, "path")
+UI_IMG_FOLDER = path.join(IMG_FOLDER, "ui")
+ENEMIES_IMG_FOLDER = path.join(IMG_FOLDER, "enemies")
+TOWERS_IMG_FOLDER = path.join(IMG_FOLDER, "towers")
+GAME_OVER_IMG_FOLDER = path.join(IMG_FOLDER, "game_over")
+
+ENEMIES_AUD_FOLDER = path.join(AUDIO_FOLDER, "enemies")
+TOWERS_AUD_FOLDER = path.join(AUDIO_FOLDER, "towers")
+GAME_OVER_AUD_FOLDER = path.join(AUDIO_FOLDER, "game_over")
 
 MENU_OFFSET = 10
 MENU_TEXT_SIZE = 25
 
 # load ui images
-HEART_IMG = pg.image.load(path.join(UI_FOLDER, "heart.png"))
-PROTEIN_IMG = pg.image.load(path.join(UI_FOLDER, "protein.png"))
-LEFT_ARROW_IMG = pg.image.load(path.join(UI_FOLDER, "left.png"))
-RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_FOLDER, "left.png")).copy(), 180)
+HEART_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "heart.png"))
+PROTEIN_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "protein.png"))
+LEFT_ARROW_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "left.png"))
+RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_IMG_FOLDER, "left.png")).copy(), 180)
+
+ # Initializing the mixer in the settings file lol but rn i don't see a better way.
+# Audio
+AUDIO_HEART_BEEP_PATH = path.join(GAME_OVER_AUD_FOLDER, "heart_beep.wav")
+AUDIO_FLATLINE_PATH = path.join(GAME_OVER_AUD_FOLDER, "flatline.wav")
+AUDIO_BUY_PATH = path.join(AUDIO_FOLDER, "buy_sound.wav")
 
 LEVEL_DATA = []
 for file in listdir(LEVELS_FOLDER):
@@ -68,27 +78,29 @@ for file in listdir(LEVELS_FOLDER):
 with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
     ENEMY_DATA = json.load(data_file)
     for enemy in ENEMY_DATA:
-        ENEMY_DATA[enemy]["image"] = pg.image.load(path.join(ENEMIES_FOLDER, ENEMY_DATA[enemy]["image"]))
+        ENEMY_DATA[enemy]["image"] = pg.image.load(path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
+        ENEMY_DATA[enemy]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy))
 
 # load tower data
 with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
     TOWER_DATA = json.load(data_file)
     for tower in TOWER_DATA:
         for level in range(3):
-            TOWER_DATA[tower][level]["gun_image"] = pg.image.load(path.join(TOWERS_FOLDER, tower + "_gun" + str(level) + ".png"))
-            TOWER_DATA[tower][level]["base_image"] = pg.image.load(path.join(TOWERS_FOLDER, tower + "_base" + str(level) + ".png"))
-            TOWER_DATA[tower][level]["bullet_image"] = pg.image.load(path.join(TOWERS_FOLDER, tower + "_bullet" + str(level) + ".png"))
+            TOWER_DATA[tower][level]["gun_image"] = pg.image.load(path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(level) + ".png"))
+            TOWER_DATA[tower][level]["base_image"] = pg.image.load(path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(level) + ".png"))
+            TOWER_DATA[tower][level]["bullet_image"] = pg.image.load(path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(level) + ".png"))
+            TOWER_DATA[tower][level]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower))
             temp_base = TOWER_DATA[tower][level]["base_image"].copy()
             temp_base.blit(TOWER_DATA[tower][level]["gun_image"], TOWER_DATA[tower][level]["gun_image"].get_rect(center = TOWER_DATA[tower][level]["base_image"].get_rect().center))
             TOWER_DATA[tower][level]["image"] = temp_base
-
+            
 # load path images
-PATH_VERTICAL_IMG = pg.image.load(path.join(PATH_FOLDER, "vertical.png"))
-PATH_HORIZONTAL_IMG = pg.image.load(path.join(PATH_FOLDER, "horizontal.png"))
-PATH_CORNER1_IMG = pg.image.load(path.join(PATH_FOLDER, "corner1.png"))
-PATH_CORNER2_IMG = pg.image.load(path.join(PATH_FOLDER, "corner2.png"))
-PATH_CORNER3_IMG = pg.image.load(path.join(PATH_FOLDER, "corner3.png"))
-PATH_CORNER4_IMG = pg.image.load(path.join(PATH_FOLDER, "corner4.png"))
+PATH_VERTICAL_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "vertical.png"))
+PATH_HORIZONTAL_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "horizontal.png"))
+PATH_CORNER1_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner1.png"))
+PATH_CORNER2_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner2.png"))
+PATH_CORNER3_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner3.png"))
+PATH_CORNER4_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner4.png"))
 
 # load other images
 START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
@@ -100,11 +112,11 @@ BACK_BTN_IMGS = [[None, None], [None, None]]
 
 for i, to_concat_1 in enumerate(["", "_lost"]):
     for j, to_concat_2 in enumerate(["", "_hover"]):
-        RESTART_BTN_IMGS[i][j] = pg.image.load(path.join(GAME_OVER_FOLDER, "restart_btn{}{}.png".format(to_concat_1, to_concat_2)))
-        BACK_BTN_IMGS[i][j] = pg.image.load(path.join(GAME_OVER_FOLDER, "back_btn{}{}.png".format(to_concat_1, to_concat_2)))
+        RESTART_BTN_IMGS[i][j] = pg.image.load(path.join(GAME_OVER_IMG_FOLDER, "restart_btn{}{}.png".format(to_concat_1, to_concat_2)))
+        BACK_BTN_IMGS[i][j] = pg.image.load(path.join(GAME_OVER_IMG_FOLDER, "back_btn{}{}.png".format(to_concat_1, to_concat_2)))
         
-HEART_MONITOR_NORMAL_IMG = pg.image.load(path.join(GAME_OVER_FOLDER, "heart_monitor_normal.png"))
-HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_OVER_FOLDER, "heart_monitor_flatline.png"))
+HEART_MONITOR_NORMAL_IMG = pg.image.load(path.join(GAME_OVER_IMG_FOLDER, "heart_monitor_normal.png"))
+HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_OVER_IMG_FOLDER, "heart_monitor_flatline.png"))
 
 # load fonts path
 GAME_OVER_FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")

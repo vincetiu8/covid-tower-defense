@@ -19,6 +19,7 @@ class Enemy(pg.sprite.Sprite):
         self.speed = data["speed"]
         self.dropped_protein = data["protein"]
         self.raw_image = data["image"]
+        self.sound = pg.mixer.Sound(data["death_sound_path"])
         
         self.image = data["image"].copy()
         self.image_size = self.image.get_size()[0]
@@ -34,8 +35,10 @@ class Enemy(pg.sprite.Sprite):
         
         self.recreate_path()
 
+
     def update(self):
         if (self.hp <= 0):
+            self.sound.play()
             self.game.protein += self.dropped_protein
             self.kill()
             return

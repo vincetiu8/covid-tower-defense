@@ -11,12 +11,10 @@ class GameOver(pg.Surface):
         self.restart_rect = pg.Rect(250, 400, RESTART_BTN_IMGS[0][0].get_width(), RESTART_BTN_IMGS[0][0].get_height())
         self.back_rect = pg.Rect(700, 400, BACK_BTN_IMGS[0][0].get_width(), BACK_BTN_IMGS[0][0].get_height())
         
-        self.heart_beep_sfx = pg.mixer.Sound(path.join(AUDIO_FOLDER, "heart_beep.wav"))
-        self.flatline_sfx = pg.mixer.Sound(path.join(AUDIO_FOLDER, "flatline.wav"))
-        self.heart_beep_sfx.set_volume(0.6)
-        self.flatline_sfx.set_volume(0.6)
-        
         self.circle_cache = {}
+        
+        self.heart_beep = pg.mixer.Sound(AUDIO_HEART_BEEP_PATH)
+        self.flatline = pg.mixer.Sound(AUDIO_FLATLINE_PATH)
         
         self.text_1 = None
         self.text_2 = None
@@ -37,13 +35,13 @@ class GameOver(pg.Surface):
             play_beep_x = play_beep_x[:2]
         
         if self.heartbeat_x in play_beep_x:
-            self.heart_beep_sfx.play()
+            self.heart_beep.play()
         elif self.heartbeat_x == play_flatline_x:
-            self.flatline_sfx.play()
+            self.flatline.play()
             
     def stop_sfx(self):
-        self.heart_beep_sfx.stop()
-        self.flatline_sfx.stop()
+        self.heart_beep.stop()
+        self.flatline.stop()
     
     def draw(self):
         self.fill(BLACK)

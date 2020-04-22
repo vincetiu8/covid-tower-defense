@@ -5,7 +5,7 @@
     "waves": [
         {
             "enemy_type": [
-                "common cold"
+                "common_cold"
             ],
             "enemy_count": [
                 20
@@ -19,8 +19,8 @@
         },
         {
             "enemy_type": [
-                "hepatitis a",
-                "common cold"
+                "hepatitis_a",
+                "common_cold"
             ],
             "enemy_count": [
                 10,
@@ -38,7 +38,7 @@
         {
             "enemy_type": [
                 "coronavirus",
-                "common cold"
+                "common_cold"
             ],
             "enemy_count": [
                 5,
