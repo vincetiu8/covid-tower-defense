@@ -147,18 +147,6 @@ class Camera():
         self.camera = self.camera.move(amount * (self.map_width - self.width - newx) / 2,
                                        amount * (self.map_height - self.height - newy))
 
-        minx = self.width - self.map_width * self.current_zoom
-        miny = self.height - self.map_height * self.current_zoom
-        self.camera.x = clamp(self.camera.x, minx, 0)
-        self.camera.y = clamp(self.camera.y, miny, 0)
-
-        if (self.current_zoom < self.critical_ratio):
-            if self.short_width:
-                self.camera.x = (self.width - self.map_width * self.current_zoom) / 2
-
-            else:
-                self.camera.y = (self.height - self.map_height * self.current_zoom) / 2
-
 
     def zoom(self, amount, pos):
         if (amount > 0 and self.current_zoom >= self.minzoom + 1 or amount < 0 and self.current_zoom <= self.minzoom):
