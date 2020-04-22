@@ -61,6 +61,7 @@ RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_IMG_FOLDER, "le
 # Audio
 AUDIO_HEART_BEEP_PATH = path.join(GAME_OVER_AUD_FOLDER, "heart_beep.wav")
 AUDIO_FLATLINE_PATH = path.join(GAME_OVER_AUD_FOLDER, "flatline.wav")
+AUDIO_BUY_PATH = path.join(AUDIO_FOLDER, "buy_sound.wav")
 
 LEVEL_DATA = []
 for file in listdir(LEVELS_FOLDER):
