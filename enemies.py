@@ -88,6 +88,7 @@ class Enemy(pg.sprite.Sprite):
 
     def load_next_node(self):
         if self.path == False:
+            raise ValueError(self.rect)
             print("PATHFINDING ERROR") # This should never happen
             self.kill()
             return

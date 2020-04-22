@@ -15,6 +15,7 @@ class Pathfinder():
 
     def astar(self, aray, start, goals):
         self.map[0] = numpy.array(aray)
+        self.map[0][start[0][0]][start[0][1]] = 0
 
         close_set = set()
         came_from = {}
