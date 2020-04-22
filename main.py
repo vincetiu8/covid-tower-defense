@@ -7,7 +7,7 @@ from ui import *
 from sprites import *
 from tilemap import *
 from towers import *
-from game_over import *
+from game_stop import *
 
 class Main:
     def __init__(self):
@@ -27,7 +27,7 @@ class Main:
             self.draw()
 
     def run_game(self):
-        self.game_over = None
+        self.game_stop = None
         
         while self.playing:
             self.events()
@@ -56,20 +56,23 @@ class Main:
             self.game.draw()
         
         else:
-            if self.game_over == None:
-                self.game_over = GameOver(self.game.lives == 0, self.screen, self.game.get_cause_of_death())
+            if self.game_stop == None:
+                if self.game.paused:
+                    self.game_stop = Pause(self.screen)
+                else:
+                    self.game_stop = GameOver(self.game.lives <= 0, self.screen, self.game.get_cause_of_death())
                 
-            if self.game_over.is_done_fading():
-                self.game_over.draw()
+            if self.game_stop.is_done_fading():
+                self.game_stop.draw()
             else:
                 self.game.draw()
-                self.game_over.draw()
+                self.game_stop.draw()
             
         pg.display.flip()
 
     def events(self):
         for event in pg.event.get():
-            if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+            if event.type == pg.QUIT:
                 self.quit()
 
             elif not self.started_game:
@@ -85,15 +88,17 @@ class Main:
                     self.game.event(event)
 
                 else:
-                    result = self.game_over.event(event)
-                    
-                    if result == "restart":
-                        self.playing = True
-                        self.game.playing = True
-                        self.game.new()
-                    elif result == "back to level select":
-                        self.started_game = False
+                    if self.game_stop.can_register_clicks():
+                        result = self.game_stop.event(event)
                         
+                        if result == "restart":
+                            self.playing = True
+                            self.game.new()
+                        elif result == "back to level select":
+                            self.started_game = False
+                        elif result == "resume":
+                            self.playing = True
+                            self.game.resume()
 
     def quit(self):
         pg.quit()
@@ -245,9 +250,9 @@ class Game:
         self.lives = LIVES
         
         self.wave = 0 # only updated at the end of new_wave()
-        
-        self.game_over_counter = 0 # for animating game over and win screens
+        self.paused = False
         self.cause_of_death = "IB"
+        
         self.map.clear_map()
         self.goals = []
         self.buy_sound = pg.mixer.Sound(AUDIO_BUY_PATH)
@@ -299,10 +304,16 @@ class Game:
         self.make_stripped_path()
         self.draw_tower_bases()
         self.ui = UI(self, 200, 10)
+        
+    def resume(self):
+        self.paused = False
+        
+        for enemy in self.enemies:
+            enemy.update_last_move()
 
     def update(self):
         # update portion of the game loop
-        if (self.lives <= 0):
+        if (self.lives <= 0 or self.paused):
             return False
         
         for start in self.starts:
@@ -538,6 +549,9 @@ class Game:
 
             elif event.button == 5:
                 self.camera.zoom(-0.05, event.pos)
+                
+        if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+            self.paused = True
 
 # create the game object
 g = Main()
