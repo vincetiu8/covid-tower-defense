@@ -57,7 +57,7 @@ class Main:
         
         else:
             if self.game_over == None:
-                self.game_over = GameOver(self.game.lives == 0, self.screen, self.game.get_cause_of_death())
+                self.game_over = GameOver(self.game.lives <= 0, self.screen, self.game.get_cause_of_death())
                 
             if self.game_over.is_done_fading():
                 self.game_over.draw()
