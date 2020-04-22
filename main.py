@@ -291,7 +291,7 @@ class Game:
         self.path = self.pathfinder.astar(self.map.get_map(), ((int(self.starts[0].x / self.map.tilesize), int(self.starts[0].y / self.map.tilesize)), 0),
                           (int(self.goal.x / self.map.tilesize), int(self.goal.y / self.map.tilesize)))
         self.make_stripped_path()
-
+        self.draw_tower_bases()
         self.ui = UI(self, 200, 10)
 
     def update(self):
@@ -343,9 +343,9 @@ class Game:
         pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.goal.rect))
 
         self.screen.blit(self.camera.apply_image(self.path_surf), self.camera.apply_rect(self.path_surf.get_rect()))
+        self.screen.blit(self.camera.apply_image(self.tower_bases_surf), self.camera.apply_rect(self.tower_bases_surf.get_rect()))
 
         for tower in self.towers:
-            self.screen.blit(self.camera.apply_image(tower.base_image), self.camera.apply_rect(tower.rect))
             rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             self.screen.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
@@ -407,7 +407,13 @@ class Game:
                     print("PATH DRAWING ERROR") # this should never occur
 
                 self.path_surf.blit(image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize))
-    
+
+    def draw_tower_bases(self):
+        self.tower_bases_surf = pg.Surface((self.screen.get_width(), self.screen.get_height()), pg.SRCALPHA)
+        self.tower_bases_surf.fill((0, 0, 0, 0))
+        for tower in self.towers:
+            self.tower_bases_surf.blit(tower.base_image, tower.rect)
+
     def draw_tower_preview(self):
         mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
         towerxy = (round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
@@ -498,6 +504,7 @@ class Game:
                     self.map.add_tower(x_coord, y_coord, new_tower)
                     self.protein -= TOWER_DATA[self.current_tower][0]["upgrade_cost"]
                     self.current_tower = None
+                    self.draw_tower_bases()
                     for enemy  in self.enemies:
                         enemy.recreate_path()
                 else:  # reverts tile map to previous state if no enemy path could be found
