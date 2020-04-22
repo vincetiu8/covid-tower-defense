@@ -205,7 +205,7 @@ class GameOver(GameStop):
         self.alpha_speed = 3
         
         if self.lost:
-            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death.title())
+            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death)
         else:
             self.init_text("YOU SURVIVED", "But the infection still continues...")
         

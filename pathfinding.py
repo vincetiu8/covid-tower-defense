@@ -13,29 +13,29 @@ class Pathfinder():
         self.map[-1] = numpy.array(vein_entrances)
         self.neighbors = [(0, 1, 0), (0, -1, 0), (1, 0, 0), (-1, 0, 0), (0, 0, -1), (0, 0, 1)]
 
-    def astar(self, aray, start, goal):
+    def astar(self, aray, start, goals):
         self.map[0] = numpy.array(aray)
+        self.map[0][start[0][0]][start[0][1]] = 0
 
         close_set = set()
         came_from = {}
 
-        gscore = {start: 0}
-        fscore = {start: heuristic(start[0], goal)}
         oheap = []
-
-        heappush(oheap, (fscore[start], start))
+        fscore = {}
+        for goal in goals:
+            fscore[goal] = heuristic(start[0], goal[0])
+            heappush(oheap, (fscore[goal], goal))
 
         while oheap:
-
             current = heappop(oheap)[1]
 
-            if current[0] == goal:
+            if current == start:
                 data = []
                 while current in came_from:
                     data.append(current)
                     current = came_from[current]
                 data.append(current)
-                return data[::-1]
+                return data
 
             close_set.add(current)
 
@@ -44,7 +44,7 @@ class Pathfinder():
                 if abs(neighbor[1]) > 2:
                     continue
                 cur_array = self.map[neighbor[1]]
-                tentative_g_score = gscore[current] + heuristic(current[0], neighbor[0])
+                tentative_g_score = fscore[current] + heuristic(current[0], neighbor[0])
                 if 0 <= neighbor[0][0] < cur_array.shape[0]:
                     if 0 <= neighbor[0][1] < cur_array.shape[1]:
                         if cur_array[neighbor[0][0]][neighbor[0][1]] == 1:
@@ -56,13 +56,12 @@ class Pathfinder():
                     # array bound x walls
                     continue
 
-                if neighbor in close_set and tentative_g_score >= gscore.get(neighbor[0], 0):
+                if neighbor in close_set and tentative_g_score >= fscore.get(neighbor[0], 0):
                     continue
 
-                if tentative_g_score < gscore.get(neighbor[0], 0) or neighbor not in [i[1] for i in oheap]:
+                if tentative_g_score < fscore.get(neighbor[0], 0) or neighbor not in [i[1] for i in oheap]:
                     came_from[neighbor] = current
-                    gscore[neighbor] = tentative_g_score
-                    fscore[neighbor] = tentative_g_score + heuristic(neighbor[0], goal)
+                    fscore[neighbor] = tentative_g_score
                     heappush(oheap, (fscore[neighbor], neighbor))
 
         return False
