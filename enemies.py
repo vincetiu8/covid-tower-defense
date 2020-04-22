@@ -47,7 +47,7 @@ class Enemy(pg.sprite.Sprite):
             return
 
         passed_time = (pg.time.get_ticks() - self.last_move) / 1000
-        self.last_move = pg.time.get_ticks()
+        self.update_last_move()
 
         if (self.maximising != 0 and self.image.get_size()[0] + self.maximising > 0 and self.image.get_size()[0] + self.maximising <= self.rect.w):
             self.image_size += self.maximising
@@ -80,6 +80,9 @@ class Enemy(pg.sprite.Sprite):
 
         if (self.new_node_rect.collidepoint(self.rect.topleft) and self.new_node_rect.collidepoint(self.rect.bottomright)):
             self.load_next_node()
+            
+    def update_last_move(self):
+        self.last_move = pg.time.get_ticks()
 
     def get_hp_rect(self):
         h = 5

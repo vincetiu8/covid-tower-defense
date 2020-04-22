@@ -28,7 +28,6 @@ HALF_RED = pg.Color(255, 0, 0, 127)
 FPS = 60
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
-SPAWN_RATE = 1
 
 # looks for img_folder and map_folder in the same folder as the code
 GAME_FOLDER = path.dirname(path.abspath(__file__))
@@ -42,11 +41,11 @@ PATH_IMG_FOLDER = path.join(IMG_FOLDER, "path")
 UI_IMG_FOLDER = path.join(IMG_FOLDER, "ui")
 ENEMIES_IMG_FOLDER = path.join(IMG_FOLDER, "enemies")
 TOWERS_IMG_FOLDER = path.join(IMG_FOLDER, "towers")
-GAME_OVER_IMG_FOLDER = path.join(IMG_FOLDER, "game_over")
+GAME_STOP_IMG_FOLDER = path.join(IMG_FOLDER, "game_stop")
 
 ENEMIES_AUD_FOLDER = path.join(AUDIO_FOLDER, "enemies")
 TOWERS_AUD_FOLDER = path.join(AUDIO_FOLDER, "towers")
-GAME_OVER_AUD_FOLDER = path.join(AUDIO_FOLDER, "game_over")
+GAME_STOP_AUD_FOLDER = path.join(AUDIO_FOLDER, "game_stop")
 
 MENU_OFFSET = 10
 MENU_TEXT_SIZE = 25
@@ -59,8 +58,8 @@ RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_IMG_FOLDER, "le
 
  # Initializing the mixer in the settings file lol but rn i don't see a better way.
 # Audio
-AUDIO_HEART_BEEP_PATH = path.join(GAME_OVER_AUD_FOLDER, "heart_beep.wav")
-AUDIO_FLATLINE_PATH = path.join(GAME_OVER_AUD_FOLDER, "flatline.wav")
+AUDIO_HEART_BEEP_PATH = path.join(GAME_STOP_AUD_FOLDER, "heart_beep.wav")
+AUDIO_FLATLINE_PATH = path.join(GAME_STOP_AUD_FOLDER, "flatline.wav")
 AUDIO_BUY_PATH = path.join(AUDIO_FOLDER, "buy_sound.wav")
 
 LEVEL_DATA = []
@@ -110,14 +109,18 @@ LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
 # load game over images
 RESTART_BTN_IMGS = [[None, None], [None, None]]
 BACK_BTN_IMGS = [[None, None], [None, None]]
+RESUME_BTN_IMGS = [None, None]
 
 for i, to_concat_1 in enumerate(["", "_lost"]):
     for j, to_concat_2 in enumerate(["", "_hover"]):
-        RESTART_BTN_IMGS[i][j] = pg.image.load(path.join(GAME_OVER_IMG_FOLDER, "restart_btn{}{}.png".format(to_concat_1, to_concat_2)))
-        BACK_BTN_IMGS[i][j] = pg.image.load(path.join(GAME_OVER_IMG_FOLDER, "back_btn{}{}.png".format(to_concat_1, to_concat_2)))
+        RESTART_BTN_IMGS[i][j] = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "restart_btn{}{}.png".format(to_concat_1, to_concat_2)))
+        BACK_BTN_IMGS[i][j] = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "back_btn{}{}.png".format(to_concat_1, to_concat_2)))
         
-HEART_MONITOR_NORMAL_IMG = pg.image.load(path.join(GAME_OVER_IMG_FOLDER, "heart_monitor_normal.png"))
-HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_OVER_IMG_FOLDER, "heart_monitor_flatline.png"))
+        if i == 0:
+            RESUME_BTN_IMGS[j] = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "resume_btn{}.png".format(to_concat_2)))
+        
+HEART_MONITOR_NORMAL_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "heart_monitor_normal.png"))
+HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "heart_monitor_flatline.png"))
 
 # load fonts path
-GAME_OVER_FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
+GAME_STOP_FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
