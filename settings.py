@@ -57,12 +57,10 @@ PROTEIN_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "protein.png"))
 LEFT_ARROW_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "left.png"))
 RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_IMG_FOLDER, "left.png")).copy(), 180)
 
-pg.mixer.init() # Initializing the mixer in the settings file lol but rn i don't see a better way.
+ # Initializing the mixer in the settings file lol but rn i don't see a better way.
 # Audio
-AUDIO_HEART_BEEP = pg.mixer.Sound(path.join(GAME_OVER_AUD_FOLDER, "heart_beep.wav"))
-AUDIO_HEART_BEEP.set_volume(0.6)
-AUDIO_FLATLINE = pg.mixer.Sound(path.join(GAME_OVER_AUD_FOLDER, "flatline.wav"))
-AUDIO_FLATLINE.set_volume(0.6)
+AUDIO_HEART_BEEP_PATH = path.join(GAME_OVER_AUD_FOLDER, "heart_beep.wav")
+AUDIO_FLATLINE_PATH = path.join(GAME_OVER_AUD_FOLDER, "flatline.wav")
 
 LEVEL_DATA = []
 for file in listdir(LEVELS_FOLDER):
@@ -81,7 +79,7 @@ with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
     ENEMY_DATA = json.load(data_file)
     for enemy in ENEMY_DATA:
         ENEMY_DATA[enemy]["image"] = pg.image.load(path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
-        ENEMY_DATA[enemy]["death_sound"] = pg.mixer.Sound(path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy)))
+        ENEMY_DATA[enemy]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy))
 
 # load tower data
 with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
@@ -91,7 +89,7 @@ with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
             TOWER_DATA[tower][level]["gun_image"] = pg.image.load(path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(level) + ".png"))
             TOWER_DATA[tower][level]["base_image"] = pg.image.load(path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(level) + ".png"))
             TOWER_DATA[tower][level]["bullet_image"] = pg.image.load(path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(level) + ".png"))
-            TOWER_DATA[tower][level]["shoot_sound"] = pg.mixer.Sound(path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower)))
+            TOWER_DATA[tower][level]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower))
 
 # load path images
 PATH_VERTICAL_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "vertical.png"))

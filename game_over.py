@@ -13,6 +13,9 @@ class GameOver(pg.Surface):
         
         self.circle_cache = {}
         
+        self.heart_beep = pg.mixer.Sound(AUDIO_HEART_BEEP_PATH)
+        self.flatline = pg.mixer.Sound(AUDIO_FLATLINE_PATH)
+        
         self.text_1 = None
         self.text_2 = None
         self.restart_text = None
@@ -32,13 +35,13 @@ class GameOver(pg.Surface):
             play_beep_x = play_beep_x[:2]
         
         if self.heartbeat_x in play_beep_x:
-            AUDIO_HEART_BEEP.play()
+            self.heart_beep.play()
         elif self.heartbeat_x == play_flatline_x:
-            AUDIO_FLATLINE.play()
+            self.flatline.play()
             
     def stop_sfx(self):
-        AUDIO_HEART_BEEP.stop()
-        AUDIO_FLATLINE.stop()
+        self.heart_beep.stop()
+        self.flatline.stop()
     
     def draw(self):
         self.fill(BLACK)

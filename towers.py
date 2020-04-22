@@ -71,6 +71,7 @@ class Tower(Obstacle):
         self.directions = data["directions"]
         self.rotating = data["rotating"]
         self.tracking = data["tracking"]
+        self.sound = pg.mixer.Sound(data["shoot_sound_path"])
 
         if (self.stage < 2):
             data = TOWER_DATA[self.name][self.stage + 1]
@@ -109,6 +110,7 @@ class Tower(Obstacle):
                     else:
                         Projectile(self.game, self.x, self.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, rotation, self.damage)
 
+                self.sound.play()
                 self.shot = True
                 self.next_spawn = pg.time.get_ticks() + self.bullet_spawn_speed * 1000
 
