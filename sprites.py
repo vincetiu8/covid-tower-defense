@@ -44,8 +44,8 @@ class Start():
         if (pg.time.get_ticks() >= self.next_spawn and self.enemy_count > 0):
             self.game.enemies.add(Enemy(
                 game = self.game,
-                x = self.rect.x + random.randint(0, self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width()),
-                y = self.rect.y + random.randint(0, self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height()),
+                x = self.rect.x + random.randrange(1, self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width()),
+                y = self.rect.y + random.randrange(1, self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height()),
                 name = self.enemy_type))
             self.next_spawn = pg.time.get_ticks() + self.spawn_rate * 1000
             self.enemy_count -= 1

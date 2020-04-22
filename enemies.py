@@ -36,8 +36,8 @@ class Enemy(pg.sprite.Sprite):
 
     def update(self):
         if (self.hp <= 0):
-            self.kill()
             self.game.protein += self.dropped_protein
+            self.kill()
             return
 
         passed_time = (pg.time.get_ticks() - self.last_move) / 1000
@@ -87,13 +87,18 @@ class Enemy(pg.sprite.Sprite):
         self.load_next_node()
 
     def load_next_node(self):
-        if (self.path == False or len(self.path) == 0):
-            self.game.lives -= 1
+        if self.path == False:
+            print("PATHFINDING ERROR") # This should never happen
             self.kill()
+            return
+
+        if (len(self.path) == 0):
+            self.game.lives -= 1
             
             if self.game.lives == 0:
                 self.game.cause_of_death = self.name
-                
+
+            self.kill()
             return
         
         self.end_dist = len(self.path)
