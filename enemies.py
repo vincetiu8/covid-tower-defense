@@ -4,17 +4,14 @@ import random
 from tilemap import tile_from_xcoords, tile_from_coords
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, game, x, y, end_x, end_y, name):
+    def __init__(self, game, x, y, name):
         self.groups = game.enemies
         super().__init__()
         
         self.game = game
         self.screen = game.screen
-        self.end_x = end_x
-        self.end_y = end_y
         self.name = name
         self.last_move = pg.time.get_ticks()
-        self.path = game.path.copy()
         
         data = ENEMY_DATA[name]
         self.name = name
@@ -32,18 +29,18 @@ class Enemy(pg.sprite.Sprite):
         self.direction = [1 if random.random() < 0.5 else -1, 1 if random.random() < 0.5 else -1]
         self.carry_x = 0
         self.carry_y = 0
-        self.new_node = ((0, 0), 0)
+        self.new_node = ((tile_from_coords(x, self.game.map.tilesize), tile_from_coords(y, self.game.map.tilesize)), 0)
         self.maximising = 0
         self.damagable = True
         
-        self.load_next_node()
+        self.recreate_path()
 
 
     def update(self):
         if (self.hp <= 0):
             self.sound.play()
-            self.kill()
             self.game.protein += self.dropped_protein
+            self.kill()
             return
 
         passed_time = (pg.time.get_ticks() - self.last_move) / 1000
@@ -89,17 +86,22 @@ class Enemy(pg.sprite.Sprite):
         return pg.Rect(x, y, w, h)
 
     def recreate_path(self):
-        self.path = self.game.pathfinder.astar(self.game.map.get_map(), (self.new_node[0], self.new_node[1]), (self.end_x, self.end_y))
+        self.path = self.game.pathfinder.astar(self.game.map.get_map(), (self.new_node[0], self.new_node[1]), self.game.goals)
         self.load_next_node()
 
     def load_next_node(self):
+        if self.path == False:
+            print("PATHFINDING ERROR") # This should never happen
+            self.kill()
+            return
+
         if (len(self.path) == 0):
             self.game.lives -= 1
-            self.kill()
             
             if self.game.lives == 0:
                 self.game.cause_of_death = self.name
-                
+
+            self.kill()
             return
         
         self.end_dist = len(self.path)
