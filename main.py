@@ -12,7 +12,6 @@ from game_over import *
 class Main:
     def __init__(self):
         pg.init()
-        pg.mixer.init()
         pg.key.set_repeat(500, 100)
         self.clock = pg.time.Clock()
         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
