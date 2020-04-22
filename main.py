@@ -247,7 +247,8 @@ class Game:
         
         self.game_over_counter = 0 # for animating game over and win screens
         self.cause_of_death = "IB"
-        
+        self.buy_sound = pg.mixer.Sound(AUDIO_BUY_PATH)
+
         self.reset_map()
 
         width = round(self.map.width / self.map.tilesize)
@@ -504,8 +505,10 @@ class Game:
                     self.map.add_tower(x_coord, y_coord, new_tower)
                     self.protein -= TOWER_DATA[self.current_tower][0]["upgrade_cost"]
                     self.current_tower = None
+                    
+                    self.buy_sound.play()
                     self.draw_tower_bases()
-                    for enemy  in self.enemies:
+                    for enemy in self.enemies:
                         enemy.recreate_path()
                 else:  # reverts tile map to previous state if no enemy path could be found
                     self.map.change_node(x_coord, y_coord, 0)
