@@ -53,6 +53,12 @@ class Start():
             
             if self.enemy_count == 0:
                 self.done_spawning = True
+                
+    def pause_spawn_timer(self):
+        self.spawn_diff = self.next_spawn - pg.time.get_ticks()
+    
+    def resume_spawn_timer(self):
+        self.next_spawn = pg.time.get_ticks() + self.spawn_diff
     
     def is_done_spawning(self):
         return self.done_spawning

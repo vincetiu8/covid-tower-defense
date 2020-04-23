@@ -310,10 +310,17 @@ class Game:
         
         for enemy in self.enemies:
             enemy.update_last_move()
+        for start in self.starts:
+            start.resume_spawn_timer()
 
     def update(self):
         # update portion of the game loop
-        if (self.lives <= 0 or self.paused):
+        if (self.lives <= 0):
+            return False
+        
+        if self.paused:
+            for start in self.starts:
+                start.pause_spawn_timer()
             return False
         
         for start in self.starts:
