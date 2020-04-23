@@ -544,17 +544,14 @@ class Game:
                     enemy.recreate_path()
 
             elif event.button == 3:
-                tile_map = self.map.get_map()
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
                 self.map.remove_tower(x_coord, y_coord)
-                self.path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
-                                        tile_from_xcoords(self.starts[0].y, self.map.tilesize)), 0),
-                            (tile_from_xcoords(self.goal.x, self.map.tilesize),
-                              tile_from_xcoords(self.goal.y, self.map.tilesize)))
+                self.pathfinder.clear_nodes(self.map.get_map())
                 self.make_stripped_path()
+                self.draw_tower_bases()
                 for enemy in self.enemies:
                     enemy.recreate_path()
 
