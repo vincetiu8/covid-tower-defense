@@ -394,7 +394,6 @@ class Game:
     def make_stripped_path(self):
         self.path_surf = pg.Surface((self.screen.get_width(), self.screen.get_height()), pg.SRCALPHA)
         self.path_surf.fill((0, 0, 0, 0))
-        map = self.map.get_map()
 
         done = []
         for start in self.starts:
@@ -405,7 +404,7 @@ class Game:
             ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
             for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
                 for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
-                    path = self.pathfinder.astar(map, ((xpos + x, ypos + y), 0), self.goals)
+                    path = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals)
                     self.stripped_path = []
                     for i, node in enumerate(path):
                         if (i < len(path) - 1):
