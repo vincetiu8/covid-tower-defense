@@ -67,7 +67,7 @@
 </data>
  </layer>
  <objectgroup id="4" name="obstacles">
-  <object id="27" name="start" x="0" y="420" width="42" height="42"/>
+  <object id="27" name="start0" x="0" y="420" width="42" height="42"/>
   <object id="36" name="goal" x="630" y="84" width="42.5" height="42.5"/>
   <object id="37" name="wall" x="0" y="462" width="672" height="42"/>
   <object id="38" name="wall" x="630" y="126" width="42" height="336"/>

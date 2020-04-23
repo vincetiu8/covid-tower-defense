@@ -4,6 +4,9 @@
     "difficulty": 4,
     "waves": [
         {
+            "start": [
+                0
+            ],
             "enemy_type": [
                 "common_cold"
             ],
@@ -11,13 +14,18 @@
                 500
             ],
             "spawn_delay": [
-                0
+                7
             ],
             "spawn_rate": [
                 0.05
             ]
         },
         {
+            "start": [
+                0,
+                0,
+                0
+            ],
             "enemy_type": [
                 "coronavirus",
                 "hepatitis_a",
@@ -40,6 +48,9 @@
             ]
         },
         {
+            "start": [
+                0
+            ],
             "enemy_type": [
                 "coronavirus"
             ],
