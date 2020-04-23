@@ -300,7 +300,8 @@ class Game:
         self.new_wave()
         self.pathfinder = Pathfinder(arteries, artery_entrances, veins, vein_entrances)
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
-        self.path = self.pathfinder.astar(self.map.get_map(), ((int(self.starts[0].rect.x / self.map.tilesize), int(self.starts[0].rect.y / self.map.tilesize)), 0), self.goals)
+        self.pathfinder.clear_nodes(self.map.get_map())
+        self.path = self.pathfinder.astar(((int(self.starts[0].rect.x / self.map.tilesize), int(self.starts[0].rect.y / self.map.tilesize)), 0), self.goals)
         self.make_stripped_path()
         self.draw_tower_bases()
         self.ui = UI(self, 200, 10)
@@ -446,7 +447,7 @@ class Game:
                 tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
             elif validity == -1:
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
-                result = self.pathfinder.astar(self.map.get_map(), ((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
+                result = self.pathfinder.astar(((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
                                             tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
                                 self.goals)
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
@@ -486,12 +487,10 @@ class Game:
                             self.current_tower = self.available_towers[i]
                             return
 
-                tile_map = self.map.get_map()
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
-                val = self.map.get_node(x_coord, y_coord)
                 if self.map.get_node(x_coord, y_coord) == 1:
                     self.map.upgrade_tower(x_coord, y_coord) # don't need to upgrade tower if clicking on empty space
                     return
@@ -504,8 +503,9 @@ class Game:
 
                 if self.map.change_node(x_coord, y_coord, 1) == False:
                     return
-                
-                path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
+
+                self.pathfinder.clear_nodes(self.map.get_map())
+                path = self.pathfinder.astar(((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
                                         tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
                             self.goals)
                                     
@@ -528,6 +528,7 @@ class Game:
                         enemy.recreate_path()
                 else:  # reverts tile map to previous state if no enemy path could be found
                     self.map.change_node(x_coord, y_coord, 0)
+                    self.pathfinder.clear_nodes(self.map.get_map())
 
             elif event.button == 3:
                 tile_map = self.map.get_map()
