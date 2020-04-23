@@ -73,8 +73,8 @@ class TiledMap:
         elif self.tower_map[x][y] == None:
             return False
         self.tower_map[x][y].kill()
-        self.reset_valid_tower_tiles()
         self.change_node(x, y, 0)
+        self.reset_valid_tower_tiles()
 
     def get_map(self):
         return self.map

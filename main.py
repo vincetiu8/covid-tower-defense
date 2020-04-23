@@ -454,16 +454,18 @@ class Game:
         if pos != -1:
             tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower][0]["image"].copy())
             validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
-            
+
             if validity == 1:
                 tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
             elif validity == -1:
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
+                self.pathfinder.clear_nodes(self.map.get_map())
                 result = self.pathfinder.astar(((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
                                             tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
                                 self.goals)
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
-                    
+                self.pathfinder.clear_nodes(self.map.get_map())
+
                 if result != False:
                     tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
                     self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
