@@ -19,6 +19,7 @@ class Main:
         self.menu = Menu(self.screen)
         self.playing = False
         self.started_game = False
+        self.game_surf = None # only used to draw static game screen when fading into game_stop screens
         
     def run_pregame(self):
         while not self.started_game:
@@ -53,20 +54,27 @@ class Main:
             self.menu.draw()
             
         elif self.playing:
-            self.game.draw()
+            self.game.draw(self.screen)
         
         else:
+            if self.game_surf == None:
+                self.game_surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+                self.game.draw(self.game_surf)
+                self.game.draw_tower_bases(self.game_surf)
+                
             if self.game_stop == None:
                 if self.game.paused:
-                    self.game_stop = Pause(self.screen)
+                    self.game_stop = Pause()
                 else:
-                    self.game_stop = GameOver(self.game.lives <= 0, self.screen, self.game.get_cause_of_death())
+                    self.game_stop = GameOver(self.game.lives <= 0, self.game.get_cause_of_death())
                 
             if self.game_stop.is_done_fading():
                 self.game_stop.draw()
+                self.screen.blit(self.game_stop, (0, 0))
             else:
-                self.game.draw()
                 self.game_stop.draw()
+                self.screen.blit(self.game_surf, (0, 0))
+                self.screen.blit(self.game_stop, (0, 0))
             
         pg.display.flip()
 
@@ -94,10 +102,13 @@ class Main:
                         if result == "restart":
                             self.playing = True
                             self.game.new()
+                            self.game_surf = None
                         elif result == "back to level select":
                             self.started_game = False
+                            self.game_surf = None
                         elif result == "resume":
                             self.playing = True
+                            self.game_surf = None
                             self.game.resume()
 
     def quit(self):
@@ -302,7 +313,7 @@ class Game:
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.path = self.pathfinder.astar(self.map.get_map(), ((int(self.starts[0].rect.x / self.map.tilesize), int(self.starts[0].rect.y / self.map.tilesize)), 0), self.goals)
         self.make_stripped_path()
-        self.draw_tower_bases()
+        self.draw_tower_bases(self.screen)
         self.ui = UI(self, 200, 10)
         
     def resume(self):
@@ -358,44 +369,46 @@ class Game:
 #         for y in range(0, self.map.height, self.map.tilesize):
 #             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
-    def draw(self):
-        self.screen.fill((0, 0, 0))
+    def draw(self, surface):
+        surface.fill((0, 0, 0))
 
-        self.screen.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
+        surface.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
         for start in self.starts:
-            pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(start.rect))
+            pg.draw.rect(surface, GREEN, self.camera.apply_rect(start.rect))
         for goal in self.goal_sprites:
-            pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(goal.rect))
+            pg.draw.rect(surface, GREEN, self.camera.apply_rect(goal.rect))
 
-        self.screen.blit(self.camera.apply_image(self.path_surf), self.camera.apply_rect(self.path_surf.get_rect()))
-        self.screen.blit(self.camera.apply_image(self.tower_bases_surf), self.camera.apply_rect(self.tower_bases_surf.get_rect()))
+        surface.blit(self.camera.apply_image(self.path_surf), self.camera.apply_rect(self.path_surf.get_rect()))
+        surface.blit(self.camera.apply_image(self.tower_bases_surf), self.camera.apply_rect(self.tower_bases_surf.get_rect()))
 
         for tower in self.towers:
             rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
-            self.screen.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
+            surface.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
 
         for enemy in self.enemies:
-            self.screen.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
-            pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
+            surface.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
+            pg.draw.rect(surface, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
 
         for projectile in self.projectiles:
-            self.screen.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
+            surface.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
 
         if self.current_tower != None:
-            self.draw_tower_preview()
+            self.draw_tower_preview(surface)
 
-        self.screen.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
+        surface.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
 
-        ui_pos = (self.screen.get_size()[0] - self.ui.offset, self.ui.offset)
+        ui_pos = (surface.get_size()[0] - self.ui.offset, self.ui.offset)
         if self.ui.active:
             ui = self.ui.ui
             ui_rect = ui.get_rect(topright = ui_pos)
-            self.screen.blit(ui, ui_rect)
-            self.screen.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright = ui_rect.topleft))
+            surface.blit(ui, ui_rect)
+            surface.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright = ui_rect.topleft))
         else:
-            self.screen.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = ui_pos))
+            surface.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = ui_pos))
+            
+        return surface
     
     def make_stripped_path(self):
         self.path_surf = pg.Surface((self.screen.get_width(), self.screen.get_height()), pg.SRCALPHA)
@@ -446,13 +459,13 @@ class Game:
 
                             self.path_surf.blit(image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize))
 
-    def draw_tower_bases(self):
-        self.tower_bases_surf = pg.Surface((self.screen.get_width(), self.screen.get_height()), pg.SRCALPHA)
+    def draw_tower_bases(self, surface):
+        self.tower_bases_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
         self.tower_bases_surf.fill((0, 0, 0, 0))
         for tower in self.towers:
             self.tower_bases_surf.blit(tower.base_image, tower.rect)
 
-    def draw_tower_preview(self):
+    def draw_tower_preview(self, surface):
         mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
         towerxy = (round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
         tower_tile = (tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
@@ -481,7 +494,7 @@ class Game:
                 tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
 
             tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower][0]["base_image"].get_size())
-            self.screen.blit(tower_img, self.camera.apply_rect(tower_pos))
+            surface.blit(tower_img, self.camera.apply_rect(tower_pos))
         
     def get_lives(self):
         return self.lives
@@ -544,7 +557,7 @@ class Game:
 
                 self.buy_sound.play()
                 self.make_stripped_path()
-                self.draw_tower_bases()
+                self.draw_tower_bases(self.screen)
                 for enemy in self.enemies:
                     enemy.recreate_path()
 

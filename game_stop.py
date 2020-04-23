@@ -1,10 +1,8 @@
 from settings import *
 
 class GameStop(pg.Surface):
-    def __init__(self, main_screen):
+    def __init__(self):
         super().__init__((SCREEN_WIDTH, SCREEN_HEIGHT))
-        
-        self.main_screen = main_screen
         
         self.restart_rect = pg.Rect(200, 400, RESTART_BTN_IMGS[0][0].get_width(), RESTART_BTN_IMGS[0][0].get_height())
         self.back_rect = pg.Rect(750, 400, BACK_BTN_IMGS[0][0].get_width(), BACK_BTN_IMGS[0][0].get_height())
@@ -32,7 +30,7 @@ class GameStop(pg.Surface):
         
         self.set_alpha(self.alpha)
         
-        self.main_screen.blit(self, (0, 0))
+        #self.main_screen.blit(self, (0, 0))
         
     def draw_grid(self):
         color = DARK_GREEN
@@ -145,8 +143,8 @@ class GameStop(pg.Surface):
         return False
 
 class Pause(GameStop):
-    def __init__(self, main_screen):
-        super().__init__(main_screen)
+    def __init__(self):
+        super().__init__()
         
         self.resume_rect = pg.Rect(500, 300, RESUME_BTN_IMGS[0].get_width(), RESUME_BTN_IMGS[0].get_height())
         self.resume_text = None
@@ -189,8 +187,8 @@ class Pause(GameStop):
         return result
         
 class GameOver(GameStop):
-    def __init__(self, lost, main_screen, cause_of_death):
-        super().__init__(main_screen)
+    def __init__(self, lost, cause_of_death):
+        super().__init__()
         
         self.lost = lost
         self.cause_of_death = cause_of_death
