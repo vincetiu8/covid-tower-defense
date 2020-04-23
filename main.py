@@ -252,7 +252,7 @@ class Game:
         self.wave = 0 # only updated at the end of new_wave()
         self.paused = False
         self.cause_of_death = "IB"
-        
+        self.start_data = []
         self.map.clear_map()
         self.goals = []
         self.buy_sound = pg.mixer.Sound(AUDIO_BUY_PATH)
@@ -265,8 +265,8 @@ class Game:
         vein_entrances = [[1 for row in range(height)] for col in range(width)]
 
         for tile_object in self.map.tmxdata.objects:
-            if tile_object.name == "start":
-                self.start_data = {"x": tile_object.x, "y": tile_object.y, "w": tile_object.width, "h": tile_object.height}
+            if "start" in tile_object.name:
+                self.start_data.insert(int(tile_object.name[5:]), {"x": tile_object.x, "y": tile_object.y, "w": tile_object.width, "h": tile_object.height})
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         self.map.set_valid_tower_tile(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
@@ -341,7 +341,7 @@ class Game:
         wave_data = self.level_data["waves"][self.wave]
                 
         for i in range(len(wave_data["enemy_type"])):
-            self.starts.append(Start(self, self.start_data["x"], self.start_data["y"], self.start_data["w"], self.start_data["h"], wave_data["enemy_type"][i], wave_data["enemy_count"][i], wave_data["spawn_delay"][i], wave_data["spawn_rate"][i]))
+            self.starts.append(Start(self, self.start_data[wave_data["start"][i]]["x"], self.start_data[wave_data["start"][i]]["y"], self.start_data[wave_data["start"][i]]["w"], self.start_data[wave_data["start"][i]]["h"], wave_data["enemy_type"][i], wave_data["enemy_count"][i], wave_data["spawn_delay"][i], wave_data["spawn_rate"][i]))
             
         self.wave += 1
 
@@ -356,7 +356,9 @@ class Game:
 
         self.screen.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
-        pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(self.starts[0].rect))
+        for start in self.starts:
+            print(start.rect)
+            pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(start.rect))
         for goal in self.goal_sprites:
             pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(goal.rect))
 
