@@ -311,7 +311,8 @@ class Game:
         self.new_wave()
         self.pathfinder = Pathfinder(arteries, artery_entrances, veins, vein_entrances)
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
-        self.path = self.pathfinder.astar(self.map.get_map(), ((int(self.starts[0].rect.x / self.map.tilesize), int(self.starts[0].rect.y / self.map.tilesize)), 0), self.goals)
+        self.pathfinder.clear_nodes(self.map.get_map())
+        self.path = self.pathfinder.astar(((int(self.starts[0].rect.x / self.map.tilesize), int(self.starts[0].rect.y / self.map.tilesize)), 0), self.goals)
         self.make_stripped_path()
         self.draw_tower_bases(self.screen)
         self.ui = UI(self, 200, 10)
@@ -413,7 +414,6 @@ class Game:
     def make_stripped_path(self):
         self.path_surf = pg.Surface((self.screen.get_width(), self.screen.get_height()), pg.SRCALPHA)
         self.path_surf.fill((0, 0, 0, 0))
-        map = self.map.get_map()
 
         done = []
         for start in self.starts:
@@ -424,7 +424,7 @@ class Game:
             ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
             for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
                 for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
-                    path = self.pathfinder.astar(map, ((xpos + x, ypos + y), 0), self.goals)
+                    path = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals)
                     self.stripped_path = []
                     for i, node in enumerate(path):
                         if (i < len(path) - 1):
@@ -474,16 +474,18 @@ class Game:
         if pos != -1:
             tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower][0]["image"].copy())
             validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
-            
+
             if validity == 1:
                 tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
             elif validity == -1:
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
-                result = self.pathfinder.astar(self.map.get_map(), ((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
+                self.pathfinder.clear_nodes(self.map.get_map())
+                result = self.pathfinder.astar(((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
                                             tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
                                 self.goals)
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
-                    
+                self.pathfinder.clear_nodes(self.map.get_map())
+
                 if result != False:
                     tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
                     self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
@@ -519,12 +521,10 @@ class Game:
                             self.current_tower = self.available_towers[i]
                             return
 
-                tile_map = self.map.get_map()
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
-                val = self.map.get_node(x_coord, y_coord)
                 if self.map.get_node(x_coord, y_coord) == 1:
                     self.map.upgrade_tower(x_coord, y_coord) # don't need to upgrade tower if clicking on empty space
                     return
@@ -538,12 +538,16 @@ class Game:
                 if self.map.change_node(x_coord, y_coord, 1) == False:
                     return
 
+
+                self.pathfinder.clear_nodes(self.map.get_map())
+
                 for start in self.starts:
-                    path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(start.rect.x, self.map.tilesize),
-                                            tile_from_xcoords(start.rect.y, self.map.tilesize)), 0),
-                                self.goals)
+                    path = self.pathfinder.astar(((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
+                                        tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
+                            self.goals)
                     if path == False:
                         self.map.change_node(x_coord, y_coord, 0)
+                        self.pathfinder.clear_nodes(self.map.get_map())
                         return
 
                 new_tower = Tower(
@@ -561,19 +565,15 @@ class Game:
                 for enemy in self.enemies:
                     enemy.recreate_path()
 
-
             elif event.button == 3:
-                tile_map = self.map.get_map()
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
                 self.map.remove_tower(x_coord, y_coord)
-                self.path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].x, self.map.tilesize),
-                                        tile_from_xcoords(self.starts[0].y, self.map.tilesize)), 0),
-                            (tile_from_xcoords(self.goal.x, self.map.tilesize),
-                              tile_from_xcoords(self.goal.y, self.map.tilesize)))
+                self.pathfinder.clear_nodes(self.map.get_map())
                 self.make_stripped_path()
+                self.draw_tower_bases()
                 for enemy in self.enemies:
                     enemy.recreate_path()
 

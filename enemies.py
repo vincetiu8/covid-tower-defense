@@ -35,7 +35,6 @@ class Enemy(pg.sprite.Sprite):
         
         self.recreate_path()
 
-
     def update(self):
         if (self.hp <= 0):
             self.sound.play()
@@ -89,7 +88,7 @@ class Enemy(pg.sprite.Sprite):
         return pg.Rect(x, y, w, h)
 
     def recreate_path(self):
-        self.path = self.game.pathfinder.astar(self.game.map.get_map(), (self.new_node[0], self.new_node[1]), self.game.goals)
+        self.path = self.game.pathfinder.astar((self.new_node[0], self.new_node[1]), self.game.goals)
         self.load_next_node()
 
     def load_next_node(self):
@@ -101,7 +100,7 @@ class Enemy(pg.sprite.Sprite):
         if (len(self.path) == 0):
             self.game.lives -= 1
             
-            if self.game.lives == 0:
+            if self.game.lives <= 0:
                 self.game.cause_of_death = " ".join(self.name.split("_")).title() # removes underscores, capitalizes it properly
 
             self.kill()
