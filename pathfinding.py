@@ -45,7 +45,7 @@ class Pathfinder():
                     data.append(current)
                     self.map[0][start[0][0]][start[0][1]] = prevstate
                     self.paths[start] = data
-                    return data
+                    return data.copy()
 
                 close_set.add(current)
 
