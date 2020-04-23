@@ -390,41 +390,49 @@ class Game:
             self.screen.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = ui_pos))
     
     def make_stripped_path(self):
-        self.stripped_path = []
-        for i, node in enumerate(self.path):
-            if (i < len(self.path) - 1):
-                diff_x_after = self.path[i + 1][0][0] - node[0][0]
-                diff_y_after = self.path[i + 1][0][1] - node[0][1]
-                if (diff_x_after == 0 and diff_y_after == 0):
-                    continue
-            self.stripped_path.append(node[0])
-
         self.path_surf = pg.Surface((self.screen.get_width(), self.screen.get_height()), pg.SRCALPHA)
         self.path_surf.fill((0, 0, 0, 0))
-        for i, node in enumerate(self.stripped_path):
-            if (i > 0 and i < len(self.stripped_path) - 1):
-                image = None
-                diff_x_before = self.stripped_path[i - 1][0] - node[0]
-                diff_x_after = self.stripped_path[i + 1][0] - node[0]
-                diff_y_before = self.stripped_path[i - 1][1] - node[1]
-                diff_y_after = self.stripped_path[i + 1][1] - node[1]
+        map = self.map.get_map()
 
-                if diff_x_before == 0 and diff_x_after == 0: # up <--> down
-                    image = PATH_VERTICAL_IMG
-                elif diff_y_before == 0 and diff_y_after == 0: # left <--> right
-                    image = PATH_HORIZONTAL_IMG
-                elif (diff_x_before == 1 and diff_y_after == 1) or (diff_y_before == 1 and diff_x_after == 1): # right <--> down
-                    image = PATH_CORNER1_IMG
-                elif (diff_x_before == -1 and diff_y_after == 1) or (diff_y_before == 1 and diff_x_after == -1): # left <--> down
-                    image = PATH_CORNER2_IMG
-                elif (diff_x_before == 1 and diff_y_after == -1) or (diff_y_before == -1 and diff_x_after == 1): # right <--> up
-                    image = PATH_CORNER3_IMG
-                elif (diff_x_before == -1 and diff_y_after == -1) or (diff_y_before == -1 and diff_x_after == -1): # left <--> up
-                    image = PATH_CORNER4_IMG
-                else:
-                    print("PATH DRAWING ERROR") # this should never occur
+        for start in self.starts:
+            xpos = tile_from_xcoords(start.rect.x, self.map.tilesize)
+            ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
+            for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
+                for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
+                    path = self.pathfinder.astar(map, ((xpos + x, ypos + y), 0), self.goals)
+                    self.stripped_path = []
+                    for i, node in enumerate(path):
+                        if (i < len(path) - 1):
+                            diff_x_after = path[i + 1][0][0] - node[0][0]
+                            diff_y_after = path[i + 1][0][1] - node[0][1]
+                            if (diff_x_after == 0 and diff_y_after == 0):
+                                continue
+                        self.stripped_path.append(node[0])
 
-                self.path_surf.blit(image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize))
+                    for i, node in enumerate(self.stripped_path):
+                        if (i > 0 and i < len(self.stripped_path) - 1):
+                            image = None
+                            diff_x_before = self.stripped_path[i - 1][0] - node[0]
+                            diff_x_after = self.stripped_path[i + 1][0] - node[0]
+                            diff_y_before = self.stripped_path[i - 1][1] - node[1]
+                            diff_y_after = self.stripped_path[i + 1][1] - node[1]
+
+                            if diff_x_before == 0 and diff_x_after == 0: # up <--> down
+                                image = PATH_VERTICAL_IMG
+                            elif diff_y_before == 0 and diff_y_after == 0: # left <--> right
+                                image = PATH_HORIZONTAL_IMG
+                            elif (diff_x_before == 1 and diff_y_after == 1) or (diff_y_before == 1 and diff_x_after == 1): # right <--> down
+                                image = PATH_CORNER1_IMG
+                            elif (diff_x_before == -1 and diff_y_after == 1) or (diff_y_before == 1 and diff_x_after == -1): # left <--> down
+                                image = PATH_CORNER2_IMG
+                            elif (diff_x_before == 1 and diff_y_after == -1) or (diff_y_before == -1 and diff_x_after == 1): # right <--> up
+                                image = PATH_CORNER3_IMG
+                            elif (diff_x_before == -1 and diff_y_after == -1) or (diff_y_before == -1 and diff_x_after == -1): # left <--> up
+                                image = PATH_CORNER4_IMG
+                            else:
+                                print("PATH DRAWING ERROR") # this should never occur
+
+                            self.path_surf.blit(image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize, self.map.tilesize, self.map.tilesize))
 
     def draw_tower_bases(self):
         self.tower_bases_surf = pg.Surface((self.screen.get_width(), self.screen.get_height()), pg.SRCALPHA)
@@ -504,30 +512,30 @@ class Game:
 
                 if self.map.change_node(x_coord, y_coord, 1) == False:
                     return
-                
-                path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
-                                        tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
-                            self.goals)
-                                    
-                if path != False:
-                    self.path = path
-                    self.make_stripped_path()
 
-                    new_tower = Tower(
-                        game = self,
-                        x = round_to_tilesize(pos[0], self.map.tilesize),
-                        y = round_to_tilesize(pos[1], self.map.tilesize),
-                        name = self.current_tower)
-                    self.map.add_tower(x_coord, y_coord, new_tower)
-                    self.protein -= TOWER_DATA[self.current_tower][0]["upgrade_cost"]
-                    self.current_tower = None
-                    
-                    self.buy_sound.play()
-                    self.draw_tower_bases()
-                    for enemy in self.enemies:
-                        enemy.recreate_path()
-                else:  # reverts tile map to previous state if no enemy path could be found
-                    self.map.change_node(x_coord, y_coord, 0)
+                for start in self.starts:
+                    path = self.pathfinder.astar(tile_map, ((tile_from_xcoords(start.rect.x, self.map.tilesize),
+                                            tile_from_xcoords(start.rect.y, self.map.tilesize)), 0),
+                                self.goals)
+                    if path == False:
+                        self.map.change_node(x_coord, y_coord, 0)
+                        return
+
+                new_tower = Tower(
+                    game = self,
+                    x = round_to_tilesize(pos[0], self.map.tilesize),
+                    y = round_to_tilesize(pos[1], self.map.tilesize),
+                    name = self.current_tower)
+                self.map.add_tower(x_coord, y_coord, new_tower)
+                self.protein -= TOWER_DATA[self.current_tower][0]["upgrade_cost"]
+                self.current_tower = None
+
+                self.buy_sound.play()
+                self.make_stripped_path()
+                self.draw_tower_bases()
+                for enemy in self.enemies:
+                    enemy.recreate_path()
+
 
             elif event.button == 3:
                 tile_map = self.map.get_map()
