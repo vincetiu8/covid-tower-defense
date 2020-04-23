@@ -266,7 +266,7 @@ class Game:
 
         for tile_object in self.map.tmxdata.objects:
             if "start" in tile_object.name:
-                self.start_data.insert(int(tile_object.name[5:]), {"x": tile_object.x, "y": tile_object.y, "w": tile_object.width, "h": tile_object.height})
+                self.start_data.insert(int(tile_object.name[5:]), pg.Rect(tile_object.x, tile_object.y, tile_object.width, tile_object.height))
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         self.map.set_valid_tower_tile(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
@@ -341,7 +341,7 @@ class Game:
         wave_data = self.level_data["waves"][self.wave]
                 
         for i in range(len(wave_data["enemy_type"])):
-            self.starts.append(Start(self, self.start_data[wave_data["start"][i]]["x"], self.start_data[wave_data["start"][i]]["y"], self.start_data[wave_data["start"][i]]["w"], self.start_data[wave_data["start"][i]]["h"], wave_data["enemy_type"][i], wave_data["enemy_count"][i], wave_data["spawn_delay"][i], wave_data["spawn_rate"][i]))
+            self.starts.append(Start(self, wave_data["start"][i], wave_data["enemy_type"][i], wave_data["enemy_count"][i], wave_data["spawn_delay"][i], wave_data["spawn_rate"][i]))
             
         self.wave += 1
 
@@ -357,7 +357,6 @@ class Game:
         self.screen.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
         for start in self.starts:
-            print(start.rect)
             pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(start.rect))
         for goal in self.goal_sprites:
             pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(goal.rect))
@@ -396,7 +395,11 @@ class Game:
         self.path_surf.fill((0, 0, 0, 0))
         map = self.map.get_map()
 
+        done = []
         for start in self.starts:
+            if start.start in done:
+                continue
+
             xpos = tile_from_xcoords(start.rect.x, self.map.tilesize)
             ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
             for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
