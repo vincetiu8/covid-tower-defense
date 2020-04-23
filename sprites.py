@@ -27,9 +27,10 @@ def collide_with_walls(sprite, group, dir):
             sprite.hit_rect.centery = sprite.pos.y
 
 class Start():
-    def __init__(self, game, x, y, w, h, enemy_type, enemy_count, spawn_delay, spawn_rate):
+    def __init__(self, game, start, enemy_type, enemy_count, spawn_delay, spawn_rate):
         self.game = game
-        self.rect = pg.Rect(x, y, w, h)
+        self.start = start
+        self.rect = game.start_data[start]
         
         self.enemy_type = enemy_type
         self.enemy_count = enemy_count

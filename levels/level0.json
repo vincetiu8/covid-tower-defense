@@ -4,6 +4,9 @@
     "difficulty": 0,
     "waves": [
         {
+            "start": [
+                0
+            ],
             "enemy_type": [
                 "common_cold"
             ],
@@ -18,6 +21,10 @@
             ]
         },
         {
+            "start": [
+                0,
+                0
+            ],
             "enemy_type": [
                 "hepatitis_a",
                 "common_cold"
@@ -36,6 +43,10 @@
             ]
         },
         {
+            "start": [
+                0,
+                0
+            ],
             "enemy_type": [
                 "coronavirus",
                 "common_cold"
