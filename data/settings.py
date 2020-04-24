@@ -1,8 +1,18 @@
 from os import path, listdir
 
+import sys
 
 import json
 import pygame as pg
+
+def resource_path(relative_path):
+    try:
+    # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = path.abspath(".")
+
+    return path.join(base_path, relative_path)
 
 LIVES = 5
 PROTEIN = 50
@@ -30,7 +40,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 
 # looks for img_folder and map_folder in the same folder as the code
-GAME_FOLDER = path.dirname(path.abspath(__file__))
+GAME_FOLDER = resource_path("data")
 IMG_FOLDER = path.join(GAME_FOLDER, "img")
 MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 LEVELS_FOLDER = path.join(GAME_FOLDER, "levels")
