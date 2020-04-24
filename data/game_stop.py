@@ -1,4 +1,4 @@
-from settings import *
+from data.settings import *
 
 class GameStop(pg.Surface):
     def __init__(self):

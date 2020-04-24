@@ -1,13 +1,12 @@
 import sys
-import json
 import textwrap
 
-from pathfinding import *
-from ui import *
-from sprites import *
-from tilemap import *
-from towers import *
-from game_stop import *
+from data.pathfinding import *
+from data.ui import *
+from data.sprites import *
+from data.tilemap import *
+from data.towers import *
+from data.game_stop import *
 
 class Main:
     def __init__(self):
@@ -585,9 +584,3 @@ class Game:
                 
         if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
             self.paused = True
-
-# create the game object
-g = Main()
-while True:
-    g.run_pregame()
-    g.run_game()

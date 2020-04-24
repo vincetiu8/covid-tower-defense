@@ -1,4 +1,4 @@
-from settings import *
+from data.settings import *
 
 class UI:
     def __init__(self, game, width, offset):

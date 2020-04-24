@@ -1,6 +1,6 @@
 from pytmx.util_pygame import load_pygame
 
-from settings import *
+from data.settings import *
 
 def tile_from_coords(i, tilesize):
     return int(round((i - tilesize / 2) / tilesize))
