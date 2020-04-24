@@ -123,4 +123,4 @@ HEART_MONITOR_NORMAL_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "heart_
 HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "heart_monitor_flatline.png"))
 
 # load fonts path
-GAME_STOP_FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
+FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")

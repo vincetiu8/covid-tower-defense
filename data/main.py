@@ -134,7 +134,7 @@ class Menu:
             self.screen.blit(self.camera.apply_image(START_SCREEN_IMG), self.camera.apply_rect(pg.Rect(0, 0, START_SCREEN_IMG.get_rect().w, START_SCREEN_IMG.get_rect().h)))
             return
 
-        lives_font = pg.font.Font(None, LEVEL_BUTTON_IMG.get_rect().w)
+        lives_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w)
         level_text = lives_font.render("Levels", 1, WHITE)
         self.screen.blit(self.camera.apply_image(level_text), self.camera.apply_tuple((START_SCREEN_IMG.get_rect().w / 2 - level_text.get_rect().center[0], 75 - level_text.get_rect().center[1])))
 
@@ -155,13 +155,13 @@ class Menu:
         height = MENU_OFFSET
 
         level_data = LEVEL_DATA[level]
-        title_font = pg.font.Font(None, MENU_TEXT_SIZE * 2)
+        title_font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
         texts = []
         title_text = title_font.render(level_data["title"], 1, WHITE)
         texts.append(title_text)
         height += title_text.get_height() + MENU_OFFSET
 
-        description_font = pg.font.Font(None, MENU_TEXT_SIZE)
+        description_font = pg.font.Font(FONT, MENU_TEXT_SIZE)
         text = textwrap.fill(level_data["description"], 30 - round(MENU_TEXT_SIZE / 30)) # No idea how to really calculate this.
         counter = 0
         for part in text.split('\n'):

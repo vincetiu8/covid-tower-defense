@@ -15,8 +15,8 @@ class GameStop(pg.Surface):
         self.back_text_1 = None
         self.back_text_2 = None
         
-        self.font_1 = pg.font.Font(GAME_STOP_FONT, 200)
-        self.font_2 = pg.font.Font(GAME_STOP_FONT, 60)
+        self.font_1 = pg.font.Font(FONT, 200)
+        self.font_2 = pg.font.Font(FONT, 60)
         
         self.alpha = 0
         self.alpha_speed = 0
