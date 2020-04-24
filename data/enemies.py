@@ -1,7 +1,6 @@
-from pathfinding import *
-from settings import *
+from data.settings import *
 import random
-from tilemap import tile_from_xcoords, tile_from_coords
+from data.tilemap import tile_from_coords
 
 class Enemy(pg.sprite.Sprite):
     def __init__(self, game, x, y, name):

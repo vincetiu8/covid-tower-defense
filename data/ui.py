@@ -1,4 +1,4 @@
-from settings import *
+from data.settings import *
 
 class UI:
     def __init__(self, game, width, offset):
@@ -33,7 +33,7 @@ class UI:
 
     def get_ui(self):
         size = HEART_IMG.get_size()[0]
-        font = pg.font.Font(None, size * 2)
+        font = pg.font.Font(FONT, size * 2)
         
         ui = pg.Surface((self.width, self.game.screen.get_size()[1] - 2 * self.offset))
         ui.fill(DARKGREY)

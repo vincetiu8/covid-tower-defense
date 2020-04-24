@@ -1,6 +1,5 @@
-from settings import *
-from tilemap import collide_hit_rect, round_to_tilesize, tile_from_coords, tile_from_xcoords
-from enemies import *
+from data.tilemap import collide_hit_rect, tile_from_xcoords
+from data.enemies import *
 
 import random
 

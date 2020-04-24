@@ -1,10 +1,10 @@
-from sprites import Obstacle
+from data.sprites import Obstacle
 import math
 import pygame as pg
-from tilemap import round_to_mtilesize
-from pathfinding import heuristic
-from settings import TOWER_DATA
-from heapq import *
+from data.tilemap import round_to_mtilesize
+from data.pathfinding import heuristic
+from data.settings import TOWER_DATA
+
 
 class Projectile(pg.sprite.Sprite):
     def __init__(self, game, x, y, image, speed, lifetime, direction, damage):
