@@ -4,7 +4,10 @@ from data.tilemap import *
 from data.pathfinding import *
 from data.game import *
 from os import path
-from data.settings import *
+from data.settings import TOWER_DATA
+import data.settings as settings
+import json
+from copy import deepcopy
 
 class Tower_Preview(Game):
     def __init__(self):
@@ -122,6 +125,17 @@ class Tower_Preview(Game):
             if surf.get_rect().width > large:
                 large = surf.get_rect().width
 
+        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
+        save_text = font.render("Save Settings", 1, WHITE)
+        save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (round( ().width * 1.5), round(save_text.get_rect().height * 1.5))).copy().convert_alpha()
+        save_button.blit(save_text, save_text.get_rect(center = save_button.get_rect().center))
+        attr_surfaces.append(save_button)
+        self.save_button_rect = save_button.get_rect()
+        self.save_button_rect.y = height + MENU_OFFSET
+        self.save_button_rect.x = self.map.width + MENU_OFFSET
+
+        height += save_button.get_rect().height + MENU_OFFSET
+
         self.attr_surf = pg.Surface((large, height))
         self.attr_surf.fill(DARKGREY)
         temp_h = MENU_OFFSET
@@ -130,6 +144,32 @@ class Tower_Preview(Game):
             temp_h += surf.get_rect().height + MENU_OFFSET
 
     def event(self, event):
+        if self.save_button_rect.collidepoint(event.pos):
+            for tower in TOWER_DATA:
+                for level in range(3):
+                    TOWER_DATA[tower][level].pop("gun_image", None)
+                    TOWER_DATA[tower][level].pop("base_image", None)
+                    TOWER_DATA[tower][level].pop("bullet_image", None)
+                    TOWER_DATA[tower][level].pop("shoot_sound_path", None)
+                    TOWER_DATA[tower][level].pop("image", None)
+            with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
+                json.dump(TOWER_DATA, out_file)
+            for tower in TOWER_DATA:
+                for level in range(3):
+                    TOWER_DATA[tower][level]["gun_image"] = pg.image.load(
+                        path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(level) + ".png"))
+                    TOWER_DATA[tower][level]["base_image"] = pg.image.load(
+                        path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(level) + ".png"))
+                    TOWER_DATA[tower][level]["bullet_image"] = pg.image.load(
+                        path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(level) + ".png"))
+                    TOWER_DATA[tower][level]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower))
+                    temp_base = TOWER_DATA[tower][level]["base_image"].copy()
+                    temp_base.blit(TOWER_DATA[tower][level]["gun_image"],
+                                   TOWER_DATA[tower][level]["gun_image"].get_rect(
+                                       center=TOWER_DATA[tower][level]["base_image"].get_rect().center))
+                    TOWER_DATA[tower][level]["image"] = temp_base
+
+        else:
             for attr in self.attributes:
                 if attr.type == "int" or attr.type == "float":
                     if attr.minus_button_rect.collidepoint(event.pos):
