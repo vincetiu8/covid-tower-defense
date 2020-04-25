@@ -5,10 +5,9 @@ from data.tilemap import tile_from_coords
 class Enemy(pg.sprite.Sprite):
     def __init__(self, game, x, y, name):
         self.groups = game.enemies
-        super().__init__()
+        super().__init__(self.groups)
         
         self.game = game
-        self.screen = game.screen
         self.name = name
         self.last_move = pg.time.get_ticks()
         

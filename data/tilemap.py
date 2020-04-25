@@ -32,11 +32,14 @@ class TiledMap:
     def render(self, surface, layers):
         ti = self.tmxdata.get_tile_image_by_gid
         for layer in layers:
-            for x, y, gid in self.tmxdata.get_layer_by_name(layer):
-                tile = ti(gid)
-                if tile:
-                    surface.blit(pg.transform.rotate(tile, 0), (x * self.tmxdata.tilewidth,
-                                        y * self.tmxdata.tileheight))
+            try:
+                for x, y, gid in self.tmxdata.get_layer_by_name(layer):
+                    tile = ti(gid)
+                    if tile:
+                        surface.blit(pg.transform.rotate(tile, 0), (x * self.tmxdata.tilewidth,
+                                            y * self.tmxdata.tileheight))
+            except:
+                print("No layer with name " + layer)
 
     def make_map(self):
         temp_surface = pg.Surface((self.width, self.height), pg.SRCALPHA, 32).convert_alpha()

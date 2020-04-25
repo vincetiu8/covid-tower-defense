@@ -73,6 +73,7 @@ AUDIO_FLATLINE_PATH = path.join(GAME_STOP_AUD_FOLDER, "flatline.wav")
 AUDIO_BUY_PATH = path.join(AUDIO_FOLDER, "buy_sound.wav")
 
 LEVEL_DATA = []
+
 for file in listdir(LEVELS_FOLDER):
     with open(path.join(LEVELS_FOLDER, file)) as data_file:
         level = json.load(data_file)
@@ -84,7 +85,6 @@ for file in listdir(LEVELS_FOLDER):
         level["enemies"] = enemies
         LEVEL_DATA.append(level)
 
-# load enemy data
 with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
     ENEMY_DATA = json.load(data_file)
     for enemy in ENEMY_DATA:
@@ -103,7 +103,11 @@ with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
             temp_base = TOWER_DATA[tower][level]["base_image"].copy()
             temp_base.blit(TOWER_DATA[tower][level]["gun_image"], TOWER_DATA[tower][level]["gun_image"].get_rect(center = TOWER_DATA[tower][level]["base_image"].get_rect().center))
             TOWER_DATA[tower][level]["image"] = temp_base
-            
+
+
+with open(path.join(GAME_FOLDER, "attributes.json"), "r") as data_file:
+    ATTR_DATA = json.load(data_file)
+
 # load path images
 PATH_VERTICAL_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "vertical.png"))
 PATH_HORIZONTAL_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "horizontal.png"))

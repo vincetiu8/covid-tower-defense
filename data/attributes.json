@@ -1,0 +1,63 @@
+{
+  "enemy": {
+
+  },
+
+  "tower": {
+      "damage": {
+        "type": "int",
+        "min": 0,
+        "max": 10000,
+        "increment": 1,
+        "dp": 0
+      },
+      "bullet_spawn_speed": {
+        "type": "float",
+        "min": 0.05,
+        "max": 10,
+        "increment": 0.05,
+        "dp": 2
+      },
+      "bullet_speed": {
+        "type": "int",
+        "min": 1,
+        "max": 50,
+        "increment": 1,
+        "dp": 0
+      },
+      "bullet_lifetime": {
+        "type": "float",
+        "min": 0.05,
+        "max": 5,
+        "increment": 0.05,
+        "dp": 2
+      },
+      "range": {
+        "type": "int",
+        "min": 25,
+        "max": 2500,
+        "increment": 25,
+        "dp": 0
+      },
+      "upgrade_cost": {
+        "type": "int",
+        "min": 0,
+        "max": 10000,
+        "increment": 1,
+        "dp": 0
+      },
+      "directions": {
+        "type": "int",
+        "min": 1,
+        "max": 360,
+        "increment": 1,
+        "dp": 0
+      },
+      "rotating": {
+        "type": "bool"
+      },
+      "tracking": {
+        "type": "bool"
+      }
+  }
+}
