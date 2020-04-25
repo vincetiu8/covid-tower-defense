@@ -35,7 +35,6 @@ class Game():
         self.level = level  # to be used when more levels are added
 
         self.starts = []
-        self.start_data = None
 
         self.map = TiledMap(path.join(MAP_FOLDER, "map{}.tmx".format(self.level)))
         self.load_data()
@@ -123,7 +122,7 @@ class Game():
         )
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
-        self.make_stripped_path()
+        self.make_stripped_path(self.screen)
         self.draw_tower_bases(self.screen)
         self.ui = UI(self, 200, 10)
 
@@ -224,8 +223,8 @@ class Game():
 
         return surface
 
-    def make_stripped_path(self):
-        self.path_surf = pg.Surface((self.screen.get_width(), self.screen.get_height()), pg.SRCALPHA)
+    def make_stripped_path(self, screen):
+        self.path_surf = pg.Surface((screen.get_width(), screen.get_height()), pg.SRCALPHA)
         self.path_surf.fill((0, 0, 0, 0))
 
         done = []
@@ -381,7 +380,7 @@ class Game():
                 self.current_tower = None
 
                 self.buy_sound.play()
-                self.make_stripped_path()
+                self.make_stripped_path(self.screen)
                 self.draw_tower_bases(self.screen)
                 for enemy in self.enemies:
                     enemy.recreate_path()
@@ -393,8 +392,8 @@ class Game():
 
                 self.map.remove_tower(x_coord, y_coord)
                 self.pathfinder.clear_nodes(self.map.get_map())
-                self.make_stripped_path()
-                self.draw_tower_bases()
+                self.make_stripped_path(self.screen)
+                self.draw_tower_bases(self.screen)
                 for enemy in self.enemies:
                     enemy.recreate_path()
 
@@ -415,6 +414,10 @@ class Start():
         
         self.enemy_type = enemy_type
         self.enemy_count = enemy_count
+        if self.enemy_count == -1:
+            self.infinity = True
+        else:
+            self.infinity = False
         self.spawn_delay = spawn_delay
         self.spawn_rate = spawn_rate
         
@@ -423,7 +426,7 @@ class Start():
         self.done_spawning = False
 
     def update(self):
-        if (pg.time.get_ticks() >= self.next_spawn and self.enemy_count > 0):
+        if (pg.time.get_ticks() >= self.next_spawn and (self.infinity or self.enemy_count > 0)):
             self.game.enemies.add(Enemy(
                 game = self.game,
                 x = self.rect.x + random.randrange(1, self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width()),

@@ -129,8 +129,8 @@ class Menu:
 
     def update(self):
         self.update_level()
-        # if self.tower_preview != None:
-        #     self.tower_preview.update()
+        if self.tower_preview != None:
+            self.tower_preview.update()
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -157,9 +157,8 @@ class Menu:
             (self.tower_preview_button.center[0] - lives_text.get_rect().center[0], self.tower_preview_button.center[1] - lives_text.get_rect().center[1] + lives_text.get_rect().height - MENU_OFFSET)))
 
         if self.tower_preview != None:
-            temp_surf = pg.Surface((1080, 720))
-            self.tower_preview.draw(temp_surf)
-            self.screen.blit(self.camera.apply_image(temp_surf), self.camera.apply_tuple((self.tower_preview_button.right + MENU_OFFSET * 10, self.tower_preview_button.top)))
+            temp_surf = self.tower_preview.draw()
+            self.screen.blit(temp_surf, (MENU_OFFSET, MENU_OFFSET))
 
         if self.over_level != -1:
             if self.level_descs[self.over_level] == None:
@@ -240,7 +239,7 @@ class Menu:
             if event.button == 1:
                 mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
                 if self.tower_preview_button.collidepoint(mouse_pos):
-                    self.tower_preview = Tower_Preview(1080, 720)
+                    self.tower_preview = Tower_Preview()
 
                 return self.over_level
 

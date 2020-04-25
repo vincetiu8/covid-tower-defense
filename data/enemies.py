@@ -8,7 +8,6 @@ class Enemy(pg.sprite.Sprite):
         super().__init__(self.groups)
         
         self.game = game
-        self.screen = game.screen
         self.name = name
         self.last_move = pg.time.get_ticks()
         

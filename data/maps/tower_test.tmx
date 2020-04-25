@@ -19,12 +19,12 @@
 </data>
  </layer>
  <objectgroup id="4" name="obstacles">
-  <object id="141" name="start" x="42" y="462" width="42" height="42"/>
+  <object id="141" name="start0" x="42" y="462" width="42" height="42"/>
   <object id="142" name="goal" x="462" y="42" width="42" height="42"/>
   <object id="143" name="wall" x="0" y="0" width="42" height="504"/>
   <object id="144" name="wall" x="42" y="0" width="462" height="42"/>
   <object id="145" name="wall" x="84" y="126" width="420" height="378"/>
   <object id="146" name="wall" x="126" y="84" width="378" height="42"/>
-  <object id="147" x="-52.5" y="105"/>
+  <object id="147" name="tower" x="84" y="84" width="42" height="42"/>
  </objectgroup>
 </map>

@@ -7,10 +7,8 @@ from os import path
 from data.settings import *
 
 class Tower_Preview(Game):
-    def __init__(self, width, height):
+    def __init__(self):
         self.map = TiledMap(path.join(MAP_FOLDER, "tower_test.tmx"))
-        self.width = width
-        self.height = height
         super().load_data()
         self.new()
 
@@ -20,13 +18,18 @@ class Tower_Preview(Game):
         self.towers = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
-        self.goal_sprites = pg.sprite.Group()
+        self.goals = pg.sprite.Group()
+
+        self.protein = 0
+        self.lives = 0
+        self.start_data = []
 
         self.map.clear_map()
 
         for tile_object in self.map.tmxdata.objects:
-            if tile_object.name == "start":
-                self.start = pg.Rect(tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+            if "start" in tile_object.name:
+                self.start_data.insert(int(tile_object.name[5:]),
+                                       pg.Rect(tile_object.x, tile_object.y, tile_object.width, tile_object.height))
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         self.map.set_valid_tower_tile(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
@@ -36,34 +39,50 @@ class Tower_Preview(Game):
             if tile_object.name == "goal":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
-                        goal = Goal(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
-                        self.goal = ((round(goal.rect.x / self.map.tilesize) + i,
-                                            round(goal.rect.y / self.map.tilesize) + j), 0)
+                        Goal(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "wall":
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+            if tile_object.name == "tower":
+                Tower(self, tile_object.x, tile_object.y, "t_cell")
 
-        self.camera = Camera(self.width, self.height, self.map.width, self.map.height)
+        self.starts = [Start(self, 0, 'common_cold', -1, 0, 0.5)]
         self.pathfinder = Pathfinder()
         self.pathfinder.clear_nodes(self.map.get_map())
+        self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
+        self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
 
-    def draw(self, surface):
+    def update(self):
+        for start in self.starts:
+            start.update()
+        self.enemies.update()
+        self.towers.update()
+        self.projectiles.update()
+
+    def draw(self):
+        surface = pg.Surface((self.map.width, self.map.height))
         surface.fill((0, 0, 0))
 
-        surface.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
+        surface.blit(self.map_img, self.map_rect)
 
-        pg.draw.rect(surface, GREEN, self.camera.apply_rect(self.start.rect))
-        pg.draw.rect(surface, GREEN, self.camera.apply_rect(self.goal.rect))
+        for start in self.starts:
+            pg.draw.rect(surface, GREEN, start.rect)
+        for goal in self.goals:
+            pg.draw.rect(surface, GREEN, goal.rect)
+
+        surface.blit(self.path_surf, self.path_surf.get_rect())
+        surface.blit(self.tower_bases_surf,
+                     self.tower_bases_surf.get_rect())
 
         for tower in self.towers:
             rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
-            surface.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
+            surface.blit(rotated_image, new_rect)
 
         for enemy in self.enemies:
-            surface.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
-            pg.draw.rect(surface, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
+            surface.blit(enemy.image, enemy.rect)
+            pg.draw.rect(surface, GREEN, enemy.get_hp_rect())
 
         for projectile in self.projectiles:
-            surface.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
+            surface.blit(projectile.image, projectile.rect)
 
         return surface
