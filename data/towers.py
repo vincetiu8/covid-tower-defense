@@ -1,10 +1,21 @@
-from data.game import Obstacle
 import math
 import pygame as pg
 from data.tilemap import round_to_mtilesize
 from data.pathfinding import heuristic
 from data.settings import TOWER_DATA
+from data.tilemap import *
 
+class Obstacle(pg.sprite.Sprite):
+    def __init__(self, game, x, y, w, h):
+        self.game = game
+        self.groups = game.obstacles
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.x = x
+        self.y = y
+        self.rect = pg.Rect(x, y, w, h)
+        for i in range(tile_from_xcoords(w, self.game.map.tilesize)):
+            for j in range(tile_from_xcoords(h, self.game.map.tilesize)):
+                self.game.map.change_node(tile_from_xcoords(x, self.game.map.tilesize) + i, tile_from_xcoords(y, self.game.map.tilesize) + j, 1)
 
 class Projectile(pg.sprite.Sprite):
     def __init__(self, game, x, y, image, speed, lifetime, direction, damage):

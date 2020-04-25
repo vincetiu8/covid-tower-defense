@@ -156,6 +156,11 @@ class Menu:
         self.screen.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
             (self.tower_preview_button.center[0] - lives_text.get_rect().center[0], self.tower_preview_button.center[1] - lives_text.get_rect().center[1] + lives_text.get_rect().height - MENU_OFFSET)))
 
+        if self.tower_preview != None:
+            temp_surf = pg.Surface((1080, 720))
+            self.tower_preview.draw(temp_surf)
+            self.screen.blit(self.camera.apply_image(temp_surf), self.camera.apply_tuple((self.tower_preview_button.right + MENU_OFFSET * 10, self.tower_preview_button.top)))
+
         if self.over_level != -1:
             if self.level_descs[self.over_level] == None:
                 self.get_level_info(self.over_level)
@@ -235,7 +240,7 @@ class Menu:
             if event.button == 1:
                 mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
                 if self.tower_preview_button.collidepoint(mouse_pos):
-                    self.tower_preview = Tower_Preview()
+                    self.tower_preview = Tower_Preview(1080, 720)
 
                 return self.over_level
 

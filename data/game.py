@@ -1,5 +1,8 @@
-from data.tilemap import collide_hit_rect, tile_from_xcoords
+from data.tilemap import *
 from data.enemies import *
+from data.pathfinding import *
+from data.ui import *
+from data.towers import *
 
 import random
 
@@ -53,7 +56,7 @@ class Game():
         self.towers = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
-        self.goal_sprites = pg.sprite.Group()
+        self.goals = pg.sprite.Group()
 
         self.available_towers = ["t_cell", "b_cell"]
         self.current_tower = None
@@ -65,7 +68,6 @@ class Game():
         self.cause_of_death = "IB"
         self.start_data = []
         self.map.clear_map()
-        self.goals = []
         self.buy_sound = pg.mixer.Sound(AUDIO_BUY_PATH)
 
         width = round(self.map.width / self.map.tilesize)
@@ -88,9 +90,7 @@ class Game():
             if tile_object.name == "goal":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
-                        goal = Goal(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
-                        self.goals.append(((round(goal.rect.x / self.map.tilesize) + i,
-                                            round(goal.rect.y / self.map.tilesize) + j), 0))
+                        Goal(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "wall":
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "artery":
@@ -115,12 +115,14 @@ class Game():
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
 
         self.new_wave()
-        self.pathfinder = Pathfinder(arteries, artery_entrances, veins, vein_entrances)
+        self.pathfinder = Pathfinder(
+            arteries = arteries,
+            artery_entrances = artery_entrances,
+            veins = veins,
+            vein_entrances = vein_entrances
+        )
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
-        self.path = self.pathfinder.astar(
-            ((int(self.starts[0].rect.x / self.map.tilesize), int(self.starts[0].rect.y / self.map.tilesize)), 0),
-            self.goals)
         self.make_stripped_path()
         self.draw_tower_bases(self.screen)
         self.ui = UI(self, 200, 10)
@@ -187,7 +189,7 @@ class Game():
 
         for start in self.starts:
             pg.draw.rect(surface, GREEN, self.camera.apply_rect(start.rect))
-        for goal in self.goal_sprites:
+        for goal in self.goals:
             pg.draw.rect(surface, GREEN, self.camera.apply_rect(goal.rect))
 
         surface.blit(self.camera.apply_image(self.path_surf), self.camera.apply_rect(self.path_surf.get_rect()))
@@ -361,8 +363,8 @@ class Game():
                 self.pathfinder.clear_nodes(self.map.get_map())
 
                 for start in self.starts:
-                    path = self.pathfinder.astar(((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
-                                                   tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
+                    path = self.pathfinder.astar(((tile_from_xcoords(start.rect.x, self.map.tilesize),
+                                                   tile_from_xcoords(start.rect.y, self.map.tilesize)), 0),
                                                  self.goals)
                     if path == False:
                         self.map.change_node(x_coord, y_coord, 0)
@@ -448,30 +450,9 @@ class Start():
 class Goal(pg.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
         self.game = game
-        self.groups = game.goal_sprites
-        pg.sprite.Sprite.__init__(self, self.groups)
+        self.groups = game.goals
+        super().__init__(self.groups)
         self.rect = pg.Rect(x, y, w, h)
 
-# class Wall(pg.sprite.Sprite):
-#     def __init__(self, game, x, y):
-#         self.groups = game.all_sprites, game.walls
-#         pg.sprite.Sprite.__init__(self, self.groups)
-#         self.game = game
-#         self.image = game.wall_img
-#         self.rect = self.image.get_rect()
-#         self.x = x
-#         self.y = y
-#         self.rect.x = x * TILESIZE
-#         self.rect.y = y * TILESIZE
-
-class Obstacle(pg.sprite.Sprite):
-    def __init__(self, game, x, y, w, h):
-        self.game = game
-        self.groups = game.obstacles
-        pg.sprite.Sprite.__init__(self, self.groups)
-        self.x = x
-        self.y = y
-        self.rect = pg.Rect(x, y, w, h)
-        for i in range(tile_from_xcoords(w, self.game.map.tilesize)):
-            for j in range(tile_from_xcoords(h, self.game.map.tilesize)):
-                self.game.map.change_node(tile_from_xcoords(x, self.game.map.tilesize) + i, tile_from_xcoords(y, self.game.map.tilesize) + j, 1)
+    def get_node(self):
+        return ((round(self.rect.x / self.game.map.tilesize), round(self.rect.y / self.game.map.tilesize)), 0)
