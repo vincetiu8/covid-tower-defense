@@ -1,4 +1,4 @@
-from data.sprites import Obstacle
+from data.game import Obstacle
 import math
 import pygame as pg
 from data.tilemap import round_to_mtilesize
