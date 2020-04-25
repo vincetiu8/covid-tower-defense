@@ -11,9 +11,9 @@ from copy import deepcopy
 
 class Tower_Preview(Game):
     def __init__(self):
-        self.current_tower = "t_cell"
+        self.tower_names = list(TOWER_DATA.keys())
+        self.current_tower = 0
         self.current_level = 0
-        self.original_data = TOWER_DATA[self.current_tower].copy()
         self.map = TiledMap(path.join(MAP_FOLDER, "tower_test.tmx"))
         super().load_data()
         self.new()
@@ -50,7 +50,7 @@ class Tower_Preview(Game):
             if tile_object.name == "wall":
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "tower":
-                Tower(self, tile_object.x, tile_object.y, self.current_tower)
+                self.map.add_tower(tile_from_xcoords(tile_object.x, self.map.tilesize), tile_from_xcoords(tile_object.y, self.map.tilesize), Tower(self, tile_object.x, tile_object.y, self.tower_names[self.current_tower]))
 
         self.starts = [Start(self, 0, 'common_cold', -1, 0, 0.5)]
         self.pathfinder = Pathfinder()
@@ -61,7 +61,7 @@ class Tower_Preview(Game):
     def load_attrs(self):
         self.attributes = []
         for attr in ATTR_DATA["tower"]:
-            attr_class = Attribute("tower", self.current_tower, attr)
+            attr_class = Attribute("tower", self.tower_names[self.current_tower], attr)
             self.attributes.append(attr_class)
             attr_class.update_level(self.current_level)
         self.get_attr_surf()
@@ -107,9 +107,57 @@ class Tower_Preview(Game):
         return combo_surf
 
     def get_attr_surf(self):
-        large = 0
         height = MENU_OFFSET
         attr_surfaces = []
+        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
+
+        title = []
+        width = MENU_OFFSET
+        back_text = font.render("<", 1, WHITE)
+        back_button = pg.transform.scale(LEVEL_BUTTON_IMG, (back_text.get_rect().height, back_text.get_rect().height)).copy().convert_alpha()
+        back_button.blit(back_text, back_text.get_rect(center = back_button.get_rect().center))
+        self.back_button_rect = back_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
+        width += back_button.get_rect().width + MENU_OFFSET
+        title.append(back_button)
+
+        tower_text = font.render(self.tower_names[self.current_tower].replace('_', ' '), 1, WHITE)
+        width += tower_text.get_rect().width + MENU_OFFSET
+        title.append(tower_text)
+
+        next_text = font.render(">", 1, WHITE)
+        next_button = pg.transform.scale(LEVEL_BUTTON_IMG, (next_text.get_rect().height, next_text.get_rect().height)).copy().convert_alpha()
+        next_button.blit(next_text, next_text.get_rect(center = next_button.get_rect().center))
+        self.next_button_rect = next_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
+        width += next_button.get_rect().width + MENU_OFFSET
+        title.append(next_button)
+
+        down_text = font.render("-", 1, WHITE)
+        down_button = pg.transform.scale(LEVEL_BUTTON_IMG, (down_text.get_rect().height, down_text.get_rect().height)).copy().convert_alpha()
+        down_button.blit(down_text, down_text.get_rect(center = down_button.get_rect().center))
+        self.down_button_rect = down_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
+        width += down_button.get_rect().width + MENU_OFFSET
+        title.append(down_button)
+
+        level_text = font.render(str(self.current_level), 1, WHITE)
+        width += level_text.get_rect().width + MENU_OFFSET
+        title.append(level_text)
+
+        up_text = font.render("+", 1, WHITE)
+        up_button = pg.transform.scale(LEVEL_BUTTON_IMG, (up_text.get_rect().height, up_text.get_rect().height)).copy().convert_alpha()
+        up_button.blit(up_text, up_text.get_rect(center = up_button.get_rect().center))
+        self.up_button_rect = up_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
+        width += up_button.get_rect().width + MENU_OFFSET
+        title.append(up_button)
+
+        surf = pg.Surface((width, tower_text.get_rect().height))
+        surf.fill(DARKGREY)
+        temp_w = MENU_OFFSET
+        for item in title:
+            surf.blit(item, (temp_w, 0))
+            temp_w += item.get_rect().width + MENU_OFFSET
+        attr_surfaces.append(surf)
+        height += surf.get_rect().height + MENU_OFFSET
+
         for attr in self.attributes:
             surf = attr.draw()
             attr_surfaces.append(surf)
@@ -122,12 +170,11 @@ class Tower_Preview(Game):
                 attr.x_button_rect.y = height + MENU_OFFSET
                 attr.x_button_rect.x += self.map.width + MENU_OFFSET
             height += surf.get_rect().height + MENU_OFFSET
-            if surf.get_rect().width > large:
-                large = surf.get_rect().width
+            if surf.get_rect().width > width:
+                width = surf.get_rect().width
 
-        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
         save_text = font.render("Save Settings", 1, WHITE)
-        save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (round( ().width * 1.5), round(save_text.get_rect().height * 1.5))).copy().convert_alpha()
+        save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (round(save_text.get_rect().width * 1.5), round(save_text.get_rect().height * 1.5))).copy().convert_alpha()
         save_button.blit(save_text, save_text.get_rect(center = save_button.get_rect().center))
         attr_surfaces.append(save_button)
         self.save_button_rect = save_button.get_rect()
@@ -136,12 +183,23 @@ class Tower_Preview(Game):
 
         height += save_button.get_rect().height + MENU_OFFSET
 
-        self.attr_surf = pg.Surface((large, height))
+        self.attr_surf = pg.Surface((width, height))
         self.attr_surf.fill(DARKGREY)
         temp_h = MENU_OFFSET
         for surf in attr_surfaces:
             self.attr_surf.blit(surf, (0, temp_h))
             temp_h += surf.get_rect().height + MENU_OFFSET
+
+    def reload_towers(self):
+        for x, list in enumerate(self.map.get_tower_map()):
+            for y, tower in enumerate(list):
+                if tower != None:
+                    temp_tower = Tower(self, tower.rect.x, tower.rect.y, self.tower_names[self.current_tower])
+                    temp_tower.stage = self.current_level
+                    temp_tower.load_tower_data()
+                    self.map.remove_tower(x, y)
+                    self.map.add_tower(x, y, temp_tower)
+        self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
 
     def event(self, event):
         if self.save_button_rect.collidepoint(event.pos):
@@ -168,6 +226,34 @@ class Tower_Preview(Game):
                                    TOWER_DATA[tower][level]["gun_image"].get_rect(
                                        center=TOWER_DATA[tower][level]["base_image"].get_rect().center))
                     TOWER_DATA[tower][level]["image"] = temp_base
+
+        elif self.back_button_rect.collidepoint(event.pos):
+            self.current_tower -= 1
+            if self.current_tower < 0:
+                self.current_tower = len(self.tower_names) - 1
+            self.reload_towers()
+            self.load_attrs()
+            self.get_attr_surf()
+
+        elif self.next_button_rect.collidepoint(event.pos):
+            self.current_tower += 1
+            if self.current_tower == len(self.tower_names):
+                self.current_tower = 0
+            self.reload_towers()
+            self.load_attrs()
+            self.get_attr_surf()
+
+        elif self.down_button_rect.collidepoint(event.pos) and self.current_level > 0:
+            self.current_level -= 1
+            self.reload_towers()
+            self.load_attrs()
+            self.get_attr_surf()
+
+        elif self.up_button_rect.collidepoint(event.pos) and self.current_level < 2:
+            self.current_level += 1
+            self.reload_towers()
+            self.load_attrs()
+            self.get_attr_surf()
 
         else:
             for attr in self.attributes:
@@ -219,7 +305,10 @@ class Attribute():
     def draw(self):
         font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
         surf_list = []
-        attr_text = font.render(self.attr, 1, WHITE)
+        if self.attr == "upgrade_cost" and self.level == 0:
+            attr_text = font.render("buy cost", 1, WHITE)
+        else:
+            attr_text = font.render(self.attr.replace('_', ' '), 1, WHITE)
         surf_list.append(attr_text)
 
         if self.type == "int" or self.type == "float":

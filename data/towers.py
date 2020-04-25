@@ -10,8 +10,6 @@ class Obstacle(pg.sprite.Sprite):
         self.game = game
         self.groups = game.obstacles
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.x = x
-        self.y = y
         self.rect = pg.Rect(x, y, w, h)
         for i in range(tile_from_xcoords(w, self.game.map.tilesize)):
             for j in range(tile_from_xcoords(h, self.game.map.tilesize)):
@@ -91,22 +89,22 @@ class Tower(Obstacle):
     def update(self):
         if (pg.time.get_ticks() >= self.next_spawn and self.current_enemy != None):
             enemy_center = self.current_enemy.rect.center
-            if (not self.current_enemy.damagable or not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.x, self.y)) > self.range):
+            if (not self.current_enemy.damagable or not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.rect.x, self.rect.y)) > self.range):
                 self.current_enemy = None
             else:
                 if self.rotating:
                     temp_x = enemy_center[0]
                     temp_y = enemy_center[1]
 
-                    if (temp_x - self.x == 0):
-                        if (temp_y - self.y > 0):
+                    if (temp_x - self.rect.x == 0):
+                        if (temp_y - self.rect.y > 0):
                             angle = math.pi / 2
                         else:
                             angle = math.pi / 2 * 3
 
                     else:
-                        angle = math.atan((temp_y - self.y) / (temp_x - self.x))
-                        if (temp_x - self.x < 0):
+                        angle = math.atan((temp_y - self.rect.y) / (temp_x - self.rect.x))
+                        if (temp_x - self.rect.x < 0):
                             angle += math.pi
 
                     self.rotation = 180 - math.degrees(angle)
@@ -116,10 +114,10 @@ class Tower(Obstacle):
                 for i in range(self.directions):
                     rotation += increment
                     if self.tracking:
-                        TrackingProjectile(self.game, self.x, self.y, self.bullet_image, self.bullet_speed,
+                        TrackingProjectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed,
                                    self.bullet_lifetime, rotation, self.damage, self.current_enemy)
                     else:
-                        Projectile(self.game, self.x, self.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, rotation, self.damage)
+                        Projectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, rotation, self.damage)
 
                 self.sound.play()
                 self.shot = True
