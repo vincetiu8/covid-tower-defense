@@ -13,7 +13,7 @@
       },
       "bullet_spawn_speed": {
         "type": "float",
-        "min": 0.1,
+        "min": 0.05,
         "max": 10,
         "increment": 0.05,
         "dp": 2
@@ -27,7 +27,7 @@
       },
       "bullet_lifetime": {
         "type": "float",
-        "min": 0.1,
+        "min": 0.05,
         "max": 5,
         "increment": 0.05,
         "dp": 2

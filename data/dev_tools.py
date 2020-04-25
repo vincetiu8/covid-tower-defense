@@ -115,6 +115,9 @@ class Tower_Preview(Game):
                 attr.minus_button_rect.x += self.map.width + MENU_OFFSET
                 attr.plus_button_rect.y = height + MENU_OFFSET
                 attr.plus_button_rect.x += self.map.width + MENU_OFFSET
+            elif attr.type == "bool":
+                attr.x_button_rect.y = height + MENU_OFFSET
+                attr.x_button_rect.x += self.map.width + MENU_OFFSET
             height += surf.get_rect().height + MENU_OFFSET
             if surf.get_rect().width > large:
                 large = surf.get_rect().width
@@ -136,6 +139,12 @@ class Tower_Preview(Game):
                                 tower.load_tower_data()
                     elif attr.plus_button_rect.collidepoint(event.pos):
                         if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
+                            self.get_attr_surf()
+                            for tower in self.towers:
+                                tower.load_tower_data()
+                elif attr.type == "bool":
+                    if attr.x_button_rect.collidepoint(event.pos):
+                        if attr.change_val(not attr.current_value):
                             self.get_attr_surf()
                             for tower in self.towers:
                                 tower.load_tower_data()
@@ -190,13 +199,23 @@ class Attribute():
             surf_list.append(plus_button)
             self.plus_button_rect = plus_button.get_rect()
 
+        elif self.type == "bool":
+            button = pg.transform.scale(LEVEL_BUTTON_IMG, (attr_text.get_rect().height, attr_text.get_rect().height)).copy().convert_alpha()
+            if self.current_value == True:
+                x_text = font.render('X', 1, WHITE)
+                button.blit(x_text, x_text.get_rect(center = button.get_rect().center))
+            surf_list.append(button)
+            self.x_button_rect = button.get_rect()
+
         width = MENU_OFFSET
         for i, surf in enumerate(surf_list):
-            if (self.type == "int" or self.type == "float") and i == 1 or i == 3:
+            if (self.type == "int" or self.type == "float") and (i == 1 or i == 3):
                 if i == 1:
                     self.minus_button_rect.x = width
                 else:
                     self.plus_button_rect.x = width
+            elif self.type == "bool" and i == 1:
+                self.x_button_rect.x = width
             width += surf.get_rect().width + MENU_OFFSET
 
         attr_surf = pg.Surface((width, attr_text.get_rect().height))
@@ -212,6 +231,10 @@ class Attribute():
     def change_val(self, value):
         if self.type == "int" or self.type == "float":
             if value < self.min or value > self.max:
+                return False
+
+        elif self.type == "bool":
+            if not isinstance(value, bool):
                 return False
 
         if self.obj_type == "enemy":
