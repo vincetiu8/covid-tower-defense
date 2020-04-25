@@ -46,7 +46,6 @@ class Pathfinder():
             fscore = {}
             for goal in goals:
                 goal_node = goal.get_node()
-                print(goal_node)
                 fscore[goal_node] = heuristic(start[0], goal_node[0])
                 heappush(oheap, (fscore[goal_node], goal_node))
 

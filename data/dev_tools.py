@@ -8,9 +8,13 @@ from data.settings import *
 
 class Tower_Preview(Game):
     def __init__(self):
+        self.current_tower = "t_cell"
+        self.current_level = 0
+        self.original_data = TOWER_DATA[self.current_tower].copy()
         self.map = TiledMap(path.join(MAP_FOLDER, "tower_test.tmx"))
         super().load_data()
         self.new()
+        self.load_attrs()
 
     def new(self):
         # initialize all variables and do all the setup for a new game
@@ -43,13 +47,21 @@ class Tower_Preview(Game):
             if tile_object.name == "wall":
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "tower":
-                Tower(self, tile_object.x, tile_object.y, "t_cell")
+                Tower(self, tile_object.x, tile_object.y, self.current_tower)
 
         self.starts = [Start(self, 0, 'common_cold', -1, 0, 0.5)]
         self.pathfinder = Pathfinder()
         self.pathfinder.clear_nodes(self.map.get_map())
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
         self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
+
+    def load_attrs(self):
+        self.attributes = []
+        for attr in ATTR_DATA["tower"]:
+            attr_class = Attribute("tower", self.current_tower, attr)
+            self.attributes.append(attr_class)
+            attr_class.update_level(self.current_level)
+        self.get_attr_surf()
 
     def update(self):
         for start in self.starts:
@@ -85,4 +97,127 @@ class Tower_Preview(Game):
         for projectile in self.projectiles:
             surface.blit(projectile.image, projectile.rect)
 
-        return surface
+        combo_surf = pg.Surface((surface.get_rect().width + self.attr_surf.get_rect().width, max(surface.get_rect().height, self.attr_surf.get_rect().height)))
+        combo_surf.blit(surface, (0, 0))
+        combo_surf.blit(self.attr_surf, (surface.get_rect().width, 0))
+
+        return combo_surf
+
+    def get_attr_surf(self):
+        large = 0
+        height = MENU_OFFSET
+        attr_surfaces = []
+        for attr in self.attributes:
+            surf = attr.draw()
+            attr_surfaces.append(surf)
+            if attr.type == "int" or attr.type == "float":
+                attr.minus_button_rect.y = height + MENU_OFFSET
+                attr.minus_button_rect.x += self.map.width + MENU_OFFSET
+                attr.plus_button_rect.y = height + MENU_OFFSET
+                attr.plus_button_rect.x += self.map.width + MENU_OFFSET
+            height += surf.get_rect().height + MENU_OFFSET
+            if surf.get_rect().width > large:
+                large = surf.get_rect().width
+
+        self.attr_surf = pg.Surface((large, height))
+        self.attr_surf.fill(DARKGREY)
+        temp_h = MENU_OFFSET
+        for surf in attr_surfaces:
+            self.attr_surf.blit(surf, (0, temp_h))
+            temp_h += surf.get_rect().height + MENU_OFFSET
+
+    def event(self, event):
+            for attr in self.attributes:
+                if attr.type == "int" or attr.type == "float":
+                    if attr.minus_button_rect.collidepoint(event.pos):
+                        if attr.change_val(round(attr.current_value - attr.increment, attr.dp)):
+                            self.get_attr_surf()
+                            for tower in self.towers:
+                                tower.load_tower_data()
+                    elif attr.plus_button_rect.collidepoint(event.pos):
+                        if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
+                            self.get_attr_surf()
+                            for tower in self.towers:
+                                tower.load_tower_data()
+
+class Attribute():
+    def __init__(self, obj_type, obj, attr):
+        self.obj_type = obj_type
+        self.obj = obj
+        self.attr = attr
+        data = ATTR_DATA[obj_type][attr]
+        self.type = data["type"]
+        if "min" in ATTR_DATA[obj_type][attr]:
+            self.min = ATTR_DATA[obj_type][attr]["min"]
+        if "max" in ATTR_DATA[obj_type][attr]:
+            self.max = ATTR_DATA[obj_type][attr]["max"]
+        if "dp" in ATTR_DATA[obj_type][attr]:
+            self.dp = ATTR_DATA[obj_type][attr]["dp"]
+        if "increment" in ATTR_DATA[obj_type][attr]:
+            self.increment = ATTR_DATA[obj_type][attr]["increment"]
+        if obj_type == "enemy":
+            self.data = ENEMY_DATA[obj]
+        elif obj_type == "tower":
+            self.data = TOWER_DATA[obj]
+
+    def update_level(self, level):
+        self.level = level
+        if level == -1:
+            self.current_value = self.data[self.attr]
+        else:
+            self.current_value = self.data[level][self.attr]
+
+    def draw(self):
+        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
+        surf_list = []
+        attr_text = font.render(self.attr, 1, WHITE)
+        surf_list.append(attr_text)
+
+        if self.type == "int" or self.type == "float":
+            button = pg.transform.scale(LEVEL_BUTTON_IMG, (attr_text.get_rect().height, attr_text.get_rect().height))
+            minus_button = button.copy().convert_alpha()
+            minus_text = font.render('-', 1, WHITE)
+            minus_button.blit(minus_text, minus_text.get_rect(center = minus_button.get_rect().center))
+            surf_list.append(minus_button)
+            self.minus_button_rect = minus_button.get_rect()
+
+            cur_val_text = font.render(str(self.current_value), 1, WHITE)
+            surf_list.append(cur_val_text)
+
+            plus_button = button.copy().convert_alpha()
+            plus_text = font.render('+', 1, WHITE)
+            plus_button.blit(plus_text, minus_text.get_rect(center = minus_button.get_rect().center))
+            surf_list.append(plus_button)
+            self.plus_button_rect = plus_button.get_rect()
+
+        width = MENU_OFFSET
+        for i, surf in enumerate(surf_list):
+            if (self.type == "int" or self.type == "float") and i == 1 or i == 3:
+                if i == 1:
+                    self.minus_button_rect.x = width
+                else:
+                    self.plus_button_rect.x = width
+            width += surf.get_rect().width + MENU_OFFSET
+
+        attr_surf = pg.Surface((width, attr_text.get_rect().height))
+        attr_surf.fill(DARKGREY)
+
+        temp_w = MENU_OFFSET
+        for surf in surf_list:
+            attr_surf.blit(surf, (temp_w, 0))
+            temp_w += surf.get_rect().width + MENU_OFFSET
+
+        return attr_surf
+
+    def change_val(self, value):
+        if self.type == "int" or self.type == "float":
+            if value < self.min or value > self.max:
+                return False
+
+        if self.obj_type == "enemy":
+            ENEMY_DATA[self.obj][self.attr] = value
+        elif self.obj_type == "tower":
+            TOWER_DATA[self.obj][self.level][self.attr] = value
+
+        self.current_value = value
+        return True
