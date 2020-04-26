@@ -14,6 +14,8 @@ class Tower_Preview(Game):
         self.tower_names = list(TOWER_DATA.keys())
         self.current_tower = 0
         self.current_level = 0
+        self.enemy_names = list(ENEMY_DATA.keys())
+        self.current_enemy = 0
         self.map = TiledMap(path.join(MAP_FOLDER, "tower_test.tmx"))
         super().load_data()
         self.new()
@@ -54,7 +56,7 @@ class Tower_Preview(Game):
             if tile_object.name == "tower":
                 self.map.add_tower(tile_from_xcoords(tile_object.x, self.map.tilesize), tile_from_xcoords(tile_object.y, self.map.tilesize), Tower(self, tile_object.x, tile_object.y, self.tower_names[self.current_tower]))
 
-        self.starts = [Start(self, 0, 'common_cold', -1, 0, 0.5)]
+        self.starts = [Start(self, 0, self.enemy_names[self.current_enemy], -1, 0, 0.5)]
         self.pathfinder = Pathfinder()
         self.pathfinder.clear_nodes(self.map.get_map())
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
@@ -146,6 +148,10 @@ class Tower_Preview(Game):
 
         title = []
         t_width = MENU_OFFSET
+        tower_text = font.render("tower", 1, WHITE)
+        t_width += tower_text.get_rect().width + MENU_OFFSET
+        title.append(tower_text)
+
         back_text = font.render("<", 1, WHITE)
         back_button = pg.transform.scale(LEVEL_BUTTON_IMG, (back_text.get_rect().height, back_text.get_rect().height)).copy().convert_alpha()
         back_button.blit(back_text, back_text.get_rect(center = back_button.get_rect().center))
@@ -164,6 +170,24 @@ class Tower_Preview(Game):
         t_width += next_button.get_rect().width + MENU_OFFSET
         title.append(next_button)
 
+        surf = pg.Surface((t_width, tower_text.get_rect().height))
+        surf.fill(DARKGREY)
+        temp_w = MENU_OFFSET
+        for item in title:
+            surf.blit(item, (temp_w, 0))
+            temp_w += item.get_rect().width + MENU_OFFSET
+        attr_surfaces.append(surf)
+        height += surf.get_rect().height + MENU_OFFSET
+
+        if t_width > width:
+            width = t_width
+
+        title = []
+        t_width = MENU_OFFSET
+        tower_text = font.render("tower level", 1, WHITE)
+        t_width += tower_text.get_rect().width + MENU_OFFSET
+        title.append(tower_text)
+
         down_text = font.render("-", 1, WHITE)
         down_button = pg.transform.scale(LEVEL_BUTTON_IMG, (down_text.get_rect().height, down_text.get_rect().height)).copy().convert_alpha()
         down_button.blit(down_text, down_text.get_rect(center = down_button.get_rect().center))
@@ -181,6 +205,42 @@ class Tower_Preview(Game):
         self.up_button_rect = up_button.get_rect(x = self.map.width + MENU_OFFSET + t_width, y = height + MENU_OFFSET)
         t_width += up_button.get_rect().width + MENU_OFFSET
         title.append(up_button)
+
+        surf = pg.Surface((t_width, tower_text.get_rect().height))
+        surf.fill(DARKGREY)
+        temp_w = MENU_OFFSET
+        for item in title:
+            surf.blit(item, (temp_w, 0))
+            temp_w += item.get_rect().width + MENU_OFFSET
+        attr_surfaces.append(surf)
+        height += surf.get_rect().height + MENU_OFFSET
+
+        if t_width > width:
+            width = t_width
+
+        title = []
+        t_width = MENU_OFFSET
+        tower_text = font.render("enemy", 1, WHITE)
+        t_width += tower_text.get_rect().width + MENU_OFFSET
+        title.append(tower_text)
+
+        back_text = font.render("<", 1, WHITE)
+        back_button = pg.transform.scale(LEVEL_BUTTON_IMG, (back_text.get_rect().height, back_text.get_rect().height)).copy().convert_alpha()
+        back_button.blit(back_text, back_text.get_rect(center = back_button.get_rect().center))
+        self.enemy_back_button_rect = back_button.get_rect(x = self.map.width + MENU_OFFSET + t_width, y = height + MENU_OFFSET)
+        t_width += back_button.get_rect().width + MENU_OFFSET
+        title.append(back_button)
+
+        tower_text = font.render(self.enemy_names[self.current_enemy], 1, WHITE)
+        t_width += tower_text.get_rect().width + MENU_OFFSET
+        title.append(tower_text)
+
+        next_text = font.render(">", 1, WHITE)
+        next_button = pg.transform.scale(LEVEL_BUTTON_IMG, (next_text.get_rect().height, next_text.get_rect().height)).copy().convert_alpha()
+        next_button.blit(next_text, next_text.get_rect(center = next_button.get_rect().center))
+        self.enemy_next_button_rect = next_button.get_rect(x = self.map.width + MENU_OFFSET + t_width, y = height + MENU_OFFSET)
+        t_width += next_button.get_rect().width + MENU_OFFSET
+        title.append(next_button)
 
         surf = pg.Surface((t_width, tower_text.get_rect().height))
         surf.fill(DARKGREY)
@@ -284,6 +344,24 @@ class Tower_Preview(Game):
                     self.get_attr_surf()
                     return
 
+                elif self.enemy_back_button_rect.collidepoint(event.pos):
+                    self.current_enemy -= 1
+                    if self.current_enemy < 0:
+                        self.current_enemy = len(self.enemy_names) - 1
+                    self.reload_enemies()
+                    self.load_attrs()
+                    self.get_attr_surf()
+                    return
+
+                elif self.enemy_next_button_rect.collidepoint(event.pos):
+                    self.current_enemy += 1
+                    if self.current_enemy == len(self.enemy_names):
+                        self.current_enemy = 0
+                    self.reload_enemies()
+                    self.load_attrs()
+                    self.get_attr_surf()
+                    return
+
                 elif self.down_button_rect.collidepoint(event.pos) and self.current_level > 0:
                     self.current_level -= 1
                     self.reload_towers()
@@ -369,11 +447,17 @@ class Tower_Preview(Game):
         self.current_tower = self.tower_names.index(self.new_tower_name)
         self.current_level = 0
 
+    def reload_enemies(self):
+        for start in self.starts:
+            start.enemy_type = self.enemy_names[self.current_enemy]
+
 class Enemy_Preview(Game):
     def __init__(self):
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_enemy = 0
         self.current_level = 0
+        self.tower_names = list(TOWER_DATA.keys())
+        self.current_tower = 0
         self.map = TiledMap(path.join(MAP_FOLDER, "enemy_test.tmx"))
         super().load_data()
         self.new()
@@ -412,7 +496,7 @@ class Enemy_Preview(Game):
             if tile_object.name == "wall":
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "tower":
-                self.map.add_tower(tile_from_xcoords(tile_object.x, self.map.tilesize), tile_from_xcoords(tile_object.y, self.map.tilesize), Tower(self, tile_object.x, tile_object.y, "t_cell"))
+                self.map.add_tower(tile_from_xcoords(tile_object.x, self.map.tilesize), tile_from_xcoords(tile_object.y, self.map.tilesize), Tower(self, tile_object.x, tile_object.y, self.tower_names[self.current_tower]))
 
         self.starts = [Start(self, 0, self.enemy_names[self.current_enemy], -1, 0, 0.5)]
         self.pathfinder = Pathfinder()
@@ -506,6 +590,10 @@ class Enemy_Preview(Game):
 
         title = []
         t_width = MENU_OFFSET
+        level_text = font.render("enemy", 1, WHITE)
+        t_width += level_text.get_rect().width + MENU_OFFSET
+        title.append(level_text)
+
         back_text = font.render("<", 1, WHITE)
         back_button = pg.transform.scale(LEVEL_BUTTON_IMG, (back_text.get_rect().height, back_text.get_rect().height)).copy().convert_alpha()
         back_button.blit(back_text, back_text.get_rect(center = back_button.get_rect().center))
@@ -524,28 +612,82 @@ class Enemy_Preview(Game):
         t_width += next_button.get_rect().width + MENU_OFFSET
         title.append(next_button)
 
+        surf = pg.Surface((t_width, enemy_text.get_rect().height))
+        surf.fill(DARKGREY)
+        temp_w = MENU_OFFSET
+        for item in title:
+            surf.blit(item, (temp_w, 0))
+            temp_w += item.get_rect().width + MENU_OFFSET
+        attr_surfaces.append(surf)
+        height += surf.get_rect().height + MENU_OFFSET
+
+        if t_width > width:
+            width = t_width
+
+        title = []
+        t_width = MENU_OFFSET
+        level_text = font.render("tower", 1, WHITE)
+        t_width += level_text.get_rect().width + MENU_OFFSET
+        title.append(level_text)
+
+        back_text = font.render("<", 1, WHITE)
+        back_button = pg.transform.scale(LEVEL_BUTTON_IMG, (back_text.get_rect().height, back_text.get_rect().height)).copy().convert_alpha()
+        back_button.blit(back_text, back_text.get_rect(center = back_button.get_rect().center))
+        self.tower_back_button_rect = back_button.get_rect(x = self.map.width + MENU_OFFSET + t_width, y = height + MENU_OFFSET)
+        t_width += back_button.get_rect().width + MENU_OFFSET
+        title.append(back_button)
+
+        enemy_text = font.render(self.tower_names[self.current_tower], 1, WHITE)
+        t_width += enemy_text.get_rect().width + MENU_OFFSET
+        title.append(enemy_text)
+
+        next_text = font.render(">", 1, WHITE)
+        next_button = pg.transform.scale(LEVEL_BUTTON_IMG, (next_text.get_rect().height, next_text.get_rect().height)).copy().convert_alpha()
+        next_button.blit(next_text, next_text.get_rect(center = next_button.get_rect().center))
+        self.tower_next_button_rect = next_button.get_rect(x = self.map.width + MENU_OFFSET + t_width, y = height + MENU_OFFSET)
+        t_width += next_button.get_rect().width + MENU_OFFSET
+        title.append(next_button)
+
+        surf = pg.Surface((t_width, enemy_text.get_rect().height))
+        surf.fill(DARKGREY)
+        temp_w = MENU_OFFSET
+        for item in title:
+            surf.blit(item, (temp_w, 0))
+            temp_w += item.get_rect().width + MENU_OFFSET
+        attr_surfaces.append(surf)
+        height += surf.get_rect().height + MENU_OFFSET
+
+        if t_width > width:
+            width = t_width
+
+        tower = []
+        t_width = MENU_OFFSET
+        level_text = font.render("tower level", 1, WHITE)
+        t_width += level_text.get_rect().width + MENU_OFFSET
+        tower.append(level_text)
+
         down_text = font.render("-", 1, WHITE)
         down_button = pg.transform.scale(LEVEL_BUTTON_IMG, (down_text.get_rect().height, down_text.get_rect().height)).copy().convert_alpha()
         down_button.blit(down_text, down_text.get_rect(center = down_button.get_rect().center))
         self.down_button_rect = down_button.get_rect(x = self.map.width + MENU_OFFSET + t_width, y = height + MENU_OFFSET)
         t_width += down_button.get_rect().width + MENU_OFFSET
-        title.append(down_button)
+        tower.append(down_button)
 
         level_text = font.render(str(self.current_level), 1, WHITE)
         t_width += level_text.get_rect().width + MENU_OFFSET
-        title.append(level_text)
+        tower.append(level_text)
 
         up_text = font.render("+", 1, WHITE)
         up_button = pg.transform.scale(LEVEL_BUTTON_IMG, (up_text.get_rect().height, up_text.get_rect().height)).copy().convert_alpha()
         up_button.blit(up_text, up_text.get_rect(center = up_button.get_rect().center))
         self.up_button_rect = up_button.get_rect(x = self.map.width + MENU_OFFSET + t_width, y = height + MENU_OFFSET)
         t_width += up_button.get_rect().width + MENU_OFFSET
-        title.append(up_button)
+        tower.append(up_button)
 
         surf = pg.Surface((t_width, enemy_text.get_rect().height))
         surf.fill(DARKGREY)
         temp_w = MENU_OFFSET
-        for item in title:
+        for item in tower:
             surf.blit(item, (temp_w, 0))
             temp_w += item.get_rect().width + MENU_OFFSET
         attr_surfaces.append(surf)
@@ -594,7 +736,7 @@ class Enemy_Preview(Game):
         for x, list in enumerate(self.map.get_tower_map()):
             for y, tower in enumerate(list):
                 if tower != None:
-                    temp_tower = Tower(self, tower.rect.x, tower.rect.y, "t_cell")
+                    temp_tower = Tower(self, tower.rect.x, tower.rect.y, self.tower_names[self.current_tower])
                     temp_tower.stage = self.current_level
                     temp_tower.load_tower_data()
                     self.map.remove_tower(x, y)
@@ -630,6 +772,24 @@ class Enemy_Preview(Game):
                     if self.current_enemy == len(self.enemy_names):
                         self.current_enemy = 0
                     self.reload_enemies()
+                    self.load_attrs()
+                    self.get_attr_surf()
+                    return
+
+                elif self.tower_back_button_rect.collidepoint(event.pos):
+                    self.current_tower -= 1
+                    if self.current_tower < 0:
+                        self.current_tower = len(self.tower_names) - 1
+                    self.reload_towers()
+                    self.load_attrs()
+                    self.get_attr_surf()
+                    return
+
+                elif self.tower_next_button_rect.collidepoint(event.pos):
+                    self.current_tower += 1
+                    if self.current_tower == len(self.tower_names):
+                        self.current_tower = 0
+                    self.reload_towers()
                     self.load_attrs()
                     self.get_attr_surf()
                     return

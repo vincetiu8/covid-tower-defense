@@ -133,6 +133,19 @@ class Menu:
         if self.preview != None:
             self.preview.update()
 
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT]:
+            self.camera.move(25, 0)
+
+        elif keys[pg.K_RIGHT]:
+            self.camera.move(-25, 0)
+
+        elif keys[pg.K_UP]:
+            self.camera.move(0, 25)
+
+        elif keys[pg.K_DOWN]:
+            self.camera.move(0, -25)
+
     def draw(self):
         self.screen.fill((0, 0, 0))
 
@@ -273,9 +286,9 @@ class Menu:
                 return self.over_level
 
             elif event.button == 4:
-                self.camera.zoom(0.05, event.pos)
+                self.camera.zoom(0.05)
 
             elif event.button == 5:
-                self.camera.zoom(-0.05, event.pos)
+                self.camera.zoom(-0.05)
 
         return -1
