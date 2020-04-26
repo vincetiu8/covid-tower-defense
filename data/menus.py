@@ -3,7 +3,7 @@ import textwrap
 from data.display import *
 from data.tilemap import Camera
 from data.settings import *
-from data.dev_tools import TowerPreview
+from data.dev_tools import TowerPreview, EnemyPreview
 
 class StartMenu(Display):
     def __init__(self):
@@ -30,14 +30,28 @@ class Menu(Display):
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
         self.level_buttons = [pg.Rect((20, 120), self.level_button_rect.size), pg.Rect((160, 120), self.level_button_rect.size), pg.Rect((300, 120), self.level_button_rect.size)]
         self.tower_preview_button = pg.Rect((600, 100), self.level_button_rect.size)
+        self.enemy_preview_button = pg.Rect((600, 500), self.level_button_rect.size)
         self.level_descs = [None for i in range(len(LEVEL_DATA))]
         self.over_level = -1
-        self.tower_preview = None
+        self.preview = None
 
     def update(self):
         self.update_level()
-        if self.tower_preview != None:
-            self.tower_preview.update()
+        if self.preview != None:
+            self.preview.update()
+
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT]:
+            self.camera.move(25, 0)
+
+        elif keys[pg.K_RIGHT]:
+            self.camera.move(-25, 0)
+
+        elif keys[pg.K_UP]:
+            self.camera.move(0, 25)
+
+        elif keys[pg.K_DOWN]:
+            self.camera.move(0, -25)
 
     def draw(self):
         self.fill((0, 0, 0))
@@ -59,8 +73,20 @@ class Menu(Display):
         self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
             (self.tower_preview_button.center[0] - lives_text.get_rect().center[0], self.tower_preview_button.center[1] - lives_text.get_rect().center[1] + lives_text.get_rect().height - MENU_OFFSET)))
 
-        if self.tower_preview != None:
-            temp_surf = self.tower_preview.draw()
+        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.enemy_preview_button))
+        lives_text = lives_font.render("Enemy", 1, WHITE)
+        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
+            (self.enemy_preview_button.center[0] - lives_text.get_rect().center[0],
+             self.enemy_preview_button.center[1] - lives_text.get_rect().center[
+                 1] - lives_text.get_rect().height + MENU_OFFSET)))
+        lives_text = lives_font.render("Preview", 1, WHITE)
+        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
+            (self.enemy_preview_button.center[0] - lives_text.get_rect().center[0],
+             self.enemy_preview_button.center[1] - lives_text.get_rect().center[
+                 1] + lives_text.get_rect().height - MENU_OFFSET)))
+
+        if self.preview != None:
+            temp_surf = self.preview.draw()
             self.blit(temp_surf, (MENU_OFFSET, MENU_OFFSET))
             return self
 
@@ -141,27 +167,39 @@ class Menu(Display):
         return self.over_level
 
     def event(self, event):
-        if event.type == pg.MOUSEBUTTONDOWN:
+        if self.preview != None:
+            self.preview.event(event)
+
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_SPACE and not self.started:
+                self.started = True
+
+        elif event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
                 if self.tower_preview_button.collidepoint(mouse_pos):
-                    if self.tower_preview == None:
-                        self.tower_preview = TowerPreview()
+                    if isinstance(self.preview, TowerPreview):
+                        self.preview = None
                     else:
-                        self.tower_preview = None
+                        self.preview = TowerPreview()
 
-                if self.tower_preview != None:
-                    self.tower_preview.event(event)
+                elif self.enemy_preview_button.collidepoint(mouse_pos):
+                    if isinstance(self.preview, EnemyPreview):
+                        self.preview = None
+                    else:
+                        self.preview = EnemyPreview()
+
+                elif self.preview != None:
                     return -1
-                
+
                 if self.over_level != -1:
                     return "game"
                 return -1
 
             elif event.button == 4:
-                self.camera.zoom(0.05, event.pos)
+                self.camera.zoom(0.05)
 
             elif event.button == 5:
-                self.camera.zoom(-0.05, event.pos)
+                self.camera.zoom(-0.05)
 
         return -1

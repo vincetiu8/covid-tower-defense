@@ -160,6 +160,19 @@ class Game(Display):
             elif len(self.enemies) == 0:
                 pg.event.post(self.game_done_event)
 
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT]:
+            self.camera.move(25, 0)
+
+        elif keys[pg.K_RIGHT]:
+            self.camera.move(-25, 0)
+
+        elif keys[pg.K_UP]:
+            self.camera.move(0, 25)
+
+        elif keys[pg.K_DOWN]:
+            self.camera.move(0, -25)
+
     def current_wave_done(self):
         for start in self.starts:
             if not start.is_done_spawning():
@@ -401,10 +414,10 @@ class Game(Display):
                     enemy.recreate_path()
 
             elif event.button == 4:
-                self.camera.zoom(0.05, event.pos)
+                self.camera.zoom(0.05)
 
             elif event.button == 5:
-                self.camera.zoom(-0.05, event.pos)
+                self.camera.zoom(-0.05)
 
         elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
             for start in self.starts:
@@ -415,7 +428,7 @@ class Game(Display):
                 return "game_over"
         
         return -1
-
+    
 class Start():
     def __init__(self, game, start, enemy_type, enemy_count, spawn_delay, spawn_rate):
         self.game = game
