@@ -31,8 +31,8 @@ def collide_with_walls(sprite, group, dir):
 
 
 class Game(Display):
-    def __init__(self, dimensions = (SCREEN_WIDTH, SCREEN_HEIGHT)):
-        super().__init__(dimensions)
+    def __init__(self):
+        super().__init__()
         self.paused = False
         self.starts = []
         self.game_done_event = pg.event.Event(pg.USEREVENT)
