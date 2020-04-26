@@ -451,6 +451,7 @@ class Tower_Preview(Game):
         for start in self.starts:
             start.enemy_type = self.enemy_names[self.current_enemy]
 
+
 class Enemy_Preview(Game):
     def __init__(self):
         self.enemy_names = list(ENEMY_DATA.keys())
