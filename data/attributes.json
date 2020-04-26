@@ -1,29 +1,6 @@
 {
   "enemy": {
-    "hp": {
-      "type": "int",
-      "min": 1,
-      "max": 10000,
-      "increment": 1,
-      "dp": 0,
-      "default": 5
-    },
-    "speed": {
-      "type": "int",
-      "min": 10,
-      "max": 500,
-      "increment": 10,
-      "dp": 0,
-      "default": 100
-    },
-    "protein": {
-      "type": "int",
-      "min": 1,
-      "max": 10000,
-      "increment": 1,
-      "dp": 0,
-      "default": 3
-    }
+
   },
 
   "tower": {
@@ -32,64 +9,55 @@
         "min": 0,
         "max": 10000,
         "increment": 1,
-        "dp": 0,
-        "default": 3
+        "dp": 0
       },
       "bullet_spawn_speed": {
         "type": "float",
         "min": 0.05,
         "max": 10,
         "increment": 0.05,
-        "dp": 2,
-        "default": 0.5
+        "dp": 2
       },
       "bullet_speed": {
         "type": "int",
         "min": 1,
         "max": 50,
         "increment": 1,
-        "dp": 0,
-        "default": 20
+        "dp": 0
       },
       "bullet_lifetime": {
         "type": "float",
         "min": 0.05,
         "max": 5,
         "increment": 0.05,
-        "dp": 2,
-        "default": 0.5
+        "dp": 2
       },
       "range": {
         "type": "int",
         "min": 25,
         "max": 2500,
         "increment": 25,
-        "dp": 0,
-        "default": 400
+        "dp": 0
       },
       "upgrade_cost": {
         "type": "int",
         "min": 0,
         "max": 10000,
         "increment": 1,
-        "dp": 0,
-        "default": 15
+        "dp": 0
       },
       "directions": {
         "type": "int",
         "min": 1,
         "max": 360,
         "increment": 1,
-        "dp": 0,
-        "default": 1
+        "dp": 0
       },
       "rotating": {
-        "type": "bool",
-        "default": true
+        "type": "bool"
       },
       "tracking": {
-        "type": "bool",
-        "default": true
+        "type": "bool"
       }
   }
 }
