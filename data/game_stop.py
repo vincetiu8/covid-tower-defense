@@ -155,17 +155,11 @@ class Pause(GameStop):
         self.resume_rect = pg.Rect(500, 300, RESUME_BTN_IMGS[0].get_width(), RESUME_BTN_IMGS[0].get_height())
         self.resume_text = None
         
-        self.resumed_game = False
-        
         self.lost = False
         
         self.alpha_speed = 12
         
         self.init_text("GAME PAUSED", "")
-        
-    def new(self, args):
-        super().new(args)
-        self.resumed_game = False
         
     def draw(self):
         self.fill(BLACK)
@@ -174,7 +168,7 @@ class Pause(GameStop):
         
     def draw_text(self):
         super().draw_text()
-        self.blit(self.resume_text, (self.center_text_x(self.resume_rect.x, self.resume_rect.w, self.resume_text),
+        self.game_stop_surf.blit(self.resume_text, (self.center_text_x(self.resume_rect.x, self.resume_rect.w, self.resume_text),
                                     self.center_text_y(self.resume_rect.y, self.resume_rect.h, self.resume_text)))
         
     def init_text(self, str_1, str_2):
@@ -186,20 +180,16 @@ class Pause(GameStop):
         
         hover_resume = self.resume_rect.collidepoint(pg.mouse.get_pos())
         resume_btn_img = RESUME_BTN_IMGS[hover_resume]
-        self.blit(resume_btn_img, (self.resume_rect[0], self.resume_rect[1]))
-        
-    def is_game_resumed(self):
-        return self.resumed_game
+        self.game_stop_surf.blit(resume_btn_img, (self.resume_rect[0], self.resume_rect[1]))
         
     def event(self, event):
         result = super().event(event)
         
-        if result == False:
+        if result == -1:
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if self.resume_rect.collidepoint(event.pos):
-                        self.resumed_game = True
-                        return "game"
+                        return "resume"
         
         return result
         

@@ -31,8 +31,9 @@ def collide_with_walls(sprite, group, dir):
 
 
 class Game(Display):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, dimensions = (SCREEN_WIDTH, SCREEN_HEIGHT)):
+        super().__init__(dimensions)
+        self.paused = False
         self.starts = []
         self.game_done_event = pg.event.Event(pg.USEREVENT)
         self.game_paused_event = pg.event.Event(pg.USEREVENT + 1)
@@ -48,8 +49,9 @@ class Game(Display):
         
     def new(self, args):
         self.level = args[0]
+        to_resume = args[1]
         
-        if args[1]:
+        if to_resume:
             self.resume()
         else:
             self.new_game()
@@ -130,8 +132,8 @@ class Game(Display):
         )
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
-        self.make_stripped_path()
-        self.draw_tower_bases()
+        self.make_stripped_path(self)
+        self.draw_tower_bases(self)
         self.ui = UI(self, 200, 10)
 
     def resume(self):
@@ -224,8 +226,8 @@ class Game(Display):
 
         return self
 
-    def make_stripped_path(self):
-        self.path_surf = pg.Surface((self.get_width(), self.get_height()), pg.SRCALPHA)
+    def make_stripped_path(self, surface):
+        self.path_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
         self.path_surf.fill((0, 0, 0, 0))
 
         done = []
@@ -277,8 +279,8 @@ class Game(Display):
                             self.path_surf.blit(image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize,
                                                                self.map.tilesize, self.map.tilesize))
 
-    def draw_tower_bases(self):
-        self.tower_bases_surf = pg.Surface((self.get_width(), self.get_height()), pg.SRCALPHA)
+    def draw_tower_bases(self, surface):
+        self.tower_bases_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
         self.tower_bases_surf.fill((0, 0, 0, 0))
         for tower in self.towers:
             self.tower_bases_surf.blit(tower.base_image, tower.rect)
@@ -381,8 +383,8 @@ class Game(Display):
                 self.current_tower = None
 
                 self.buy_sound.play()
-                self.make_stripped_path()
-                self.draw_tower_bases()
+                self.make_stripped_path(self)
+                self.draw_tower_bases(self)
                 for enemy in self.enemies:
                     enemy.recreate_path()
 
@@ -393,8 +395,8 @@ class Game(Display):
 
                 self.map.remove_tower(x_coord, y_coord)
                 self.pathfinder.clear_nodes(self.map.get_map())
-                self.make_stripped_path(self.screen)
-                self.draw_tower_bases(self.screen)
+                self.make_stripped_path(self)
+                self.draw_tower_bases(self)
                 for enemy in self.enemies:
                     enemy.recreate_path()
 

@@ -1,8 +1,8 @@
 from data.settings import *
 
 class Display(pg.Surface):
-    def __init__(self):
-        super().__init__((SCREEN_WIDTH, SCREEN_HEIGHT))
+    def __init__(self, dimensions = (SCREEN_WIDTH, SCREEN_HEIGHT)):
+        super().__init__(dimensions)
         
     def new(self, args):
         pass
