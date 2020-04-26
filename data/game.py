@@ -68,7 +68,7 @@ class Game(Display):
         self.projectiles = pg.sprite.Group()
         self.goals = pg.sprite.Group()
 
-        self.available_towers = ["t_cell", "b_cell"]
+        self.available_towers = list(TOWER_DATA.keys())
         self.current_tower = None
         self.protein = PROTEIN
         self.lives = LIVES
