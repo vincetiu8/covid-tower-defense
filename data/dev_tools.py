@@ -27,6 +27,8 @@ class Tower_Preview(Game):
         self.projectiles = pg.sprite.Group()
         self.goals = pg.sprite.Group()
 
+        self.new_tower_name = ""
+        self.over_tower_button = False
         self.protein = 0
         self.lives = 0
         self.start_data = []
@@ -111,45 +113,76 @@ class Tower_Preview(Game):
         attr_surfaces = []
         font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
 
-        title = []
+        new_tower = []
         width = MENU_OFFSET
+        if self.new_tower_name == "":
+            if self.over_tower_button:
+                tower_text = font.render("tower name...", 1, WHITE)
+            else:
+                tower_text = font.render("tower name...", 1, LIGHTGREY)
+        else:
+            tower_text = font.render(self.new_tower_name, 1, WHITE)
+        tower_button = pg.transform.scale(LEVEL_BUTTON_IMG, (round(tower_text.get_rect().width * 1.5), tower_text.get_rect().height)).copy().convert_alpha()
+        tower_button.blit(tower_text, tower_text.get_rect(center = tower_button.get_rect().center))
+        self.tower_button_rect = tower_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
+        width += tower_button.get_rect().width + MENU_OFFSET
+        new_tower.append(tower_button)
+
+        create_text = font.render("create tower", 1, WHITE)
+        create_button = pg.transform.scale(LEVEL_BUTTON_IMG, (round(create_text.get_rect().width * 1.5), create_text.get_rect().height)).copy().convert_alpha()
+        create_button.blit(create_text, create_text.get_rect(center = create_button.get_rect().center))
+        self.create_button_rect = create_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
+        width += create_button.get_rect().width + MENU_OFFSET
+        new_tower.append(create_button)
+
+        surf = pg.Surface((width, tower_text.get_rect().height))
+        surf.fill(DARKGREY)
+        temp_w = MENU_OFFSET
+        for item in new_tower:
+            surf.blit(item, (temp_w, 0))
+            temp_w += item.get_rect().width + MENU_OFFSET
+        attr_surfaces.append(surf)
+        height += surf.get_rect().height + MENU_OFFSET
+
+        title = []
+        t_width = MENU_OFFSET
         back_text = font.render("<", 1, WHITE)
         back_button = pg.transform.scale(LEVEL_BUTTON_IMG, (back_text.get_rect().height, back_text.get_rect().height)).copy().convert_alpha()
         back_button.blit(back_text, back_text.get_rect(center = back_button.get_rect().center))
-        self.back_button_rect = back_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
-        width += back_button.get_rect().width + MENU_OFFSET
+        self.back_button_rect = back_button.get_rect(x = self.map.width + MENU_OFFSET + t_width, y = height + MENU_OFFSET)
+        t_width += back_button.get_rect().width + MENU_OFFSET
         title.append(back_button)
 
-        tower_text = font.render(self.tower_names[self.current_tower].replace('_', ' '), 1, WHITE)
-        width += tower_text.get_rect().width + MENU_OFFSET
+        tower_text = font.render(self.tower_names[self.current_tower], 1, WHITE)
+        t_width += tower_text.get_rect().width + MENU_OFFSET
         title.append(tower_text)
 
         next_text = font.render(">", 1, WHITE)
         next_button = pg.transform.scale(LEVEL_BUTTON_IMG, (next_text.get_rect().height, next_text.get_rect().height)).copy().convert_alpha()
         next_button.blit(next_text, next_text.get_rect(center = next_button.get_rect().center))
-        self.next_button_rect = next_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
-        width += next_button.get_rect().width + MENU_OFFSET
+        self.next_button_rect = next_button.get_rect(x = self.map.width + MENU_OFFSET + t_width, y = height + MENU_OFFSET)
+        t_width += next_button.get_rect().width + MENU_OFFSET
         title.append(next_button)
 
         down_text = font.render("-", 1, WHITE)
         down_button = pg.transform.scale(LEVEL_BUTTON_IMG, (down_text.get_rect().height, down_text.get_rect().height)).copy().convert_alpha()
         down_button.blit(down_text, down_text.get_rect(center = down_button.get_rect().center))
-        self.down_button_rect = down_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
-        width += down_button.get_rect().width + MENU_OFFSET
+        self.down_button_rect = down_button.get_rect(x = self.map.width + MENU_OFFSET + t_width, y = height + MENU_OFFSET)
+        t_width += down_button.get_rect().width + MENU_OFFSET
         title.append(down_button)
 
         level_text = font.render(str(self.current_level), 1, WHITE)
-        width += level_text.get_rect().width + MENU_OFFSET
+        t_width += level_text.get_rect().width + MENU_OFFSET
         title.append(level_text)
 
         up_text = font.render("+", 1, WHITE)
         up_button = pg.transform.scale(LEVEL_BUTTON_IMG, (up_text.get_rect().height, up_text.get_rect().height)).copy().convert_alpha()
         up_button.blit(up_text, up_text.get_rect(center = up_button.get_rect().center))
-        self.up_button_rect = up_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
-        width += up_button.get_rect().width + MENU_OFFSET
+        self.up_button_rect = up_button.get_rect(x = self.map.width + MENU_OFFSET + t_width, y = height + MENU_OFFSET)
+        t_width += up_button.get_rect().width + MENU_OFFSET
         title.append(up_button)
 
-        surf = pg.Surface((width, tower_text.get_rect().height))
+        surf = pg.Surface((t_width, tower_text.get_rect().height))
         surf.fill(DARKGREY)
         temp_w = MENU_OFFSET
         for item in title:
@@ -157,6 +190,9 @@ class Tower_Preview(Game):
             temp_w += item.get_rect().width + MENU_OFFSET
         attr_surfaces.append(surf)
         height += surf.get_rect().height + MENU_OFFSET
+
+        if t_width > width:
+            width = t_width
 
         for attr in self.attributes:
             surf = attr.draw()
@@ -202,78 +238,137 @@ class Tower_Preview(Game):
         self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
 
     def event(self, event):
-        if self.save_button_rect.collidepoint(event.pos):
-            for tower in TOWER_DATA:
-                for level in range(3):
-                    TOWER_DATA[tower][level].pop("gun_image", None)
-                    TOWER_DATA[tower][level].pop("base_image", None)
-                    TOWER_DATA[tower][level].pop("bullet_image", None)
-                    TOWER_DATA[tower][level].pop("shoot_sound_path", None)
-                    TOWER_DATA[tower][level].pop("image", None)
-            with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
-                json.dump(TOWER_DATA, out_file)
-            for tower in TOWER_DATA:
-                for level in range(3):
-                    TOWER_DATA[tower][level]["gun_image"] = pg.image.load(
-                        path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(level) + ".png"))
-                    TOWER_DATA[tower][level]["base_image"] = pg.image.load(
-                        path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(level) + ".png"))
-                    TOWER_DATA[tower][level]["bullet_image"] = pg.image.load(
-                        path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(level) + ".png"))
-                    TOWER_DATA[tower][level]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower))
-                    temp_base = TOWER_DATA[tower][level]["base_image"].copy()
-                    temp_base.blit(TOWER_DATA[tower][level]["gun_image"],
-                                   TOWER_DATA[tower][level]["gun_image"].get_rect(
-                                       center=TOWER_DATA[tower][level]["base_image"].get_rect().center))
-                    TOWER_DATA[tower][level]["image"] = temp_base
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.save_button_rect.collidepoint(event.pos):
+                    for tower in TOWER_DATA:
+                        for level in range(3):
+                            TOWER_DATA[tower][level].pop("gun_image", None)
+                            TOWER_DATA[tower][level].pop("base_image", None)
+                            TOWER_DATA[tower][level].pop("bullet_image", None)
+                            TOWER_DATA[tower][level].pop("shoot_sound_path", None)
+                            TOWER_DATA[tower][level].pop("image", None)
+                    with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
+                        json.dump(TOWER_DATA, out_file)
+                    for tower in TOWER_DATA:
+                        for level in range(3):
+                            TOWER_DATA[tower][level]["gun_image"] = pg.image.load(
+                                path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(level) + ".png"))
+                            TOWER_DATA[tower][level]["base_image"] = pg.image.load(
+                                path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(level) + ".png"))
+                            TOWER_DATA[tower][level]["bullet_image"] = pg.image.load(
+                                path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(level) + ".png"))
+                            TOWER_DATA[tower][level]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower))
+                            temp_base = TOWER_DATA[tower][level]["base_image"].copy()
+                            temp_base.blit(TOWER_DATA[tower][level]["gun_image"],
+                                           TOWER_DATA[tower][level]["gun_image"].get_rect(
+                                               center=TOWER_DATA[tower][level]["base_image"].get_rect().center))
+                            TOWER_DATA[tower][level]["image"] = temp_base
+                    return
 
-        elif self.back_button_rect.collidepoint(event.pos):
-            self.current_tower -= 1
-            if self.current_tower < 0:
-                self.current_tower = len(self.tower_names) - 1
-            self.reload_towers()
-            self.load_attrs()
-            self.get_attr_surf()
+                elif self.back_button_rect.collidepoint(event.pos):
+                    self.current_tower -= 1
+                    if self.current_tower < 0:
+                        self.current_tower = len(self.tower_names) - 1
+                    self.reload_towers()
+                    self.load_attrs()
+                    self.get_attr_surf()
+                    return
 
-        elif self.next_button_rect.collidepoint(event.pos):
-            self.current_tower += 1
-            if self.current_tower == len(self.tower_names):
-                self.current_tower = 0
-            self.reload_towers()
-            self.load_attrs()
-            self.get_attr_surf()
+                elif self.next_button_rect.collidepoint(event.pos):
+                    self.current_tower += 1
+                    if self.current_tower == len(self.tower_names):
+                        self.current_tower = 0
+                    self.reload_towers()
+                    self.load_attrs()
+                    self.get_attr_surf()
+                    return
 
-        elif self.down_button_rect.collidepoint(event.pos) and self.current_level > 0:
-            self.current_level -= 1
-            self.reload_towers()
-            self.load_attrs()
-            self.get_attr_surf()
+                elif self.down_button_rect.collidepoint(event.pos) and self.current_level > 0:
+                    self.current_level -= 1
+                    self.reload_towers()
+                    self.load_attrs()
+                    self.get_attr_surf()
+                    return
 
-        elif self.up_button_rect.collidepoint(event.pos) and self.current_level < 2:
-            self.current_level += 1
-            self.reload_towers()
-            self.load_attrs()
-            self.get_attr_surf()
+                elif self.up_button_rect.collidepoint(event.pos) and self.current_level < 2:
+                    self.current_level += 1
+                    self.reload_towers()
+                    self.load_attrs()
+                    self.get_attr_surf()
+                    return
 
-        else:
-            for attr in self.attributes:
-                if attr.type == "int" or attr.type == "float":
-                    if attr.minus_button_rect.collidepoint(event.pos):
-                        if attr.change_val(round(attr.current_value - attr.increment, attr.dp)):
-                            self.get_attr_surf()
-                            for tower in self.towers:
-                                tower.load_tower_data()
-                    elif attr.plus_button_rect.collidepoint(event.pos):
-                        if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
-                            self.get_attr_surf()
-                            for tower in self.towers:
-                                tower.load_tower_data()
-                elif attr.type == "bool":
-                    if attr.x_button_rect.collidepoint(event.pos):
-                        if attr.change_val(not attr.current_value):
-                            self.get_attr_surf()
-                            for tower in self.towers:
-                                tower.load_tower_data()
+                elif self.create_button_rect.collidepoint(event.pos):
+                    self.over_tower_button = False
+                    self.create_new_tower()
+                    self.load_attrs()
+                    self.reload_towers()
+                    self.get_attr_surf()
+                    return
+
+                if self.tower_button_rect.collidepoint(event.pos):
+                    self.over_tower_button = True
+                    return
+
+                else:
+                    self.over_tower_button = False
+                    for attr in self.attributes:
+                        if attr.type == "int" or attr.type == "float":
+                            if attr.minus_button_rect.collidepoint(event.pos):
+                                if attr.change_val(round(attr.current_value - attr.increment, attr.dp)):
+                                    self.get_attr_surf()
+                                    for tower in self.towers:
+                                        tower.load_tower_data()
+                            elif attr.plus_button_rect.collidepoint(event.pos):
+                                if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
+                                    self.get_attr_surf()
+                                    for tower in self.towers:
+                                        tower.load_tower_data()
+                        elif attr.type == "bool":
+                            if attr.x_button_rect.collidepoint(event.pos):
+                                if attr.change_val(not attr.current_value):
+                                    self.get_attr_surf()
+                                    for tower in self.towers:
+                                        tower.load_tower_data()
+
+        elif event.type == pg.KEYDOWN:
+            if self.over_tower_button:
+                if event.key == pg.K_BACKSPACE:
+                    self.new_tower_name = self.new_tower_name[:-1]
+                    self.get_attr_surf()
+                elif event.key == pg.K_RETURN:
+                    self.create_new_tower()
+                    self.load_attrs()
+                    self.new_tower_name = ""
+                    self.get_attr_surf()
+                    self.reload_towers()
+                else:
+                    self.new_tower_name += event.unicode
+                    self.get_attr_surf()
+
+    def create_new_tower(self):
+        TOWER_DATA[self.new_tower_name] = []
+        for level in range(3):
+            TOWER_DATA[self.new_tower_name].append({})
+            for attr in ATTR_DATA["tower"]:
+                TOWER_DATA[self.new_tower_name][level][attr] = ATTR_DATA["tower"][attr]["default"]
+            TOWER_DATA[self.new_tower_name][level]["gun_image"] = pg.image.load(
+                path.join(TOWERS_IMG_FOLDER, self.new_tower_name + "_gun" + str(level) + ".png"))
+            TOWER_DATA[self.new_tower_name][level]["base_image"] = pg.image.load(
+                path.join(TOWERS_IMG_FOLDER, self.new_tower_name + "_base" + str(level) + ".png"))
+            TOWER_DATA[self.new_tower_name][level]["bullet_image"] = pg.image.load(
+                path.join(TOWERS_IMG_FOLDER, self.new_tower_name + "_bullet" + str(level) + ".png"))
+            TOWER_DATA[self.new_tower_name][level]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER, "{}.wav".format(self.new_tower_name))
+            temp_base = TOWER_DATA[self.new_tower_name][level]["base_image"].copy()
+            temp_base.blit(TOWER_DATA[self.new_tower_name][level]["gun_image"],
+                           TOWER_DATA[self.new_tower_name][level]["gun_image"].get_rect(
+                               center=TOWER_DATA[self.new_tower_name][level]["base_image"].get_rect().center))
+            TOWER_DATA[self.new_tower_name][level]["image"] = temp_base
+        self.tower_names = list(TOWER_DATA.keys())
+        self.current_tower = self.tower_names.index(self.new_tower_name)
+        self.current_level = 0
+
+
 
 class Attribute():
     def __init__(self, obj_type, obj, attr):

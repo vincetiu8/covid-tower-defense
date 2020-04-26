@@ -232,6 +232,9 @@ class Menu:
         self.over_level = -1
 
     def event(self, event):
+        if self.tower_preview != None:
+            self.tower_preview.event(event)
+
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_SPACE and not self.started:
                 self.started = True
@@ -245,8 +248,7 @@ class Menu:
                     else:
                         self.tower_preview = None
 
-                if self.tower_preview != None:
-                    self.tower_preview.event(event)
+                elif self.tower_preview != None:
                     return -1
 
                 return self.over_level
