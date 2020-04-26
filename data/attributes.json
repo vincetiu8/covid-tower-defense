@@ -1,6 +1,29 @@
 {
   "enemy": {
-
+    "hp": {
+      "type": "int",
+      "min": 1,
+      "max": 10000,
+      "increment": 1,
+      "dp": 0,
+      "default": 5
+    },
+    "speed": {
+      "type": "int",
+      "min": 10,
+      "max": 500,
+      "increment": 10,
+      "dp": 0,
+      "default": 100
+    },
+    "protein": {
+      "type": "int",
+      "min": 1,
+      "max": 10000,
+      "increment": 1,
+      "dp": 0,
+      "default": 3
+    }
   },
 
   "tower": {
