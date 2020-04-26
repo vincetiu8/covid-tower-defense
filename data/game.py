@@ -3,6 +3,7 @@ from data.enemies import *
 from data.pathfinding import *
 from data.ui import *
 from data.towers import *
+from data.display import *
 
 import random
 
@@ -29,16 +30,13 @@ def collide_with_walls(sprite, group, dir):
             sprite.hit_rect.centery = sprite.pos.y
 
 
-class Game():
-    def __init__(self, screen, level):
-        self.screen = screen
-        self.level = level  # to be used when more levels are added
-
+class Game(Display):
+    def __init__(self):
+        super().__init__()
+        self.paused = False
         self.starts = []
-
-        self.map = TiledMap(path.join(MAP_FOLDER, "map{}.tmx".format(self.level)))
-        self.load_data()
-        self.load_level_data()
+        self.game_done_event = pg.event.Event(pg.USEREVENT)
+        self.game_paused_event = pg.event.Event(pg.USEREVENT + 1)
 
     def load_data(self):
         self.map_img = self.map.make_map()
@@ -48,8 +46,21 @@ class Game():
     def load_level_data(self):
         self.level_data = LEVEL_DATA[self.level]
         self.max_wave = len(self.level_data["waves"])
+        
+    def new(self, args):
+        self.level = args[0]
+        to_resume = args[1]
+        
+        if to_resume:
+            self.resume()
+        else:
+            self.new_game()
 
-    def new(self):
+    def new_game(self):
+        self.map = TiledMap(path.join(MAP_FOLDER, "map{}.tmx".format(self.level)))
+        self.load_data()
+        self.load_level_data()
+        
         # initialize all variables and do all the setup for a new game
         self.obstacles = pg.sprite.Group()
         self.towers = pg.sprite.Group()
@@ -63,7 +74,6 @@ class Game():
         self.lives = LIVES
 
         self.wave = 0  # only updated at the end of new_wave()
-        self.paused = False
         self.cause_of_death = "IB"
         self.start_data = []
         self.map.clear_map()
@@ -122,13 +132,11 @@ class Game():
         )
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
-        self.make_stripped_path(self.screen)
-        self.draw_tower_bases(self.screen)
+        self.make_stripped_path(self)
+        self.draw_tower_bases(self)
         self.ui = UI(self, 200, 10)
 
     def resume(self):
-        self.paused = False
-
         for enemy in self.enemies:
             enemy.update_last_move()
         for start in self.starts:
@@ -137,12 +145,7 @@ class Game():
     def update(self):
         # update portion of the game loop
         if (self.lives <= 0):
-            return False
-
-        if self.paused:
-            for start in self.starts:
-                start.pause_spawn_timer()
-            return False
+            pg.event.post(self.game_done_event)
 
         for start in self.starts:
             start.update()
@@ -155,7 +158,7 @@ class Game():
             if self.wave < self.max_wave:
                 self.new_wave()
             elif len(self.enemies) == 0:
-                return False
+                pg.event.post(self.game_done_event)
 
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
@@ -194,50 +197,50 @@ class Game():
     #         for y in range(0, self.map.height, self.map.tilesize):
     #             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
-    def draw(self, surface):
-        surface.fill((0, 0, 0))
+    def draw(self):
+        self.fill((0, 0, 0))
 
-        surface.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
+        self.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
         for start in self.starts:
-            pg.draw.rect(surface, GREEN, self.camera.apply_rect(start.rect))
+            pg.draw.rect(self, GREEN, self.camera.apply_rect(start.rect))
         for goal in self.goals:
-            pg.draw.rect(surface, GREEN, self.camera.apply_rect(goal.rect))
+            pg.draw.rect(self, GREEN, self.camera.apply_rect(goal.rect))
 
-        surface.blit(self.camera.apply_image(self.path_surf), self.camera.apply_rect(self.path_surf.get_rect()))
-        surface.blit(self.camera.apply_image(self.tower_bases_surf),
+        self.blit(self.camera.apply_image(self.path_surf), self.camera.apply_rect(self.path_surf.get_rect()))
+        self.blit(self.camera.apply_image(self.tower_bases_surf),
                      self.camera.apply_rect(self.tower_bases_surf.get_rect()))
 
         for tower in self.towers:
             rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
-            surface.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
+            self.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
 
         for enemy in self.enemies:
-            surface.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
-            pg.draw.rect(surface, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
+            self.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
+            pg.draw.rect(self, GREEN, self.camera.apply_rect(enemy.get_hp_rect()))
 
         for projectile in self.projectiles:
-            surface.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
+            self.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
 
         if self.current_tower != None:
-            self.draw_tower_preview(surface)
+            self.draw_tower_preview()
 
-        surface.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
+        self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
 
-        ui_pos = (surface.get_size()[0] - self.ui.offset, self.ui.offset)
+        ui_pos = (self.get_size()[0] - self.ui.offset, self.ui.offset)
         if self.ui.active:
             ui = self.ui.ui
             ui_rect = ui.get_rect(topright=ui_pos)
-            surface.blit(ui, ui_rect)
-            surface.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright=ui_rect.topleft))
+            self.blit(ui, ui_rect)
+            self.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright=ui_rect.topleft))
         else:
-            surface.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright=ui_pos))
+            self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright=ui_pos))
 
-        return surface
+        return self
 
-    def make_stripped_path(self, screen):
-        self.path_surf = pg.Surface((screen.get_width(), screen.get_height()), pg.SRCALPHA)
+    def make_stripped_path(self, surface):
+        self.path_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
         self.path_surf.fill((0, 0, 0, 0))
 
         done = []
@@ -295,7 +298,7 @@ class Game():
         for tower in self.towers:
             self.tower_bases_surf.blit(tower.base_image, tower.rect)
 
-    def draw_tower_preview(self, surface):
+    def draw_tower_preview(self):
         mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
         towerxy = (
         round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
@@ -330,7 +333,7 @@ class Game():
                 tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
 
             tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower][0]["base_image"].get_size())
-            surface.blit(tower_img, self.camera.apply_rect(tower_pos))
+            self.blit(tower_img, self.camera.apply_rect(tower_pos))
 
     def get_lives(self):
         return self.lives
@@ -343,17 +346,17 @@ class Game():
             if event.button == 1:
                 if self.ui.rect.collidepoint(event.pos):
                     self.ui.set_active(not self.ui.active)
-                    return
+                    return -1
 
                 elif self.ui.active:
                     for i, tower_rect in enumerate(self.ui.tower_rects):
                         if (self.protein < TOWER_DATA[self.available_towers[i]][0]["upgrade_cost"]):
                             continue
                         temp_rect = tower_rect.copy()
-                        temp_rect.x += self.screen.get_size()[0] - self.ui.width
+                        temp_rect.x += self.get_size()[0] - self.ui.width
                         if temp_rect.collidepoint(event.pos):
                             self.current_tower = self.available_towers[i]
-                            return
+                            return -1
 
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
@@ -361,16 +364,16 @@ class Game():
 
                 if self.map.get_node(x_coord, y_coord) == 1:
                     self.map.upgrade_tower(x_coord, y_coord)  # don't need to upgrade tower if clicking on empty space
-                    return
+                    return -1
 
                 if self.map.is_valid_tower_tile(x_coord, y_coord) == 0:
-                    return
+                    return -1
 
                 if self.current_tower == None:
-                    return
+                    return -1
 
                 if self.map.change_node(x_coord, y_coord, 1) == False:
-                    return
+                    return -1
 
                 self.pathfinder.clear_nodes(self.map.get_map())
 
@@ -381,7 +384,7 @@ class Game():
                     if path == False:
                         self.map.change_node(x_coord, y_coord, 0)
                         self.pathfinder.clear_nodes(self.map.get_map())
-                        return
+                        return -1
 
                 new_tower = Tower(
                     game=self,
@@ -393,8 +396,8 @@ class Game():
                 self.current_tower = None
 
                 self.buy_sound.play()
-                self.make_stripped_path(self.screen)
-                self.draw_tower_bases(self.screen)
+                self.make_stripped_path(self)
+                self.draw_tower_bases(self)
                 for enemy in self.enemies:
                     enemy.recreate_path()
 
@@ -405,8 +408,8 @@ class Game():
 
                 self.map.remove_tower(x_coord, y_coord)
                 self.pathfinder.clear_nodes(self.map.get_map())
-                self.make_stripped_path(self.screen)
-                self.draw_tower_bases(self.screen)
+                self.make_stripped_path(self)
+                self.draw_tower_bases(self)
                 for enemy in self.enemies:
                     enemy.recreate_path()
 
@@ -416,10 +419,16 @@ class Game():
             elif event.button == 5:
                 self.camera.zoom(-0.05)
 
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_ESCAPE:
-                self.paused = True
-
+        elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+            for start in self.starts:
+                start.pause_spawn_timer()
+            return "pause"
+            
+        elif event.type == pg.USEREVENT and event == self.game_done_event:
+                return "game_over"
+        
+        return -1
+    
 class Start():
     def __init__(self, game, start, enemy_type, enemy_count, spawn_delay, spawn_rate):
         self.game = game

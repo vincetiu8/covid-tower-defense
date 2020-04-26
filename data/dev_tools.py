@@ -9,7 +9,7 @@ import data.settings as settings
 import json
 from copy import deepcopy
 
-class Tower_Preview(Game):
+class TowerPreview(Game):
     def __init__(self):
         self.tower_names = list(TOWER_DATA.keys())
         self.current_tower = 0
@@ -18,10 +18,10 @@ class Tower_Preview(Game):
         self.current_enemy = 0
         self.map = TiledMap(path.join(MAP_FOLDER, "tower_test.tmx"))
         super().load_data()
-        self.new()
+        self.new_game()
         self.load_attrs()
 
-    def new(self):
+    def new_game(self):
         # initialize all variables and do all the setup for a new game
         self.obstacles = pg.sprite.Group()
         self.towers = pg.sprite.Group()
@@ -103,7 +103,8 @@ class Tower_Preview(Game):
 
         for projectile in self.projectiles:
             surface.blit(projectile.image, projectile.rect)
-
+        
+        
         combo_surf = pg.Surface((surface.get_rect().width + self.attr_surf.get_rect().width, max(surface.get_rect().height, self.attr_surf.get_rect().height)))
         combo_surf.blit(surface, (0, 0))
         combo_surf.blit(self.attr_surf, (surface.get_rect().width, 0))
@@ -451,7 +452,7 @@ class Tower_Preview(Game):
         for start in self.starts:
             start.enemy_type = self.enemy_names[self.current_enemy]
 
-class Enemy_Preview(Game):
+class EnemyPreview(Game):
     def __init__(self):
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_enemy = 0

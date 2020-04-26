@@ -1,11 +1,13 @@
 from data.settings import *
+from data.display import *
 
-class GameStop(pg.Surface):
+class GameStop(Display):
     def __init__(self):
-        super().__init__((SCREEN_WIDTH, SCREEN_HEIGHT))
+        super().__init__()
         
         self.restart_rect = pg.Rect(200, 400, RESTART_BTN_IMGS[0][0].get_width(), RESTART_BTN_IMGS[0][0].get_height())
         self.back_rect = pg.Rect(750, 400, BACK_BTN_IMGS[0][0].get_width(), BACK_BTN_IMGS[0][0].get_height())
+        self.game_stop_surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         
         self.circle_cache = {}
         
@@ -18,8 +20,11 @@ class GameStop(pg.Surface):
         self.font_1 = pg.font.Font(FONT, 200)
         self.font_2 = pg.font.Font(FONT, 60)
         
-        self.alpha = 0
         self.alpha_speed = 0
+        
+    def new(self, args):
+        self.game_surf = args[0]
+        self.alpha = 0
     
     def draw(self):
         self.alpha = min(255, self.alpha + self.alpha_speed)
@@ -28,9 +33,10 @@ class GameStop(pg.Surface):
         self.draw_btns()
         self.draw_text()
         
-        self.set_alpha(self.alpha)
+        self.game_stop_surf.set_alpha(self.alpha)
         
-        #self.main_screen.blit(self, (0, 0))
+        self.blit(self.game_surf, (0, 0))
+        self.blit(self.game_stop_surf, (0, 0))
         
     def draw_grid(self):
         color = DARK_GREEN
@@ -38,9 +44,9 @@ class GameStop(pg.Surface):
             color = DARK_RED
             
         for x in range(0, SCREEN_WIDTH, 60):
-            pg.draw.line(self, color, (x, 0), (x, SCREEN_HEIGHT))
+            pg.draw.line(self.game_stop_surf, color, (x, 0), (x, SCREEN_HEIGHT))
         for y in range(0, SCREEN_HEIGHT, 40):
-            pg.draw.line(self, color, (0, y), (SCREEN_WIDTH, y))
+            pg.draw.line(self.game_stop_surf, color, (0, y), (SCREEN_WIDTH, y))
         
     def init_text(self, str_1, str_2):
         color = WHITE
@@ -55,15 +61,15 @@ class GameStop(pg.Surface):
         self.back_text_2 = self.render_text("Level Select", self.font_2, color, BLACK)
         
     def draw_text(self):
-        self.blit(self.text_1, (self.center_text_x(0, SCREEN_WIDTH, self.text_1), 70))
-        self.blit(self.text_2, (self.center_text_x(0, SCREEN_WIDTH, self.text_2), 260))
+        self.game_stop_surf.blit(self.text_1, (self.center_text_x(0, SCREEN_WIDTH, self.text_1), 70))
+        self.game_stop_surf.blit(self.text_2, (self.center_text_x(0, SCREEN_WIDTH, self.text_2), 260))
         
-        self.blit(self.restart_text, (self.center_text_x(self.restart_rect.x, self.restart_rect.w, self.restart_text),
+        self.game_stop_surf.blit(self.restart_text, (self.center_text_x(self.restart_rect.x, self.restart_rect.w, self.restart_text),
                                     self.center_text_y(self.restart_rect.y, self.restart_rect.h, self.restart_text)))
         
-        self.blit(self.back_text_1, (self.center_text_x(self.back_rect.x + 10, self.back_rect.w, self.back_text_1),
+        self.game_stop_surf.blit(self.back_text_1, (self.center_text_x(self.back_rect.x + 10, self.back_rect.w, self.back_text_1),
                                     self.center_text_y(self.back_rect.y - self.back_text_2.get_rect().h / 3, self.back_rect.h, self.back_text_1)))
-        self.blit(self.back_text_2, (self.center_text_x(self.back_rect.x + 10, self.back_rect.w, self.back_text_2),
+        self.game_stop_surf.blit(self.back_text_2, (self.center_text_x(self.back_rect.x + 10, self.back_rect.w, self.back_text_2),
                                     self.center_text_y(self.back_rect.y + self.back_text_1.get_rect().h / 3, self.back_rect.h, self.back_text_2)))
         
     def draw_btns(self):
@@ -73,8 +79,8 @@ class GameStop(pg.Surface):
         restart_btn_img = RESTART_BTN_IMGS[self.lost][hover_restart]
         back_btn_img = BACK_BTN_IMGS[self.lost][hover_back]
         
-        self.blit(restart_btn_img, (self.restart_rect[0], self.restart_rect[1]))
-        self.blit(back_btn_img, (self.back_rect[0], self.back_rect[1]))
+        self.game_stop_surf.blit(restart_btn_img, (self.restart_rect[0], self.restart_rect[1]))
+        self.game_stop_surf.blit(back_btn_img, (self.back_rect[0], self.back_rect[1]))
         
     def is_done_fading(self):
         return self.alpha == 255
@@ -136,11 +142,11 @@ class GameStop(pg.Surface):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.restart_rect.collidepoint(event.pos):
-                    return "restart"
+                    return "game"
                 elif self.back_rect.collidepoint(event.pos):
-                    return "back to level select"
+                    return "menu"
                 
-        return False
+        return -1
 
 class Pause(GameStop):
     def __init__(self):
@@ -158,10 +164,11 @@ class Pause(GameStop):
     def draw(self):
         self.fill(BLACK)
         super().draw()
+        return self
         
     def draw_text(self):
         super().draw_text()
-        self.blit(self.resume_text, (self.center_text_x(self.resume_rect.x, self.resume_rect.w, self.resume_text),
+        self.game_stop_surf.blit(self.resume_text, (self.center_text_x(self.resume_rect.x, self.resume_rect.w, self.resume_text),
                                     self.center_text_y(self.resume_rect.y, self.resume_rect.h, self.resume_text)))
         
     def init_text(self, str_1, str_2):
@@ -173,12 +180,12 @@ class Pause(GameStop):
         
         hover_resume = self.resume_rect.collidepoint(pg.mouse.get_pos())
         resume_btn_img = RESUME_BTN_IMGS[hover_resume]
-        self.blit(resume_btn_img, (self.resume_rect[0], self.resume_rect[1]))
+        self.game_stop_surf.blit(resume_btn_img, (self.resume_rect[0], self.resume_rect[1]))
         
     def event(self, event):
         result = super().event(event)
         
-        if result == False:
+        if result == -1:
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if self.resume_rect.collidepoint(event.pos):
@@ -187,13 +194,8 @@ class Pause(GameStop):
         return result
         
 class GameOver(GameStop):
-    def __init__(self, lost, cause_of_death):
+    def __init__(self):
         super().__init__()
-        
-        self.lost = lost
-        self.cause_of_death = cause_of_death
-        
-        self.heartbeat_x = 0
         
         self.heart_beep_sfx = pg.mixer.Sound(AUDIO_HEART_BEEP_PATH)
         self.flatline_sfx = pg.mixer.Sound(AUDIO_FLATLINE_PATH)
@@ -201,11 +203,6 @@ class GameOver(GameStop):
         self.flatline_sfx.set_volume(0.6)
         
         self.alpha_speed = 3
-        
-        if self.lost:
-            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death)
-        else:
-            self.init_text("YOU SURVIVED", "But the infection still continues...")
         
     def play_sfx(self):
         play_beep_x = [20, 332, 724, 1160]
@@ -224,6 +221,17 @@ class GameOver(GameStop):
         self.heart_beep_sfx.stop()
         self.flatline_sfx.stop()
         
+    def new(self, args):
+        super().new(args)
+        
+        self.heartbeat_x = 0
+        self.lost, self.cause_of_death = args[1], args[2]
+        
+        if self.lost:
+            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death)
+        else:
+            self.init_text("YOU SURVIVED", "But the infection still continues...")
+        
     def draw(self):
         self.fill(BLACK)
         self.heartbeat_x = min(1280, self.heartbeat_x + 4)
@@ -233,18 +241,20 @@ class GameOver(GameStop):
         
         self.play_sfx()
         
+        return self
+        
     def draw_heartbeat(self):
         image = HEART_MONITOR_NORMAL_IMG
         if self.lost:
             image = HEART_MONITOR_FLATLINE_IMG
         
-        self.blit(image, (0, 0))
-        pg.draw.rect(self, BLACK, (int(self.heartbeat_x), 0, SCREEN_WIDTH - int(self.heartbeat_x), SCREEN_HEIGHT))
+        self.game_stop_surf.blit(image, (0, 0))
+        pg.draw.rect(self.game_stop_surf, BLACK, (int(self.heartbeat_x), 0, SCREEN_WIDTH - int(self.heartbeat_x), SCREEN_HEIGHT))
         
     def event(self, event):
         result = super().event(event)
         
-        if result != False:
+        if result != -1:
             self.stop_sfx()
         
         return result

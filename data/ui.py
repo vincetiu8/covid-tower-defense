@@ -19,10 +19,10 @@ class UI:
         self.active = bool
         if bool:
             self.rect = RIGHT_ARROW_IMG.get_rect(
-                topright=(self.game.screen.get_size()[0] - self.width - self.offset, self.offset))
+                topright=(self.game.get_size()[0] - self.width - self.offset, self.offset))
 
         else:
-            self.rect = LEFT_ARROW_IMG.get_rect(topright=(self.game.screen.get_size()[0] - self.offset, self.offset))
+            self.rect = LEFT_ARROW_IMG.get_rect(topright=(self.game.get_size()[0] - self.offset, self.offset))
 
     def update(self):
         if (self.lives != self.game.lives or self.protein != self.game.protein):
@@ -35,7 +35,7 @@ class UI:
         size = HEART_IMG.get_size()[0]
         font = pg.font.Font(FONT, size * 2)
         
-        ui = pg.Surface((self.width, self.game.screen.get_size()[1] - 2 * self.offset))
+        ui = pg.Surface((self.width, self.game.get_size()[1] - 2 * self.offset))
         ui.fill(DARKGREY)
         
         waves_text = font.render("Wave {}/{}".format(self.wave, self.max_wave), 1, WHITE)
