@@ -27,6 +27,7 @@ class Tower_Preview(Game):
         self.projectiles = pg.sprite.Group()
         self.goals = pg.sprite.Group()
 
+        self.save_button_text = "save settings"
         self.new_tower_name = ""
         self.over_tower_button = False
         self.protein = 0
@@ -209,13 +210,16 @@ class Tower_Preview(Game):
             if surf.get_rect().width > width:
                 width = surf.get_rect().width
 
-        save_text = font.render("Save Settings", 1, WHITE)
+        save_text = font.render(self.save_button_text, 1, WHITE)
         save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (round(save_text.get_rect().width * 1.5), round(save_text.get_rect().height * 1.5))).copy().convert_alpha()
         save_button.blit(save_text, save_text.get_rect(center = save_button.get_rect().center))
-        attr_surfaces.append(save_button)
+        temp_surf = pg.Surface((save_button.get_rect().width + MENU_OFFSET, save_button.get_rect().height))
+        temp_surf.fill(DARKGREY)
+        temp_surf.blit(save_button, (MENU_OFFSET, 0))
+        attr_surfaces.append(temp_surf)
         self.save_button_rect = save_button.get_rect()
         self.save_button_rect.y = height + MENU_OFFSET
-        self.save_button_rect.x = self.map.width + MENU_OFFSET
+        self.save_button_rect.x = self.map.width + MENU_OFFSET * 2
 
         height += save_button.get_rect().height + MENU_OFFSET
 
@@ -264,7 +268,8 @@ class Tower_Preview(Game):
                                            TOWER_DATA[tower][level]["gun_image"].get_rect(
                                                center=TOWER_DATA[tower][level]["base_image"].get_rect().center))
                             TOWER_DATA[tower][level]["image"] = temp_base
-                    return
+                    self.save_button_text = "saved!"
+                    self.load_attrs()
 
                 elif self.back_button_rect.collidepoint(event.pos):
                     self.current_tower -= 1
@@ -272,8 +277,7 @@ class Tower_Preview(Game):
                         self.current_tower = len(self.tower_names) - 1
                     self.reload_towers()
                     self.load_attrs()
-                    self.get_attr_surf()
-                    return
+                    self.reset_save_button_text()
 
                 elif self.next_button_rect.collidepoint(event.pos):
                     self.current_tower += 1
@@ -281,34 +285,30 @@ class Tower_Preview(Game):
                         self.current_tower = 0
                     self.reload_towers()
                     self.load_attrs()
-                    self.get_attr_surf()
-                    return
+                    self.reset_save_button_text()
 
                 elif self.down_button_rect.collidepoint(event.pos) and self.current_level > 0:
                     self.current_level -= 1
                     self.reload_towers()
                     self.load_attrs()
-                    self.get_attr_surf()
-                    return
+                    self.reset_save_button_text()
 
                 elif self.up_button_rect.collidepoint(event.pos) and self.current_level < 2:
                     self.current_level += 1
                     self.reload_towers()
                     self.load_attrs()
-                    self.get_attr_surf()
-                    return
+                    self.reset_save_button_text()
 
                 elif self.create_button_rect.collidepoint(event.pos):
                     self.over_tower_button = False
                     self.create_new_tower()
                     self.load_attrs()
                     self.reload_towers()
-                    self.get_attr_surf()
-                    return
+                    self.reset_save_button_text()
 
                 if self.tower_button_rect.collidepoint(event.pos):
                     self.over_tower_button = True
-                    return
+                    self.reset_save_button_text()
 
                 else:
                     self.over_tower_button = False
@@ -316,20 +316,20 @@ class Tower_Preview(Game):
                         if attr.type == "int" or attr.type == "float":
                             if attr.minus_button_rect.collidepoint(event.pos):
                                 if attr.change_val(round(attr.current_value - attr.increment, attr.dp)):
-                                    self.get_attr_surf()
                                     for tower in self.towers:
                                         tower.load_tower_data()
+                                self.reset_save_button_text()
                             elif attr.plus_button_rect.collidepoint(event.pos):
                                 if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
-                                    self.get_attr_surf()
                                     for tower in self.towers:
                                         tower.load_tower_data()
+                                self.reset_save_button_text()
                         elif attr.type == "bool":
                             if attr.x_button_rect.collidepoint(event.pos):
                                 if attr.change_val(not attr.current_value):
-                                    self.get_attr_surf()
                                     for tower in self.towers:
                                         tower.load_tower_data()
+                                self.reset_save_button_text()
 
         elif event.type == pg.KEYDOWN:
             if self.over_tower_button:
@@ -345,6 +345,10 @@ class Tower_Preview(Game):
                 else:
                     self.new_tower_name += event.unicode
                     self.get_attr_surf()
+
+    def reset_save_button_text(self):
+        self.save_button_text = "save settings"
+        self.get_attr_surf()
 
     def create_new_tower(self):
         TOWER_DATA[self.new_tower_name] = []
