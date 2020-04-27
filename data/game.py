@@ -31,13 +31,11 @@ def collide_with_walls(sprite, group, dir):
 
 
 class Game(Display):
-    def __init__(self, clock):
+    def __init__(self):
         super().__init__()
         self.paused = False
         self.starts = []
-        self.clock = clock
         self.game_done_event = pg.event.Event(pg.USEREVENT)
-        self.game_paused_event = pg.event.Event(pg.USEREVENT + 1)
 
     def load_data(self):
         self.map_img = self.map.make_map()
@@ -154,8 +152,6 @@ class Game(Display):
         
         if self.lives <= 0:
             pg.event.post(self.game_done_event)
-        if self.clock.get_fps() <= 20: # should only occur when window is being dragged
-            pg.event.post(self.game_paused_event)
 
         if self.current_wave_done():
             if self.wave < self.max_wave:
@@ -426,12 +422,9 @@ class Game(Display):
             for start in self.starts:
                 start.pause_spawn_timer()
             return "pause"
-            
-        elif event.type == pg.USEREVENT:
-            if event == self.game_done_event:
-                return "game_over"
-            elif event == self.game_paused_event:
-                return "pause"
+        
+        elif event == self.game_done_event:
+            return "game_over"
         
         return -1
     
