@@ -96,7 +96,7 @@ class Enemy(pg.sprite.Sprite):
             return
 
         if (len(self.path) == 0):
-            self.game.lives -= 1
+            self.game.lives = max(self.game.lives - 1, 0)
             
             if self.game.lives <= 0:
                 self.game.cause_of_death = " ".join(self.name.split("_")).title() # removes underscores, capitalizes it properly

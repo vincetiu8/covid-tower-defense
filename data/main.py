@@ -21,7 +21,7 @@ class Main:
         
         self.start_menu = StartMenu()
         self.menu = Menu()
-        self.game = Game()
+        self.game = Game(self.clock)
         self.game_over = GameOver()
         self.pause = Pause()
         
