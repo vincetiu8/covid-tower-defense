@@ -2,11 +2,12 @@ import sys
 
 from data.pathfinding import *
 from data.ui import *
-from data.game import *
+from data.game import Game
 from data.tilemap import *
 from data.towers import *
 from data.game_stop import *
 from data.menus import *
+from data.dev_tools import TowerPreview, EnemyPreview
 
 class Main:
     def __init__(self):
@@ -24,13 +25,17 @@ class Main:
         self.game = Game()
         self.game_over = GameOver()
         self.pause = Pause()
+        self.tower_preview = TowerPreview()
+        self.enemy_preview = EnemyPreview()
         
         self.display_keys = {
-            "menu":         self.menu,
-            "resume":       self.game,
-            "game":         self.game,
-            "game_over":    self.game_over,
-            "pause":        self.pause
+            "menu":             self.menu,
+            "resume":           self.game,
+            "game":             self.game,
+            "game_over":        self.game_over,
+            "pause":            self.pause,
+            "tower_preview":    self.tower_preview,
+            "enemy_preview":    self.enemy_preview
         }
         
         self.current_display = self.start_menu
@@ -47,6 +52,7 @@ class Main:
         self.clock.tick(FPS)
         pg.display.set_caption("FPS: {:.2f}".format(self.clock.get_fps()))
         
+        self.screen.fill((0, 0, 0))
         surf = self.current_display.draw()
         self.screen.blit(surf, (0, 0))
             

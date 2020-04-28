@@ -33,12 +33,9 @@ class Menu(Display):
         self.enemy_preview_button = pg.Rect((1200, 500), self.level_button_rect.size)
         self.level_descs = [None for i in range(len(LEVEL_DATA))]
         self.over_level = -1
-        self.preview = None
 
     def update(self):
         self.update_level()
-        if self.preview != None:
-            self.preview.update()
 
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
@@ -86,11 +83,6 @@ class Menu(Display):
             (self.enemy_preview_button.center[0] - lives_text.get_rect().center[0],
              self.enemy_preview_button.center[1] - lives_text.get_rect().center[
                  1] + lives_text.get_rect().height - MENU_OFFSET)))
-
-        if self.preview != None:
-            temp_surf = self.preview.draw()
-            self.blit(temp_surf, (MENU_OFFSET, MENU_OFFSET))
-            return self
 
         if self.over_level != -1:
             if self.level_descs[self.over_level] == None:
@@ -169,9 +161,6 @@ class Menu(Display):
         return self.over_level
 
     def event(self, event):
-        if self.preview != None:
-            self.preview.event(event)
-
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_SPACE and not self.started:
                 self.started = True
@@ -180,19 +169,10 @@ class Menu(Display):
             if event.button == 1:
                 mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
                 if self.tower_preview_button.collidepoint(mouse_pos):
-                    if isinstance(self.preview, TowerPreview):
-                        self.preview = None
-                    else:
-                        self.preview = TowerPreview()
+                    return "tower_preview"
 
                 elif self.enemy_preview_button.collidepoint(mouse_pos):
-                    if isinstance(self.preview, EnemyPreview):
-                        self.preview = None
-                    else:
-                        self.preview = EnemyPreview()
-
-                elif self.preview != None:
-                    return -1
+                    return "enemy_preview"
 
                 if self.over_level != -1:
                     return "game"

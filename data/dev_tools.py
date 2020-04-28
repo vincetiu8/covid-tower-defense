@@ -11,18 +11,17 @@ from copy import deepcopy
 
 class TowerPreview(Game):
     def __init__(self):
-        self.tower_names = list(TOWER_DATA.keys())
-        self.current_tower = 0
-        self.current_level = 0
-        self.enemy_names = list(ENEMY_DATA.keys())
-        self.current_enemy = 0
         self.map = TiledMap(path.join(MAP_FOLDER, "tower_test.tmx"))
         super().load_data()
-        self.new_game()
-        self.load_attrs()
 
-    def new_game(self):
+    def new(self, args):
         # initialize all variables and do all the setup for a new game
+        self.tower_names = list(TOWER_DATA.keys())
+        self.enemy_names = list(ENEMY_DATA.keys())
+        self.current_tower = 0
+        self.current_level = 0
+        self.current_enemy = 0
+        
         self.obstacles = pg.sprite.Group()
         self.towers = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
@@ -61,6 +60,8 @@ class TowerPreview(Game):
         self.pathfinder.clear_nodes(self.map.get_map())
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
         self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
+        
+        self.load_attrs()
 
     def load_attrs(self):
         self.attributes = []
@@ -273,19 +274,32 @@ class TowerPreview(Game):
         save_text = font.render("Save Settings", 1, WHITE)
         save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (round(save_text.get_rect().width * 1.5), round(save_text.get_rect().height * 1.5))).copy().convert_alpha()
         save_button.blit(save_text, save_text.get_rect(center = save_button.get_rect().center))
-        attr_surfaces.append(save_button)
         self.save_button_rect = save_button.get_rect()
         self.save_button_rect.y = height + MENU_OFFSET
         self.save_button_rect.x = self.map.width + MENU_OFFSET
 
         height += save_button.get_rect().height + MENU_OFFSET
+        
+        done_text = font.render("Done", 1, WHITE)
+        done_button = pg.transform.scale(LEVEL_BUTTON_IMG, (round(done_text.get_rect().width * 1.5), round(done_text.get_rect().height * 1.5))).copy().convert_alpha()
+        done_button.blit(done_text, done_text.get_rect(center = done_button.get_rect().center))
+        self.done_button_rect = done_button.get_rect()
+        self.done_button_rect.y = self.save_button_rect.y
+        self.done_button_rect.x = self.save_button_rect.x + self.save_button_rect.width + MENU_OFFSET
 
+        save_surfs = [save_button, done_button]
+        
         self.attr_surf = pg.Surface((width, height))
         self.attr_surf.fill(DARKGREY)
         temp_h = MENU_OFFSET
         for surf in attr_surfaces:
             self.attr_surf.blit(surf, (0, temp_h))
             temp_h += surf.get_rect().height + MENU_OFFSET
+            
+        temp_w = MENU_OFFSET
+        for surf in save_surfs:
+            self.attr_surf.blit(surf, (temp_w, temp_h))
+            temp_w += surf.get_rect().width + MENU_OFFSET
 
     def reload_towers(self):
         for x, list in enumerate(self.map.get_tower_map()):
@@ -310,7 +324,7 @@ class TowerPreview(Game):
                             TOWER_DATA[tower][level].pop("shoot_sound_path", None)
                             TOWER_DATA[tower][level].pop("image", None)
                     with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
-                        json.dump(TOWER_DATA, out_file)
+                        json.dump(TOWER_DATA, out_file, indent = 4)
                     for tower in TOWER_DATA:
                         for level in range(3):
                             TOWER_DATA[tower][level]["gun_image"] = pg.image.load(
@@ -325,7 +339,10 @@ class TowerPreview(Game):
                                            TOWER_DATA[tower][level]["gun_image"].get_rect(
                                                center=TOWER_DATA[tower][level]["base_image"].get_rect().center))
                             TOWER_DATA[tower][level]["image"] = temp_base
-                    return
+                    return -1
+                
+                elif self.done_button_rect.collidepoint(event.pos):
+                    return "menu"
 
                 elif self.back_button_rect.collidepoint(event.pos):
                     self.current_tower -= 1
@@ -334,7 +351,7 @@ class TowerPreview(Game):
                     self.reload_towers()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.next_button_rect.collidepoint(event.pos):
                     self.current_tower += 1
@@ -343,7 +360,7 @@ class TowerPreview(Game):
                     self.reload_towers()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.enemy_back_button_rect.collidepoint(event.pos):
                     self.current_enemy -= 1
@@ -352,7 +369,7 @@ class TowerPreview(Game):
                     self.reload_enemies()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.enemy_next_button_rect.collidepoint(event.pos):
                     self.current_enemy += 1
@@ -361,21 +378,21 @@ class TowerPreview(Game):
                     self.reload_enemies()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.down_button_rect.collidepoint(event.pos) and self.current_level > 0:
                     self.current_level -= 1
                     self.reload_towers()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.up_button_rect.collidepoint(event.pos) and self.current_level < 2:
                     self.current_level += 1
                     self.reload_towers()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.create_button_rect.collidepoint(event.pos):
                     self.over_tower_button = False
@@ -384,11 +401,11 @@ class TowerPreview(Game):
                     self.load_attrs()
                     self.new_tower_name = ""
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 if self.tower_button_rect.collidepoint(event.pos):
                     self.over_tower_button = True
-                    return
+                    return -1
 
                 else:
                     self.over_tower_button = False
@@ -410,7 +427,7 @@ class TowerPreview(Game):
                                     self.get_attr_surf()
                                     for tower in self.towers:
                                         tower.load_tower_data()
-
+                                        
         elif event.type == pg.KEYDOWN:
             if self.over_tower_button:
                 if event.key == pg.K_BACKSPACE:
@@ -425,6 +442,8 @@ class TowerPreview(Game):
                 else:
                     self.new_tower_name += event.unicode
                     self.get_attr_surf()
+                    
+        return -1
 
     def create_new_tower(self):
         TOWER_DATA[self.new_tower_name] = []
@@ -454,17 +473,16 @@ class TowerPreview(Game):
 
 class EnemyPreview(Game):
     def __init__(self):
-        self.enemy_names = list(ENEMY_DATA.keys())
-        self.current_enemy = 0
-        self.current_level = 0
-        self.tower_names = list(TOWER_DATA.keys())
-        self.current_tower = 0
         self.map = TiledMap(path.join(MAP_FOLDER, "enemy_test.tmx"))
         super().load_data()
-        self.new()
-        self.load_attrs()
 
-    def new(self):
+    def new(self, args):
+        self.enemy_names = list(ENEMY_DATA.keys())
+        self.tower_names = list(TOWER_DATA.keys())
+        self.current_enemy = 0
+        self.current_level = 0
+        self.current_tower = 0
+        
         # initialize all variables and do all the setup for a new game
         self.obstacles = pg.sprite.Group()
         self.towers = pg.sprite.Group()
@@ -504,6 +522,8 @@ class EnemyPreview(Game):
         self.pathfinder.clear_nodes(self.map.get_map())
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
         self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
+        
+        self.load_attrs()
 
     def load_attrs(self):
         self.attributes = []
@@ -715,19 +735,32 @@ class EnemyPreview(Game):
         save_text = font.render("Save Settings", 1, WHITE)
         save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (round(save_text.get_rect().width * 1.5), round(save_text.get_rect().height * 1.5))).copy().convert_alpha()
         save_button.blit(save_text, save_text.get_rect(center = save_button.get_rect().center))
-        attr_surfaces.append(save_button)
         self.save_button_rect = save_button.get_rect()
         self.save_button_rect.y = height + MENU_OFFSET
         self.save_button_rect.x = self.map.width + MENU_OFFSET
 
         height += save_button.get_rect().height + MENU_OFFSET
+        
+        done_text = font.render("Done", 1, WHITE)
+        done_button = pg.transform.scale(LEVEL_BUTTON_IMG, (round(done_text.get_rect().width * 1.5), round(done_text.get_rect().height * 1.5))).copy().convert_alpha()
+        done_button.blit(done_text, done_text.get_rect(center = done_button.get_rect().center))
+        self.done_button_rect = done_button.get_rect()
+        self.done_button_rect.y = self.save_button_rect.y
+        self.done_button_rect.x = self.save_button_rect.x + self.save_button_rect.width + MENU_OFFSET
 
+        save_surfs = [save_button, done_button]
+        
         self.attr_surf = pg.Surface((width, height))
         self.attr_surf.fill(DARKGREY)
         temp_h = MENU_OFFSET
         for surf in attr_surfaces:
             self.attr_surf.blit(surf, (0, temp_h))
             temp_h += surf.get_rect().height + MENU_OFFSET
+            
+        temp_w = MENU_OFFSET
+        for surf in save_surfs:
+            self.attr_surf.blit(surf, (temp_w, temp_h))
+            temp_w += surf.get_rect().width + MENU_OFFSET
 
     def reload_enemies(self):
         for start in self.starts:
@@ -752,12 +785,15 @@ class EnemyPreview(Game):
                         ENEMY_DATA[enemy].pop("image")
                         ENEMY_DATA[enemy].pop("death_sound_path")
                     with open(path.join(GAME_FOLDER, "enemies.json"), 'w') as out_file:
-                        json.dump(ENEMY_DATA, out_file)
+                        json.dump(ENEMY_DATA, out_file, indent = 4)
                     for enemy in ENEMY_DATA:
                         ENEMY_DATA[enemy]["image"] = pg.image.load(
                             path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
                         ENEMY_DATA[enemy]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy))
-                    return
+                    return -1
+                
+                elif self.done_button_rect.collidepoint(event.pos):
+                    return "menu"
 
                 elif self.back_button_rect.collidepoint(event.pos):
                     self.current_enemy -= 1
@@ -766,7 +802,7 @@ class EnemyPreview(Game):
                     self.reload_enemies()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.next_button_rect.collidepoint(event.pos):
                     self.current_enemy += 1
@@ -775,7 +811,7 @@ class EnemyPreview(Game):
                     self.reload_enemies()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.tower_back_button_rect.collidepoint(event.pos):
                     self.current_tower -= 1
@@ -784,7 +820,7 @@ class EnemyPreview(Game):
                     self.reload_towers()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.tower_next_button_rect.collidepoint(event.pos):
                     self.current_tower += 1
@@ -793,21 +829,21 @@ class EnemyPreview(Game):
                     self.reload_towers()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.down_button_rect.collidepoint(event.pos) and self.current_level > 0:
                     self.current_level -= 1
                     self.reload_towers()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.up_button_rect.collidepoint(event.pos) and self.current_level < 2:
                     self.current_level += 1
                     self.reload_towers()
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 elif self.create_button_rect.collidepoint(event.pos):
                     self.over_enemy_button = False
@@ -816,11 +852,11 @@ class EnemyPreview(Game):
                     self.new_enemy_name = ""
                     self.load_attrs()
                     self.get_attr_surf()
-                    return
+                    return -1
 
                 if self.enemy_button_rect.collidepoint(event.pos):
                     self.over_enemy_button = True
-                    return
+                    return -1
 
                 else:
                     self.over_enemy_button = False
@@ -851,6 +887,8 @@ class EnemyPreview(Game):
                 else:
                     self.new_enemy_name += event.unicode
                     self.get_attr_surf()
+                    
+        return -1
 
     def create_new_enemy(self):
         ENEMY_DATA[self.new_enemy_name] = {}
