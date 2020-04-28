@@ -3,10 +3,11 @@ import random
 from data.tilemap import tile_from_coords
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, game, x, y, name):
+    def __init__(self, clock, game, x, y, name):
         self.groups = game.enemies
         super().__init__(self.groups)
         
+        self.clock = clock
         self.game = game
         self.name = name
         self.last_move = pg.time.get_ticks()
@@ -39,9 +40,8 @@ class Enemy(pg.sprite.Sprite):
             self.game.protein += self.dropped_protein
             self.kill()
             return
-
-        passed_time = (pg.time.get_ticks() - self.last_move) / 1000
-        self.update_last_move()
+          
+        passed_time = self.clock.get_time() / 1000
 
         if (self.maximising != 0 and self.image.get_size()[0] + self.maximising > 0 and self.image.get_size()[0] + self.maximising <= self.rect.w):
             self.image_size += self.maximising

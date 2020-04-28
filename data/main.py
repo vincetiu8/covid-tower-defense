@@ -14,16 +14,18 @@ class Main:
         pg.mixer.init()
         pg.key.set_repeat(500, 100)
         self.clock = pg.time.Clock()
-        self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.FULLSCREEN)
+        self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.playing = False
         self.started_game = False
         self.game_surf = None # only used to draw static game screen when fading into game_stop screens
         
         self.start_menu = StartMenu()
         self.menu = Menu()
-        self.game = Game()
+        self.game = Game(self.clock)
         self.game_over = GameOver()
         self.pause = Pause()
+        
+        self.i = 0
         
         self.display_keys = {
             "menu":         self.menu,
@@ -36,9 +38,15 @@ class Main:
         self.current_display = self.start_menu
         
     def run(self):
+        self.clock.tick(FPS)
+        #print(self.i)
+        #if self.clock.get_fps() <= 20:
+        #    print("roftl")
         self.events()
+        #print(self.i + 1)
         self.update()
         self.draw()
+        self.i += 2
 
     def update(self):
         self.current_display.update()
