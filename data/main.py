@@ -14,14 +14,14 @@ class Main:
         pg.mixer.init()
         pg.key.set_repeat(500, 100)
         self.clock = pg.time.Clock()
-        self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.FULLSCREEN)
+        self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.playing = False
         self.started_game = False
         self.game_surf = None # only used to draw static game screen when fading into game_stop screens
         
         self.start_menu = StartMenu()
         self.menu = Menu()
-        self.game = Game()
+        self.game = Game(self.clock)
         self.game_over = GameOver()
         self.pause = Pause()
         

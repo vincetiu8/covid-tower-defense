@@ -31,8 +31,9 @@ def collide_with_walls(sprite, group, dir):
 
 
 class Game(Display):
-    def __init__(self):
+    def __init__(self, clock):
         super().__init__()
+        self.clock = clock
         self.paused = False
         self.starts = []
         self.game_done_event = pg.event.Event(pg.USEREVENT)
@@ -185,7 +186,7 @@ class Game(Display):
 
         for i in range(len(wave_data["enemy_type"])):
             self.starts.append(
-                Start(self, wave_data["start"][i], wave_data["enemy_type"][i], wave_data["enemy_count"][i],
+                Start(self.clock, self, wave_data["start"][i], wave_data["enemy_type"][i], wave_data["enemy_count"][i],
                       wave_data["spawn_delay"][i], wave_data["spawn_rate"][i]))
 
         self.wave += 1
@@ -429,7 +430,8 @@ class Game(Display):
         return -1
     
 class Start():
-    def __init__(self, game, start, enemy_type, enemy_count, spawn_delay, spawn_rate):
+    def __init__(self, clock, game, start, enemy_type, enemy_count, spawn_delay, spawn_rate):
+        self.clock = clock
         self.game = game
         self.start = start
         self.rect = game.start_data[start]
@@ -450,6 +452,7 @@ class Start():
     def update(self):
         if (pg.time.get_ticks() >= self.next_spawn and (self.infinity or self.enemy_count > 0)):
             self.game.enemies.add(Enemy(
+                clock = self.clock,
                 game = self.game,
                 x = self.rect.x + random.randrange(1, self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width()),
                 y = self.rect.y + random.randrange(1, self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height()),
