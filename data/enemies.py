@@ -10,7 +10,6 @@ class Enemy(pg.sprite.Sprite):
         self.clock = clock
         self.game = game
         self.name = name
-        self.last_move = pg.time.get_ticks()
         
         data = ENEMY_DATA[name]
         self.name = name
@@ -74,9 +73,6 @@ class Enemy(pg.sprite.Sprite):
 
         if (self.new_node_rect.collidepoint(self.rect.topleft) and self.new_node_rect.collidepoint(self.rect.bottomright)):
             self.load_next_node()
-            
-    def update_last_move(self):
-        self.last_move = pg.time.get_ticks()
 
     def get_hp_rect(self):
         h = 5
