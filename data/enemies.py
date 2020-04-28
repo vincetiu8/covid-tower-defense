@@ -3,13 +3,13 @@ import random
 from data.tilemap import tile_from_coords
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, game, x, y, name):
+    def __init__(self, clock, game, x, y, name):
         self.groups = game.enemies
         super().__init__(self.groups)
         
+        self.clock = clock
         self.game = game
         self.name = name
-        self.last_move = pg.time.get_ticks()
         
         data = ENEMY_DATA[name]
         self.name = name
@@ -40,8 +40,7 @@ class Enemy(pg.sprite.Sprite):
             self.kill()
             return
 
-        passed_time = (pg.time.get_ticks() - self.last_move) / 1000
-        self.update_last_move()
+        passed_time = self.clock.get_time() / 1000
 
         if (self.maximising != 0 and self.image.get_size()[0] + self.maximising > 0 and self.image.get_size()[0] + self.maximising <= self.rect.w):
             self.image_size += self.maximising
@@ -74,9 +73,6 @@ class Enemy(pg.sprite.Sprite):
 
         if (self.new_node_rect.collidepoint(self.rect.topleft) and self.new_node_rect.collidepoint(self.rect.bottomright)):
             self.load_next_node()
-            
-    def update_last_move(self):
-        self.last_move = pg.time.get_ticks()
 
     def get_hp_rect(self):
         h = 5
@@ -96,7 +92,7 @@ class Enemy(pg.sprite.Sprite):
             return
 
         if (len(self.path) == 0):
-            self.game.lives -= 1
+            self.game.lives = max(self.game.lives - 1, 0)
             
             if self.game.lives <= 0:
                 self.game.cause_of_death = " ".join(self.name.split("_")).title() # removes underscores, capitalizes it properly

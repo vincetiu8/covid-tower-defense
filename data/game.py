@@ -31,12 +31,12 @@ def collide_with_walls(sprite, group, dir):
 
 
 class Game(Display):
-    def __init__(self):
+    def __init__(self, clock):
         super().__init__()
+        self.clock = clock
         self.paused = False
         self.starts = []
         self.game_done_event = pg.event.Event(pg.USEREVENT)
-        self.game_paused_event = pg.event.Event(pg.USEREVENT + 1)
 
     def load_data(self):
         self.map_img = self.map.make_map()
@@ -51,9 +51,7 @@ class Game(Display):
         self.level = args[0]
         to_resume = args[1]
         
-        if to_resume:
-            self.resume()
-        else:
+        if not to_resume:
             self.new_game()
 
     def new_game(self):
@@ -136,23 +134,17 @@ class Game(Display):
         self.draw_tower_bases(self)
         self.ui = UI(self, 200, 10)
 
-    def resume(self):
-        for enemy in self.enemies:
-            enemy.update_last_move()
-        for start in self.starts:
-            start.resume_spawn_timer()
-
     def update(self):
         # update portion of the game loop
-        if (self.lives <= 0):
-            pg.event.post(self.game_done_event)
-
         for start in self.starts:
             start.update()
         self.enemies.update()
         self.towers.update()
         self.projectiles.update()
         self.ui.update()
+        
+        if self.lives <= 0:
+            pg.event.post(self.game_done_event)
 
         if self.current_wave_done():
             if self.wave < self.max_wave:
@@ -186,7 +178,7 @@ class Game(Display):
 
         for i in range(len(wave_data["enemy_type"])):
             self.starts.append(
-                Start(self, wave_data["start"][i], wave_data["enemy_type"][i], wave_data["enemy_count"][i],
+                Start(self.clock, self, wave_data["start"][i], wave_data["enemy_type"][i], wave_data["enemy_count"][i],
                       wave_data["spawn_delay"][i], wave_data["spawn_rate"][i]))
 
         self.wave += 1
@@ -419,18 +411,17 @@ class Game(Display):
             elif event.button == 5:
                 self.camera.zoom(-0.05)
 
-        elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-            for start in self.starts:
-                start.pause_spawn_timer()
+        elif (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
             return "pause"
-            
-        elif event.type == pg.USEREVENT and event == self.game_done_event:
-                return "game_over"
+        
+        elif event == self.game_done_event:
+            return "game_over"
         
         return -1
     
 class Start():
-    def __init__(self, game, start, enemy_type, enemy_count, spawn_delay, spawn_rate):
+    def __init__(self, clock, game, start, enemy_type, enemy_count, spawn_delay, spawn_rate):
+        self.clock = clock
         self.game = game
         self.start = start
         self.rect = game.start_data[start]
@@ -444,28 +435,26 @@ class Start():
         self.spawn_delay = spawn_delay
         self.spawn_rate = spawn_rate
         
-        self.next_spawn = pg.time.get_ticks() + self.spawn_delay * 1000
+        self.time_passed = 0
+        self.next_spawn = self.spawn_delay * 1000
         
         self.done_spawning = False
 
     def update(self):
-        if (pg.time.get_ticks() >= self.next_spawn and (self.infinity or self.enemy_count > 0)):
+        self.time_passed += self.clock.get_time()
+        if (self.time_passed >= self.next_spawn and (self.infinity or self.enemy_count > 0)):
             self.game.enemies.add(Enemy(
+                clock = self.clock,
                 game = self.game,
                 x = self.rect.x + random.randrange(1, self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width()),
                 y = self.rect.y + random.randrange(1, self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height()),
                 name = self.enemy_type))
-            self.next_spawn = pg.time.get_ticks() + self.spawn_rate * 1000
+            self.next_spawn = self.spawn_rate * 1000
+            self.time_passed = 0
             self.enemy_count -= 1
             
             if self.enemy_count == 0:
                 self.done_spawning = True
-                
-    def pause_spawn_timer(self):
-        self.spawn_diff = self.next_spawn - pg.time.get_ticks()
-    
-    def resume_spawn_timer(self):
-        self.next_spawn = pg.time.get_ticks() + self.spawn_diff
     
     def is_done_spawning(self):
         return self.done_spawning
