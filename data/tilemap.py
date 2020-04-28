@@ -115,7 +115,7 @@ class Camera():
         self.map_width = map_width
         self.map_height = map_height
         self.current_zoom = min(width / map_width, height / map_height)
-        self.minzoom = self.current_zoom - 1
+        self.minzoom = self.current_zoom / 2
         self.camera = pg.Rect((self.width - self.map_width * (self.current_zoom + 0.05)) / 2, (self.height- self.map_height * self.current_zoom) / 2, width, height)
 
     def apply_tuple(self, tuple):
@@ -136,13 +136,13 @@ class Camera():
         return ([round((x - self.camera.topleft[i]) / self.current_zoom) for i, x in enumerate(pos)])
 
     def zoom(self, amount):
-        if (amount > 0 and self.current_zoom >= self.minzoom + 2 or amount < 0 and self.current_zoom <= self.minzoom):
+        if (amount > 0 and self.current_zoom >= self.minzoom * 4 or amount < 0 and self.current_zoom <= self.minzoom):
             return
 
         self.current_zoom += amount
 
-        self.camera = self.camera.move(amount * (self.map_width - self.width) / 2,
-                                       amount * (self.map_width - self.width) / 2) # I have no idea why this works but it just does.
+        center = self.correct_mouse((self.width / 2, self.height / 2))
+        self.move(-amount * center[0], -amount * center[1])
 
     def move(self, x, y):
         self.camera = self.camera.move(x, y)

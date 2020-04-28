@@ -119,6 +119,7 @@ PATH_CORNER4_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner4.png"))
 # load other images
 START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
 LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
+BODY_IMG = pg.transform.scale(pg.image.load(path.join(IMG_FOLDER, "body.png")), (2560, 3480))
 
 # load game over images
 RESTART_BTN_IMGS = [[None, None], [None, None]]

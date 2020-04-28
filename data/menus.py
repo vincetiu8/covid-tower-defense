@@ -28,9 +28,9 @@ class Menu(Display):
         super().__init__()
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, START_SCREEN_IMG.get_rect().w, START_SCREEN_IMG.get_rect().h)
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
-        self.level_buttons = [pg.Rect((20, 120), self.level_button_rect.size), pg.Rect((160, 120), self.level_button_rect.size), pg.Rect((300, 120), self.level_button_rect.size)]
-        self.tower_preview_button = pg.Rect((600, 100), self.level_button_rect.size)
-        self.enemy_preview_button = pg.Rect((600, 500), self.level_button_rect.size)
+        self.level_buttons = [pg.Rect((20, 400), self.level_button_rect.size), pg.Rect((160, 400), self.level_button_rect.size), pg.Rect((300, 400), self.level_button_rect.size)]
+        self.tower_preview_button = pg.Rect((1200, 100), self.level_button_rect.size)
+        self.enemy_preview_button = pg.Rect((1200, 500), self.level_button_rect.size)
         self.level_descs = [None for i in range(len(LEVEL_DATA))]
         self.over_level = -1
         self.preview = None
@@ -55,10 +55,12 @@ class Menu(Display):
 
     def draw(self):
         self.fill((0, 0, 0))
+        self.blit(self.camera.apply_image(BODY_IMG), self.camera.apply_tuple((-1075, 150)))
 
+        big_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w * 4)
         lives_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w)
-        level_text = lives_font.render("Levels", 1, WHITE)
-        self.blit(self.camera.apply_image(level_text), self.camera.apply_tuple((START_SCREEN_IMG.get_rect().w / 2 - level_text.get_rect().center[0], 75 - level_text.get_rect().center[1])))
+        level_text = big_font.render("Levels", 1, WHITE)
+        self.blit(self.camera.apply_image(level_text), self.camera.apply_tuple((START_SCREEN_IMG.get_rect().w / 2 - level_text.get_rect().center[0], -50 - level_text.get_rect().center[1])))
 
         for i, button in enumerate(self.level_buttons):
             self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(button))
