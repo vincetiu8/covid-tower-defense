@@ -24,8 +24,9 @@ class StartMenu(Display):
         return -1
     
 class Menu(Display):
-    def __init__(self):
+    def __init__(self, clock):
         super().__init__()
+        self.clock = clock
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, START_SCREEN_IMG.get_rect().w, START_SCREEN_IMG.get_rect().h)
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
         self.level_buttons = [pg.Rect((20, 120), self.level_button_rect.size), pg.Rect((160, 120), self.level_button_rect.size), pg.Rect((300, 120), self.level_button_rect.size)]
@@ -181,13 +182,13 @@ class Menu(Display):
                     if isinstance(self.preview, TowerPreview):
                         self.preview = None
                     else:
-                        self.preview = TowerPreview()
+                        self.preview = TowerPreview(self.clock)
 
                 elif self.enemy_preview_button.collidepoint(mouse_pos):
                     if isinstance(self.preview, EnemyPreview):
                         self.preview = None
                     else:
-                        self.preview = EnemyPreview()
+                        self.preview = EnemyPreview(self.clock)
 
                 elif self.preview != None:
                     return -1

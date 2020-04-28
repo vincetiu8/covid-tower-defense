@@ -10,7 +10,6 @@ class Enemy(pg.sprite.Sprite):
         self.clock = clock
         self.game = game
         self.name = name
-        self.last_move = pg.time.get_ticks()
         
         data = ENEMY_DATA[name]
         self.name = name
@@ -40,12 +39,8 @@ class Enemy(pg.sprite.Sprite):
             self.game.protein += self.dropped_protein
             self.kill()
             return
-        
-        if self.clock.get_fps() <= 20:
-            self.update_last_move()
 
-        passed_time = (pg.time.get_ticks() - self.last_move) / 1000
-        self.update_last_move()
+        passed_time = self.clock.get_time() / 1000
 
         if (self.maximising != 0 and self.image.get_size()[0] + self.maximising > 0 and self.image.get_size()[0] + self.maximising <= self.rect.w):
             self.image_size += self.maximising
@@ -78,9 +73,6 @@ class Enemy(pg.sprite.Sprite):
 
         if (self.new_node_rect.collidepoint(self.rect.topleft) and self.new_node_rect.collidepoint(self.rect.bottomright)):
             self.load_next_node()
-            
-    def update_last_move(self):
-        self.last_move = pg.time.get_ticks()
 
     def get_hp_rect(self):
         h = 5
