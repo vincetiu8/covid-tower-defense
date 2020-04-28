@@ -22,11 +22,13 @@ class Main:
         
         self.start_menu = StartMenu()
         self.menu = Menu()
-        self.game = Game()
+        self.game = Game(self.clock)
         self.game_over = GameOver()
         self.pause = Pause()
-        self.tower_preview = TowerPreview()
-        self.enemy_preview = EnemyPreview()
+        self.tower_preview = TowerPreview(self.clock)
+        self.enemy_preview = EnemyPreview(self.clock)
+        
+        self.i = 0
         
         self.display_keys = {
             "menu":             self.menu,
@@ -41,9 +43,15 @@ class Main:
         self.current_display = self.start_menu
         
     def run(self):
+        self.clock.tick(FPS)
+        #print(self.i)
+        #if self.clock.get_fps() <= 20:
+        #    print("roftl")
         self.events()
+        #print(self.i + 1)
         self.update()
         self.draw()
+        self.i += 2
 
     def update(self):
         self.current_display.update()

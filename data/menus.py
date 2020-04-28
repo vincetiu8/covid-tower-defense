@@ -173,7 +173,7 @@ class Menu(Display):
 
                 elif self.enemy_preview_button.collidepoint(mouse_pos):
                     return "enemy_preview"
-
+                
                 if self.over_level != -1:
                     return "game"
                 return -1

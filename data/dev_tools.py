@@ -10,7 +10,8 @@ import json
 from copy import deepcopy
 
 class TowerPreview(Game):
-    def __init__(self):
+    def __init__(self, clock):
+        self.clock = clock
         self.map = TiledMap(path.join(MAP_FOLDER, "tower_test.tmx"))
         super().load_data()
 
@@ -55,7 +56,7 @@ class TowerPreview(Game):
             if tile_object.name == "tower":
                 self.map.add_tower(tile_from_xcoords(tile_object.x, self.map.tilesize), tile_from_xcoords(tile_object.y, self.map.tilesize), Tower(self, tile_object.x, tile_object.y, self.tower_names[self.current_tower]))
 
-        self.starts = [Start(self, 0, self.enemy_names[self.current_enemy], -1, 0, 0.5)]
+        self.starts = [Start(self.clock, self, 0, self.enemy_names[self.current_enemy], -1, 0, 0.5)]
         self.pathfinder = Pathfinder()
         self.pathfinder.clear_nodes(self.map.get_map())
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
@@ -472,7 +473,8 @@ class TowerPreview(Game):
             start.enemy_type = self.enemy_names[self.current_enemy]
 
 class EnemyPreview(Game):
-    def __init__(self):
+    def __init__(self, clock):
+        self.clock = clock
         self.map = TiledMap(path.join(MAP_FOLDER, "enemy_test.tmx"))
         super().load_data()
 
@@ -517,7 +519,7 @@ class EnemyPreview(Game):
             if tile_object.name == "tower":
                 self.map.add_tower(tile_from_xcoords(tile_object.x, self.map.tilesize), tile_from_xcoords(tile_object.y, self.map.tilesize), Tower(self, tile_object.x, tile_object.y, self.tower_names[self.current_tower]))
 
-        self.starts = [Start(self, 0, self.enemy_names[self.current_enemy], -1, 0, 0.5)]
+        self.starts = [Start(self.clock, self, 0, self.enemy_names[self.current_enemy], -1, 0, 0.5)]
         self.pathfinder = Pathfinder()
         self.pathfinder.clear_nodes(self.map.get_map())
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
