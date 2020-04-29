@@ -50,6 +50,7 @@ class Game(Display):
     def new(self, args):
         self.level = args[0]
         to_resume = args[1]
+        self.available_towers = args[2]
         
         if not to_resume:
             self.new_game()
@@ -66,7 +67,6 @@ class Game(Display):
         self.projectiles = pg.sprite.Group()
         self.goals = pg.sprite.Group()
 
-        self.available_towers = list(TOWER_DATA.keys())
         self.current_tower = None
         self.protein = PROTEIN
         self.lives = LIVES

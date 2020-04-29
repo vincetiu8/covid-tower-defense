@@ -27,8 +27,7 @@ class Main:
         self.pause = Pause()
         self.tower_preview = TowerPreview(self.clock)
         self.enemy_preview = EnemyPreview(self.clock)
-        
-        self.i = 0
+        self.tower_select = TowerSelectMenu()
         
         self.display_keys = {
             "menu":             self.menu,
@@ -37,27 +36,22 @@ class Main:
             "game_over":        self.game_over,
             "pause":            self.pause,
             "tower_preview":    self.tower_preview,
-            "enemy_preview":    self.enemy_preview
+            "enemy_preview":    self.enemy_preview,
+            "tower_select":     self.tower_select
         }
         
         self.current_display = self.start_menu
         
     def run(self):
         self.clock.tick(FPS)
-        #print(self.i)
-        #if self.clock.get_fps() <= 20:
-        #    print("roftl")
         self.events()
-        #print(self.i + 1)
         self.update()
         self.draw()
-        self.i += 2
 
     def update(self):
         self.current_display.update()
         
     def draw(self):
-        self.clock.tick(FPS)
         pg.display.set_caption("FPS: {:.2f}".format(self.clock.get_fps()))
         
         self.screen.fill((0, 0, 0))
@@ -78,7 +72,7 @@ class Main:
                 if result != -1:
                     args = []
                     if result == "game" or result == "resume":
-                        args.extend([self.menu.get_over_level(), result == "resume"])
+                        args.extend([self.menu.get_over_level(), result == "resume", self.tower_select.get_selected_towers()])
                     elif result == "game_over":
                         args.extend([self.game.draw(), self.game.get_lives() == 0, self.game.get_cause_of_death()])
                     elif result == "pause":

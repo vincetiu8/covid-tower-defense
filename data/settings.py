@@ -57,8 +57,21 @@ ENEMIES_AUD_FOLDER = path.join(AUDIO_FOLDER, "enemies")
 TOWERS_AUD_FOLDER = path.join(AUDIO_FOLDER, "towers")
 GAME_STOP_AUD_FOLDER = path.join(AUDIO_FOLDER, "game_stop")
 
+# UI Constants
 MENU_OFFSET = 10
 MENU_TEXT_SIZE = 25
+
+# TowerSelectMenu Constants
+NUM_ALLOWED = 2
+GRID_ROW_SIZE = 6
+GRID_CELL_SIZE = 100 # both width and height
+GRID_SEPARATION = 30
+GRID_MARGIN_X = 150
+GRID_MARGIN_Y = 160
+
+BTN_PADDING = 30
+BTN_X_MARGIN = 180
+BTN_Y = 550
 
 # load ui images
 HEART_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "heart.png"))
@@ -66,7 +79,7 @@ PROTEIN_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "protein.png"))
 LEFT_ARROW_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "left.png"))
 RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_IMG_FOLDER, "left.png")).copy(), 180)
 
- # Initializing the mixer in the settings file lol but rn i don't see a better way.
+# Initializing the mixer in the settings file lol but rn i don't see a better way.
 # Audio
 AUDIO_HEART_BEEP_PATH = path.join(GAME_STOP_AUD_FOLDER, "heart_beep.wav")
 AUDIO_FLATLINE_PATH = path.join(GAME_STOP_AUD_FOLDER, "flatline.wav")
