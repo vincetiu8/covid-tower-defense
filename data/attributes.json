@@ -1,7 +1,7 @@
 {
   "enemy": {
     "hp": {
-      "type": "int",
+      "type": "float",
       "min": 1,
       "max": 10000,
       "increment": 1,
@@ -9,7 +9,7 @@
       "default": 5
     },
     "speed": {
-      "type": "int",
+      "type": "float",
       "min": 10,
       "max": 500,
       "increment": 10,
@@ -17,7 +17,7 @@
       "default": 100
     },
     "protein": {
-      "type": "int",
+      "type": "float",
       "min": 1,
       "max": 10000,
       "increment": 1,
@@ -28,7 +28,7 @@
 
   "tower": {
       "damage": {
-        "type": "int",
+        "type": "float",
         "min": 0,
         "max": 10000,
         "increment": 1,
@@ -44,7 +44,7 @@
         "default": 0.5
       },
       "bullet_speed": {
-        "type": "int",
+        "type": "float",
         "min": 1,
         "max": 50,
         "increment": 1,
@@ -60,7 +60,7 @@
         "default": 0.5
       },
       "range": {
-        "type": "int",
+        "type": "float",
         "min": 25,
         "max": 2500,
         "increment": 25,
@@ -68,7 +68,7 @@
         "default": 400
       },
       "upgrade_cost": {
-        "type": "int",
+        "type": "float",
         "min": 0,
         "max": 10000,
         "increment": 1,
@@ -76,7 +76,7 @@
         "default": 15
       },
       "directions": {
-        "type": "int",
+        "type": "float",
         "min": 1,
         "max": 360,
         "increment": 1,
