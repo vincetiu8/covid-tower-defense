@@ -33,40 +33,5 @@
             "rotating": true,
             "tracking": true
         }
-    ],
-    "b_cell": [
-        {
-            "damage": 3,
-            "bullet_spawn_speed": 0.4,
-            "bullet_speed": 20,
-            "bullet_lifetime": 0.5,
-            "range": 400,
-            "upgrade_cost": 15,
-            "directions": 4,
-            "rotating": false,
-            "tracking": false
-        },
-        {
-            "damage": 4,
-            "bullet_spawn_speed": 0.35,
-            "bullet_speed": 20,
-            "bullet_lifetime": 0.5,
-            "range": 400,
-            "upgrade_cost": 10,
-            "directions": 1,
-            "rotating": false,
-            "tracking": false
-        },
-        {
-            "damage": 5,
-            "bullet_spawn_speed": 0.3,
-            "bullet_speed": 20,
-            "bullet_lifetime": 0.5,
-            "range": 400,
-            "upgrade_cost": 10,
-            "directions": 1,
-            "rotating": false,
-            "tracking": false
-        }
     ]
 }
