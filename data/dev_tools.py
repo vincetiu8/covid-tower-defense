@@ -237,18 +237,6 @@ class TowerPreview(DevClass):
         return combo_surf
 
     def event(self, event):
-        result = super().event(event)
-        if isinstance(result, str):
-            return result
-
-        if result == -3:
-            super().reload_attrs()
-            self.load_ui()
-
-        if result <= -2:
-            self.reload_attrs()
-            return -1
-
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.create_button_rect.collidepoint(event.pos):
@@ -261,6 +249,16 @@ class TowerPreview(DevClass):
                 elif self.tower_button_rect.collidepoint(event.pos):
                     self.over_tower_button = True
                     return -1
+
+                result = self.ui.event_button(
+                    (event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET * 2))
+                if result == -2:
+                    self.reload_attrs()
+                    self.get_attr_surf()
+                    return -1
+
+                else:
+                    return result
 
         elif event.type == pg.KEYDOWN:
             if self.over_tower_button:
@@ -300,6 +298,8 @@ class TowerPreview(DevClass):
         self.current_tower = self.tower_names.index(self.new_tower_name)
         self.current_level = 0
         self.load_ui()
+        self.reload_towers()
+        self.reload_enemies()
 
 class EnemyPreview(DevClass):
     def __init__(self, clock):
@@ -412,6 +412,17 @@ class EnemyPreview(DevClass):
                     self.over_enemy_button = True
                     return -1
 
+                result = self.ui.event_button(
+                    (
+                    event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET * 2))
+                if result == -2:
+                    self.reload_attrs()
+                    self.get_attr_surf()
+                    return -1
+
+                else:
+                    return result
+
         elif event.type == pg.KEYDOWN:
             if self.over_enemy_button:
                 if event.key == pg.K_BACKSPACE:
@@ -436,7 +447,7 @@ class EnemyPreview(DevClass):
         ENEMY_DATA[self.new_enemy_name]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(self.new_enemy_name))
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_enemy = self.enemy_names.index(self.new_enemy_name)
-        self.load_ui()
+        self.current_level = 0
 
 class DevUI():
     def __init__(self):
@@ -499,7 +510,6 @@ class DevUI():
         return surf
 
     def event_button(self, offset):
-        print(offset)
         if self.save_button_rect.collidepoint(offset):
             for enemy in ENEMY_DATA:
                 ENEMY_DATA[enemy].pop("image")
