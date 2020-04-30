@@ -161,22 +161,16 @@ class Menu(Display):
         return self.over_level
 
     def event(self, event):
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_SPACE and not self.started:
-                self.started = True
-
-        elif event.type == pg.MOUSEBUTTONDOWN:
+        if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
                 if self.tower_preview_button.collidepoint(mouse_pos):
                     return "tower_preview"
-
                 elif self.enemy_preview_button.collidepoint(mouse_pos):
                     return "enemy_preview"
                 
                 if self.over_level != -1:
-                    return "game"
-                return -1
+                    return "tower_select"
 
             elif event.button == 4:
                 self.camera.zoom(0.05)
@@ -184,4 +178,113 @@ class Menu(Display):
             elif event.button == 5:
                 self.camera.zoom(-0.05)
 
+        return -1
+    
+class TowerSelectMenu(Display):
+    def __init__(self):
+        super().__init__()
+        self.start_btn = self.make_btn("Start")
+        self.back_btn = self.make_btn("Back")
+        self.start_btn_rect = pg.Rect(SCREEN_WIDTH - BTN_X_MARGIN - self.start_btn.get_width(),
+                                      BTN_Y, self.start_btn.get_width(), self.start_btn.get_height())
+        self.back_btn_rect = pg.Rect(BTN_X_MARGIN, BTN_Y, self.back_btn.get_width(), self.back_btn.get_height())
+        
+        self.start_btn_disabled = self.make_btn("Start")
+        self.start_btn_disabled.fill(LIGHTGREY, None, pg.BLEND_RGB_MULT)
+        
+    def new(self, args):
+        self.towers = []
+        self.tower_rects = []
+        self.tower_selected = []
+        self.num_selected = 0
+        tower_names = list(TOWER_DATA)
+        
+        row = -1
+        for i in range(len(TOWER_DATA)):
+            if i % GRID_ROW_SIZE == 0:
+                row += 1
+                self.towers.append([])
+                self.tower_rects.append([])
+                self.tower_selected.append([])
+            
+            self.towers[row].append(tower_names[i])
+            self.tower_rects[row].append(pg.Rect(self.get_locs(row, i % GRID_ROW_SIZE), self.get_dims()))
+            self.tower_selected[row].append(False)
+        
+    def draw(self):
+        self.fill(BLACK)
+        
+        title_font = pg.font.Font(FONT, 160)
+        text_font = pg.font.Font(FONT, 80)
+        
+        title = title_font.render("Select Towers", 1, WHITE)
+        self.blit(title, ((SCREEN_WIDTH - title.get_width()) / 2, 0))
+        
+        selected_text = text_font.render("Selected: {}/{}".format(self.num_selected, NUM_ALLOWED), 1, WHITE)
+        self.blit(selected_text, ((SCREEN_WIDTH - selected_text.get_width()) / 2, BTN_Y))
+        
+        for row, grid_row in enumerate(self.towers):
+            for col, tower in enumerate(grid_row):
+                
+                tower_img = pg.transform.scale(TOWER_DATA[tower][0]["base_image"], self.get_dims())
+                tower_img.blit(pg.transform.scale(TOWER_DATA[tower][0]["gun_image"], self.get_dims()), (0, 0))
+                
+                if not self.tower_selected[row][col]:
+                    tower_img.fill(LIGHTGREY, None, pg.BLEND_RGB_MULT)
+                self.blit(tower_img, self.get_locs(row, col))
+                
+        start_btn = self.start_btn
+        if self.num_selected == 0:
+            start_btn = self.start_btn_disabled
+
+        self.blit(start_btn, (self.start_btn_rect.x, BTN_Y))
+        self.blit(self.back_btn, (BTN_X_MARGIN, BTN_Y))
+                
+        return self
+                
+    def get_dims(self):
+        return (GRID_CELL_SIZE, GRID_CELL_SIZE)
+                
+    def get_locs(self, row, col):
+        x = GRID_MARGIN_X + col * (GRID_CELL_SIZE + GRID_SEPARATION)
+        y = GRID_MARGIN_Y + row * (GRID_CELL_SIZE + GRID_SEPARATION)
+        
+        return (x, y)
+    
+    def make_btn(self, string):
+        font = pg.font.Font(FONT, 100)
+        text = font.render(string, 1, WHITE)
+        btn = pg.transform.scale(LEVEL_BUTTON_IMG, (text.get_width() + BTN_PADDING * 2, text.get_height())).copy().convert_alpha()
+        btn.blit(text, text.get_rect(center = btn.get_rect().center))
+        return btn
+    
+    def get_selected_towers(self):
+        selected_towers = []
+        for row, grid_row in enumerate(self.towers):
+            for col, tower in enumerate(grid_row):
+                if self.tower_selected[row][col]:
+                    selected_towers.append(tower)
+        return selected_towers
+    
+    def event(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                mouse_pos = pg.mouse.get_pos()
+                
+                if self.back_btn_rect.collidepoint(mouse_pos):
+                    return "menu"
+                elif self.start_btn_rect.collidepoint(mouse_pos) and self.num_selected > 0:
+                    return "game"
+                
+                for row, grid_row in enumerate(self.tower_rects):
+                    for col, rect in enumerate(grid_row):
+                        if rect.collidepoint(mouse_pos):
+                            if self.tower_selected[row][col]:
+                                self.num_selected -= 1
+                                self.tower_selected[row][col] = False
+                            elif self.num_selected < NUM_ALLOWED:
+                                self.num_selected += 1
+                                self.tower_selected[row][col] = True
+                            
+                            
         return -1
