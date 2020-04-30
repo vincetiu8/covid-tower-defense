@@ -299,7 +299,7 @@ class Game(Display):
         pos = self.map.get_node(tower_tile[0], tower_tile[1])
 
         if pos != -1:
-            tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower][0]["image"].copy())
+            tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower][0]["image"].copy().convert_alpha())
             validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
 
             if validity == 1:
