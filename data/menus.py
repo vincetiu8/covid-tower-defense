@@ -226,11 +226,14 @@ class TowerSelectMenu(Display):
         for row, grid_row in enumerate(self.towers):
             for col, tower in enumerate(grid_row):
                 
-                tower_img = pg.transform.scale(TOWER_DATA[tower][0]["base_image"], self.get_dims())
-                tower_img.blit(pg.transform.scale(TOWER_DATA[tower][0]["gun_image"], self.get_dims()), (0, 0))
-                
+                tower_img = pg.transform.scale(TOWER_DATA[tower][0]["image"].convert_alpha(), self.get_dims())
+
                 if not self.tower_selected[row][col]:
-                    tower_img.fill(LIGHTGREY, None, pg.BLEND_RGB_MULT)
+                    if self.num_selected == NUM_ALLOWED:
+                        tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+                    else:
+                        tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
+
                 self.blit(tower_img, self.get_locs(row, col))
                 
         start_btn = self.start_btn
