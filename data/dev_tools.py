@@ -143,7 +143,7 @@ class DevClass(Game):
             if result == -1:
                 return -1
 
-            elif result == "menu":
+            elif isinstance(result, str) and result == "menu":
                 return result
 
             name = result.name
@@ -409,14 +409,12 @@ class EnemyPreview(DevClass):
                     self.new_enemy_name = ""
                     self.load_ui()
                     return -1
-
                 elif self.enemy_button_rect.collidepoint(event.pos):
                     self.over_enemy_button = True
                     return -1
-
+                
                 result = self.ui.event_button(
-                    (
-                    event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET * 2))
+                    (event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET))
                 if result == -2:
                     self.reload_attrs()
                     self.get_attr_surf()
