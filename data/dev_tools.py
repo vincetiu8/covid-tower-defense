@@ -137,6 +137,23 @@ class DevClass(Game):
 
         return surface
 
+    def event(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            result = self.ui.event_button((event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET))
+            if result == -1:
+                return -1
+
+            elif result == "menu":
+                return result
+
+            name = result.name
+
+            if name == "tower_name" or name == "tower_level" or name == "enemy_name":
+                return -3
+
+            return -2
+        return -1
+
 class TowerPreview(DevClass):
     def __init__(self, clock):
         super().__init__(clock, "tower")
@@ -155,6 +172,8 @@ class TowerPreview(DevClass):
         for attr in ATTR_DATA["tower"]:
             self.ui.new_attr(Attribute(attr, ATTR_DATA["tower"][attr], TOWER_DATA[self.tower_names[self.current_tower]][self.current_level][attr]))
 
+        self.reload_enemies()
+        self.reload_towers()
         self.get_attr_surf()
 
     def get_attr_surf(self):
@@ -207,6 +226,7 @@ class TowerPreview(DevClass):
             TOWER_DATA[self.tower_names[self.current_tower]][self.current_level][attr] = attrs[attr]
         self.reload_towers()
         self.reload_enemies()
+        self.get_attr_surf()
 
     def draw(self):
         surface = super().draw()
@@ -217,6 +237,18 @@ class TowerPreview(DevClass):
         return combo_surf
 
     def event(self, event):
+        result = super().event(event)
+        if isinstance(result, str):
+            return result
+
+        if result == -3:
+            super().reload_attrs()
+            self.load_ui()
+
+        if result <= -2:
+            self.reload_attrs()
+            return -1
+
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.create_button_rect.collidepoint(event.pos):
@@ -229,16 +261,6 @@ class TowerPreview(DevClass):
                 elif self.tower_button_rect.collidepoint(event.pos):
                     self.over_tower_button = True
                     return -1
-
-                result = self.ui.event_button(
-                    (event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET * 2))
-                if result == -2:
-                    self.reload_attrs()
-                    self.get_attr_surf()
-                    return -1
-
-                else:
-                    return result
 
         elif event.type == pg.KEYDOWN:
             if self.over_tower_button:
@@ -278,8 +300,6 @@ class TowerPreview(DevClass):
         self.current_tower = self.tower_names.index(self.new_tower_name)
         self.current_level = 0
         self.load_ui()
-        self.reload_towers()
-        self.reload_enemies()
 
 class EnemyPreview(DevClass):
     def __init__(self, clock):
@@ -299,7 +319,8 @@ class EnemyPreview(DevClass):
         for attr in ATTR_DATA["enemy"]:
             self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
                                        ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
-
+        self.reload_enemies()
+        self.reload_towers()
         self.get_attr_surf()
 
     def get_attr_surf(self):
@@ -355,6 +376,7 @@ class EnemyPreview(DevClass):
             ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
         self.reload_towers()
         self.reload_enemies()
+        self.get_attr_surf()
 
     def draw(self):
         surface = super().draw()
@@ -365,29 +387,30 @@ class EnemyPreview(DevClass):
         return combo_surf
 
     def event(self, event):
+        result = super().event(event)
+        if isinstance(result, str):
+            return result
+
+        if result == -3:
+            super().reload_attrs()
+            self.load_ui()
+
+        if result <= -2:
+            self.reload_attrs()
+            return -1
+
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.create_button_rect.collidepoint(event.pos):
                     self.over_enemy_button = False
                     self.create_new_enemy()
                     self.new_enemy_name = ""
-                    self.get_attr_surf()
+                    self.load_ui()
                     return -1
 
                 elif self.enemy_button_rect.collidepoint(event.pos):
                     self.over_enemy_button = True
                     return -1
-
-                result = self.ui.event_button(
-                    (
-                    event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET * 2))
-                if result == -2:
-                    self.reload_attrs()
-                    self.get_attr_surf()
-                    return -1
-
-                else:
-                    return result
 
         elif event.type == pg.KEYDOWN:
             if self.over_enemy_button:
@@ -413,7 +436,7 @@ class EnemyPreview(DevClass):
         ENEMY_DATA[self.new_enemy_name]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(self.new_enemy_name))
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_enemy = self.enemy_names.index(self.new_enemy_name)
-        self.current_level = 0
+        self.load_ui()
 
 class DevUI():
     def __init__(self):
@@ -434,7 +457,7 @@ class DevUI():
         width = 0
         for attr in self.attributes:
             attr_surf = attr.draw()
-            attr.fix_height(height)
+            attr.fix_offset(MENU_OFFSET, height)
             height += attr_surf.get_height() + MENU_OFFSET
             if attr_surf.get_width() > width:
                 width = attr_surf.get_width()
@@ -476,6 +499,7 @@ class DevUI():
         return surf
 
     def event_button(self, offset):
+        print(offset)
         if self.save_button_rect.collidepoint(offset):
             for enemy in ENEMY_DATA:
                 ENEMY_DATA[enemy].pop("image")
@@ -510,31 +534,31 @@ class DevUI():
                                    TOWER_DATA[tower][level]["gun_image"].get_rect(
                                        center=TOWER_DATA[tower][level]["base_image"].get_rect().center))
                     TOWER_DATA[tower][level]["image"] = temp_base
-            return -2
+            return -1
 
         elif self.done_button_rect.collidepoint(offset):
             return "menu"
 
         else:
             for attr in self.attributes:
-                if attr.type == "int" or attr.type == "float":
+                if attr.type == "float":
                     if attr.minus_button_rect.collidepoint(offset):
                         if attr.change_val(round(attr.current_value - attr.increment, attr.dp)):
-                            return -2
+                            return attr
                     elif attr.plus_button_rect.collidepoint(offset):
                         if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
-                            return -2
+                            return attr
                 elif attr.type == "bool":
                     if attr.x_button_rect.collidepoint(offset):
                         if attr.change_val(not attr.current_value):
-                            return -2
+                            return attr
                 elif attr.type == "string":
                     if attr.back_button_rect.collidepoint(offset):
                         if attr.change_val(attr.current_value - 1):
-                            return -2
+                            return attr
                     elif attr.next_button_rect.collidepoint(offset):
                         if attr.change_val(attr.current_value + 1):
-                            return -2
+                            return attr
             return -1
 
 class Attribute():
@@ -626,15 +650,15 @@ class Attribute():
 
         return attr_surf
 
-    def fix_height(self, value):
+    def fix_offset(self, width, height):
         if self.type == "float":
-            self.minus_button_rect.y += value
-            self.plus_button_rect.y += value
+            self.minus_button_rect = self.minus_button_rect.move(width, height)
+            self.plus_button_rect = self.plus_button_rect.move(width, height)
         elif self.type == "bool":
-            self.x_button_rect.y += value
+            self.x_button_rect = self.x_button_rect.move(width, height)
         elif self.type == "string":
-            self.back_button_rect.y += value
-            self.next_button_rect.y += value
+            self.back_button_rect = self.back_button_rect.move(width, height)
+            self.next_button_rect = self.next_button_rect.move(width, height)
 
     def change_val(self, value):
         if self.type == "int" or self.type == "float":
