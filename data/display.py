@@ -11,7 +11,7 @@ class Display(pg.Surface):
         pass
     
     def draw(self):
-        pass
+        return self
     
     def event(self, event):
-        pass
+        return -1
