@@ -237,6 +237,18 @@ class TowerPreview(DevClass):
         return combo_surf
 
     def event(self, event):
+        result = super().event(event)
+        if isinstance(result, str):
+            return result
+
+        if result == -3:
+            super().reload_attrs()
+            self.load_ui()
+
+        if result <= -2:
+            self.reload_attrs()
+            return -1
+
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.create_button_rect.collidepoint(event.pos):
@@ -249,16 +261,6 @@ class TowerPreview(DevClass):
                 elif self.tower_button_rect.collidepoint(event.pos):
                     self.over_tower_button = True
                     return -1
-
-                result = self.ui.event_button(
-                    (event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET * 2))
-                if result == -2:
-                    self.reload_attrs()
-                    self.get_attr_surf()
-                    return -1
-
-                else:
-                    return result
 
         elif event.type == pg.KEYDOWN:
             if self.over_tower_button:
