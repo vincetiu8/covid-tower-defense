@@ -174,12 +174,10 @@ class Game(Display):
     def new_wave(self):
         self.starts.clear()
 
-        wave_data = self.level_data["waves"][self.wave]
-
-        for i in range(len(wave_data["enemy_type"])):
+        for i in self.level_data["waves"][self.wave]:
             self.starts.append(
-                Start(self.clock, self, wave_data["start"][i], wave_data["enemy_type"][i], wave_data["enemy_count"][i],
-                      wave_data["spawn_delay"][i], wave_data["spawn_rate"][i]))
+                Start(self.clock, self, i["start"], i["enemy_type"], i["enemy_count"],
+                      i["spawn_delay"], i["spawn_rate"]))
 
         self.wave += 1
 

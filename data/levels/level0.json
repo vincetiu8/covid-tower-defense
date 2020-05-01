@@ -3,66 +3,51 @@
     "description": "A place to test out the game. Relax and code on!",
     "difficulty": 0,
     "waves": [
-        {
-            "start": [
-                0
-            ],
-            "enemy_type": [
-                "common_cold"
-            ],
-            "enemy_count": [
-                20
-            ],
-            "spawn_delay": [
-                3
-            ],
-            "spawn_rate": [
-                0.2
-            ]
-        },
-        {
-            "start": [
-                0,
-                0
-            ],
-            "enemy_type": [
-                "hepatitis_a",
-                "common_cold"
-            ],
-            "enemy_count": [
-                10,
-                16
-            ],
-            "spawn_delay": [
-                3,
-                3
-            ],
-            "spawn_rate": [
-                0.6,
-                0.3
-            ]
-        },
-        {
-            "start": [
-                0,
-                0
-            ],
-            "enemy_type": [
-                "coronavirus",
-                "common_cold"
-            ],
-            "enemy_count": [
-                5,
-                20
-            ],
-            "spawn_delay": [
-                3,
-                4
-            ],
-            "spawn_rate": [
-                1,
-                0.2
-            ]
-        }
+        [
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 21,
+                "spawn_delay": 3,
+                "spawn_rate": 0.2
+            }
+        ],
+        [
+            {
+                "start": 0,
+                "enemy_type": "hepatitis_a",
+                "enemy_count": 10,
+                "spawn_delay": 3,
+                "spawn_rate": 0.6
+            },
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 16,
+                "spawn_delay": 3,
+                "spawn_rate": 0.3
+            }
+        ],
+        [
+            {
+                "start": 0,
+                "enemy_type": "coronavirus",
+                "enemy_count": 5,
+                "spawn_delay": 3,
+                "spawn_rate": 1
+            },
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 20,
+                "spawn_delay": 4,
+                "spawn_rate": 0.2
+            }
+        ]
+    ],
+    "enemies": [
+        "common_cold",
+        "hepatitis_a",
+        "coronavirus"
     ]
 }
