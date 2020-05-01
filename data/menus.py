@@ -26,13 +26,34 @@ class StartMenu(Display):
 class Menu(Display):
     def __init__(self):
         super().__init__()
-        self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, START_SCREEN_IMG.get_rect().w, START_SCREEN_IMG.get_rect().h)
+        self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT)
+        
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
         self.level_buttons = [pg.Rect((20, 400), self.level_button_rect.size), pg.Rect((160, 400), self.level_button_rect.size), pg.Rect((300, 400), self.level_button_rect.size)]
+        
         self.tower_preview_button = pg.Rect((1200, 100), self.level_button_rect.size)
         self.enemy_preview_button = pg.Rect((1200, 500), self.level_button_rect.size)
+        
+        self.base_zoom = self.camera.get_zoom()
+        self.zoom_step = -1
+        self.body_images = []
+        self.body_image = self.camera.apply_image(BODY_IMG)
+        
+        self.init_body_1()
+        
         self.level_descs = [None for i in range(len(LEVEL_DATA))]
         self.over_level = -1
+        
+    def init_body_1(self): #inits half the body_images on game startup
+        for i in range(5):
+            self.camera.zoom(ZOOM_AMT_MENU)
+            self.body_images.append(self.camera.apply_image(BODY_IMG))
+        
+    def new(self, args): #inits the other half
+        if len(self.body_images) < 6: # so this will only run when first switching to menu
+            while self.camera.zoom(ZOOM_AMT_MENU) != False:
+                self.body_images.append(self.camera.apply_image(BODY_IMG))
+            self.camera.zoom(self.base_zoom - self.camera.get_zoom())
 
     def update(self):
         self.update_level()
@@ -52,7 +73,8 @@ class Menu(Display):
 
     def draw(self):
         self.fill((0, 0, 0))
-        self.blit(self.camera.apply_image(BODY_IMG), self.camera.apply_tuple((-1075, 150)))
+        
+        self.blit(self.body_image, self.camera.apply_tuple((-775, 150)))
 
         big_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w * 4)
         lives_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w)
@@ -159,6 +181,12 @@ class Menu(Display):
 
     def get_over_level(self):
         return self.over_level
+    
+    def update_body_img(self):
+        if self.zoom_step >= 0:
+            self.body_image = self.body_images[self.zoom_step]
+        else:
+            self.body_image = self.camera.apply_image(BODY_IMG)
 
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -173,10 +201,14 @@ class Menu(Display):
                     return "tower_select"
 
             elif event.button == 4:
-                self.camera.zoom(0.05)
+                if self.camera.zoom(ZOOM_AMT_MENU) != False:
+                    self.zoom_step += 1
+                    self.update_body_img()
 
             elif event.button == 5:
-                self.camera.zoom(-0.05)
+                if self.camera.zoom(-ZOOM_AMT_MENU) != False:
+                    self.zoom_step -= 1
+                    self.update_body_img()
 
         return -1
     
