@@ -57,6 +57,7 @@ class DevClass(Game):
                                    tile_from_xcoords(tile_object.y, self.map.tilesize),
                                    Tower(self, tile_object.x, tile_object.y, self.tower_names[self.current_tower]))
 
+        self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder = Pathfinder()
         self.pathfinder.clear_nodes(self.map.get_map())
         self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
@@ -74,12 +75,6 @@ class DevClass(Game):
             "dp": 0,
             "increment": 1
         }, self.current_level))
-
-    def reload_attrs(self):
-        attrs = self.ui.get_attrs()
-        self.current_tower = attrs.pop("tower_name")
-        self.current_level = attrs.pop("tower_level")
-        return attrs
 
     def reload_towers(self):
         for x, list in enumerate(self.map.get_tower_map()):
@@ -130,10 +125,30 @@ class DevClass(Game):
         for projectile in self.projectiles:
             surface.blit(projectile.image, projectile.rect)
 
-        return surface
+        surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        surf.blit(self.camera.apply_image((surface)), self.camera.apply_tuple((0, 0)))
+
+        ui_pos = (SCREEN_WIDTH - MENU_OFFSET, MENU_OFFSET)
+        if self.ui.active:
+            ui = self.attr_surf
+            ui_rect = ui.get_rect(topright=ui_pos)
+            surf.blit(ui, ui_rect)
+            surf.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright=ui_rect.topleft))
+        else:
+            surf.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright=ui_pos))
+
+        return surf
 
     def event(self, event):
-        result = self.ui.event(event, self.map.width)
+        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            if self.ui.active and RIGHT_ARROW_IMG.get_rect(topright = self.attr_surf.get_rect(topright = (SCREEN_WIDTH - MENU_OFFSET, MENU_OFFSET)).topleft).collidepoint(event.pos):
+                self.ui.active = False
+                return -1
+            elif not self.ui.active and LEFT_ARROW_IMG.get_rect(topright=(SCREEN_WIDTH - MENU_OFFSET, MENU_OFFSET)).collidepoint(event.pos):
+                self.ui.active = True
+                return -1
+
+        result = self.ui.event(event, SCREEN_WIDTH - self.attr_surf.get_width())
         if result == -1:
             return -1
 
@@ -180,24 +195,26 @@ class TowerPreview(DevClass):
         self.attr_surf = self.ui.get_ui()
 
     def reload_attrs(self):
-        attrs = super().reload_attrs()
+        attrs = self.ui.get_attrs()
+        reload = False
         self.current_enemy = attrs.pop("enemy_name")
+        self.new_tower_name = attrs.pop("new_tower_name")
         for attr in attrs:
-            if attr == "new_tower_name":
-                self.new_tower_name = attrs[attr]
-                continue
-            TOWER_DATA[self.tower_names[self.current_tower]][self.current_level][attr] = attrs[attr]
+            if attr == "tower_name":
+                if self.current_tower != attrs[attr]:
+                    reload = True
+            elif attr == "tower_level":
+                if self.current_level != attrs[attr]:
+                    reload = True
+            else:
+                TOWER_DATA[self.tower_names[self.current_tower]][self.current_level][attr] = attrs[attr]
+        if reload:
+            self.current_tower = attrs["tower_name"]
+            self.current_level = attrs["tower_level"]
+
         self.reload_towers()
         self.reload_enemies()
         self.get_attr_surf()
-
-    def draw(self):
-        surface = super().draw()
-        combo_surf = pg.Surface((surface.get_rect().width + self.attr_surf.get_rect().width,
-                                 max(surface.get_rect().height, self.attr_surf.get_rect().height)))
-        combo_surf.blit(surface, (0, 0))
-        combo_surf.blit(self.attr_surf, (surface.get_rect().width, 0))
-        return combo_surf
 
     def event(self, event):
         result = super().event(event)
@@ -274,24 +291,23 @@ class EnemyPreview(DevClass):
         self.attr_surf = self.ui.get_ui()
 
     def reload_attrs(self):
-        attrs = super().reload_attrs()
-        self.current_enemy = attrs.pop("enemy_name")
+        reload = False
+        attrs = self.ui.get_attrs()
+        self.current_tower = attrs.pop("tower_name")
+        self.current_level = attrs.pop("tower_level")
+        self.new_enemy_name = attrs.pop("new_enemy_name")
         for attr in attrs:
-            if attr == "new_enemy_name":
-                self.new_enemy_name = attrs[attr]
-                continue
-            ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
+            if attr == "enemy_name":
+                if self.current_enemy != attrs[attr]:
+                    reload = True
+            else:
+                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
+        if reload:
+            self.current_enemy = attrs["enemy_name"]
+
         self.reload_towers()
         self.reload_enemies()
         self.get_attr_surf()
-
-    def draw(self):
-        surface = super().draw()
-        combo_surf = pg.Surface((surface.get_rect().width + self.attr_surf.get_rect().width,
-                                 max(surface.get_rect().height, self.attr_surf.get_rect().height)))
-        combo_surf.blit(surface, (0, 0))
-        combo_surf.blit(self.attr_surf, (surface.get_rect().width, 0))
-        return combo_surf
 
     def event(self, event):
         result = super().event(event)
@@ -401,11 +417,13 @@ class LevelPreview(DevClass):
         self.attr_surf = self.ui.get_ui()
 
     def reload_attrs(self):
-        attrs = super().reload_attrs()
+        attrs = self.ui.get_attrs()
         load = False
         create_level = False
         create_wave = False
         create_sub_wave = False
+        self.current_tower = attrs.pop("tower_name")
+        self.current_level = attrs.pop("tower_level")
         for attr in attrs:
             if attr == "level":
                 if self.level != attrs[attr]:
@@ -455,14 +473,6 @@ class LevelPreview(DevClass):
             self.reload_enemies()
             self.get_attr_surf()
 
-    def draw(self):
-        surface = super().draw()
-        combo_surf = pg.Surface((surface.get_rect().width + self.attr_surf.get_rect().width,
-                                 max(surface.get_rect().height, self.attr_surf.get_rect().height)))
-        combo_surf.blit(surface, (0, 0))
-        combo_surf.blit(self.attr_surf, (surface.get_rect().width, 0))
-        return combo_surf
-
     def event(self, event):
         result = super().event(event)
         if isinstance(result, str):
@@ -508,6 +518,7 @@ class LevelPreview(DevClass):
 class DevUI():
     def __init__(self):
         self.attributes = []
+        self.active = True
 
     def new_attr(self, attribute):
         self.attributes.append(attribute)
@@ -568,11 +579,11 @@ class DevUI():
 
         return surf
 
-    def event(self, event, map_width):
+    def event(self, event, w):
         return_val = -1
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
-                offset = (event.pos[0] - map_width, event.pos[1] - MENU_OFFSET)
+                offset = (event.pos[0] - w, event.pos[1] - MENU_OFFSET)
                 if self.save_button_rect.collidepoint(offset):
                     for i, level in enumerate(LEVEL_DATA):
                         with open(path.join(LEVELS_FOLDER, "level{}.json".format(i)), 'w') as out_file:
