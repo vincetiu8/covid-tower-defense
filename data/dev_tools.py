@@ -55,7 +55,7 @@ class DevClass(Game):
                                    tile_from_xcoords(tile_object.y, self.map.tilesize),
                                    Tower(self, tile_object.x, tile_object.y, self.tower_names[self.current_tower]))
 
-        self.starts = [Start(self.clock, self, 0, self.enemy_names[self.current_enemy], -1, 0, 0.5)]
+        self.starts = [Start(self.clock, self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in range(len(self.start_data))]
         self.pathfinder = Pathfinder()
         self.pathfinder.clear_nodes(self.map.get_map())
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
