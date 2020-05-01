@@ -397,7 +397,6 @@ class LevelPreview(DevClass):
                 temp_val = self.enemy_types.index(temp_val)
             self.ui.new_attr(Attribute(attr, temp_dat, temp_val))
 
-        print(LEVEL_DATA[self.level]["waves"][self.wave])
         self.reload_enemies()
         self.reload_towers()
         self.get_attr_surf()
@@ -405,7 +404,7 @@ class LevelPreview(DevClass):
     def reload_enemies(self):
         self.starts.clear()
         self.enemies = pg.sprite.Group()
-        for s in LEVEL_DATA[self.current_level]["waves"][self.wave]:
+        for s in LEVEL_DATA[self.level]["waves"][self.wave]:
             self.starts.append(Start(self.clock, self, s["start"], s["enemy_type"], s["enemy_count"], s["spawn_delay"], s["spawn_rate"]))
 
     def update(self):
@@ -450,6 +449,7 @@ class LevelPreview(DevClass):
             self.level = attrs["level"]
             self.create_new_level()
             self.load_ui()
+            print(LEVEL_DATA[self.level])
 
         elif create_wave:
             self.wave = attrs["wave"]
@@ -478,9 +478,6 @@ class LevelPreview(DevClass):
         if isinstance(result, str):
             if result == "menu":
                 return result
-            elif result == "change_level":
-                self.create_new_enemy()
-                self.load_ui()
             else:
                 self.reload_attrs()
 
@@ -496,7 +493,6 @@ class LevelPreview(DevClass):
     def create_new_level(self):
         LEVEL_DATA.append({})
         self.wave = 0
-        self.sub_wave = 0
         for attr in ATTR_DATA["level"]:
             LEVEL_DATA[self.level][attr] = ATTR_DATA["level"][attr]["default"]
         LEVEL_DATA[self.level]["waves"] = []
@@ -586,11 +582,23 @@ class DevUI():
                 offset = (event.pos[0] - w, event.pos[1] - MENU_OFFSET)
                 if self.save_button_rect.collidepoint(offset):
                     for i, level in enumerate(LEVEL_DATA):
+                        if "enemies" in level:
+                            level.pop("enemies")
                         with open(path.join(LEVELS_FOLDER, "level{}.json".format(i)), 'w') as out_file:
                             json.dump(level, out_file, indent=4)
+                    for level in LEVEL_DATA:
+                        enemies = []
+                        for wave in level["waves"]:
+                            for sub_wave in wave:
+                                enemy = sub_wave["enemy_type"]
+                                if enemy not in enemies:
+                                    enemies.append(enemy)
+                        level["enemies"] = enemies
                     for enemy in ENEMY_DATA:
-                        ENEMY_DATA[enemy].pop("image")
-                        ENEMY_DATA[enemy].pop("death_sound_path")
+                        if "image" in ENEMY_DATA[enemy]:
+                            ENEMY_DATA[enemy].pop("image")
+                        if "death_sound_path" in ENEMY_DATA[enemy]:
+                            ENEMY_DATA[enemy].pop("death_sound_path")
                     with open(path.join(GAME_FOLDER, "enemies.json"), 'w') as out_file:
                         json.dump(ENEMY_DATA, out_file, indent=4)
                     for enemy in ENEMY_DATA:
@@ -599,11 +607,16 @@ class DevUI():
                         ENEMY_DATA[enemy]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy))
                     for tower in TOWER_DATA:
                         for level in range(3):
-                            TOWER_DATA[tower][level].pop("gun_image", None)
-                            TOWER_DATA[tower][level].pop("base_image", None)
-                            TOWER_DATA[tower][level].pop("bullet_image", None)
-                            TOWER_DATA[tower][level].pop("shoot_sound_path", None)
-                            TOWER_DATA[tower][level].pop("image", None)
+                            if "gun_image" in TOWER_DATA[tower][level]:
+                                TOWER_DATA[tower][level].pop("gun_image", None)
+                            if "base_image" in TOWER_DATA[tower][level]:
+                                TOWER_DATA[tower][level].pop("base_image", None)
+                            if "bullet_image" in TOWER_DATA[tower][level]:
+                                TOWER_DATA[tower][level].pop("bullet_image", None)
+                            if "shoot_sound_path" in TOWER_DATA[tower][level]:
+                                TOWER_DATA[tower][level].pop("shoot_sound_path", None)
+                            if "image" in TOWER_DATA[tower][level]:
+                                TOWER_DATA[tower][level].pop("image", None)
                     with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
                         json.dump(TOWER_DATA, out_file, indent=4)
                     for tower in TOWER_DATA:

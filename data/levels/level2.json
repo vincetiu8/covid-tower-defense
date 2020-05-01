@@ -44,10 +44,5 @@
                 "spawn_rate": 0.0042
             }
         ]
-    ],
-    "enemies": [
-        "common_cold",
-        "coronavirus",
-        "hepatitis_a"
     ]
 }
