@@ -406,10 +406,10 @@ class Game(Display):
                     enemy.recreate_path()
 
             elif event.button == 4:
-                self.camera.zoom(0.05)
+                self.camera.zoom(ZOOM_AMT_GAME)
 
             elif event.button == 5:
-                self.camera.zoom(-0.05)
+                self.camera.zoom(-ZOOM_AMT_GAME)
 
         elif (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
             return "pause"

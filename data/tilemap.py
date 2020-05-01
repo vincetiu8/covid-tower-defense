@@ -137,7 +137,7 @@ class Camera():
 
     def zoom(self, amount):
         if (amount > 0 and self.current_zoom >= self.minzoom * 4 or amount < 0 and self.current_zoom <= self.minzoom):
-            return
+            return False
 
         self.current_zoom += amount
 
@@ -146,3 +146,6 @@ class Camera():
 
     def move(self, x, y):
         self.camera = self.camera.move(x, y)
+        
+    def get_zoom(self):
+        return self.current_zoom
