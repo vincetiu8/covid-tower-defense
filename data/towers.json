@@ -68,40 +68,5 @@
             "rotating": false,
             "tracking": false
         }
-    ],
-    "test": [
-        {
-            "damage": 1,
-            "bullet_spawn_speed": 0.35,
-            "bullet_speed": 20,
-            "bullet_lifetime": 0.5,
-            "range": 150,
-            "upgrade_cost": 10,
-            "directions": 1,
-            "rotating": true,
-            "tracking": true
-        },
-        {
-            "damage": 1,
-            "bullet_spawn_speed": 0.3,
-            "bullet_speed": 20,
-            "bullet_lifetime": 0.5,
-            "range": 175,
-            "upgrade_cost": 5,
-            "directions": 1,
-            "rotating": true,
-            "tracking": true
-        },
-        {
-            "damage": 1,
-            "bullet_spawn_speed": 0.2,
-            "bullet_speed": 20,
-            "bullet_lifetime": 0.5,
-            "range": 200,
-            "upgrade_cost": 5,
-            "directions": 1,
-            "rotating": true,
-            "tracking": true
-        }
     ]
 }

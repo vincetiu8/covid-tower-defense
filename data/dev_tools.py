@@ -64,7 +64,7 @@ class DevClass(Game):
     def load_ui(self):
         self.ui = DevUI()
         self.ui.new_attr(Attribute("tower_name", {
-            "type": "string",
+            "type": "select",
             "values": self.tower_names
         }, self.current_tower))
         self.ui.new_attr(Attribute("tower_level", {
@@ -75,7 +75,7 @@ class DevClass(Game):
             "increment": 1
         }, self.current_level))
         self.ui.new_attr(Attribute("enemy_name", {
-            "type": "string",
+            "type": "select",
             "values": self.enemy_names
         }, self.current_enemy))
 
@@ -138,21 +138,19 @@ class DevClass(Game):
         return surface
 
     def event(self, event):
-        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
-            result = self.ui.event_button((event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET))
-            if result == -1:
-                return -1
+        result = self.ui.event(event, self.map.width)
+        if result == -1:
+            return -1
 
-            elif isinstance(result, str) and result == "menu":
-                return result
+        elif isinstance(result, str):
+            return result
 
-            name = result.name
+        name = result.name
 
-            if name == "tower_name" or name == "tower_level" or name == "enemy_name":
-                return -3
+        if name == "tower_name" or name == "tower_level" or name == "enemy_name":
+            return -3
 
-            return -2
-        return -1
+        return -2
 
 class TowerPreview(DevClass):
     def __init__(self, clock):
@@ -169,6 +167,8 @@ class TowerPreview(DevClass):
     def load_ui(self):
         super().load_ui()
 
+        self.ui.new_attr(Attribute("new_tower_name", {"type": "string"}, ""))
+
         for attr in ATTR_DATA["tower"]:
             self.ui.new_attr(Attribute(attr, ATTR_DATA["tower"][attr], TOWER_DATA[self.tower_names[self.current_tower]][self.current_level][attr]))
 
@@ -177,52 +177,14 @@ class TowerPreview(DevClass):
         self.get_attr_surf()
 
     def get_attr_surf(self):
-        height = MENU_OFFSET
-        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
-
-        new_tower = []
-        width = MENU_OFFSET
-        if self.new_tower_name == "":
-            if self.over_tower_button:
-                tower_text = font.render("tower name...", 1, WHITE)
-            else:
-                tower_text = font.render("tower name...", 1, LIGHTGREY)
-        else:
-            tower_text = font.render(self.new_tower_name, 1, WHITE)
-        tower_button = pg.transform.scale(LEVEL_BUTTON_IMG, (tower_text.get_rect().width + MENU_OFFSET * 4, tower_text.get_rect().height)).copy().convert_alpha()
-        tower_button.blit(tower_text, tower_text.get_rect(center = tower_button.get_rect().center))
-        self.tower_button_rect = tower_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
-        width += tower_button.get_rect().width + MENU_OFFSET
-        new_tower.append(tower_button)
-
-        create_text = font.render("create tower", 1, WHITE)
-        create_button = pg.transform.scale(LEVEL_BUTTON_IMG, (round(create_text.get_rect().width * 1.5), create_text.get_rect().height)).copy().convert_alpha()
-        create_button.blit(create_text, create_text.get_rect(center = create_button.get_rect().center))
-        self.create_button_rect = create_button.get_rect(x = self.map.width + MENU_OFFSET + width, y = height + MENU_OFFSET)
-        width += create_button.get_rect().width + MENU_OFFSET
-        new_tower.append(create_button)
-
-        surf = pg.Surface((width, tower_text.get_rect().height))
-        surf.fill(DARKGREY)
-        temp_w = MENU_OFFSET
-        for item in new_tower:
-            surf.blit(item, (temp_w, 0))
-            temp_w += item.get_rect().width + MENU_OFFSET
-
-        height += surf.get_height()
-        ui_surf = self.ui.get_ui()
-        height += ui_surf.get_height()
-        if ui_surf.get_width() > width:
-            width = ui_surf.get_width()
-
-        self.attr_surf = pg.Surface((width, height))
-        self.attr_surf.fill(DARKGREY)
-        self.attr_surf.blit(surf, (0, MENU_OFFSET))
-        self.attr_surf.blit(ui_surf, (0, surf.get_height() + MENU_OFFSET))
+        self.attr_surf = self.ui.get_ui()
 
     def reload_attrs(self):
         attrs = super().reload_attrs()
         for attr in attrs:
+            if attr == "new_tower_name":
+                self.new_tower_name = attrs[attr]
+                continue
             TOWER_DATA[self.tower_names[self.current_tower]][self.current_level][attr] = attrs[attr]
         self.reload_towers()
         self.reload_enemies()
@@ -239,42 +201,20 @@ class TowerPreview(DevClass):
     def event(self, event):
         result = super().event(event)
         if isinstance(result, str):
-            return result
+            if result == "menu":
+                return result
+            elif result == "new_tower_name":
+                self.create_new_tower()
+                self.load_ui()
+            else:
+                self.reload_attrs()
 
-        if result == -3:
-            super().reload_attrs()
+        elif result == -3:
+            self.reload_attrs()
             self.load_ui()
 
-        if result <= -2:
+        elif result == -2:
             self.reload_attrs()
-            return -1
-
-        if event.type == pg.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                if self.create_button_rect.collidepoint(event.pos):
-                    self.over_tower_button = False
-                    self.create_new_tower()
-                    self.new_tower_name = ""
-                    self.get_attr_surf()
-                    return -1
-
-                elif self.tower_button_rect.collidepoint(event.pos):
-                    self.over_tower_button = True
-                    return -1
-
-        elif event.type == pg.KEYDOWN:
-            if self.over_tower_button:
-                if event.key == pg.K_BACKSPACE:
-                    self.new_tower_name = self.new_tower_name[:-1]
-                    self.get_attr_surf()
-                elif event.key == pg.K_RETURN:
-                    self.create_new_tower()
-                    self.new_tower_name = ""
-                    self.get_attr_surf()
-                else:
-                    self.new_tower_name += event.unicode
-                    self.get_attr_surf()
-            return -1
 
         return -1
 
@@ -299,9 +239,6 @@ class TowerPreview(DevClass):
         self.tower_names = list(TOWER_DATA.keys())
         self.current_tower = self.tower_names.index(self.new_tower_name)
         self.current_level = 0
-        self.load_ui()
-        self.reload_towers()
-        self.reload_enemies()
 
 class EnemyPreview(DevClass):
     def __init__(self, clock):
@@ -318,6 +255,8 @@ class EnemyPreview(DevClass):
     def load_ui(self):
         super().load_ui()
 
+        self.ui.new_attr(Attribute("new_enemy_name", {"type": "string"}, ""))
+
         for attr in ATTR_DATA["enemy"]:
             self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
                                        ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
@@ -326,55 +265,14 @@ class EnemyPreview(DevClass):
         self.get_attr_surf()
 
     def get_attr_surf(self):
-        height = MENU_OFFSET
-        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
-
-        new_enemy = []
-        width = MENU_OFFSET
-        if self.new_enemy_name == "":
-            if self.over_enemy_button:
-                enemy_text = font.render("enemy name...", 1, WHITE)
-            else:
-                enemy_text = font.render("enemy name...", 1, LIGHTGREY)
-        else:
-            enemy_text = font.render(self.new_enemy_name, 1, WHITE)
-        enemy_button = pg.transform.scale(LEVEL_BUTTON_IMG, (enemy_text.get_rect().width + MENU_OFFSET * 4, enemy_text.get_rect().height)).copy().convert_alpha()
-        enemy_button.blit(enemy_text, enemy_text.get_rect(center=enemy_button.get_rect().center))
-        self.enemy_button_rect = enemy_button.get_rect(x=self.map.width + MENU_OFFSET + width,
-                                                       y=height + MENU_OFFSET)
-        width += enemy_button.get_rect().width + MENU_OFFSET
-        new_enemy.append(enemy_button)
-
-        create_text = font.render("create enemy", 1, WHITE)
-        create_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
-        round(create_text.get_rect().width * 1.5), create_text.get_rect().height)).copy().convert_alpha()
-        create_button.blit(create_text, create_text.get_rect(center=create_button.get_rect().center))
-        self.create_button_rect = create_button.get_rect(x=self.map.width + MENU_OFFSET + width,
-                                                         y=height + MENU_OFFSET)
-        width += create_button.get_rect().width + MENU_OFFSET
-        new_enemy.append(create_button)
-
-        surf = pg.Surface((width, enemy_text.get_rect().height))
-        surf.fill(DARKGREY)
-        temp_w = MENU_OFFSET
-        for item in new_enemy:
-            surf.blit(item, (temp_w, 0))
-            temp_w += item.get_rect().width + MENU_OFFSET
-
-        height += surf.get_height()
-        ui_surf = self.ui.get_ui()
-        height += ui_surf.get_height()
-        if ui_surf.get_width() > width:
-            width = ui_surf.get_width()
-
-        self.attr_surf = pg.Surface((width, height))
-        self.attr_surf.fill(DARKGREY)
-        self.attr_surf.blit(surf, (0, MENU_OFFSET))
-        self.attr_surf.blit(ui_surf, (0, surf.get_height() + MENU_OFFSET))
+        self.attr_surf = self.ui.get_ui()
 
     def reload_attrs(self):
         attrs = super().reload_attrs()
         for attr in attrs:
+            if attr == "new_enemy_name":
+                self.new_enemy_name = attrs[attr]
+                continue
             ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
         self.reload_towers()
         self.reload_enemies()
@@ -391,51 +289,20 @@ class EnemyPreview(DevClass):
     def event(self, event):
         result = super().event(event)
         if isinstance(result, str):
-            return result
+            if result == "menu":
+                return result
+            elif result == "new_enemy_name":
+                self.create_new_enemy()
+                self.load_ui()
+            else:
+                self.reload_attrs()
 
-        if result == -3:
-            super().reload_attrs()
+        elif result == -3:
+            self.reload_attrs()
             self.load_ui()
 
-        if result <= -2:
+        elif result == -2:
             self.reload_attrs()
-            return -1
-
-        if event.type == pg.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                if self.create_button_rect.collidepoint(event.pos):
-                    self.over_enemy_button = False
-                    self.create_new_enemy()
-                    self.new_enemy_name = ""
-                    self.load_ui()
-                    return -1
-                elif self.enemy_button_rect.collidepoint(event.pos):
-                    self.over_enemy_button = True
-                    return -1
-                
-                result = self.ui.event_button(
-                    (event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET))
-                if result == -2:
-                    self.reload_attrs()
-                    self.get_attr_surf()
-                    return -1
-
-                else:
-                    return result
-
-        elif event.type == pg.KEYDOWN:
-            if self.over_enemy_button:
-                if event.key == pg.K_BACKSPACE:
-                    self.new_enemy_name = self.new_enemy_name[:-1]
-                    self.get_attr_surf()
-                elif event.key == pg.K_RETURN:
-                    self.create_new_enemy()
-                    self.new_enemy_name = ""
-                    self.get_attr_surf()
-                else:
-                    self.new_enemy_name += event.unicode
-                    self.get_attr_surf()
-            return -1
 
         return -1
 
@@ -445,156 +312,6 @@ class EnemyPreview(DevClass):
             ENEMY_DATA[self.new_enemy_name][attr] = ATTR_DATA["enemy"][attr]["default"]
         ENEMY_DATA[self.new_enemy_name]["image"] = pg.image.load(path.join(ENEMIES_IMG_FOLDER, "{}.png".format(self.new_enemy_name)))
         ENEMY_DATA[self.new_enemy_name]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(self.new_enemy_name))
-        self.enemy_names = list(ENEMY_DATA.keys())
-        self.current_enemy = self.enemy_names.index(self.new_enemy_name)
-        self.current_level = 0
-
-class LevelPreview(DevClass):
-    def __init__(self, clock):
-        self.level = 0
-        super().__init__(clock, "map{}".format(self.level))
-        super().load_data()
-
-    def new(self, args):
-        # initialize all variables and do all the setup for a new game
-        super().new()
-        self.new_level_name = ""
-        self.over_level_button = False
-        self.load_ui()
-
-    def load_ui(self):
-        super().load_ui()
-
-        for attr in ATTR_DATA["enemy"]:
-            self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
-                                       ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
-        self.reload_enemies()
-        self.reload_towers()
-        self.get_attr_surf()
-
-    def get_attr_surf(self):
-        height = MENU_OFFSET
-        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
-
-        new_enemy = []
-        width = MENU_OFFSET
-        if self.new_enemy_name == "":
-            if self.over_enemy_button:
-                enemy_text = font.render("enemy name...", 1, WHITE)
-            else:
-                enemy_text = font.render("enemy name...", 1, LIGHTGREY)
-        else:
-            enemy_text = font.render(self.new_enemy_name, 1, WHITE)
-        enemy_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
-        enemy_text.get_rect().width + MENU_OFFSET * 4, enemy_text.get_rect().height)).copy().convert_alpha()
-        enemy_button.blit(enemy_text, enemy_text.get_rect(center=enemy_button.get_rect().center))
-        self.enemy_button_rect = enemy_button.get_rect(x=self.map.width + MENU_OFFSET + width,
-                                                       y=height + MENU_OFFSET)
-        width += enemy_button.get_rect().width + MENU_OFFSET
-        new_enemy.append(enemy_button)
-
-        create_text = font.render("create enemy", 1, WHITE)
-        create_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
-            round(create_text.get_rect().width * 1.5), create_text.get_rect().height)).copy().convert_alpha()
-        create_button.blit(create_text, create_text.get_rect(center=create_button.get_rect().center))
-        self.create_button_rect = create_button.get_rect(x=self.map.width + MENU_OFFSET + width,
-                                                         y=height + MENU_OFFSET)
-        width += create_button.get_rect().width + MENU_OFFSET
-        new_enemy.append(create_button)
-
-        surf = pg.Surface((width, enemy_text.get_rect().height))
-        surf.fill(DARKGREY)
-        temp_w = MENU_OFFSET
-        for item in new_enemy:
-            surf.blit(item, (temp_w, 0))
-            temp_w += item.get_rect().width + MENU_OFFSET
-
-        height += surf.get_height()
-        ui_surf = self.ui.get_ui()
-        height += ui_surf.get_height()
-        if ui_surf.get_width() > width:
-            width = ui_surf.get_width()
-
-        self.attr_surf = pg.Surface((width, height))
-        self.attr_surf.fill(DARKGREY)
-        self.attr_surf.blit(surf, (0, MENU_OFFSET))
-        self.attr_surf.blit(ui_surf, (0, surf.get_height() + MENU_OFFSET))
-
-    def reload_attrs(self):
-        attrs = super().reload_attrs()
-        for attr in attrs:
-            ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
-        self.reload_towers()
-        self.reload_enemies()
-        self.get_attr_surf()
-
-    def draw(self):
-        surface = super().draw()
-        combo_surf = pg.Surface((surface.get_rect().width + self.attr_surf.get_rect().width,
-                                 max(surface.get_rect().height, self.attr_surf.get_rect().height)))
-        combo_surf.blit(surface, (0, 0))
-        combo_surf.blit(self.attr_surf, (surface.get_rect().width, 0))
-        return combo_surf
-
-    def event(self, event):
-        result = super().event(event)
-        if isinstance(result, str):
-            return result
-
-        if result == -3:
-            super().reload_attrs()
-            self.load_ui()
-
-        if result <= -2:
-            self.reload_attrs()
-            return -1
-
-        if event.type == pg.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                if self.create_button_rect.collidepoint(event.pos):
-                    self.over_enemy_button = False
-                    self.create_new_enemy()
-                    self.new_enemy_name = ""
-                    self.load_ui()
-                    return -1
-                elif self.enemy_button_rect.collidepoint(event.pos):
-                    self.over_enemy_button = True
-                    return -1
-
-                result = self.ui.event_button(
-                    (event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET))
-                if result == -2:
-                    self.reload_attrs()
-                    self.get_attr_surf()
-                    return -1
-
-                else:
-                    return result
-
-        elif event.type == pg.KEYDOWN:
-            if self.over_enemy_button:
-                if event.key == pg.K_BACKSPACE:
-                    self.new_enemy_name = self.new_enemy_name[:-1]
-                    self.get_attr_surf()
-                elif event.key == pg.K_RETURN:
-                    self.create_new_enemy()
-                    self.new_enemy_name = ""
-                    self.get_attr_surf()
-                else:
-                    self.new_enemy_name += event.unicode
-                    self.get_attr_surf()
-            return -1
-
-        return -1
-
-    def create_new_enemy(self):
-        ENEMY_DATA[self.new_enemy_name] = {}
-        for attr in ATTR_DATA["enemy"]:
-            ENEMY_DATA[self.new_enemy_name][attr] = ATTR_DATA["enemy"][attr]["default"]
-        ENEMY_DATA[self.new_enemy_name]["image"] = pg.image.load(
-            path.join(ENEMIES_IMG_FOLDER, "{}.png".format(self.new_enemy_name)))
-        ENEMY_DATA[self.new_enemy_name]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER,
-                                                                        "{}.wav".format(self.new_enemy_name))
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_enemy = self.enemy_names.index(self.new_enemy_name)
         self.current_level = 0
@@ -630,7 +347,7 @@ class DevUI():
         round(save_text.get_rect().width * 1.5), save_text.get_height())).copy().convert_alpha()
         save_button.blit(save_text, save_text.get_rect(center=save_button.get_rect().center))
         self.save_button_rect = save_button.get_rect()
-        self.save_button_rect.y = height + MENU_OFFSET
+        self.save_button_rect.y = height - MENU_OFFSET
         self.save_button_rect.x = MENU_OFFSET
 
         height += save_button.get_rect().height + MENU_OFFSET
@@ -648,7 +365,7 @@ class DevUI():
 
         save_surfs = [save_button, done_button]
 
-        surf = pg.Surface((width, height))
+        surf = pg.Surface((width + MENU_OFFSET, height))
         surf.fill(DARKGREY)
         height = MENU_OFFSET
         for attr in surf_list:
@@ -662,67 +379,94 @@ class DevUI():
 
         return surf
 
-    def event_button(self, offset):
-        if self.save_button_rect.collidepoint(offset):
-            for enemy in ENEMY_DATA:
-                ENEMY_DATA[enemy].pop("image")
-                ENEMY_DATA[enemy].pop("death_sound_path")
-            with open(path.join(GAME_FOLDER, "enemies.json"), 'w') as out_file:
-                json.dump(ENEMY_DATA, out_file, indent=4)
-            for enemy in ENEMY_DATA:
-                ENEMY_DATA[enemy]["image"] = pg.image.load(
-                    path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
-                ENEMY_DATA[enemy]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy))
-            for tower in TOWER_DATA:
-                for level in range(3):
-                    TOWER_DATA[tower][level].pop("gun_image", None)
-                    TOWER_DATA[tower][level].pop("base_image", None)
-                    TOWER_DATA[tower][level].pop("bullet_image", None)
-                    TOWER_DATA[tower][level].pop("shoot_sound_path", None)
-                    TOWER_DATA[tower][level].pop("image", None)
-            with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
-                json.dump(TOWER_DATA, out_file, indent=4)
-            for tower in TOWER_DATA:
-                for level in range(3):
-                    TOWER_DATA[tower][level]["gun_image"] = pg.image.load(
-                        path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(level) + ".png"))
-                    TOWER_DATA[tower][level]["base_image"] = pg.image.load(
-                        path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(level) + ".png"))
-                    TOWER_DATA[tower][level]["bullet_image"] = pg.image.load(
-                        path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(level) + ".png"))
-                    TOWER_DATA[tower][level]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER,
-                                                                             "{}.wav".format(tower))
-                    temp_base = TOWER_DATA[tower][level]["base_image"].copy()
-                    temp_base.blit(TOWER_DATA[tower][level]["gun_image"],
-                                   TOWER_DATA[tower][level]["gun_image"].get_rect(
-                                       center=TOWER_DATA[tower][level]["base_image"].get_rect().center))
-                    TOWER_DATA[tower][level]["image"] = temp_base
-            return -1
+    def event(self, event, map_width):
+        return_val = -1
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                offset = (event.pos[0] - map_width, event.pos[1] - MENU_OFFSET)
+                if self.save_button_rect.collidepoint(offset):
+                    for enemy in ENEMY_DATA:
+                        ENEMY_DATA[enemy].pop("image")
+                        ENEMY_DATA[enemy].pop("death_sound_path")
+                    with open(path.join(GAME_FOLDER, "enemies.json"), 'w') as out_file:
+                        json.dump(ENEMY_DATA, out_file, indent=4)
+                    for enemy in ENEMY_DATA:
+                        ENEMY_DATA[enemy]["image"] = pg.image.load(
+                            path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
+                        ENEMY_DATA[enemy]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy))
+                    for tower in TOWER_DATA:
+                        for level in range(3):
+                            TOWER_DATA[tower][level].pop("gun_image", None)
+                            TOWER_DATA[tower][level].pop("base_image", None)
+                            TOWER_DATA[tower][level].pop("bullet_image", None)
+                            TOWER_DATA[tower][level].pop("shoot_sound_path", None)
+                            TOWER_DATA[tower][level].pop("image", None)
+                    with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
+                        json.dump(TOWER_DATA, out_file, indent=4)
+                    for tower in TOWER_DATA:
+                        for level in range(3):
+                            TOWER_DATA[tower][level]["gun_image"] = pg.image.load(
+                                path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(level) + ".png"))
+                            TOWER_DATA[tower][level]["base_image"] = pg.image.load(
+                                path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(level) + ".png"))
+                            TOWER_DATA[tower][level]["bullet_image"] = pg.image.load(
+                                path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(level) + ".png"))
+                            TOWER_DATA[tower][level]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER,
+                                                                                     "{}.wav".format(tower))
+                            temp_base = TOWER_DATA[tower][level]["base_image"].copy()
+                            temp_base.blit(TOWER_DATA[tower][level]["gun_image"],
+                                           TOWER_DATA[tower][level]["gun_image"].get_rect(
+                                               center=TOWER_DATA[tower][level]["base_image"].get_rect().center))
+                            TOWER_DATA[tower][level]["image"] = temp_base
+                    return_val = -1
 
-        elif self.done_button_rect.collidepoint(offset):
-            return "menu"
+                elif self.done_button_rect.collidepoint(offset):
+                    return_val = "menu"
 
-        else:
+                else:
+                    for attr in self.attributes:
+                        if attr.type == "float":
+                            if attr.minus_button_rect.collidepoint(offset):
+                                if attr.change_val(round(attr.current_value - attr.increment, attr.dp)):
+                                    return_val = attr
+                            elif attr.plus_button_rect.collidepoint(offset):
+                                if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
+                                    return_val = attr
+                        elif attr.type == "bool":
+                            if attr.x_button_rect.collidepoint(offset):
+                                if attr.change_val(not attr.current_value):
+                                    return_val = attr
+                        elif attr.type == "select":
+                            if attr.back_button_rect.collidepoint(offset):
+                                if attr.change_val(attr.current_value - 1):
+                                    return_val = attr
+                            elif attr.next_button_rect.collidepoint(offset):
+                                if attr.change_val(attr.current_value + 1):
+                                    return_val = attr
+                        elif attr.type == "string":
+                            if attr.textbox_rect.collidepoint(offset):
+                                if not attr.over:
+                                    attr.over = True
+                                    return_val = attr
+                            elif attr.enter_button_rect.collidepoint(offset):
+                                attr.over = False
+                                return_val = attr.name
+                            elif attr.over:
+                                attr.over = False
+                                return_val = attr
+        elif event.type == pg.KEYDOWN:
             for attr in self.attributes:
-                if attr.type == "float":
-                    if attr.minus_button_rect.collidepoint(offset):
-                        if attr.change_val(round(attr.current_value - attr.increment, attr.dp)):
-                            return attr
-                    elif attr.plus_button_rect.collidepoint(offset):
-                        if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
-                            return attr
-                elif attr.type == "bool":
-                    if attr.x_button_rect.collidepoint(offset):
-                        if attr.change_val(not attr.current_value):
-                            return attr
-                elif attr.type == "select":
-                    if attr.back_button_rect.collidepoint(offset):
-                        if attr.change_val(attr.current_value - 1):
-                            return attr
-                    elif attr.next_button_rect.collidepoint(offset):
-                        if attr.change_val(attr.current_value + 1):
-                            return attr
-            return -1
+                if attr.type == "string" and attr.over:
+                    if event.key == pg.K_BACKSPACE and attr.current_value != "":
+                        if attr.change_val(attr.current_value[:-1]):
+                            return_val = attr
+                    elif event.key == pg.K_RETURN and attr.current_value != "":
+                        attr.over = False
+                        return_val = attr.name
+                    else:
+                        if attr.change_val(attr.current_value + event.unicode):
+                            return_val = attr
+        return return_val
 
 class Attribute():
     def __init__(self, name, data, value):
@@ -736,56 +480,80 @@ class Attribute():
             self.increment = data["increment"]
         elif self.type == "select":
             self.values = data["values"]
+        elif self.type == "string":
+            self.over = False
         self.change_val(value)
 
     def draw(self):
         font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
         surf_list = []
-        attr_text = font.render(self.name.replace('_', ' '), 1, WHITE)
-        surf_list.append(attr_text)
+        if self.type == "string":
+            if self.current_value == "":
+                if self.over:
+                    attr_text = font.render("{}...".format(self.name), 1, WHITE)
+                else:
+                    attr_text = font.render("{}...".format(self.name), 1, LIGHTGREY)
+            else:
+                attr_text = font.render(self.current_value, 1, WHITE)
+            textbox = pg.transform.scale(LEVEL_BUTTON_IMG, (
+            attr_text.get_rect().width + MENU_OFFSET * 4, attr_text.get_rect().height)).copy().convert_alpha()
+            textbox.blit(attr_text, attr_text.get_rect(center=textbox.get_rect().center))
+            self.textbox_rect = textbox.get_rect()
+            surf_list.append(textbox)
 
-        if self.type == "float":
-            button = pg.transform.scale(LEVEL_BUTTON_IMG, (attr_text.get_rect().height, attr_text.get_rect().height))
-            minus_button = button.copy().convert_alpha()
-            minus_text = font.render('-', 1, WHITE)
-            minus_button.blit(minus_text, minus_text.get_rect(center = minus_button.get_rect().center))
-            surf_list.append(minus_button)
-            self.minus_button_rect = minus_button.get_rect()
+            enter_text = font.render("enter", 1, WHITE)
+            enter_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
+                round(enter_text.get_rect().width * 1.5), enter_text.get_rect().height)).copy().convert_alpha()
+            enter_button.blit(enter_text, enter_text.get_rect(center=enter_button.get_rect().center))
+            self.enter_button_rect = enter_button.get_rect()
+            surf_list.append(enter_button)
 
-            cur_val_text = font.render(str(self.current_value), 1, WHITE)
-            surf_list.append(cur_val_text)
+        else:
+            attr_text = font.render(self.name.replace('_', ' '), 1, WHITE)
+            surf_list.append(attr_text)
 
-            plus_button = button.copy().convert_alpha()
-            plus_text = font.render('+', 1, WHITE)
-            plus_button.blit(plus_text, plus_text.get_rect(center = plus_button.get_rect().center))
-            surf_list.append(plus_button)
-            self.plus_button_rect = plus_button.get_rect()
+            if self.type == "float":
+                button = pg.transform.scale(LEVEL_BUTTON_IMG, (attr_text.get_rect().height, attr_text.get_rect().height))
+                minus_button = button.copy().convert_alpha()
+                minus_text = font.render('-', 1, WHITE)
+                minus_button.blit(minus_text, minus_text.get_rect(center = minus_button.get_rect().center))
+                surf_list.append(minus_button)
+                self.minus_button_rect = minus_button.get_rect()
 
-        elif self.type == "bool":
-            button = pg.transform.scale(LEVEL_BUTTON_IMG, (attr_text.get_rect().height, attr_text.get_rect().height)).copy().convert_alpha()
-            if self.current_value == True:
-                x_text = font.render('X', 1, WHITE)
-                button.blit(x_text, x_text.get_rect(center = button.get_rect().center))
-            surf_list.append(button)
-            self.x_button_rect = button.get_rect()
+                cur_val_text = font.render(str(self.current_value), 1, WHITE)
+                surf_list.append(cur_val_text)
 
-        elif self.type == "select":
-            back_text = font.render("<", 1, WHITE)
-            back_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
-            back_text.get_rect().height, back_text.get_rect().height)).copy().convert_alpha()
-            back_button.blit(back_text, back_text.get_rect(center=back_button.get_rect().center))
-            self.back_button_rect = back_button.get_rect()
-            surf_list.append(back_button)
+                plus_button = button.copy().convert_alpha()
+                plus_text = font.render('+', 1, WHITE)
+                plus_button.blit(plus_text, plus_text.get_rect(center = plus_button.get_rect().center))
+                surf_list.append(plus_button)
+                self.plus_button_rect = plus_button.get_rect()
 
-            text = font.render(self.values[self.current_value], 1, WHITE)
-            surf_list.append(text)
+            elif self.type == "bool":
+                button = pg.transform.scale(LEVEL_BUTTON_IMG, (attr_text.get_rect().height, attr_text.get_rect().height)).copy().convert_alpha()
+                if self.current_value == True:
+                    x_text = font.render('X', 1, WHITE)
+                    button.blit(x_text, x_text.get_rect(center = button.get_rect().center))
+                surf_list.append(button)
+                self.x_button_rect = button.get_rect()
 
-            next_text = font.render(">", 1, WHITE)
-            next_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
-            next_text.get_rect().height, next_text.get_rect().height)).copy().convert_alpha()
-            next_button.blit(next_text, next_text.get_rect(center=next_button.get_rect().center))
-            self.next_button_rect = next_button.get_rect()
-            surf_list.append(next_button)
+            elif self.type == "select":
+                back_text = font.render("<", 1, WHITE)
+                back_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
+                back_text.get_rect().height, back_text.get_rect().height)).copy().convert_alpha()
+                back_button.blit(back_text, back_text.get_rect(center=back_button.get_rect().center))
+                self.back_button_rect = back_button.get_rect()
+                surf_list.append(back_button)
+
+                text = font.render(self.values[self.current_value], 1, WHITE)
+                surf_list.append(text)
+
+                next_text = font.render(">", 1, WHITE)
+                next_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
+                next_text.get_rect().height, next_text.get_rect().height)).copy().convert_alpha()
+                next_button.blit(next_text, next_text.get_rect(center=next_button.get_rect().center))
+                self.next_button_rect = next_button.get_rect()
+                surf_list.append(next_button)
 
         width = MENU_OFFSET
         for i, surf in enumerate(surf_list):
@@ -801,6 +569,11 @@ class Attribute():
                     self.back_button_rect.x = width
                 else:
                     self.next_button_rect.x = width
+            elif self.type == "string":
+                if i == 0:
+                    self.textbox_rect.x = width
+                else:
+                    self.enter_button_rect.x = width
             width += surf.get_rect().width + MENU_OFFSET
 
         attr_surf = pg.Surface((width, attr_text.get_rect().height))
@@ -822,6 +595,9 @@ class Attribute():
         elif self.type == "select":
             self.back_button_rect = self.back_button_rect.move(width, height)
             self.next_button_rect = self.next_button_rect.move(width, height)
+        elif self.type == "string":
+            self.textbox_rect = self.textbox_rect.move(width, height)
+            self.enter_button_rect = self.enter_button_rect.move(width, height)
 
     def change_val(self, value):
         if self.type == "int" or self.type == "float":
