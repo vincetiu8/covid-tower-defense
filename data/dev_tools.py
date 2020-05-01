@@ -449,6 +449,156 @@ class EnemyPreview(DevClass):
         self.current_enemy = self.enemy_names.index(self.new_enemy_name)
         self.current_level = 0
 
+class LevelPreview(DevClass):
+    def __init__(self, clock):
+        self.level = 0
+        super().__init__(clock, "map{}".format(self.level))
+        super().load_data()
+
+    def new(self, args):
+        # initialize all variables and do all the setup for a new game
+        super().new()
+        self.new_level_name = ""
+        self.over_level_button = False
+        self.load_ui()
+
+    def load_ui(self):
+        super().load_ui()
+
+        for attr in ATTR_DATA["enemy"]:
+            self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
+                                       ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
+        self.reload_enemies()
+        self.reload_towers()
+        self.get_attr_surf()
+
+    def get_attr_surf(self):
+        height = MENU_OFFSET
+        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
+
+        new_enemy = []
+        width = MENU_OFFSET
+        if self.new_enemy_name == "":
+            if self.over_enemy_button:
+                enemy_text = font.render("enemy name...", 1, WHITE)
+            else:
+                enemy_text = font.render("enemy name...", 1, LIGHTGREY)
+        else:
+            enemy_text = font.render(self.new_enemy_name, 1, WHITE)
+        enemy_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
+        enemy_text.get_rect().width + MENU_OFFSET * 4, enemy_text.get_rect().height)).copy().convert_alpha()
+        enemy_button.blit(enemy_text, enemy_text.get_rect(center=enemy_button.get_rect().center))
+        self.enemy_button_rect = enemy_button.get_rect(x=self.map.width + MENU_OFFSET + width,
+                                                       y=height + MENU_OFFSET)
+        width += enemy_button.get_rect().width + MENU_OFFSET
+        new_enemy.append(enemy_button)
+
+        create_text = font.render("create enemy", 1, WHITE)
+        create_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
+            round(create_text.get_rect().width * 1.5), create_text.get_rect().height)).copy().convert_alpha()
+        create_button.blit(create_text, create_text.get_rect(center=create_button.get_rect().center))
+        self.create_button_rect = create_button.get_rect(x=self.map.width + MENU_OFFSET + width,
+                                                         y=height + MENU_OFFSET)
+        width += create_button.get_rect().width + MENU_OFFSET
+        new_enemy.append(create_button)
+
+        surf = pg.Surface((width, enemy_text.get_rect().height))
+        surf.fill(DARKGREY)
+        temp_w = MENU_OFFSET
+        for item in new_enemy:
+            surf.blit(item, (temp_w, 0))
+            temp_w += item.get_rect().width + MENU_OFFSET
+
+        height += surf.get_height()
+        ui_surf = self.ui.get_ui()
+        height += ui_surf.get_height()
+        if ui_surf.get_width() > width:
+            width = ui_surf.get_width()
+
+        self.attr_surf = pg.Surface((width, height))
+        self.attr_surf.fill(DARKGREY)
+        self.attr_surf.blit(surf, (0, MENU_OFFSET))
+        self.attr_surf.blit(ui_surf, (0, surf.get_height() + MENU_OFFSET))
+
+    def reload_attrs(self):
+        attrs = super().reload_attrs()
+        for attr in attrs:
+            ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
+        self.reload_towers()
+        self.reload_enemies()
+        self.get_attr_surf()
+
+    def draw(self):
+        surface = super().draw()
+        combo_surf = pg.Surface((surface.get_rect().width + self.attr_surf.get_rect().width,
+                                 max(surface.get_rect().height, self.attr_surf.get_rect().height)))
+        combo_surf.blit(surface, (0, 0))
+        combo_surf.blit(self.attr_surf, (surface.get_rect().width, 0))
+        return combo_surf
+
+    def event(self, event):
+        result = super().event(event)
+        if isinstance(result, str):
+            return result
+
+        if result == -3:
+            super().reload_attrs()
+            self.load_ui()
+
+        if result <= -2:
+            self.reload_attrs()
+            return -1
+
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.create_button_rect.collidepoint(event.pos):
+                    self.over_enemy_button = False
+                    self.create_new_enemy()
+                    self.new_enemy_name = ""
+                    self.load_ui()
+                    return -1
+                elif self.enemy_button_rect.collidepoint(event.pos):
+                    self.over_enemy_button = True
+                    return -1
+
+                result = self.ui.event_button(
+                    (event.pos[0] - self.map.width, event.pos[1] - self.create_button_rect.height - MENU_OFFSET))
+                if result == -2:
+                    self.reload_attrs()
+                    self.get_attr_surf()
+                    return -1
+
+                else:
+                    return result
+
+        elif event.type == pg.KEYDOWN:
+            if self.over_enemy_button:
+                if event.key == pg.K_BACKSPACE:
+                    self.new_enemy_name = self.new_enemy_name[:-1]
+                    self.get_attr_surf()
+                elif event.key == pg.K_RETURN:
+                    self.create_new_enemy()
+                    self.new_enemy_name = ""
+                    self.get_attr_surf()
+                else:
+                    self.new_enemy_name += event.unicode
+                    self.get_attr_surf()
+            return -1
+
+        return -1
+
+    def create_new_enemy(self):
+        ENEMY_DATA[self.new_enemy_name] = {}
+        for attr in ATTR_DATA["enemy"]:
+            ENEMY_DATA[self.new_enemy_name][attr] = ATTR_DATA["enemy"][attr]["default"]
+        ENEMY_DATA[self.new_enemy_name]["image"] = pg.image.load(
+            path.join(ENEMIES_IMG_FOLDER, "{}.png".format(self.new_enemy_name)))
+        ENEMY_DATA[self.new_enemy_name]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER,
+                                                                        "{}.wav".format(self.new_enemy_name))
+        self.enemy_names = list(ENEMY_DATA.keys())
+        self.current_enemy = self.enemy_names.index(self.new_enemy_name)
+        self.current_level = 0
+
 class DevUI():
     def __init__(self):
         self.attributes = []
@@ -492,6 +642,9 @@ class DevUI():
         self.done_button_rect = done_button.get_rect()
         self.done_button_rect.y = self.save_button_rect.y
         self.done_button_rect.x = self.save_button_rect.width + MENU_OFFSET * 2
+
+        if self.save_button_rect.width + self.done_button_rect.width + MENU_OFFSET * 3 > width:
+            width = self.save_button_rect.width + self.done_button_rect.width + MENU_OFFSET * 3
 
         save_surfs = [save_button, done_button]
 
@@ -562,7 +715,7 @@ class DevUI():
                     if attr.x_button_rect.collidepoint(offset):
                         if attr.change_val(not attr.current_value):
                             return attr
-                elif attr.type == "string":
+                elif attr.type == "select":
                     if attr.back_button_rect.collidepoint(offset):
                         if attr.change_val(attr.current_value - 1):
                             return attr
@@ -581,7 +734,7 @@ class Attribute():
             self.max = data["max"]
             self.dp = data["dp"]
             self.increment = data["increment"]
-        elif self.type == "string":
+        elif self.type == "select":
             self.values = data["values"]
         self.change_val(value)
 
@@ -616,7 +769,7 @@ class Attribute():
             surf_list.append(button)
             self.x_button_rect = button.get_rect()
 
-        elif self.type == "string":
+        elif self.type == "select":
             back_text = font.render("<", 1, WHITE)
             back_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
             back_text.get_rect().height, back_text.get_rect().height)).copy().convert_alpha()
@@ -643,7 +796,7 @@ class Attribute():
                     self.plus_button_rect.x = width
             elif self.type == "bool" and i == 1:
                 self.x_button_rect.x = width
-            elif self.type == "string" and (i == 1 or i == 3):
+            elif self.type == "select" and (i == 1 or i == 3):
                 if i == 1:
                     self.back_button_rect.x = width
                 else:
@@ -666,7 +819,7 @@ class Attribute():
             self.plus_button_rect = self.plus_button_rect.move(width, height)
         elif self.type == "bool":
             self.x_button_rect = self.x_button_rect.move(width, height)
-        elif self.type == "string":
+        elif self.type == "select":
             self.back_button_rect = self.back_button_rect.move(width, height)
             self.next_button_rect = self.next_button_rect.move(width, height)
 
@@ -679,7 +832,7 @@ class Attribute():
             if not isinstance(value, bool):
                 return False
 
-        elif self.type == "string":
+        elif self.type == "select":
             if value < 0:
                 value = len(self.values) + value
 
