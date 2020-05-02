@@ -540,7 +540,7 @@ class DevUI():
                 width = attr_surf.get_width()
             surf_list.append(attr_surf)
 
-        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
+        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.2))
         save_text = font.render("Save Settings", 1, WHITE)
         save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
         round(save_text.get_rect().width * 1.5), save_text.get_height())).copy().convert_alpha()
@@ -704,7 +704,7 @@ class Attribute():
         self.change_val(value)
 
     def draw(self):
-        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.5))
+        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.2))
         surf_list = []
         if self.type == "string":
             if self.current_value == "":

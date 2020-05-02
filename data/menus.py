@@ -42,7 +42,7 @@ class Menu(Display):
         
         self.init_body_1()
         
-        self.level_descs = [None for i in range(len(LEVEL_DATA))]
+        self.level_infos = [None for i in range(len(LEVEL_DATA))]
         self.over_level = -1
         
     def init_body_1(self): #inits half the body_images on game startup
@@ -120,12 +120,14 @@ class Menu(Display):
                  1] + lives_text.get_rect().height - MENU_OFFSET)))
 
         if self.over_level != -1:
-            if self.level_descs[self.over_level] == None:
-                self.get_level_info(self.over_level)
+            if self.level_infos[self.over_level] == None:
+                new_level_info = LevelInfo(self.over_level)
+                self.level_infos[self.over_level] = new_level_info.draw()
+
             if self.level_buttons[self.over_level].centerx < self.get_width() / 2:
-                self.blit(self.camera.apply_image(self.level_descs[self.over_level]), self.camera.apply_tuple(self.level_buttons[self.over_level].topright))
+                self.blit(self.camera.apply_image(self.level_infos[self.over_level]), self.camera.apply_tuple(self.level_buttons[self.over_level].topright))
             else:
-                self.blit(self.camera.apply_image(self.level_descs[self.over_level]), self.camera.apply_rect(self.level_descs[self.over_level].get_rect(topright = self.level_buttons[self.over_level].topleft)))
+                self.blit(self.camera.apply_image(self.level_infos[self.over_level]), self.camera.apply_rect(self.level_infos[self.over_level].get_rect(topright = self.level_buttons[self.over_level].topleft)))
                 
         return self
 
@@ -239,6 +241,8 @@ class TowerSelectMenu(Display):
         self.start_btn_disabled = self.make_btn("Start")
         self.start_btn_disabled.fill(LIGHTGREY, None, pg.BLEND_RGB_MULT)
         
+        self.over_tower = [-1, -1]
+        
     def new(self, args):
         self.towers = []
         self.tower_rects = []
@@ -257,6 +261,8 @@ class TowerSelectMenu(Display):
             self.towers[row].append(tower_names[i])
             self.tower_rects[row].append(pg.Rect(self.get_locs(row, i % GRID_ROW_SIZE), self.get_dims()))
             self.tower_selected[row].append(False)
+            
+        self.tower_infos = [None for i in range(len(tower_names))]
         
     def draw(self):
         self.fill(BLACK)
@@ -289,6 +295,19 @@ class TowerSelectMenu(Display):
 
         self.blit(start_btn, (self.start_btn_rect.x, BTN_Y))
         self.blit(self.back_btn, (BTN_X_MARGIN, BTN_Y))
+        
+        if self.over_tower[0] != -1:
+            row, col = self.over_tower
+            ind = row * GRID_ROW_SIZE + col
+            
+            if self.tower_infos[ind] == None:
+                new_tower_info = TowerInfo(self.towers[row][col])
+                self.tower_infos[ind] = new_tower_info.draw()
+                
+            if self.tower_rects[row][col].centerx < self.get_width() / 2:
+                self.blit(self.tower_infos[ind], self.tower_rects[row][col].topright)
+            else:
+                self.blit(self.tower_infos[ind], self.tower_infos[ind].get_rect(topright = self.tower_rects[row][col].topleft))
                 
         return self
                 
@@ -325,16 +344,131 @@ class TowerSelectMenu(Display):
                     return "menu"
                 elif self.start_btn_rect.collidepoint(mouse_pos) and self.num_selected > 0:
                     return "game"
-                
-                for row, grid_row in enumerate(self.tower_rects):
-                    for col, rect in enumerate(grid_row):
-                        if rect.collidepoint(mouse_pos):
-                            if self.tower_selected[row][col]:
-                                self.num_selected -= 1
-                                self.tower_selected[row][col] = False
-                            elif self.num_selected < NUM_ALLOWED:
-                                self.num_selected += 1
-                                self.tower_selected[row][col] = True
+                elif self.over_tower[0] != -1:
+                    row, col = self.over_tower
+                    if self.tower_selected[row][col]:
+                        self.num_selected -= 1
+                        self.tower_selected[row][col] = False
+                    elif self.num_selected < NUM_ALLOWED:
+                        self.num_selected += 1
+                        self.tower_selected[row][col] = True
                             
-                            
+        if event.type == pg.MOUSEMOTION:
+            mouse_pos = pg.mouse.get_pos()
+            for row, grid_row in enumerate(self.tower_rects):
+                for col, rect in enumerate(grid_row):
+                    if rect.collidepoint(mouse_pos):
+                        self.over_tower = [row, col]
+                        return -1
+                    
+            self.over_tower = [-1, -1]
+                        
         return -1
+
+class HoverInfo(pg.Surface):
+    def __init__(self, title, description, menu_offset):
+        self.menu_offset = menu_offset
+        self.info_font = pg.font.Font(FONT, MENU_TEXT_SIZE)
+        
+        self.title = title
+        self.description = description
+        
+        self.texts = []
+        self.height = self.menu_offset
+        self.width = self.menu_offset
+        
+    def make_title(self):
+        title_font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
+        title_text = title_font.render(self.title, 1, WHITE)
+        self.add_text(title_text)
+        
+    def make_description(self):
+        text = textwrap.fill(self.description, 30 - round(MENU_TEXT_SIZE / 30)) # No idea how to really calculate this.
+        
+        for part in text.split('\n'):
+            rendered_text = self.info_font.render(part, 1, WHITE)
+            self.add_text(rendered_text)
+            
+    def make_other_info(self):
+        pass # to be overrided
+    
+    def add_text(self, text):
+        self.texts.append(text)
+        self.height += text.get_height() + self.menu_offset
+        self.width = max(self.width, text.get_width() + self.menu_offset * 2)
+            
+    def draw(self):
+        self.make_title()
+        self.make_description()
+        self.make_other_info()
+        
+        super().__init__((self.width, self.height + self.menu_offset))
+        self.fill(DARKGREY)
+        
+        temp_height = self.menu_offset
+        for text in self.texts:
+            self.blit(text, (self.menu_offset, temp_height))
+            temp_height += text.get_height() + self.menu_offset
+            
+        return self
+    
+class LevelInfo(HoverInfo):
+    def __init__(self, level):
+        self.level_data = LEVEL_DATA[level]
+        super().__init__(self.level_data["title"], self.level_data["description"], MENU_OFFSET)
+        
+    def make_other_info(self):
+        if self.level_data["difficulty"] == 0:
+            difficulty_text = self.info_font.render("Easy", 1, GREEN)
+        elif self.level_data["difficulty"] == 1:
+            difficulty_text = self.info_font.render("Medium", 1, YELLOW)
+        elif self.level_data["difficulty"] == 2:
+            difficulty_text = self.info_font.render("Hard", 1, ORANGE)
+        elif self.level_data["difficulty"] == 3:
+            difficulty_text = self.info_font.render("Very Hard", 1, RED)
+        elif self.level_data["difficulty"] == 4:
+            difficulty_text = self.info_font.render("Extreme", 1, MAROON)
+        self.add_text(difficulty_text)
+
+        waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"])), 1, WHITE)
+        self.add_text(waves_text)
+
+        enemy_surf = pg.Surface((self.texts[0].get_width() + self.menu_offset * 2, MENU_TEXT_SIZE))
+        enemy_surf.fill(DARKGREY)
+        for i, enemy in enumerate(self.level_data["enemies"]):
+            enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE))
+            enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + self.menu_offset), 0))
+
+        self.add_text(enemy_surf)
+        
+class TowerInfo(HoverInfo):
+    def __init__(self, tower):
+        self.tower_data = TOWER_DATA[tower]
+        
+        tower_name = (" ".join(tower.split("_"))).title() # removes underscores, capitalizes it properly
+        super().__init__(tower_name, "placeholder text", MENU_OFFSET_2)
+        
+    def make_other_info(self):
+        text_names = ["Damage", "Fire Rate", "Range", "Cost", "Directions", "Tracks Enemies"]
+        keys = ["damage", "bullet_spawn_speed", "range", "upgrade_cost", "directions", "tracking"]
+        
+        stages_text = self.info_font.render("Stages: {}".format(len(self.tower_data)), 1, WHITE)
+        self.add_text(stages_text)
+        
+        for i in range(len(text_names)):
+            self.make_text(text_names[i], keys[i])
+        
+    def make_text(self, text_name, key):
+        texts = []
+        map_tf = {True: "Yes", False: "No"}
+        
+        for i in range(len(self.tower_data)):
+            to_add = self.tower_data[i][key]
+            
+            if isinstance(to_add, bool):
+                texts.append(map_tf[to_add])
+            else:
+                texts.append(str(to_add))
+            
+        text = self.info_font.render("{}: {}".format(text_name, "/".join(texts)), 1, WHITE)
+        self.add_text(text)
