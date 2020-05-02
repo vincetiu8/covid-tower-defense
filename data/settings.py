@@ -60,7 +60,8 @@ GAME_STOP_AUD_FOLDER = path.join(AUDIO_FOLDER, "game_stop")
 
 # UI Constants
 MENU_OFFSET = 10
-MENU_TEXT_SIZE = 25
+MENU_OFFSET_2 = 5
+MENU_TEXT_SIZE = 30
 
 # TowerSelectMenu Constants
 NUM_ALLOWED = 2
