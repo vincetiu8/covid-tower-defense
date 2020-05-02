@@ -428,11 +428,14 @@ class LevelPreview(DevClass):
                 if self.level != attrs[attr]:
                     if attrs[attr] == len(LEVEL_DATA):
                         create_level = True
+                    attrs["wave"] = 0
+                    attrs["sub_wave"] = 0
                     load = True
             elif attr == "wave":
                 if self.wave != attrs[attr]:
                     if attrs[attr] == len(LEVEL_DATA[self.level]["waves"]):
                         create_wave = True
+                    attrs["sub_wave"] = 0
                     load = True
             elif attr == "sub_wave":
                 if self.sub_wave != attrs[attr]:
