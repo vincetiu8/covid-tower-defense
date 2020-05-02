@@ -3,66 +3,46 @@
     "description": "Extreme testing ground! Prepare to die!",
     "difficulty": 4,
     "waves": [
-        {
-            "start": [
-                0
-            ],
-            "enemy_type": [
-                "common_cold"
-            ],
-            "enemy_count": [
-                500
-            ],
-            "spawn_delay": [
-                7
-            ],
-            "spawn_rate": [
-                0.05
-            ]
-        },
-        {
-            "start": [
-                0,
-                0,
-                0
-            ],
-            "enemy_type": [
-                "coronavirus",
-                "hepatitis_a",
-                "common_cold"
-            ],
-            "enemy_count": [
-                100,
-                250,
-                500
-            ],
-            "spawn_delay": [
-                10,
-                5,
-                3
-            ],
-            "spawn_rate": [
-                0.01,
-                0.02,
-                0.05
-            ]
-        },
-        {
-            "start": [
-                0
-            ],
-            "enemy_type": [
-                "coronavirus"
-            ],
-            "enemy_count": [
-                6969
-            ],
-            "spawn_delay": [
-                3
-            ],
-            "spawn_rate": [
-                0.0042
-            ]
-        }
+        [
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 500,
+                "spawn_delay": 7,
+                "spawn_rate": 0.05
+            }
+        ],
+        [
+            {
+                "start": 0,
+                "enemy_type": "coronavirus",
+                "enemy_count": 100,
+                "spawn_delay": 10,
+                "spawn_rate": 0.01
+            },
+            {
+                "start": 0,
+                "enemy_type": "hepatitis_a",
+                "enemy_count": 250,
+                "spawn_delay": 5,
+                "spawn_rate": 0.02
+            },
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 500,
+                "spawn_delay": 3,
+                "spawn_rate": 0.05
+            }
+        ],
+        [
+            {
+                "start": 0,
+                "enemy_type": "coronavirus",
+                "enemy_count": 6969,
+                "spawn_delay": 3,
+                "spawn_rate": 0.0042
+            }
+        ]
     ]
 }

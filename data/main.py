@@ -7,7 +7,7 @@ from data.tilemap import *
 from data.towers import *
 from data.game_stop import *
 from data.menus import *
-from data.dev_tools import TowerPreview, EnemyPreview
+from data.dev_tools import TowerPreview, EnemyPreview, LevelPreview
 
 class Main:
     def __init__(self):
@@ -27,6 +27,7 @@ class Main:
         self.pause = Pause()
         self.tower_preview = TowerPreview(self.clock)
         self.enemy_preview = EnemyPreview(self.clock)
+        self.level_preview = LevelPreview(self.clock)
         self.tower_select = TowerSelectMenu()
         
         self.display_keys = {
@@ -37,6 +38,7 @@ class Main:
             "pause":            self.pause,
             "tower_preview":    self.tower_preview,
             "enemy_preview":    self.enemy_preview,
+            "level_preview":    self.level_preview,
             "tower_select":     self.tower_select
         }
         

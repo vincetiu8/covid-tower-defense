@@ -93,7 +93,8 @@ for file in listdir(LEVELS_FOLDER):
         level = json.load(data_file)
         enemies = []
         for wave in level["waves"]:
-            for enemy in wave["enemy_type"]:
+            for sub_wave in wave:
+                enemy = sub_wave["enemy_type"]
                 if enemy not in enemies:
                     enemies.append(enemy)
         level["enemies"] = enemies

@@ -3,66 +3,46 @@
     "description": "Another place to try out things. Maybe it will be different on this map!",
     "difficulty": 2,
     "waves": [
-        {
-            "start": [
-                0
-            ],
-            "enemy_type": [
-                "common_cold"
-            ],
-            "enemy_count": [
-                50
-            ],
-            "spawn_delay": [
-                3
-            ],
-            "spawn_rate": [
-                0.05
-            ]
-        },
-        {
-            "start": [
-                0,
-                0
-            ],
-            "enemy_type": [
-                "common_cold",
-                "hepatitis_a"
-            ],
-            "enemy_count": [
-                100,
-                25
-            ],
-            "spawn_delay": [
-                3,
-                5
-            ],
-            "spawn_rate": [
-                0.05,
-                0.2
-            ]
-        },
-        {
-            "start": [
-                0,
-                0
-            ],
-            "enemy_type": [
-                "common_cold",
-                "hepatitis_a"
-            ],
-            "enemy_count": [
-                150,
-                50
-            ],
-            "spawn_delay": [
-                3,
-                6
-            ],
-            "spawn_rate": [
-                0.05,
-                0.01
-            ]
-        }
+        [
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 50,
+                "spawn_delay": 3,
+                "spawn_rate": 0.05
+            }
+        ],
+        [
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 100,
+                "spawn_delay": 3,
+                "spawn_rate": 0.05
+            },
+            {
+                "start": 0,
+                "enemy_type": "hepatitis_a",
+                "enemy_count": 25,
+                "spawn_delay": 5,
+                "spawn_rate": 0.2
+            }
+        ],
+        [
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 150,
+                "spawn_delay": 3,
+                "spawn_rate": 0.05
+            },
+            {
+                "start": 0,
+                "enemy_type": "hepatitis_a",
+                "enemy_count": 50,
+                "spawn_delay": 6,
+                "spawn_rate": 0.01
+            }
+        ]
     ]
 }

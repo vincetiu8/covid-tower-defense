@@ -91,5 +91,62 @@
         "type": "bool",
         "default": true
       }
+  },
+  "level": {
+    "title": {
+      "type": "string",
+      "default": ""
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "difficulty": {
+      "type": "float",
+      "min": 0,
+      "max": 4,
+      "increment": 1,
+      "dp": 0,
+      "default": 2
+    }
+  },
+  "sub_wave": {
+    "start": {
+      "type": "float",
+      "min": 0,
+      "max": 0,
+      "increment": 1,
+      "dp": 0,
+      "default": 0
+    },
+    "enemy_type": {
+      "type": "select",
+      "values": [],
+      "default": 0
+    },
+    "enemy_count": {
+      "type": "float",
+      "min": 1,
+      "max": 10000,
+      "increment": 1,
+      "dp": 0,
+      "default": 5
+    },
+    "spawn_delay": {
+      "type": "float",
+      "min": 0.1,
+      "max": 25,
+      "increment": 0.1,
+      "dp": 1,
+      "default": 1
+    },
+    "spawn_rate": {
+      "type": "float",
+      "min": 0.05,
+      "max": 10,
+      "increment": 0.05,
+      "dp": 2,
+      "default": 0.5
+    }
   }
 }

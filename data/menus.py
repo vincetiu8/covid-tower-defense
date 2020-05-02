@@ -33,6 +33,7 @@ class Menu(Display):
         
         self.tower_preview_button = pg.Rect((1200, 100), self.level_button_rect.size)
         self.enemy_preview_button = pg.Rect((1200, 500), self.level_button_rect.size)
+        self.level_preview_button = pg.Rect((1200, 900), self.level_button_rect.size)
         
         self.base_zoom = self.camera.get_zoom()
         self.zoom_step = -1
@@ -104,6 +105,18 @@ class Menu(Display):
         self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
             (self.enemy_preview_button.center[0] - lives_text.get_rect().center[0],
              self.enemy_preview_button.center[1] - lives_text.get_rect().center[
+                 1] + lives_text.get_rect().height - MENU_OFFSET)))
+
+        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.level_preview_button))
+        lives_text = lives_font.render("Level", 1, WHITE)
+        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
+            (self.level_preview_button.center[0] - lives_text.get_rect().center[0],
+             self.level_preview_button.center[1] - lives_text.get_rect().center[
+                 1] - lives_text.get_rect().height + MENU_OFFSET)))
+        lives_text = lives_font.render("Preview", 1, WHITE)
+        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
+            (self.level_preview_button.center[0] - lives_text.get_rect().center[0],
+             self.level_preview_button.center[1] - lives_text.get_rect().center[
                  1] + lives_text.get_rect().height - MENU_OFFSET)))
 
         if self.over_level != -1:
@@ -196,6 +209,8 @@ class Menu(Display):
                     return "tower_preview"
                 elif self.enemy_preview_button.collidepoint(mouse_pos):
                     return "enemy_preview"
+                elif self.level_preview_button.collidepoint(mouse_pos):
+                    return "level_preview"
                 
                 if self.over_level != -1:
                     return "tower_select"
