@@ -22,12 +22,12 @@ class Main:
         
         self.start_menu = StartMenu()
         self.menu = Menu()
-        self.game = Game(self.clock)
+        self.game = Game()
         self.game_over = GameOver()
         self.pause = Pause()
-        self.tower_preview = TowerPreview(self.clock)
-        self.enemy_preview = EnemyPreview(self.clock)
-        self.level_preview = LevelPreview(self.clock)
+        self.tower_preview = TowerPreview()
+        self.enemy_preview = EnemyPreview()
+        self.level_preview = LevelPreview()
         self.tower_select = TowerSelectMenu()
         
         self.display_keys = {
