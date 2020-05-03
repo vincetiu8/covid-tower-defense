@@ -31,9 +31,8 @@ def collide_with_walls(sprite, group, dir):
 
 
 class Game(Display):
-    def __init__(self, clock):
+    def __init__(self):
         super().__init__()
-        self.clock = clock
         self.paused = False
         self.starts = []
         self.game_done_event = pg.event.Event(pg.USEREVENT)
@@ -56,6 +55,7 @@ class Game(Display):
             self.new_game()
 
     def new_game(self):
+        self.clock = pg.time.Clock()
         self.map = TiledMap(path.join(MAP_FOLDER, "map{}.tmx".format(self.level)))
         self.load_data()
         self.load_level_data()
@@ -188,6 +188,7 @@ class Game(Display):
     #             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
     def draw(self):
+        self.clock.tick()
         self.fill((0, 0, 0))
 
         self.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
@@ -226,7 +227,8 @@ class Game(Display):
             self.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright=ui_rect.topleft))
         else:
             self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright=ui_pos))
-
+        
+        self.clock.tick()
         return self
 
     def make_stripped_path(self, surface):
