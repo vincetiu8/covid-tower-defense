@@ -180,7 +180,7 @@ First, you need to add these assets into the correct folders. They should be add
 ```
 
 Once you've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
-base folder. This will launch the game. In the Level Select, Menu click on the
+base folder. This will launch the game. In the Level Select Menu, click on the
 `Enemy Preview` button. This will open up the enemy preview screen. In the window on
 the top-right, there will be a text box with the text `enemy name...`. Enter the enemy name
 into this box. For the 'virus', simply enter `virus` and press the `create enemy` button.
