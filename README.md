@@ -274,7 +274,7 @@ After making the map, it has to be added into the correct folder. It should be a
 .
 ├── data
     ├── maps
-		(add your map file here)
+        (add your map file here)
 ```
 
 Once you've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
