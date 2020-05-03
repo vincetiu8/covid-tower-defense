@@ -25,8 +25,8 @@ python 3
 ├── numpy 1.16.2
 ```
 
-You can install Python 3 from [the python website](https://www.python.org/). You need
-to install the Python packages (pygame, pytmx, numpy) 
+You can install Python 3 from [the python website](https://www.python.org/). You
+also need to install the Python packages (pygame, pytmx, numpy) 
 [via the command line using pip](https://www.w3schools.com/python/python_pip.asp).
 
 Once you've cloned the repository, run `sergeant_t_cell.py` and enjoy the game!
@@ -87,10 +87,17 @@ will push your changes.
 ### Making an Issue
 Perhaps there's a feature you'd like in the game or a bug you need to report. In this
 case, you should make an issue on the repository on GitHub. Navigate to the `issues` page
-and press `create issue`. In the issue, describe what problem/feature you are encountering
+and press `create issue`. In the issue, describe what problem you have or feature you wanr
 and any suggestions you have for its implementation. Tag this with the appropriate tags:
 `bug` for bugs or problems, `enhancement` for important changes, `nice to have` for smaller, 
 not so important changes.
+
+If you're reporting a bug in the game, it would be best to include in the issue the
+steps to reproduce the bug as well as any error messages you received. Screenshots or video
+demonstrations of the bug would be helpful as well.
+
+Finally, before you submit a new issue, make sure that you're playing on the latest
+latest version of the game as your issue might have been resolved already.
 
 ### Pull Requests
 If you're happy with all the changes you've made on your new branch and want to merge
@@ -113,8 +120,8 @@ or pull the branch. Once they've pulled the branch, congrats! Your changes have 
 successfully merged!
 
 ## Using the Game's Developer Tools
-The game currently has built-in developer tools to allow non-coders to make enemies and
-towers.
+The game currently has built-in developer tools to allow non-coders to make enemies, towers,
+and levels.
 
 Enemy and tower names must follow snake case. This means no spaces between words and
 no capital letters. In our case, punctuation is not allowed either. Words are separated by `_` instead. For example:
@@ -130,32 +137,37 @@ coding is fun
 oh, you're approaching me?
 ```  
 
+Unlike enemies and towers, levels are defined by their number rather than their name. Internally,
+the game starts counting levels from 0, so the first level would be level 0, the second level
+would be level 1, and so on. Generally, if you're making a new level, its level number should
+be the number of the most recently created level plus 1.
+
 ### Making an Enemy
 An enemy in the game tries to get past the player's defenses and reach the goal, where
 it will cause the player to lose a certain amount of lives.
 
-Say you want to add an enemy to the game. Let's call this tower the
+Say you want to add an enemy to the game. Let's call this enemy the
 'virus'. The first thing you want to do is create all the necessary
-assets for the virus. These are:
+assets for the enemy. These are:
 - An image
     You need to name the enemy's image by the format:
     `(enemy name).png`
-    where _enemy name_ is the name of the enemy. For the 'virus'm this should be named
+    where _enemy name_ is the name of the enemy. For the 'virus', this should be named
     `virus.png`
-    >This image shouldn't be larger than 40 x 40 pixels. Note, all images must be of the file format .png. 
+    >This image shouldn't be larger than 40 x 40 pixels. Also, all images must be of the file format .png. 
 
 - A sound effect when it dies  
     You need to name the sound effect by the format:  
     `(enemy name).wav`,
-    where _enemy name_ is the name of the tower. For the 'virus', the sound effect
+    where _enemy name_ is the name of the enemy. For the 'virus', the sound effect
     should be named `virus.wav`.
     
     >The sound effect should be of the format .wav and ideally be shorter than 0.2 seconds long.
 
-Once you have all of these assets, you're ready to add the tower
+Once you have all of these assets, you're ready to add the enemy
 in-game!
 
-First, we need to add these assets into the correct folders. They should be added in:
+First, you need to add these assets into the correct folders. They should be added in:
 ```
 .
 ├── data
@@ -167,16 +179,16 @@ First, we need to add these assets into the correct folders. They should be adde
             (add the enemy image here)
 ```
 
-Once we've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
-base folder. This will launch the game. Once in the game, in the Menu click on the
-`Enemy Preview` button. This will open up the enemy preview screen. At the very top,
-there will be a text box with the text `enemy name...`. Enter the enemy name into this
-box. For the 'virus', simply enter `virus` and press the `create enemy` button. This
-will load the enemy into the game.
+Once you've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
+base folder. This will launch the game. In the Level Select, Menu click on the
+`Enemy Preview` button. This will open up the enemy preview screen. In the window on
+the top-right, there will be a text box with the text `enemy name...`. Enter the enemy name
+into this box. For the 'virus', simply enter `virus` and press the `create enemy` button.
+This will load the enemy into the game.
 
 Once the enemy has been loaded, its in-game attributes can be edited by using the
-buttons in the enemy preview menu. Once you are happy with how the enemy functions,
-click `save settings` at the bottom of the screen. Once you have saved these settings,
+buttons in the window. Once you are happy with how the enemy functions, click
+`save settings` at the bottom of the window. Once you have saved these settings,
 you can exit the game and push your changes to Github for others to review.
 
 ### Making a Tower
@@ -227,7 +239,7 @@ assets for the phagocyte. These are:
 Once you have all of these assets, you're ready to add the tower
 in-game!
 
-First, we need to add these assets into the correct folders. They should be added in:
+First, you need to add these assets into the correct folders. They should be added in:
 ```
 .
 ├── data
@@ -239,17 +251,43 @@ First, we need to add these assets into the correct folders. They should be adde
             (add all the base and gun images here)
 ```
 
-Once we've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
-base folder. This will launch the game. Once in the game, in the Menu click on the
-`Tower Preview` button. This will open up the tower preview screen. At the very top,
-there will be a text box with the text `tower name...`. Enter the tower name into this
-box. For the 'phagocyte', simply enter `phagocyte` and press the `create tower` button. This
-will load the tower into the game.
+Once you've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
+base folder. This will launch the game. In the Level Select Menu, click on the
+`Tower Preview` button. This will open up the tower preview screen. In the window on the
+top-right, there will be a text box with the text `tower name...`. Enter the tower name
+into this box. For the 'phagocyte', simply enter `phagocyte` and press the `create tower`
+button. This will load the tower into the game.
 
 Once the tower has been loaded, its in-game attributes can be edited by using the
-buttons in the tower preview menu. Once you are happy with how the tower functions,
-click `save settings` at the bottom of the screen. Once you have saved these settings,
+buttons in the window. Once you are happy with how the tower functions, click
+`save settings` at the bottom of the window. Once you have saved these settings,
 you can exit the game and push your changes to Github for others to review.
+
+### Making a Level
+To make a level, the first thing you need to do is create a map for your level. You can
+either make a new map using Tiled, or simply re-use an existing map. Either way, the map
+for your level should be named in the format `map(level).tmx`, where _level_ is the
+number of your level. For instance, if you're making level 5, name your map file `map5.tmx`.
+
+After making the map, it has to be added into the correct folder. It should be added in:
+```
+.
+├── data
+    ├── maps
+		(add your map file here)
+```
+
+Once you've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
+base folder. This will launch the game. In the Level Select Menu, click on the
+`Level Preview` button. This will open up the level preview screen. In the window on the
+top-right, there will be a text called `level`, with - and + buttons to the right of it.
+Use these buttons to change the level number until it reaches the number of your level.
+
+Once the right level number has been reached, the attributes and wave data of the level
+can be edited by using the buttons in the window. Once you are happy with the level
+click `save settings` at the bottom of the window. This will create a new level file
+and save your settings to it. Once you have saved these settings, you can exit the game
+and push your changes to Github for others to review.
 
 ## Building the Game
 For coders, in order to make a production-ready version of the game, we need to
