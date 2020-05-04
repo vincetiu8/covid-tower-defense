@@ -18,7 +18,6 @@ class DevClass(Game):
         super().load_data()
 
     def new(self):
-        #self.clock = pg.time.Clock()
         self.tower_names = list(TOWER_DATA.keys())
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_tower = 0
@@ -100,7 +99,6 @@ class DevClass(Game):
         self.projectiles.update()
 
     def draw(self):
-        #self.clock.tick()
         surface = pg.Surface((self.map.width, self.map.height))
         surface.fill((0, 0, 0))
 
@@ -122,7 +120,12 @@ class DevClass(Game):
 
         for enemy in self.enemies:
             surface.blit(enemy.image, enemy.rect)
-            pg.draw.rect(surface, GREEN, enemy.get_hp_rect())
+            
+            hp_color = GREEN
+            if enemy.is_slowed():
+                hp_color = RED
+                
+            pg.draw.rect(surface, hp_color, enemy.get_hp_rect())
 
         for projectile in self.projectiles:
             surface.blit(projectile.image, projectile.rect)
@@ -139,7 +142,6 @@ class DevClass(Game):
         else:
             surf.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright=ui_pos))
         
-        #self.clock.tick()
         return surf
 
     def event(self, event):

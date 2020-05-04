@@ -16,10 +16,11 @@ class Obstacle(pg.sprite.Sprite):
                 self.game.map.change_node(tile_from_xcoords(x, self.game.map.tilesize) + i, tile_from_xcoords(y, self.game.map.tilesize) + j, 1)
 
 class Projectile(pg.sprite.Sprite):
-    def __init__(self, game, x, y, image, speed, lifetime, direction, damage):
+    def __init__(self, game, type, x, y, image, speed, lifetime, direction, damage):
         self.groups = game.projectiles
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
+        self.type = type
         self.size = image.get_size()
         self.x = round_to_mtilesize(x, game.map.tilesize) - self.size[0] / 2
         self.y = round_to_mtilesize(y, game.map.tilesize) - self.size[1] / 2
@@ -39,12 +40,15 @@ class Projectile(pg.sprite.Sprite):
 
         hits = pg.sprite.spritecollide(self, self.game.enemies, False)
         if (hits):
-            hits[0].hp -= self.damage
+            if self.type == "basic":
+                hits[0].hp -= self.damage
+            elif self.type == "slow":
+                hits[0].slow()
             self.kill()
 
 class TrackingProjectile(Projectile):
-    def __init__(self, game, x, y, image, speed, lifetime, direction, damage, enemy):
-        super().__init__(game, x, y, image, speed, lifetime, direction, damage)
+    def __init__(self, game, type, x, y, image, speed, lifetime, direction, damage, enemy):
+        super().__init__(game, type, x, y, image, speed, lifetime, direction, damage)
         self.enemy = enemy
 
     def update(self):
@@ -114,10 +118,13 @@ class Tower(Obstacle):
                 for i in range(self.directions):
                     rotation += increment
                     if self.tracking:
-                        TrackingProjectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed,
+                        type = "basic"
+                        if self.name == "goblet_cell":
+                            type = "slow"
+                        TrackingProjectile(self.game, type, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed,
                                    self.bullet_lifetime, rotation, self.damage, self.current_enemy)
                     else:
-                        Projectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, rotation, self.damage)
+                        Projectile(self.game, "basic", self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, rotation, self.damage)
 
                 self.sound.play()
                 self.shot = True

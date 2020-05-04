@@ -31,6 +31,8 @@ class Enemy(pg.sprite.Sprite):
         self.maximising = 0
         self.damagable = True
         
+        self.slowed = False
+        
         self.recreate_path()
 
     def update(self):
@@ -114,3 +116,17 @@ class Enemy(pg.sprite.Sprite):
             self.damagable = True
 
         self.new_node_rect = pg.Rect(self.new_node[0][0] * self.game.map.tilesize, self.new_node[0][1] * self.game.map.tilesize, self.game.map.tilesize, self.game.map.tilesize)
+        
+    def is_slowed(self):
+        return self.slowed
+    
+    def slow(self):
+        if not self.slowed:
+            self.slowed = True
+            self.speed = self.speed * SLOW_AMT
+            
+            image_surf = pg.Surface(self.image.get_size()).convert_alpha()
+            image_surf.fill((0, 0, 0, 0))
+            image_surf.blit(self.image.convert_alpha(), (0, 0))
+            image_surf.fill(HALF_GREEN, None, pg.BLEND_RGBA_MULT)
+            self.image = image_surf

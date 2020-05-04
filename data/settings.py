@@ -16,6 +16,8 @@ def resource_path(relative_path):
 
 LIVES = 5
 PROTEIN = 50
+
+SLOW_AMT = 0.5
               
 ZOOM_AMT_GAME = 0.05
 ZOOM_AMT_MENU = 0.1
@@ -25,6 +27,7 @@ WHITE = pg.Color(255, 255, 255)
 BLACK = pg.Color(0, 0, 0)
 DARKGREY = pg.Color(40, 40, 40)
 LIGHTGREY = pg.Color(100, 100, 100)
+HALF_GREEN = pg.Color(100, 255, 100)
 GREEN = pg.Color(0, 255, 0)
 DARK_GREEN = pg.Color(0, 60, 0)
 RED = pg.Color(255, 0, 0)
