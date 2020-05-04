@@ -14,6 +14,7 @@ class Main:
         pg.init()
         pg.mixer.init()
         pg.key.set_repeat(500, 100)
+        self.main_clock = pg.time.Clock()
         self.clock = pg.time.Clock()
         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.playing = False
@@ -22,12 +23,12 @@ class Main:
         
         self.start_menu = StartMenu()
         self.menu = Menu()
-        self.game = Game()
+        self.game = Game(self.clock)
         self.game_over = GameOver()
         self.pause = Pause()
-        self.tower_preview = TowerPreview()
-        self.enemy_preview = EnemyPreview()
-        self.level_preview = LevelPreview()
+        self.tower_preview = TowerPreview(self.clock)
+        self.enemy_preview = EnemyPreview(self.clock)
+        self.level_preview = LevelPreview(self.clock)
         self.tower_select = TowerSelectMenu()
         
         self.display_keys = {
@@ -45,16 +46,18 @@ class Main:
         self.current_display = self.start_menu
         
     def run(self):
-        self.clock.tick(FPS)
+        self.main_clock.tick(FPS)
+        self.clock.tick()
         self.events()
         self.update()
+        self.clock.tick()
         self.draw()
 
     def update(self):
         self.current_display.update()
         
     def draw(self):
-        pg.display.set_caption("FPS: {:.2f}".format(self.clock.get_fps()))
+        pg.display.set_caption("FPS: {:.2f}".format(self.main_clock.get_fps()))
         
         self.screen.fill((0, 0, 0))
         surf = self.current_display.draw()
