@@ -22,7 +22,7 @@ class DevClass(Game):
         self.tower_names = list(TOWER_DATA.keys())
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_tower = 0
-        self.current_level = 0
+        self.current_stage = 0
         self.current_enemy = 0
 
         self.obstacles = pg.sprite.Group()
@@ -69,20 +69,20 @@ class DevClass(Game):
             "type": "select",
             "values": self.tower_names
         }, self.current_tower))
-        self.ui.new_attr(Attribute("tower_level", {
+        self.ui.new_attr(Attribute("tower_stage", {
             "type": "float",
             "min": 0,
             "max": 2,
             "dp": 0,
             "increment": 1
-        }, self.current_level))
+        }, self.current_stage))
 
     def reload_towers(self):
         for x, list in enumerate(self.map.get_tower_map()):
             for y, tower in enumerate(list):
                 if tower != None:
                     temp_tower = Tower(self, tower.rect.x, tower.rect.y, self.tower_names[self.current_tower])
-                    temp_tower.stage = self.current_level
+                    temp_tower.stage = self.current_stage
                     temp_tower.load_tower_data()
                     self.map.remove_tower(x, y)
                     self.map.add_tower(x, y, temp_tower)
@@ -160,7 +160,7 @@ class DevClass(Game):
 
         name = result.name
 
-        if name == "tower_name" or name == "tower_level" or name == "enemy_name":
+        if name == "tower_name" or name == "tower_stage" or name == "enemy_name":
             return -3
 
         return -2
@@ -183,9 +183,11 @@ class TowerPreview(DevClass):
             "values": self.enemy_names
         }, self.current_enemy))
         self.ui.new_attr(Attribute("new_tower_name", {"type": "string"}, ""))
+        
+        self.ui.new_attr(Attribute("description", {"type": "string"}, TOWER_DATA[self.tower_names[self.current_tower]]["description"]))
 
         for attr in ATTR_DATA["tower"]:
-            self.ui.new_attr(Attribute(attr, ATTR_DATA["tower"][attr], TOWER_DATA[self.tower_names[self.current_tower]][self.current_level][attr]))
+            self.ui.new_attr(Attribute(attr, ATTR_DATA["tower"][attr], TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr]))
 
         self.reload_enemies()
         self.reload_towers()
@@ -203,14 +205,16 @@ class TowerPreview(DevClass):
             if attr == "tower_name":
                 if self.current_tower != attrs[attr]:
                     reload = True
-            elif attr == "tower_level":
-                if self.current_level != attrs[attr]:
+            elif attr == "tower_stage":
+                if self.current_stage != attrs[attr]:
                     reload = True
+            elif attr == "description":
+                TOWER_DATA[self.tower_names[self.current_tower]][attr] = attrs[attr]
             else:
-                TOWER_DATA[self.tower_names[self.current_tower]][self.current_level][attr] = attrs[attr]
+                TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] = attrs[attr]
         if reload:
             self.current_tower = attrs["tower_name"]
-            self.current_level = attrs["tower_level"]
+            self.current_stage = attrs["tower_stage"]
 
         self.reload_towers()
         self.reload_enemies()
@@ -238,25 +242,25 @@ class TowerPreview(DevClass):
 
     def create_new_tower(self):
         TOWER_DATA[self.new_tower_name] = []
-        for level in range(3):
+        for stage in range(3):
             TOWER_DATA[self.new_tower_name].append({})
             for attr in ATTR_DATA["tower"]:
-                TOWER_DATA[self.new_tower_name][level][attr] = ATTR_DATA["tower"][attr]["default"]
-            TOWER_DATA[self.new_tower_name][level]["gun_image"] = pg.image.load(
-                path.join(TOWERS_IMG_FOLDER, self.new_tower_name + "_gun" + str(level) + ".png"))
-            TOWER_DATA[self.new_tower_name][level]["base_image"] = pg.image.load(
-                path.join(TOWERS_IMG_FOLDER, self.new_tower_name + "_base" + str(level) + ".png"))
-            TOWER_DATA[self.new_tower_name][level]["bullet_image"] = pg.image.load(
-                path.join(TOWERS_IMG_FOLDER, self.new_tower_name + "_bullet" + str(level) + ".png"))
-            TOWER_DATA[self.new_tower_name][level]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER, "{}.wav".format(self.new_tower_name))
-            temp_base = TOWER_DATA[self.new_tower_name][level]["base_image"].copy()
-            temp_base.blit(TOWER_DATA[self.new_tower_name][level]["gun_image"],
-                           TOWER_DATA[self.new_tower_name][level]["gun_image"].get_rect(
-                               center=TOWER_DATA[self.new_tower_name][level]["base_image"].get_rect().center))
-            TOWER_DATA[self.new_tower_name][level]["image"] = temp_base
+                TOWER_DATA[self.new_tower_name][stage][attr] = ATTR_DATA["tower"][attr]["default"]
+            TOWER_DATA[self.new_tower_name][stage]["gun_image"] = pg.image.load(
+                path.join(TOWERS_IMG_FOLDER, self.new_tower_name + "_gun" + str(stage) + ".png"))
+            TOWER_DATA[self.new_tower_name][stage]["base_image"] = pg.image.load(
+                path.join(TOWERS_IMG_FOLDER, self.new_tower_name + "_base" + str(stage) + ".png"))
+            TOWER_DATA[self.new_tower_name][stage]["bullet_image"] = pg.image.load(
+                path.join(TOWERS_IMG_FOLDER, self.new_tower_name + "_bullet" + str(stage) + ".png"))
+            TOWER_DATA[self.new_tower_name][stage]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER, "{}.wav".format(self.new_tower_name))
+            temp_base = TOWER_DATA[self.new_tower_name][stage]["base_image"].copy()
+            temp_base.blit(TOWER_DATA[self.new_tower_name][stage]["gun_image"],
+                           TOWER_DATA[self.new_tower_name][stage]["gun_image"].get_rect(
+                               center=TOWER_DATA[self.new_tower_name][stage]["base_image"].get_rect().center))
+            TOWER_DATA[self.new_tower_name][stage]["image"] = temp_base
         self.tower_names = list(TOWER_DATA.keys())
         self.current_tower = self.tower_names.index(self.new_tower_name)
-        self.current_level = 0
+        self.current_stage = 0
 
 class EnemyPreview(DevClass):
     def new(self, args):
@@ -291,7 +295,7 @@ class EnemyPreview(DevClass):
         reload = False
         attrs = self.ui.get_attrs()
         self.current_tower = attrs.pop("tower_name")
-        self.current_level = attrs.pop("tower_level")
+        self.current_stage = attrs.pop("tower_stage")
         self.new_enemy_name = attrs.pop("new_enemy_name")
         for attr in attrs:
             if attr == "enemy_name":
@@ -418,7 +422,7 @@ class LevelPreview(DevClass):
         create_wave = False
         create_sub_wave = False
         self.current_tower = attrs.pop("tower_name")
-        self.current_level = attrs.pop("tower_level")
+        self.current_stage = attrs.pop("tower_stage")
         for attr in attrs:
             if attr == "level":
                 if self.level != attrs[attr]:
@@ -605,34 +609,34 @@ class DevUI():
                             path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
                         ENEMY_DATA[enemy]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy))
                     for tower in TOWER_DATA:
-                        for level in range(3):
-                            if "gun_image" in TOWER_DATA[tower][level]:
-                                TOWER_DATA[tower][level].pop("gun_image", None)
-                            if "base_image" in TOWER_DATA[tower][level]:
-                                TOWER_DATA[tower][level].pop("base_image", None)
-                            if "bullet_image" in TOWER_DATA[tower][level]:
-                                TOWER_DATA[tower][level].pop("bullet_image", None)
-                            if "shoot_sound_path" in TOWER_DATA[tower][level]:
-                                TOWER_DATA[tower][level].pop("shoot_sound_path", None)
-                            if "image" in TOWER_DATA[tower][level]:
-                                TOWER_DATA[tower][level].pop("image", None)
+                        for stage in range(3):
+                            if "gun_image" in TOWER_DATA[tower]["stages"][stage]:
+                                TOWER_DATA[tower]["stages"][stage].pop("gun_image", None)
+                            if "base_image" in TOWER_DATA[tower]["stages"][stage]:
+                                TOWER_DATA[tower]["stages"][stage].pop("base_image", None)
+                            if "bullet_image" in TOWER_DATA[tower]["stages"][stage]:
+                                TOWER_DATA[tower]["stages"][stage].pop("bullet_image", None)
+                            if "shoot_sound_path" in TOWER_DATA[tower]["stages"][stage]:
+                                TOWER_DATA[tower]["stages"][stage].pop("shoot_sound_path", None)
+                            if "image" in TOWER_DATA[tower]["stages"][stage]:
+                                TOWER_DATA[tower]["stages"][stage].pop("image", None)
                     with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
                         json.dump(TOWER_DATA, out_file, indent=4)
                     for tower in TOWER_DATA:
-                        for level in range(3):
-                            TOWER_DATA[tower][level]["gun_image"] = pg.image.load(
-                                path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(level) + ".png"))
-                            TOWER_DATA[tower][level]["base_image"] = pg.image.load(
-                                path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(level) + ".png"))
-                            TOWER_DATA[tower][level]["bullet_image"] = pg.image.load(
-                                path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(level) + ".png"))
-                            TOWER_DATA[tower][level]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER,
+                        for stage in range(3):
+                            TOWER_DATA[tower]["stages"][stage]["gun_image"] = pg.image.load(
+                                path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(stage) + ".png"))
+                            TOWER_DATA[tower]["stages"][stage]["base_image"] = pg.image.load(
+                                path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(stage) + ".png"))
+                            TOWER_DATA[tower]["stages"][stage]["bullet_image"] = pg.image.load(
+                                path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(stage) + ".png"))
+                            TOWER_DATA[tower]["stages"][stage]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER,
                                                                                      "{}.wav".format(tower))
-                            temp_base = TOWER_DATA[tower][level]["base_image"].copy()
-                            temp_base.blit(TOWER_DATA[tower][level]["gun_image"],
-                                           TOWER_DATA[tower][level]["gun_image"].get_rect(
-                                               center=TOWER_DATA[tower][level]["base_image"].get_rect().center))
-                            TOWER_DATA[tower][level]["image"] = temp_base
+                            temp_base = TOWER_DATA[tower]["stages"][stage]["base_image"].copy()
+                            temp_base.blit(TOWER_DATA[tower]["stages"][stage]["gun_image"],
+                                           TOWER_DATA[tower]["stages"][stage]["gun_image"].get_rect(
+                                               center=TOWER_DATA[tower]["stages"][stage]["base_image"].get_rect().center))
+                            TOWER_DATA[tower]["stages"][stage]["image"] = temp_base
                     return_val = -1
 
                 elif self.done_button_rect.collidepoint(offset):
