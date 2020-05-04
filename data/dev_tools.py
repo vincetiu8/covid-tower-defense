@@ -10,15 +10,15 @@ import json
 from copy import deepcopy
 
 class DevClass(Game):
-    def __init__(self):
-        pass
+    def __init__(self, clock):
+        self.clock = clock
 
     def reload_level(self, map):
         self.map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(map)))
         super().load_data()
 
     def new(self):
-        self.clock = pg.time.Clock()
+        #self.clock = pg.time.Clock()
         self.tower_names = list(TOWER_DATA.keys())
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_tower = 0
@@ -100,7 +100,7 @@ class DevClass(Game):
         self.projectiles.update()
 
     def draw(self):
-        self.clock.tick()
+        #self.clock.tick()
         surface = pg.Surface((self.map.width, self.map.height))
         surface.fill((0, 0, 0))
 
@@ -139,7 +139,7 @@ class DevClass(Game):
         else:
             surf.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright=ui_pos))
         
-        self.clock.tick()
+        #self.clock.tick()
         return surf
 
     def event(self, event):
@@ -336,7 +336,8 @@ class EnemyPreview(DevClass):
         self.current_enemy = self.enemy_names.index(self.new_enemy_name)
 
 class LevelPreview(DevClass):
-    def __init__(self):
+    def __init__(self, clock):
+        super().__init__(clock)
         self.level = 0
         self.wave = 0
         self.sub_wave = 0
