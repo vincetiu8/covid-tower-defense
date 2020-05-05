@@ -2,6 +2,8 @@
     "t_cell": [
         {
             "damage": 2,
+            "area_of_effect": false,
+            "splash": false,
             "bullet_spawn_speed": 0.25,
             "bullet_speed": 25,
             "bullet_lifetime": 0.3,
@@ -13,6 +15,8 @@
         },
         {
             "damage": 3,
+            "area_of_effect": false,
+            "splash": false,
             "bullet_spawn_speed": 0.2,
             "bullet_speed": 35,
             "bullet_lifetime": 0.3,
@@ -24,6 +28,8 @@
         },
         {
             "damage": 4,
+            "area_of_effect": false,
+            "splash": false,
             "bullet_spawn_speed": 0.15,
             "bullet_speed": 45,
             "bullet_lifetime": 0.3,
@@ -37,6 +43,8 @@
     "b_cell": [
         {
             "damage": 3,
+            "area_of_effect": false,
+            "splash": false,
             "bullet_spawn_speed": 0.4,
             "bullet_speed": 20,
             "bullet_lifetime": 0.5,
@@ -48,6 +56,8 @@
         },
         {
             "damage": 4,
+            "area_of_effect": false,
+            "splash": false,
             "bullet_spawn_speed": 0.35,
             "bullet_speed": 20,
             "bullet_lifetime": 0.5,
@@ -59,6 +69,8 @@
         },
         {
             "damage": 5,
+            "area_of_effect": false,
+            "splash": false,
             "bullet_spawn_speed": 0.3,
             "bullet_speed": 20,
             "bullet_lifetime": 0.5,
@@ -72,6 +84,8 @@
     "goblet_cell": [
         {
             "damage": 0,
+            "area_of_effect": false,
+            "splash": true,
             "bullet_spawn_speed": 0.7,
             "bullet_speed": 15,
             "bullet_lifetime": 0.5,
@@ -83,6 +97,8 @@
         },
         {
             "damage": 0,
+            "area_of_effect": false,
+            "splash": true,
             "bullet_spawn_speed": 0.6,
             "bullet_speed": 15,
             "bullet_lifetime": 0.5,
@@ -94,6 +110,8 @@
         },
         {
             "damage": 0,
+            "area_of_effect": false,
+            "splash": true,
             "bullet_spawn_speed": 0.5,
             "bullet_speed": 15,
             "bullet_lifetime": 0.5,
@@ -102,6 +120,26 @@
             "directions": 1,
             "rotating": true,
             "tracking": true
+        }
+    ],
+    "neutrophil": [
+        {
+            "damage": 1,
+            "area_of_effect": true,
+            "range": 150,
+            "upgrade_cost": 20
+        },
+        {
+            "damage": 1,
+            "area_of_effect": true,
+            "range": 150,
+            "upgrade_cost": 20
+        },
+        {
+            "damage": 1,
+            "area_of_effect": true,
+            "range": 150,
+            "upgrade_cost": 20
         }
     ]
 }
