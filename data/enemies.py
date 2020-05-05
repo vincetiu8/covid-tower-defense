@@ -30,8 +30,9 @@ class Enemy(pg.sprite.Sprite):
         self.new_node = ((tile_from_coords(x, self.game.map.tilesize), tile_from_coords(y, self.game.map.tilesize)), 0)
         self.maximising = 0
         self.damagable = True
-        
+
         self.slowed = False
+        self.slow_end = 0
         
         self.recreate_path()
 
@@ -43,6 +44,9 @@ class Enemy(pg.sprite.Sprite):
             return
 
         passed_time = self.clock.get_time() / 1000
+
+        if passed_time >= self.slow_end:
+            self.reset_speed()
 
         if (self.maximising != 0 and self.image.get_size()[0] + self.maximising > 0 and self.image.get_size()[0] + self.maximising <= self.rect.w):
             self.image_size += self.maximising
@@ -117,16 +121,22 @@ class Enemy(pg.sprite.Sprite):
 
         self.new_node_rect = pg.Rect(self.new_node[0][0] * self.game.map.tilesize, self.new_node[0][1] * self.game.map.tilesize, self.game.map.tilesize, self.game.map.tilesize)
         
+    def reset_speed(self):
+        self.speed = ENEMY_DATA[self.name]["speed"]
+        self.image = ENEMY_DATA[self.name]["image"].copy()
+        self.slowed = False
+
     def is_slowed(self):
         return self.slowed
-    
-    def slow(self):
-        if not self.slowed:
-            self.slowed = True
-            self.speed = self.speed * SLOW_AMT
-            
-            image_surf = pg.Surface(self.image.get_size()).convert_alpha()
-            image_surf.fill((0, 0, 0, 0))
-            image_surf.blit(self.image.convert_alpha(), (0, 0))
-            image_surf.fill(HALF_GREEN, None, pg.BLEND_RGBA_MULT)
-            self.image = image_surf
+
+    def slow(self, slow_speed, slow_duration):
+        self.speed = ENEMY_DATA[self.name]["speed"]
+        self.slowed = True
+        self.slow_end = self.clock.get_time() / 1000 + slow_duration
+        self.speed *= slow_speed
+
+        image_surf = pg.Surface(self.image.get_size()).convert_alpha()
+        image_surf.fill((0, 0, 0, 0))
+        image_surf.blit(self.image.convert_alpha(), (0, 0))
+        image_surf.fill(HALF_GREEN, None, pg.BLEND_RGBA_MULT)
+        self.image = image_surf

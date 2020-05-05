@@ -16,8 +16,6 @@ def resource_path(relative_path):
 
 LIVES = 5
 PROTEIN = 50
-
-SLOW_AMT = 0.5
               
 ZOOM_AMT_GAME = 0.05
 ZOOM_AMT_MENU = 0.1
