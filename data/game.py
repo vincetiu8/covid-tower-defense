@@ -302,7 +302,7 @@ class Game(Display):
         pos = self.map.get_node(tower_tile[0], tower_tile[1])
 
         if pos != -1:
-            tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower][0]["image"].copy().convert_alpha())
+            tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower]["stages"][0]["image"].copy().convert_alpha())
             validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
 
             if validity == 1:
@@ -327,7 +327,7 @@ class Game(Display):
             else:
                 tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
 
-            tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower][0]["base_image"].get_size())
+            tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower]["stages"][0]["base_image"].get_size())
             self.blit(tower_img, self.camera.apply_rect(tower_pos))
 
     def get_lives(self):
@@ -345,7 +345,7 @@ class Game(Display):
 
                 elif self.ui.active:
                     for i, tower_rect in enumerate(self.ui.tower_rects):
-                        if (self.protein < TOWER_DATA[self.available_towers[i]][0]["upgrade_cost"]):
+                        if (self.protein < TOWER_DATA[self.available_towers[i]]["stages"][0]["upgrade_cost"]):
                             continue
                         temp_rect = tower_rect.copy()
                         temp_rect.x += self.get_size()[0] - self.ui.width
@@ -387,7 +387,7 @@ class Game(Display):
                     y=round_to_tilesize(pos[1], self.map.tilesize),
                     name=self.current_tower)
                 self.map.add_tower(x_coord, y_coord, new_tower)
-                self.protein -= TOWER_DATA[self.current_tower][0]["upgrade_cost"]
+                self.protein -= TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"]
                 self.current_tower = None
 
                 self.buy_sound.play()
