@@ -16,7 +16,8 @@ class Enemy(pg.sprite.Sprite):
         self.hp = data["hp"]
         self.speed = data["speed"]
         self.dropped_protein = data["protein"]
-        self.raw_image = data["image"]
+        self.original_image = data["image"]
+        self.raw_image = self.original_image
         self.sound = pg.mixer.Sound(data["death_sound_path"])
         
         self.image = data["image"].copy()
@@ -30,8 +31,9 @@ class Enemy(pg.sprite.Sprite):
         self.new_node = ((tile_from_coords(x, self.game.map.tilesize), tile_from_coords(y, self.game.map.tilesize)), 0)
         self.maximising = 0
         self.damagable = True
-        
+
         self.slowed = False
+        self.slow_end = 0
         
         self.recreate_path()
 
@@ -43,12 +45,16 @@ class Enemy(pg.sprite.Sprite):
             return
 
         passed_time = self.clock.get_time() / 1000
+        self.slow_end -= passed_time
+
+        if self.slowed and self.slow_end <= 0:
+            self.reset_speed()
 
         if (self.maximising != 0 and self.image.get_size()[0] + self.maximising > 0 and self.image.get_size()[0] + self.maximising <= self.rect.w):
             self.image_size += self.maximising
             self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
 
-        if self.image.get_size()[0] + self.maximising == 0 or self.image.get_size()[0] + self.maximising == self.rect.w:
+        if self.image_size + self.maximising == 0 or self.image_size + self.maximising == self.rect.w:
             self.maximising = 0
 
         if (self.rect.left <= self.new_node_rect.left):
@@ -117,16 +123,24 @@ class Enemy(pg.sprite.Sprite):
 
         self.new_node_rect = pg.Rect(self.new_node[0][0] * self.game.map.tilesize, self.new_node[0][1] * self.game.map.tilesize, self.game.map.tilesize, self.game.map.tilesize)
         
+    def reset_speed(self):
+        self.speed = ENEMY_DATA[self.name]["speed"]
+        self.raw_image = self.original_image
+        self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
+        self.slowed = False
+
     def is_slowed(self):
         return self.slowed
-    
-    def slow(self):
-        if not self.slowed:
-            self.slowed = True
-            self.speed = self.speed * SLOW_AMT
-            
-            image_surf = pg.Surface(self.image.get_size()).convert_alpha()
-            image_surf.fill((0, 0, 0, 0))
-            image_surf.blit(self.image.convert_alpha(), (0, 0))
-            image_surf.fill(HALF_GREEN, None, pg.BLEND_RGBA_MULT)
-            self.image = image_surf
+
+    def slow(self, slow_speed, slow_duration):
+        self.speed = ENEMY_DATA[self.name]["speed"]
+        self.slowed = True
+        self.slow_end = self.clock.get_time() / 1000 + slow_duration
+        self.speed *= slow_speed
+
+        image_surf = pg.Surface(self.image.get_size()).convert_alpha()
+        image_surf.fill((0, 0, 0, 0))
+        image_surf.blit(self.original_image.convert_alpha(), (0, 0))
+        image_surf.fill(HALF_GREEN, None, pg.BLEND_RGBA_MULT)
+        self.raw_image = image_surf
+        self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))

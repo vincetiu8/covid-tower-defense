@@ -16,7 +16,7 @@ class Obstacle(pg.sprite.Sprite):
                 self.game.map.change_node(tile_from_xcoords(x, self.game.map.tilesize) + i, tile_from_xcoords(y, self.game.map.tilesize) + j, 1)
 
 class Projectile(pg.sprite.Sprite):
-    def __init__(self, game, type, x, y, image, speed, lifetime, direction, damage):
+    def __init__(self, game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage):
         self.groups = game.projectiles
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -27,6 +27,8 @@ class Projectile(pg.sprite.Sprite):
         self.rect = pg.Rect(self.x, self.y, self.size[0], self.size[1])
         self.image = image
         self.speed = speed
+        self.slow_speed = slow_speed
+        self.slow_duration = slow_duration
         self.damage = damage
         self.direction = direction
         self.end = pg.time.get_ticks() + lifetime * 1000
@@ -40,15 +42,14 @@ class Projectile(pg.sprite.Sprite):
 
         hits = pg.sprite.spritecollide(self, self.game.enemies, False)
         if (hits):
-            if self.type == "basic":
-                hits[0].hp -= self.damage
-            elif self.type == "slow":
-                hits[0].slow()
+            hits[0].hp -= self.damage
+            if self.slow_speed != 1:
+                hits[0].slow(self.slow_speed, self.slow_duration)
             self.kill()
 
 class TrackingProjectile(Projectile):
-    def __init__(self, game, type, x, y, image, speed, lifetime, direction, damage, enemy):
-        super().__init__(game, type, x, y, image, speed, lifetime, direction, damage)
+    def __init__(self, game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage, enemy):
+        super().__init__(game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage)
         self.enemy = enemy
 
     def update(self):
@@ -76,6 +77,8 @@ class Tower(Obstacle):
         self.bullet_spawn_speed = data["bullet_spawn_speed"]
         self.bullet_speed = data["bullet_speed"]
         self.bullet_lifetime = data["bullet_lifetime"]
+        self.slow_speed = data["slow_speed"]
+        self.slow_duration = data["slow_duration"]
         self.damage = data["damage"]
         self.range = data["range"]
         self.base_image = data["base_image"]
@@ -118,13 +121,10 @@ class Tower(Obstacle):
                 for i in range(self.directions):
                     rotation += increment
                     if self.tracking:
-                        type = "basic"
-                        if self.name == "goblet_cell":
-                            type = "slow"
-                        TrackingProjectile(self.game, type, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed,
-                                   self.bullet_lifetime, rotation, self.damage, self.current_enemy)
+                        TrackingProjectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed,
+                                   self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.current_enemy)
                     else:
-                        Projectile(self.game, "basic", self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, rotation, self.damage)
+                        Projectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage)
 
                 self.sound.play()
                 self.shot = True
