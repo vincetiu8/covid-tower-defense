@@ -62,6 +62,9 @@ class DevClass(Game):
         self.pathfinder.clear_nodes(self.map.get_map())
         self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
 
+    def get_attr_surf(self):
+        self.attr_surf = self.ui.get_ui()
+
     def load_ui(self):
         self.ui = DevUI()
         self.ui.new_attr(Attribute("tower_name", {
@@ -193,9 +196,6 @@ class TowerPreview(DevClass):
         self.reload_towers()
         self.get_attr_surf()
 
-    def get_attr_surf(self):
-        self.attr_surf = self.ui.get_ui()
-
     def reload_attrs(self):
         attrs = self.ui.get_attrs()
         reload = False
@@ -285,9 +285,6 @@ class EnemyPreview(DevClass):
         self.reload_enemies()
         self.reload_towers()
         self.get_attr_surf()
-
-    def get_attr_surf(self):
-        self.attr_surf = self.ui.get_ui()
 
     def reload_attrs(self):
         reload = False
@@ -411,9 +408,6 @@ class LevelPreview(DevClass):
         if self.current_wave_done() and len(self.enemies) == 0:
             self.reload_enemies()
 
-    def get_attr_surf(self):
-        self.attr_surf = self.ui.get_ui()
-
     def reload_attrs(self):
         attrs = self.ui.get_attrs()
         load = False
@@ -517,6 +511,14 @@ class DevUI():
     def __init__(self):
         self.attributes = []
         self.active = True
+        self.max_attrs = 0
+        self.attributes.insert(0, Attribute("scroll_position", {
+            "type": "float",
+            "min": 1,
+            "max": 1,
+            "increment": 1,
+            "dp": 0
+        }, 1))
 
     def new_attr(self, attribute):
         self.attributes.append(attribute)
@@ -530,24 +532,16 @@ class DevUI():
     def get_ui(self):
         surf_list = []
         height = MENU_OFFSET
-        width = 0
-        for attr in self.attributes:
-            attr_surf = attr.draw()
-            attr.fix_offset(MENU_OFFSET, height)
-            height += attr_surf.get_height() + MENU_OFFSET
-            if attr_surf.get_width() > width:
-                width = attr_surf.get_width()
-            surf_list.append(attr_surf)
 
+        width = MENU_OFFSET
         font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.2))
         save_text = font.render("Save Settings", 1, WHITE)
         save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
         round(save_text.get_rect().width * 1.5), save_text.get_height())).copy().convert_alpha()
         save_button.blit(save_text, save_text.get_rect(center=save_button.get_rect().center))
         self.save_button_rect = save_button.get_rect()
-        self.save_button_rect.y = height - MENU_OFFSET
         self.save_button_rect.x = MENU_OFFSET
-
+        width += self.save_button_rect.width + MENU_OFFSET
         height += save_button.get_rect().height + MENU_OFFSET
 
         done_text = font.render("Done", 1, WHITE)
@@ -555,13 +549,44 @@ class DevUI():
         round(done_text.get_rect().width * 1.5), done_text.get_height())).copy().convert_alpha()
         done_button.blit(done_text, done_text.get_rect(center=done_button.get_rect().center))
         self.done_button_rect = done_button.get_rect()
-        self.done_button_rect.y = self.save_button_rect.y
         self.done_button_rect.x = self.save_button_rect.width + MENU_OFFSET * 2
+        width += self.done_button_rect.width + MENU_OFFSET
 
-        if self.save_button_rect.width + self.done_button_rect.width + MENU_OFFSET * 3 > width:
-            width = self.save_button_rect.width + self.done_button_rect.width + MENU_OFFSET * 3
+        temp_surf = pg.Surface((width, self.save_button_rect.height))
+        temp_surf.fill(DARKGREY)
+        t_width = MENU_OFFSET
+        for save_surf in [save_button, done_button]:
+            temp_surf.blit(save_surf, (t_width, 0))
+            t_width += save_surf.get_rect().width + MENU_OFFSET
+        surf_list.append(temp_surf)
 
-        save_surfs = [save_button, done_button]
+        attr_surf = self.attributes[0].draw()
+        self.attributes[0].fix_offset(0, MENU_OFFSET)
+        height += attr_surf.get_height() + MENU_OFFSET
+        surf_list.insert(0, attr_surf)
+
+        if self.max_attrs == 0:
+            for attr in self.attributes[1:]:
+                attr_surf = attr.draw()
+                attr.fix_offset(MENU_OFFSET, height - self.save_button_rect.height - MENU_OFFSET * 2)
+                height += attr_surf.get_height() + MENU_OFFSET
+                if height >= SCREEN_HEIGHT - MENU_OFFSET:
+                    height -= attr_surf.get_height() + MENU_OFFSET
+                    break
+                self.max_attrs += 1
+                if attr_surf.get_width() > width:
+                    width = attr_surf.get_width()
+                surf_list.insert(-1, attr_surf)
+            self.attributes[0].max = len(self.attributes) - self.max_attrs
+
+        else:
+            for attr in self.attributes[self.attributes[0].current_value:self.attributes[0].current_value + self.max_attrs]:
+                attr_surf = attr.draw()
+                attr.fix_offset(MENU_OFFSET, height - self.save_button_rect.height - MENU_OFFSET * 2)
+                height += attr_surf.get_height() + MENU_OFFSET
+                if attr_surf.get_width() > width:
+                    width = attr_surf.get_width()
+                surf_list.insert(-1, attr_surf)
 
         surf = pg.Surface((width + MENU_OFFSET, height))
         surf.fill(DARKGREY)
@@ -570,10 +595,8 @@ class DevUI():
             surf.blit(attr, (MENU_OFFSET, height))
             height += attr.get_height() + MENU_OFFSET
 
-        width = MENU_OFFSET
-        for save_surf in save_surfs:
-            surf.blit(save_surf, (width, height))
-            width += save_surf.get_rect().width + MENU_OFFSET
+        self.save_button_rect.y = height - MENU_OFFSET - self.save_button_rect.height
+        self.done_button_rect.y = self.save_button_rect.y
 
         return surf
 
@@ -642,36 +665,42 @@ class DevUI():
                     return_val = "menu"
 
                 else:
-                    for attr in self.attributes:
-                        if attr.type == "float":
-                            if attr.minus_button_rect.collidepoint(offset):
-                                if attr.change_val(round(attr.current_value - attr.increment, attr.dp)):
+                    if self.attributes[0].minus_button_rect.collidepoint(offset) and self.attributes[0].change_val(self.attributes[0].current_value - 1):
+                        return_val = self.attributes[0]
+                    elif self.attributes[0].plus_button_rect.collidepoint(offset) and self.attributes[0].change_val(self.attributes[0].current_value + 1):
+                        return_val = self.attributes[0]
+
+                    else:
+                        for attr in self.attributes[self.attributes[0].current_value:self.attributes[0].current_value + self.max_attrs]:
+                            if attr.type == "float":
+                                if attr.minus_button_rect.collidepoint(offset):
+                                    if attr.change_val(round(attr.current_value - attr.increment, attr.dp)):
+                                        return_val = attr
+                                elif attr.plus_button_rect.collidepoint(offset):
+                                    if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
+                                        return_val = attr
+                            elif attr.type == "bool":
+                                if attr.x_button_rect.collidepoint(offset):
+                                    if attr.change_val(not attr.current_value):
+                                        return_val = attr
+                            elif attr.type == "select":
+                                if attr.back_button_rect.collidepoint(offset):
+                                    if attr.change_val(attr.current_value - 1):
+                                        return_val = attr
+                                elif attr.next_button_rect.collidepoint(offset):
+                                    if attr.change_val(attr.current_value + 1):
+                                        return_val = attr
+                            elif attr.type == "string":
+                                if attr.textbox_rect.collidepoint(offset):
+                                    if not attr.over:
+                                        attr.over = True
+                                        return_val = attr
+                                elif attr.enter_button_rect.collidepoint(offset):
+                                    attr.over = False
+                                    return_val = attr.name
+                                elif attr.over:
+                                    attr.over = False
                                     return_val = attr
-                            elif attr.plus_button_rect.collidepoint(offset):
-                                if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
-                                    return_val = attr
-                        elif attr.type == "bool":
-                            if attr.x_button_rect.collidepoint(offset):
-                                if attr.change_val(not attr.current_value):
-                                    return_val = attr
-                        elif attr.type == "select":
-                            if attr.back_button_rect.collidepoint(offset):
-                                if attr.change_val(attr.current_value - 1):
-                                    return_val = attr
-                            elif attr.next_button_rect.collidepoint(offset):
-                                if attr.change_val(attr.current_value + 1):
-                                    return_val = attr
-                        elif attr.type == "string":
-                            if attr.textbox_rect.collidepoint(offset):
-                                if not attr.over:
-                                    attr.over = True
-                                    return_val = attr
-                            elif attr.enter_button_rect.collidepoint(offset):
-                                attr.over = False
-                                return_val = attr.name
-                            elif attr.over:
-                                attr.over = False
-                                return_val = attr
         elif event.type == pg.KEYDOWN:
             for attr in self.attributes:
                 if attr.type == "string" and attr.over:

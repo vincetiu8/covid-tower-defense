@@ -16,7 +16,8 @@ class Enemy(pg.sprite.Sprite):
         self.hp = data["hp"]
         self.speed = data["speed"]
         self.dropped_protein = data["protein"]
-        self.raw_image = data["image"]
+        self.original_image = data["image"]
+        self.raw_image = self.original_image
         self.sound = pg.mixer.Sound(data["death_sound_path"])
         
         self.image = data["image"].copy()
@@ -124,7 +125,7 @@ class Enemy(pg.sprite.Sprite):
         
     def reset_speed(self):
         self.speed = ENEMY_DATA[self.name]["speed"]
-        self.raw_image = ENEMY_DATA[self.name]["image"].copy()
+        self.raw_image = self.original_image
         self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
         self.slowed = False
 
@@ -139,7 +140,7 @@ class Enemy(pg.sprite.Sprite):
 
         image_surf = pg.Surface(self.image.get_size()).convert_alpha()
         image_surf.fill((0, 0, 0, 0))
-        image_surf.blit(self.image.convert_alpha(), (0, 0))
+        image_surf.blit(self.original_image.convert_alpha(), (0, 0))
         image_surf.fill(HALF_GREEN, None, pg.BLEND_RGBA_MULT)
         self.raw_image = image_surf
         self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))

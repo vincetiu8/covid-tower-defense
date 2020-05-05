@@ -11,7 +11,8 @@
             "upgrade_cost": 10,
             "directions": 1,
             "rotating": true,
-            "tracking": true
+            "tracking": true,
+            "at": 2
         },
         {
             "damage": 3,
@@ -52,7 +53,8 @@
             "upgrade_cost": 15,
             "directions": 4,
             "rotating": false,
-            "tracking": false
+            "tracking": false,
+            "at": 0
         },
         {
             "damage": 4,
