@@ -40,6 +40,10 @@
         "dp": 0,
         "default": 3
       },
+      "area_of_effect": {
+        "type": "bool",
+        "default": false
+      },
       "bullet_spawn_speed": {
         "type": "float",
         "min": 0.05,
@@ -87,6 +91,10 @@
         "increment": 25,
         "dp": 0,
         "default": 400
+      },
+      "splash": {
+        "type": "bool",
+        "default": false
       },
       "upgrade_cost": {
         "type": "float",

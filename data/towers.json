@@ -1,4 +1,5 @@
 {
+<<<<<<< 6a3f9e63699ad954c30d094e05318bf897b59c52
     "t_cell": {
         "description": "Your standard cell with standard range and standard damage.",
         "stages": [
@@ -138,6 +139,29 @@
                 "rotating": true,
                 "tracking": true,
                 "scroll_position": 1
+            }
+        ]
+    },
+    "neutrophil": {
+        "description": "These cells shoot mucus that deal no damage but slow enemies down. Gross but effective.",
+        "levels": [
+            {
+                "damage": 1,
+                "area_of_effect": true,
+                "range": 150,
+                "upgrade_cost": 20
+            },
+            {
+                "damage": 1,
+                "area_of_effect": true,
+                "range": 150,
+                "upgrade_cost": 20
+            },
+            {
+                "damage": 1,
+                "area_of_effect": true,
+                "range": 150,
+                "upgrade_cost": 20
             }
         ]
     }
