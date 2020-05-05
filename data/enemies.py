@@ -44,15 +44,16 @@ class Enemy(pg.sprite.Sprite):
             return
 
         passed_time = self.clock.get_time() / 1000
+        self.slow_end -= passed_time
 
-        if passed_time >= self.slow_end:
+        if self.slowed and self.slow_end <= 0:
             self.reset_speed()
 
         if (self.maximising != 0 and self.image.get_size()[0] + self.maximising > 0 and self.image.get_size()[0] + self.maximising <= self.rect.w):
             self.image_size += self.maximising
             self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
 
-        if self.image.get_size()[0] + self.maximising == 0 or self.image.get_size()[0] + self.maximising == self.rect.w:
+        if self.image_size + self.maximising == 0 or self.image_size + self.maximising == self.rect.w:
             self.maximising = 0
 
         if (self.rect.left <= self.new_node_rect.left):
@@ -123,7 +124,8 @@ class Enemy(pg.sprite.Sprite):
         
     def reset_speed(self):
         self.speed = ENEMY_DATA[self.name]["speed"]
-        self.image = ENEMY_DATA[self.name]["image"].copy()
+        self.raw_image = ENEMY_DATA[self.name]["image"].copy()
+        self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
         self.slowed = False
 
     def is_slowed(self):
@@ -139,4 +141,5 @@ class Enemy(pg.sprite.Sprite):
         image_surf.fill((0, 0, 0, 0))
         image_surf.blit(self.image.convert_alpha(), (0, 0))
         image_surf.fill(HALF_GREEN, None, pg.BLEND_RGBA_MULT)
-        self.image = image_surf
+        self.raw_image = image_surf
+        self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
