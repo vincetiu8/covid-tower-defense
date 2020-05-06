@@ -55,15 +55,15 @@ class UI:
         ui.blit(protein_text, (self.offset * 2 + size, self.offset * 4 + size * 2))
 
         for i, tower in enumerate(self.game.available_towers):
-            tower_img = pg.transform.scale(TOWER_DATA[tower][0]["base_image"], self.tower_rects[i].size).convert_alpha()
-            tower_img.blit(pg.transform.scale(TOWER_DATA[tower][0]["gun_image"], self.tower_rects[i].size), (0, 0))
-            if (self.game.protein < TOWER_DATA[tower][0]["upgrade_cost"]):
+            tower_img = pg.transform.scale(TOWER_DATA[tower]["stages"][0]["base_image"], self.tower_rects[i].size).convert_alpha()
+            tower_img.blit(pg.transform.scale(TOWER_DATA[tower]["stages"][0]["gun_image"], self.tower_rects[i].size), (0, 0))
+            if (self.game.protein < TOWER_DATA[tower]["stages"][0]["upgrade_cost"]):
                 tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
             ui.blit(tower_img, self.tower_rects[i])
             temp_rect = self.tower_rects[i].copy()
             temp_rect.x += self.tower_size + self.offset
             ui.blit(PROTEIN_IMG, temp_rect)
-            cost_text = font.render(str(TOWER_DATA[tower][0]["upgrade_cost"]), 1, WHITE)
+            cost_text = font.render(str(TOWER_DATA[tower]["stages"][0]["upgrade_cost"]), 1, WHITE)
             temp_rect.y += size + self.offset
             ui.blit(cost_text, temp_rect)
 

@@ -279,7 +279,7 @@ class TowerSelectMenu(Display):
         for row, grid_row in enumerate(self.towers):
             for col, tower in enumerate(grid_row):
                 
-                tower_img = pg.transform.scale(TOWER_DATA[tower][0]["image"].convert_alpha(), self.get_dims())
+                tower_img = pg.transform.scale(TOWER_DATA[tower]["stages"][0]["image"].convert_alpha(), self.get_dims())
 
                 if not self.tower_selected[row][col]:
                     if self.num_selected == NUM_ALLOWED:
@@ -444,15 +444,16 @@ class LevelInfo(HoverInfo):
 class TowerInfo(HoverInfo):
     def __init__(self, tower):
         self.tower_data = TOWER_DATA[tower]
+        self.stages_data = self.tower_data["stages"]
         
         tower_name = (" ".join(tower.split("_"))).title() # removes underscores, capitalizes it properly
-        super().__init__(tower_name, "placeholder text", MENU_OFFSET_2)
+        super().__init__(tower_name, self.tower_data["description"], MENU_OFFSET_2)
         
     def make_other_info(self):
         text_names = ["Damage", "Fire Rate", "Range", "Cost", "Directions", "Tracks Enemies"]
         keys = ["damage", "bullet_spawn_speed", "range", "upgrade_cost", "directions", "tracking"]
         
-        stages_text = self.info_font.render("Stages: {}".format(len(self.tower_data)), 1, WHITE)
+        stages_text = self.info_font.render("Stages: {}".format(len(self.stages_data)), 1, WHITE)
         self.add_text(stages_text)
         
         for i in range(len(text_names)):
@@ -462,8 +463,8 @@ class TowerInfo(HoverInfo):
         texts = []
         map_tf = {True: "Yes", False: "No"}
         
-        for i in range(len(self.tower_data)):
-            to_add = self.tower_data[i][key]
+        for i in range(len(self.stages_data)):
+            to_add = self.stages_data[i][key]
             
             if isinstance(to_add, bool):
                 texts.append(map_tf[to_add])
