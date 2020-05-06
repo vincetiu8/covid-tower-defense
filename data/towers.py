@@ -80,7 +80,7 @@ class Tower(Obstacle):
         self.search_for_enemy()
 
     def load_tower_data(self):
-        data = TOWER_DATA[self.name][self.stage]
+        data = TOWER_DATA[self.name]["stages"][self.stage]
         self.bullet_spawn_speed = data["bullet_spawn_speed"]
         self.bullet_speed = data["bullet_speed"]
         self.bullet_lifetime = data["bullet_lifetime"]
@@ -97,7 +97,7 @@ class Tower(Obstacle):
         self.sound = pg.mixer.Sound(data["shoot_sound_path"])
 
         if (self.stage < 2):
-            data = TOWER_DATA[self.name][self.stage + 1]
+            data = TOWER_DATA[self.name]["stages"][self.stage + 1]
             self.upgrade_cost = data["upgrade_cost"]
 
     def update(self):

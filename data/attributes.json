@@ -25,8 +25,13 @@
       "default": 3
     }
   },
-
   "tower": {
+      "description": {
+        "type": "string",
+        "default": ""
+      }
+  },
+  "stage": {
       "damage": {
         "type": "float",
         "min": 0,
