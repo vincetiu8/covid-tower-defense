@@ -663,7 +663,7 @@ class DevUI():
                                                center=TOWER_DATA[tower][level]["base_image"].get_rect().center))
                             TOWER_DATA[tower][level]["image"] = temp_base
                             
-                    self.save_text = "Saved!"
+                    self.save_text = "Settings Saved!"
                     pg.time.set_timer(pg.USEREVENT + 1, 2000)
                     return_val = -2
 
