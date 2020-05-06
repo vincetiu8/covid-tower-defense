@@ -135,6 +135,7 @@ class Tower(Obstacle):
 
                 self.sound.play()
                 self.shot = True
+                self.time_passed = 0
                 self.next_spawn = self.bullet_spawn_speed * 1000
 
         if (self.current_enemy == None):

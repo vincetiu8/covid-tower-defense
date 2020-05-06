@@ -448,7 +448,6 @@ class Start():
         self.time_passed += self.clock.get_time()
         if (self.time_passed >= self.next_spawn and (self.infinity or self.enemy_count > 0)):
             self.game.enemies.add(Enemy(
-                clock = self.clock,
                 game = self.game,
                 x = self.rect.x + random.randrange(1, self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width()),
                 y = self.rect.y + random.randrange(1, self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height()),
