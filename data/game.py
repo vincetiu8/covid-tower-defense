@@ -176,7 +176,7 @@ class Game(Display):
 
         for i in self.level_data["waves"][self.wave]:
             self.starts.append(
-                Start(self.clock, self, i["start"], i["enemy_type"], i["enemy_count"],
+                Start(self, i["start"], i["enemy_type"], i["enemy_count"],
                       i["spawn_delay"], i["spawn_rate"]))
 
         self.wave += 1
@@ -424,8 +424,8 @@ class Game(Display):
         return -1
     
 class Start():
-    def __init__(self, clock, game, start, enemy_type, enemy_count, spawn_delay, spawn_rate):
-        self.clock = clock
+    def __init__(self, game, start, enemy_type, enemy_count, spawn_delay, spawn_rate):
+        self.clock = game.clock
         self.game = game
         self.start = start
         self.rect = game.start_data[start]
