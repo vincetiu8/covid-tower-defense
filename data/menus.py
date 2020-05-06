@@ -450,8 +450,8 @@ class TowerInfo(HoverInfo):
         super().__init__(tower_name, self.tower_data["description"], MENU_OFFSET_2)
         
     def make_other_info(self):
-        text_names = ["Damage", "Fire Rate", "Range", "Cost", "Directions", "Tracks Enemies"]
-        keys = ["damage", "bullet_spawn_speed", "range", "upgrade_cost", "directions", "tracking"]
+        text_names = ["Damage", "Attack Speed", "Range", "Cost"]
+        keys = ["damage", "attack_speed", "range", "upgrade_cost"]
         
         stages_text = self.info_font.render("Stages: {}".format(len(self.stages_data)), 1, WHITE)
         self.add_text(stages_text)

@@ -202,6 +202,14 @@ class Game(Display):
                      self.camera.apply_rect(self.tower_bases_surf.get_rect()))
 
         for tower in self.towers:
+            if tower.area_of_effect:
+                s = pg.Surface(self.camera.apply_size(tower.aoe_sprite.rect.size), pg.SRCALPHA)
+                s.fill(HALF_GREEN)
+                self.blit(s, self.camera.apply_rect(tower.aoe_sprite.rect))
+                continue
+
+            elif not tower.rotating:
+                continue
             rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             self.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
@@ -358,7 +366,8 @@ class Game(Display):
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
                 if self.map.get_node(x_coord, y_coord) == 1:
-                    self.map.upgrade_tower(x_coord, y_coord)  # don't need to upgrade tower if clicking on empty space
+                    if self.map.upgrade_tower(x_coord, y_coord):
+                        self.draw_tower_bases(self)
                     return -1
 
                 if self.map.is_valid_tower_tile(x_coord, y_coord) == 0:

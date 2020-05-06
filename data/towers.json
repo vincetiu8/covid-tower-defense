@@ -1,11 +1,11 @@
 {
-<<<<<<< 6a3f9e63699ad954c30d094e05318bf897b59c52
     "t_cell": {
         "description": "Your standard cell with standard range and standard damage.",
         "stages": [
             {
                 "damage": 2,
-                "bullet_spawn_speed": 0.25,
+                "area_of_effect": false,
+                "attack_speed": 0.25,
                 "bullet_speed": 25,
                 "bullet_lifetime": 0.3,
                 "slow_speed": 1,
@@ -20,7 +20,8 @@
             },
             {
                 "damage": 3,
-                "bullet_spawn_speed": 0.2,
+                "area_of_effect": false,
+                "attack_speed": 0.2,
                 "bullet_speed": 35,
                 "bullet_lifetime": 0.3,
                 "slow_speed": 1,
@@ -33,7 +34,8 @@
             },
             {
                 "damage": 4,
-                "bullet_spawn_speed": 0.15,
+                "area_of_effect": false,
+                "attack_speed": 0.15,
                 "bullet_speed": 45,
                 "bullet_lifetime": 0.3,
                 "slow_speed": 1,
@@ -52,7 +54,8 @@
         "stages": [
             {
                 "damage": 3,
-                "bullet_spawn_speed": 0.4,
+                "area_of_effect": false,
+                "attack_speed": 0.4,
                 "bullet_speed": 20,
                 "bullet_lifetime": 0.5,
                 "slow_speed": 1,
@@ -67,7 +70,8 @@
             },
             {
                 "damage": 4,
-                "bullet_spawn_speed": 0.35,
+                "area_of_effect": false,
+                "attack_speed": 0.35,
                 "bullet_speed": 20,
                 "bullet_lifetime": 0.5,
                 "slow_speed": 1,
@@ -81,7 +85,8 @@
             },
             {
                 "damage": 5,
-                "bullet_spawn_speed": 0.3,
+                "area_of_effect": false,
+                "attack_speed": 0.3,
                 "bullet_speed": 20,
                 "bullet_lifetime": 0.5,
                 "slow_speed": 1.0,
@@ -100,7 +105,8 @@
         "stages": [
             {
                 "damage": 0,
-                "bullet_spawn_speed": 0.7,
+                "area_of_effect": false,
+                "attack_speed": 0.7,
                 "bullet_speed": 15,
                 "bullet_lifetime": 0.5,
                 "slow_speed": 0.5,
@@ -114,7 +120,8 @@
             },
             {
                 "damage": 0,
-                "bullet_spawn_speed": 0.7,
+                "area_of_effect": false,
+                "attack_speed": 0.7,
                 "bullet_speed": 15,
                 "bullet_lifetime": 0.5,
                 "slow_speed": 0.5,
@@ -128,7 +135,8 @@
             },
             {
                 "damage": 0,
-                "bullet_spawn_speed": 0.5,
+                "area_of_effect": false,
+                "attack_speed": 0.5,
                 "bullet_speed": 15,
                 "bullet_lifetime": 0.5,
                 "slow_speed": 0.5,
@@ -143,25 +151,35 @@
         ]
     },
     "neutrophil": {
-        "description": "These cells shoot mucus that deal no damage but slow enemies down. Gross but effective.",
-        "levels": [
+        "description": "This cell deals area-of-effect damage to any enemies around it.",
+        "stages": [
             {
                 "damage": 1,
                 "area_of_effect": true,
+                "attack_speed": 0.5,
                 "range": 150,
-                "upgrade_cost": 20
+                "upgrade_cost": 10,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "scroll_position": 1
             },
             {
-                "damage": 1,
+                "damage": 2,
                 "area_of_effect": true,
-                "range": 150,
-                "upgrade_cost": 20
+                "attack_speed": 0.4,
+                "range": 175,
+                "upgrade_cost": 25,
+                "slow_speed": 1,
+                "slow_duration": 0
             },
             {
-                "damage": 1,
+                "damage": 3,
                 "area_of_effect": true,
-                "range": 150,
-                "upgrade_cost": 20
+                "attack_speed": 0.3,
+                "range": 200,
+                "upgrade_cost": 20,
+                "slow_speed": 1,
+                "slow_duration": 0
             }
         ]
     }

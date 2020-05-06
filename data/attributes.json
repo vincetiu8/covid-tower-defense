@@ -42,9 +42,10 @@
       },
       "area_of_effect": {
         "type": "bool",
+        "ignore": ["bullet_speed", "bullet_lifetime", "rotating", "tracking", "bullet_image", "directions"],
         "default": false
       },
-      "bullet_spawn_speed": {
+      "attack_speed": {
         "type": "float",
         "min": 0.05,
         "max": 10,
@@ -91,10 +92,6 @@
         "increment": 25,
         "dp": 0,
         "default": 400
-      },
-      "splash": {
-        "type": "bool",
-        "default": false
       },
       "upgrade_cost": {
         "type": "float",

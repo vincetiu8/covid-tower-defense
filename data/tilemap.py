@@ -69,6 +69,7 @@ class TiledMap:
         elif self.tower_map[x][y] == None:
             return False
         self.tower_map[x][y].upgrade()
+        return True
 
     def remove_tower(self, x, y):
         if (x < 0 or x >= len(self.tower_map) or y < 0 or y >= len(self.tower_map[0])):
@@ -117,6 +118,9 @@ class Camera():
         self.current_zoom = min(width / map_width, height / map_height)
         self.minzoom = self.current_zoom / 2
         self.camera = pg.Rect((self.width - self.map_width * (self.current_zoom + 0.05)) / 2, (self.height- self.map_height * self.current_zoom) / 2, width, height)
+
+    def apply_size(self, tuple):
+        return ([i * self.current_zoom for i in tuple])
 
     def apply_tuple(self, tuple):
         return ([x * self.current_zoom + self.camera.topleft[i] for i, x in enumerate(tuple)])
