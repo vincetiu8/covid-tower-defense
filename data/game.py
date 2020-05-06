@@ -359,6 +359,7 @@ class Game(Display):
 
                 if self.map.get_node(x_coord, y_coord) == 1:
                     self.map.upgrade_tower(x_coord, y_coord)  # don't need to upgrade tower if clicking on empty space
+                    self.draw_tower_bases(self)
                     return -1
 
                 if self.map.is_valid_tower_tile(x_coord, y_coord) == 0:
