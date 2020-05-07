@@ -94,7 +94,7 @@
                 "range": 400,
                 "upgrade_cost": 10,
                 "directions": 4,
-                "rotating": false,
+                "rotating": true,
                 "tracking": false,
                 "scroll_position": 1
             }
