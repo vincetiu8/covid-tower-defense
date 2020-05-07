@@ -66,15 +66,19 @@ MENU_TEXT_SIZE = 30
 
 # TowerSelectMenu Constants
 NUM_ALLOWED = 2
-GRID_ROW_SIZE = 6
-GRID_CELL_SIZE = 100 # both width and height
+GRID_ROW_SIZE = 5
+GRID_CELL_SIZE = 80 # both width and height
 GRID_SEPARATION = 30
-GRID_MARGIN_X = 150
-GRID_MARGIN_Y = 160
+GRID_MARGIN_X = 60
+GRID_MARGIN_Y = 180
 
-BTN_PADDING = 30
-BTN_X_MARGIN = 180
-BTN_Y = 550
+GRID_2_CELL_SIZE = 50
+GRID_2_SEPARATION = 30
+GRID_2_MARGIN_X = 20
+
+BTN_PADDING = 20
+BTN_X_MARGIN = 100
+BTN_Y = 620
 
 # load ui images
 HEART_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "heart.png"))
