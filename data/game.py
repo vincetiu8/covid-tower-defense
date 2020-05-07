@@ -300,7 +300,7 @@ class Game(Display):
             self.tower_bases_surf.blit(tower.base_image, tower.rect)
             if tower.area_of_effect:
                 s = pg.Surface(tower.aoe_sprite.rect.size, pg.SRCALPHA)
-                s.fill(HALF_GREEN)
+                s.fill(AURA_COLORS[tower.aura_color])
                 self.aoe_surf.blit(s, tower.aoe_sprite.rect, special_flags=pg.BLEND_RGBA_MAX)
 
 

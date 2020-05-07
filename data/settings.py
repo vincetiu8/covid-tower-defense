@@ -23,9 +23,8 @@ ZOOM_AMT_MENU = 0.1
 # define some colors (R, G, B)
 WHITE = pg.Color(255, 255, 255)
 BLACK = pg.Color(0, 0, 0)
-DARKGREY = pg.Color(40, 40, 40)
-LIGHTGREY = pg.Color(100, 100, 100)
-HALF_GREEN = pg.Color(100, 255, 100, 127)
+DARK_GREY = pg.Color(40, 40, 40)
+LIGHT_GREY = pg.Color(100, 100, 100)
 GREEN = pg.Color(0, 255, 0)
 DARK_GREEN = pg.Color(0, 60, 0)
 RED = pg.Color(255, 0, 0)
@@ -33,8 +32,18 @@ DARK_RED = pg.Color(60, 0, 0)
 YELLOW = pg.Color(255, 255, 0)
 ORANGE = pg.Color(255, 127, 0)
 MAROON = pg.Color(127, 0, 0)
+
 HALF_WHITE = pg.Color(255, 255, 255, 127)
 HALF_RED = pg.Color(255, 0, 0, 127)
+HALF_ORANGE = pg.Color(255, 127, 0, 127)
+HALF_YELLOW = pg.Color(255, 255, 0, 127)
+HALF_GREEN = pg.Color(0, 255, 0, 127)
+HALF_CYAN = pg.Color(0, 255, 255, 127)
+HALF_BLUE = pg.Color(0, 0, 255, 127)
+HALF_PURPLE = pg.Color(127, 0, 255, 127)
+HALF_PINK = pg.Color(255, 0, 255, 127)
+
+AURA_COLORS = [HALF_RED, HALF_ORANGE, HALF_YELLOW, HALF_GREEN, HALF_CYAN, HALF_BLUE, HALF_PURPLE, HALF_PINK]
 
 # game settings
 FPS = 60
@@ -119,12 +128,14 @@ with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
             temp_base = TOWER_DATA[tower]["stages"][stage]["base_image"].copy()
             base = TOWER_DATA[tower]["stages"][stage]["base_image"]
             if not TOWER_DATA[tower]["stages"][stage]["area_of_effect"]:
-                TOWER_DATA[tower]["stages"][stage]["gun_image"] = pg.image.load(
-                    path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(stage) + ".png"))
                 TOWER_DATA[tower]["stages"][stage]["bullet_image"] = pg.image.load(
                     path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(stage) + ".png"))
-                temp_base.blit(TOWER_DATA[tower]["stages"][stage]["gun_image"],
-                           TOWER_DATA[tower]["stages"][stage]["gun_image"].get_rect(center = base.get_rect().center))
+
+                if TOWER_DATA[tower]["stages"][stage]["rotating"]:
+                    TOWER_DATA[tower]["stages"][stage]["gun_image"] = pg.image.load(
+                        path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(stage) + ".png"))
+                    temp_base.blit(TOWER_DATA[tower]["stages"][stage]["gun_image"],
+                               TOWER_DATA[tower]["stages"][stage]["gun_image"].get_rect(center = base.get_rect().center))
             
             TOWER_DATA[tower]["stages"][stage]["image"] = temp_base
 

@@ -194,12 +194,14 @@ class TowerPreview(DevClass):
         for attr in ATTR_DATA["stage"]:
             if attr in ignore:
                 continue
-            if ATTR_DATA["stage"][attr]["type"] == "bool" and "ignore" in ATTR_DATA["stage"][attr]:
+            if ATTR_DATA["stage"][attr]["type"] == "bool" and "ignore_if_true" in ATTR_DATA["stage"][attr] or "ignore_if_false" in ATTR_DATA["stage"][attr]:
                 self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr],
                                            TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
                                                self.current_stage][attr], reload_on_change=True))
-                if TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr]:
-                    ignore.extend(ATTR_DATA["stage"][attr]["ignore"])
+                if "ignore_if_true" in ATTR_DATA["stage"][attr] and TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr]:
+                    ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_true"])
+                elif "ignore_if_false" in ATTR_DATA["stage"][attr] and not TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr]:
+                    ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_false"])
             else:
                 self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr],
                                            TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
@@ -568,7 +570,7 @@ class DevUI():
         width += self.done_button_rect.width + MENU_OFFSET
 
         temp_surf = pg.Surface((width, self.save_button_rect.height))
-        temp_surf.fill(DARKGREY)
+        temp_surf.fill(DARK_GREY)
         t_width = MENU_OFFSET
         for save_surf in [save_button, done_button]:
             temp_surf.blit(save_surf, (t_width, 0))
@@ -604,7 +606,7 @@ class DevUI():
                 surf_list.insert(-1, attr_surf)
 
         surf = pg.Surface((width + MENU_OFFSET, height))
-        surf.fill(DARKGREY)
+        surf.fill(DARK_GREY)
         height = MENU_OFFSET
         for attr in surf_list:
             surf.blit(attr, (MENU_OFFSET, height))
@@ -665,16 +667,20 @@ class DevUI():
                                 path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(stage) + ".png"))
                             TOWER_DATA[tower]["stages"][stage]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER,
                                                                                                "{}.wav".format(tower))
+
                             temp_base = TOWER_DATA[tower]["stages"][stage]["base_image"].copy()
                             base = TOWER_DATA[tower]["stages"][stage]["base_image"]
                             if not TOWER_DATA[tower]["stages"][stage]["area_of_effect"]:
-                                TOWER_DATA[tower]["stages"][stage]["gun_image"] = pg.image.load(
-                                    path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(stage) + ".png"))
                                 TOWER_DATA[tower]["stages"][stage]["bullet_image"] = pg.image.load(
                                     path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(stage) + ".png"))
-                                temp_base.blit(TOWER_DATA[tower]["stages"][stage]["gun_image"],
-                                               TOWER_DATA[tower]["stages"][stage]["gun_image"].get_rect(
-                                                   center=base.get_rect().center))
+
+                                if TOWER_DATA[tower]["stages"][stage]["rotating"]:
+                                    TOWER_DATA[tower]["stages"][stage]["gun_image"] = pg.image.load(
+                                        path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(stage) + ".png"))
+                                    temp_base.blit(TOWER_DATA[tower]["stages"][stage]["gun_image"],
+                                                   TOWER_DATA[tower]["stages"][stage]["gun_image"].get_rect(
+                                                       center=base.get_rect().center))
+
                             TOWER_DATA[tower]["stages"][stage]["image"] = temp_base
                     return_val = -1
 
@@ -759,7 +765,7 @@ class Attribute():
                 if self.over:
                     attr_text = font.render("{}...".format(self.name), 1, WHITE)
                 else:
-                    attr_text = font.render("{}...".format(self.name), 1, LIGHTGREY)
+                    attr_text = font.render("{}...".format(self.name), 1, LIGHT_GREY)
             else:
                 attr_text = font.render(self.current_value, 1, WHITE)
             textbox = pg.transform.scale(LEVEL_BUTTON_IMG, (
@@ -844,7 +850,7 @@ class Attribute():
             width += surf.get_rect().width + MENU_OFFSET
 
         attr_surf = pg.Surface((width, attr_text.get_rect().height))
-        attr_surf.fill(DARKGREY)
+        attr_surf.fill(DARK_GREY)
 
         temp_w = MENU_OFFSET
         for surf in surf_list:

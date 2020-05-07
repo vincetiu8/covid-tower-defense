@@ -42,8 +42,14 @@
       },
       "area_of_effect": {
         "type": "bool",
-        "ignore": ["bullet_speed", "bullet_lifetime", "rotating", "tracking", "bullet_image", "directions"],
+        "ignore_if_true": ["bullet_speed", "bullet_lifetime", "rotating", "tracking", "bullet_image", "directions"],
+        "ignore_if_false": ["aura_color"],
         "default": false
+      },
+      "aura_color": {
+        "type": "select",
+        "values": ["red","orange","yellow","green","cyan","blue","purple","pink"],
+        "default": 3
       },
       "attack_speed": {
         "type": "float",

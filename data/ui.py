@@ -36,7 +36,7 @@ class UI:
         font = pg.font.Font(FONT, size * 2)
         
         ui = pg.Surface((self.width, self.game.get_size()[1] - 2 * self.offset))
-        ui.fill(DARKGREY)
+        ui.fill(DARK_GREY)
         
         waves_text = font.render("Wave {}/{}".format(self.wave, self.max_wave), 1, WHITE)
 

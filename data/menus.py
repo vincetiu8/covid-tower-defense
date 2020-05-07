@@ -168,7 +168,7 @@ class Menu(Display):
         height += waves_text.get_height() + MENU_OFFSET
 
         enemy_surf = pg.Surface((title_text.get_size()[0] + MENU_OFFSET * 2, MENU_TEXT_SIZE))
-        enemy_surf.fill(DARKGREY)
+        enemy_surf.fill(DARK_GREY)
         for i, enemy in enumerate(level_data["enemies"]):
             enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE))
             enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + MENU_OFFSET), 0))
@@ -177,7 +177,7 @@ class Menu(Display):
         height += enemy_surf.get_height()
 
         level_surf = pg.Surface((title_text.get_width() + MENU_OFFSET * 2, height + MENU_OFFSET))
-        level_surf.fill(DARKGREY)
+        level_surf.fill(DARK_GREY)
         temp_height = MENU_OFFSET
         for text in texts:
             level_surf.blit(text, (MENU_OFFSET, temp_height))
@@ -239,7 +239,7 @@ class TowerSelectMenu(Display):
         self.back_btn_rect = pg.Rect(BTN_X_MARGIN, BTN_Y, self.back_btn.get_width(), self.back_btn.get_height())
         
         self.start_btn_disabled = self.make_btn("Start")
-        self.start_btn_disabled.fill(LIGHTGREY, None, pg.BLEND_RGB_MULT)
+        self.start_btn_disabled.fill(LIGHT_GREY, None, pg.BLEND_RGB_MULT)
         
         self.over_tower = [-1, -1]
         
@@ -403,7 +403,7 @@ class HoverInfo(pg.Surface):
         self.make_other_info()
         
         super().__init__((self.width, self.height + self.menu_offset))
-        self.fill(DARKGREY)
+        self.fill(DARK_GREY)
         
         temp_height = self.menu_offset
         for text in self.texts:
@@ -434,7 +434,7 @@ class LevelInfo(HoverInfo):
         self.add_text(waves_text)
 
         enemy_surf = pg.Surface((self.texts[0].get_width() + self.menu_offset * 2, MENU_TEXT_SIZE))
-        enemy_surf.fill(DARKGREY)
+        enemy_surf.fill(DARK_GREY)
         for i, enemy in enumerate(self.level_data["enemies"]):
             enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE))
             enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + self.menu_offset), 0))

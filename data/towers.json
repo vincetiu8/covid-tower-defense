@@ -156,9 +156,10 @@
             {
                 "damage": 1,
                 "area_of_effect": true,
+                "aura_color": 2,
                 "attack_speed": 0.5,
                 "range": 150,
-                "upgrade_cost": 10,
+                "upgrade_cost": 50,
                 "slow_speed": 1,
                 "slow_duration": 0,
                 "scroll_position": 1
@@ -166,6 +167,7 @@
             {
                 "damage": 2,
                 "area_of_effect": true,
+                "aura_color": 2,
                 "attack_speed": 0.4,
                 "range": 175,
                 "upgrade_cost": 25,
@@ -175,6 +177,7 @@
             {
                 "damage": 3,
                 "area_of_effect": true,
+                "aura_color": 2,
                 "attack_speed": 0.3,
                 "range": 200,
                 "upgrade_cost": 20,

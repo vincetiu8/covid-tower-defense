@@ -87,6 +87,7 @@ class Tower(Obstacle):
             self.aoe_sprite.rect.x -= (self.range - self.game.map.tilesize) / 2
             self.aoe_sprite.rect.y -= (self.range - self.game.map.tilesize) / 2
             self.aoe_sprite.rect.width = self.aoe_sprite.rect.height = self.range
+            self.aura_color = data["aura_color"]
 
         else:
             self.bullet_speed = data["bullet_speed"]
