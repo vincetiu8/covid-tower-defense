@@ -117,13 +117,7 @@ class DevClass(Game):
                      self.tower_bases_surf.get_rect())
 
         for tower in self.towers:
-            if tower.area_of_effect:
-                s = pg.Surface((tower.aoe_sprite.rect.size), pg.SRCALPHA)
-                s.fill(HALF_GREEN)
-                surface.blit(s, tower.aoe_sprite.rect)
-                continue
-
-            elif not tower.rotating:
+            if tower.area_of_effect or not tower.rotating:
                 continue
             rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
@@ -141,6 +135,7 @@ class DevClass(Game):
         for projectile in self.projectiles:
             surface.blit(projectile.image, projectile.rect)
 
+        surface.blit(self.aoe_surf, (0, 0))
         surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         surf.blit(self.camera.apply_image((surface)), self.camera.apply_tuple((0, 0)))
 

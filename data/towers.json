@@ -158,7 +158,7 @@
                 "area_of_effect": true,
                 "attack_speed": 0.5,
                 "range": 150,
-                "upgrade_cost": 50,
+                "upgrade_cost": 10,
                 "slow_speed": 1,
                 "slow_duration": 0,
                 "scroll_position": 1
