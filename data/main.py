@@ -78,6 +78,8 @@ class Main:
                     args = []
                     if result == "game" or result == "resume":
                         args.extend([self.menu.get_over_level(), result == "resume", self.tower_select.get_selected_towers()])
+                    elif result == "tower_select":
+                        args.append(self.menu.get_over_level())
                     elif result == "game_over":
                         args.extend([self.game.draw(), self.game.get_lives() == 0, self.game.get_cause_of_death()])
                     elif result == "pause":

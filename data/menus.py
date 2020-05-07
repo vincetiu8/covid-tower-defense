@@ -241,13 +241,21 @@ class TowerSelectMenu(Display):
         self.start_btn_disabled = self.make_btn("Start")
         self.start_btn_disabled.fill(LIGHTGREY, None, pg.BLEND_RGB_MULT)
         
-        self.over_tower = [-1, -1]
+        self.left_btn_rect = None
+        self.right_btn_rect = None
         
     def new(self, args):
+        self.level_data = LEVEL_DATA[args[0]]
+        self.max_wave = len(self.level_data["waves"])
+        
         self.towers = []
         self.tower_rects = []
         self.tower_selected = []
+        
+        self.over_tower = [-1, -1]
+        self.curr_wave = 0
         self.num_selected = 0
+        
         tower_names = list(TOWER_DATA)
         
         row = -1
@@ -267,15 +275,35 @@ class TowerSelectMenu(Display):
     def draw(self):
         self.fill(BLACK)
         
-        title_font = pg.font.Font(FONT, 160)
-        text_font = pg.font.Font(FONT, 80)
+        title_font = pg.font.Font(FONT, 120)
+        text_font = pg.font.Font(FONT, 70)
         
-        title = title_font.render("Select Towers", 1, WHITE)
-        self.blit(title, ((SCREEN_WIDTH - title.get_width()) / 2, 0))
-        
+        # Draws upper left text
+        title_1 = title_font.render("Select Towers", 1, WHITE)
         selected_text = text_font.render("Selected: {}/{}".format(self.num_selected, NUM_ALLOWED), 1, WHITE)
-        self.blit(selected_text, ((SCREEN_WIDTH - selected_text.get_width()) / 2, BTN_Y))
         
+        self.blit(title_1, (SCREEN_WIDTH / 4 - title_1.get_width() / 2, 0)) # puts these on the x center of the screnn's left half
+        self.blit(selected_text, (SCREEN_WIDTH / 4 - selected_text.get_width() / 2, title_1.get_height() - 20))
+        
+        # Draws upper right text + buttons
+        title_2 = title_font.render("Wave {}/{}".format(self.curr_wave + 1, self.max_wave), 1, WHITE)
+        left_btn = self.make_btn("<")
+        right_btn = self.make_btn(">")
+        
+        title_2_x = SCREEN_WIDTH * 3 / 4 - title_2.get_width() / 2 # puts title_2 on the x center of the screen's right half
+        left_right_y = (title_2.get_height() - left_btn.get_height()) / 2 # puts btns on the y center of title_2
+        
+        left_x = title_2_x - left_btn.get_width() - 20
+        right_x = title_2_x + title_2.get_width() + 20
+        
+        self.blit(title_2, (title_2_x, 0))
+        self.blit(left_btn, (left_x, left_right_y))
+        self.blit(right_btn, (right_x, left_right_y))
+        
+        self.left_btn_rect = left_btn.get_rect(x = left_x, y = left_right_y)
+        self.right_btn_rect = right_btn.get_rect(x = right_x, y = left_right_y)
+        
+        # Draws towers
         for row, grid_row in enumerate(self.towers):
             for col, tower in enumerate(grid_row):
                 
@@ -289,6 +317,10 @@ class TowerSelectMenu(Display):
 
                 self.blit(tower_img, self.get_locs(row, col))
                 
+        # Draws stuff at the bottom
+        level_text = text_font.render("Level: {}".format(self.level_data["title"]), 1, WHITE)
+        self.blit(level_text, ((SCREEN_WIDTH - level_text.get_width()) / 2, BTN_Y))
+                
         start_btn = self.start_btn
         if self.num_selected == 0:
             start_btn = self.start_btn_disabled
@@ -296,6 +328,7 @@ class TowerSelectMenu(Display):
         self.blit(start_btn, (self.start_btn_rect.x, BTN_Y))
         self.blit(self.back_btn, (BTN_X_MARGIN, BTN_Y))
         
+        # Draws tower infos
         if self.over_tower[0] != -1:
             row, col = self.over_tower
             ind = row * GRID_ROW_SIZE + col
@@ -321,7 +354,7 @@ class TowerSelectMenu(Display):
         return (x, y)
     
     def make_btn(self, string):
-        font = pg.font.Font(FONT, 100)
+        font = pg.font.Font(FONT, 70)
         text = font.render(string, 1, WHITE)
         btn = pg.transform.scale(LEVEL_BUTTON_IMG, (text.get_width() + BTN_PADDING * 2, text.get_height())).copy().convert_alpha()
         btn.blit(text, text.get_rect(center = btn.get_rect().center))
@@ -344,6 +377,10 @@ class TowerSelectMenu(Display):
                     return "menu"
                 elif self.start_btn_rect.collidepoint(mouse_pos) and self.num_selected > 0:
                     return "game"
+                elif self.left_btn_rect.collidepoint(mouse_pos):
+                    self.curr_wave = max(self.curr_wave - 1, 0)
+                elif self.right_btn_rect.collidepoint(mouse_pos):
+                    self.curr_wave = min(self.curr_wave + 1, self.max_wave - 1)
                 elif self.over_tower[0] != -1:
                     row, col = self.over_tower
                     if self.tower_selected[row][col]:
