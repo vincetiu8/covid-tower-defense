@@ -1,7 +1,7 @@
 import textwrap
 
 from data.display import *
-from data.tilemap import Camera
+from data.tilemap import Camera, TiledMap
 from data.settings import *
 from data.dev_tools import TowerPreview, EnemyPreview
 
@@ -245,7 +245,12 @@ class TowerSelectMenu(Display):
         self.right_btn_rect = None
         
     def new(self, args):
+        # args[0] = level
         self.level_data = LEVEL_DATA[args[0]]
+        map = TiledMap(path.join(MAP_FOLDER, "map{}.tmx".format(args[0])))
+        self.map_img = None
+        self.draw_map(map)
+        
         self.max_wave = len(self.level_data["waves"])
         
         self.towers = []
@@ -255,6 +260,9 @@ class TowerSelectMenu(Display):
         self.over_tower = [-1, -1]
         self.curr_wave = 0
         self.num_selected = 0
+        
+        self.wave_info = None
+        self.draw_wave_info()
         
         tower_names = list(TOWER_DATA)
         
@@ -317,6 +325,13 @@ class TowerSelectMenu(Display):
 
                 self.blit(tower_img, self.get_locs(row, col))
                 
+        # Draws waves info
+        self.draw_wave_info()
+        self.blit(self.wave_info, (SCREEN_WIDTH / 2, GRID_MARGIN_Y - selected_text.get_height()))
+        
+        # Draws map
+        self.blit(self.map_img, (SCREEN_WIDTH * 3 / 4 - self.map_img.get_width() / 2, SCREEN_HEIGHT / 2 - 80))
+                
         # Draws stuff at the bottom
         level_text = text_font.render("Level: {}".format(self.level_data["title"]), 1, WHITE)
         self.blit(level_text, ((SCREEN_WIDTH - level_text.get_width()) / 2, BTN_Y))
@@ -343,6 +358,38 @@ class TowerSelectMenu(Display):
                 self.blit(self.tower_infos[ind], self.tower_infos[ind].get_rect(topright = self.tower_rects[row][col].topleft))
                 
         return self
+    
+    def draw_map(self, map):
+        img = map.make_map()
+        
+        # scales map down so that it is no bigger than a rectangle with dimensions (SCREEN_WIDTH / 2, SCREEN_WIDTH / 4)
+        scale_factor = min((SCREEN_WIDTH / 2 - GRID_MARGIN_X) / img.get_width(), (SCREEN_HEIGHT / 2 - 40) / img.get_height())
+        self.map_img = pg.transform.scale(img, (int(img.get_width() * scale_factor), int(img.get_height() * scale_factor)))
+    
+    def draw_wave_info(self):
+        wave_font = pg.font.Font(FONT, 50)
+        enemy_surfs = []
+        
+        for sub_wave in self.level_data["waves"][self.curr_wave]:
+            text = wave_font.render("{}x".format(sub_wave["enemy_count"]), 1, WHITE)
+            enemy_img = pg.transform.scale(ENEMY_DATA[sub_wave["enemy_type"]]["image"], (GRID_2_CELL_SIZE, GRID_2_CELL_SIZE))
+            enemy_surf = pg.Surface((text.get_width() + enemy_img.get_width(), max(text.get_height(), enemy_img.get_height())))
+            
+            enemy_surf.blit(text, (0, 0))
+            enemy_surf.blit(enemy_img, (text.get_width(), 0))
+            
+            enemy_surfs.append(enemy_surf)
+        
+        self.wave_info = pg.Surface((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4))
+        x = 0
+        y = 0
+        for i, surf in enumerate(enemy_surfs):
+            if x + surf.get_width() >= SCREEN_WIDTH / 2 - GRID_2_MARGIN_X:
+                x = 0
+                y += GRID_2_CELL_SIZE + GRID_SEPARATION
+                
+            self.wave_info.blit(surf, (x, y))
+            x += surf.get_width() + GRID_2_SEPARATION
                 
     def get_dims(self):
         return (GRID_CELL_SIZE, GRID_CELL_SIZE)
@@ -379,8 +426,10 @@ class TowerSelectMenu(Display):
                     return "game"
                 elif self.left_btn_rect.collidepoint(mouse_pos):
                     self.curr_wave = max(self.curr_wave - 1, 0)
+                    self.draw_wave_info()
                 elif self.right_btn_rect.collidepoint(mouse_pos):
                     self.curr_wave = min(self.curr_wave + 1, self.max_wave - 1)
+                    self.draw_wave_info()
                 elif self.over_tower[0] != -1:
                     row, col = self.over_tower
                     if self.tower_selected[row][col]:
