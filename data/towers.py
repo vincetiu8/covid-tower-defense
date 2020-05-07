@@ -121,7 +121,8 @@ class Tower(Obstacle):
                         hit.hp -= self.damage
                         if self.slow_speed != 1:
                             hits[0].slow(self.slow_speed, self.slow_duration)
-
+                    self.sound.play()
+                    self.next_spawn = pg.time.get_ticks() + self.attack_speed * 1000
 
             elif self.current_enemy != None:
                 enemy_center = self.current_enemy.rect.center
@@ -155,8 +156,8 @@ class Tower(Obstacle):
                         else:
                             Projectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage)
 
-            self.sound.play()
-            self.next_spawn = pg.time.get_ticks() + self.attack_speed * 1000
+                self.sound.play()
+                self.next_spawn = pg.time.get_ticks() + self.attack_speed * 1000
 
         if not self.area_of_effect and self.current_enemy == None:
             self.search_for_enemy()
