@@ -3,11 +3,11 @@ import random
 from data.tilemap import tile_from_coords
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, clock, game, x, y, name):
+    def __init__(self, game, x, y, name):
         self.groups = game.enemies
         super().__init__(self.groups)
         
-        self.clock = clock
+        self.clock = game.clock
         self.game = game
         self.name = name
         

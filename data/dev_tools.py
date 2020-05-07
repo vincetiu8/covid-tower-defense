@@ -174,7 +174,7 @@ class TowerPreview(DevClass):
         super().reload_level("tower_test")
         super().load_data()
         super().new()
-        self.starts = [Start(self.clock, self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in range(len(self.start_data))]
+        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in range(len(self.start_data))]
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
         self.new_tower_name = ""
         self.load_ui()
@@ -287,7 +287,7 @@ class EnemyPreview(DevClass):
         super().reload_level("enemy_test")
         super().load_data()
         super().new()
-        self.starts = [Start(self.clock, self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in range(len(self.start_data))]
+        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in range(len(self.start_data))]
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
         self.new_enemy_name = ""
         self.load_ui()
@@ -364,7 +364,7 @@ class LevelPreview(DevClass):
         super().reload_level("map{}".format(self.level))
         super().load_data()
         super().new()
-        self.starts = [Start(self.clock, self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in range(len(self.start_data))]
+        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in range(len(self.start_data))]
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
 
     def new(self, args):
@@ -419,7 +419,7 @@ class LevelPreview(DevClass):
         self.starts.clear()
         self.enemies = pg.sprite.Group()
         for s in LEVEL_DATA[self.level]["waves"][self.wave]:
-            self.starts.append(Start(self.clock, self, s["start"], s["enemy_type"], s["enemy_count"], s["spawn_delay"], s["spawn_rate"]))
+            self.starts.append(Start(self, s["start"], s["enemy_type"], s["enemy_count"], s["spawn_delay"], s["spawn_rate"]))
 
     def update(self):
         super().update()
@@ -526,6 +526,8 @@ class LevelPreview(DevClass):
                 LEVEL_DATA[self.level]["waves"][self.wave][self.sub_wave][attr] = ATTR_DATA["sub_wave"][attr]["default"]
 class DevUI():
     def __init__(self):
+        self.save_text = "Save Settings"
+        self.revert_save_text_event = pg.event.Event(pg.USEREVENT + 1)
         self.attributes = []
         self.active = True
         self.max_attrs = 0
@@ -552,7 +554,7 @@ class DevUI():
 
         width = MENU_OFFSET
         font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.2))
-        save_text = font.render("Save Settings", 1, WHITE)
+        save_text = font.render(self.save_text, 1, WHITE)
         save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
         round(save_text.get_rect().width * 1.5), save_text.get_height())).copy().convert_alpha()
         save_button.blit(save_text, save_text.get_rect(center=save_button.get_rect().center))
@@ -682,7 +684,10 @@ class DevUI():
                                                        center=base.get_rect().center))
 
                             TOWER_DATA[tower]["stages"][stage]["image"] = temp_base
-                    return_val = -1
+                            
+                    self.save_text = "Settings Saved!"
+                    pg.time.set_timer(pg.USEREVENT + 1, 2000)
+                    return_val = -2
 
                 elif self.done_button_rect.collidepoint(offset):
                     return_val = "menu"
@@ -738,6 +743,12 @@ class DevUI():
                             return_val = attr
         if isinstance(return_val, Attribute) and return_val.reload_on_change:
             return_val = return_val.name
+                            
+        if event.type == pg.USEREVENT + 1:
+            self.save_text = "Save Settings"
+            pg.time.set_timer(pg.USEREVENT + 1, 0)
+            return_val = -2
+            
         return return_val
 
 class Attribute():

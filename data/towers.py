@@ -18,6 +18,7 @@ class Obstacle(pg.sprite.Sprite):
 class Projectile(pg.sprite.Sprite):
     def __init__(self, game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage):
         self.groups = game.projectiles
+        self.clock = game.clock
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.type = type
@@ -31,12 +32,15 @@ class Projectile(pg.sprite.Sprite):
         self.slow_duration = slow_duration
         self.damage = damage
         self.direction = direction
-        self.end = pg.time.get_ticks() + lifetime * 1000
+        
+        self.time_passed = 0
+        self.end = lifetime * 1000
 
     def update(self):
-        if pg.time.get_ticks() > self.end:
+        if self.time_passed > self.end:
             self.kill()
-
+        
+        self.time_passed += self.clock.get_time()
         self.rect.x += self.speed * math.cos(self.direction)
         self.rect.y += self.speed * math.sin(self.direction)
 
@@ -61,12 +65,15 @@ class Tower(Obstacle):
     def __init__(self, game, x, y, name):
         super().__init__(game, x, y, game.map.tilesize, game.map.tilesize)
         self.groups = game.towers
+        self.clock = game.clock
         pg.sprite.Sprite.__init__(self, self.groups)
         self.name = name
         self.stage = 0
         self.load_tower_data()
 
-        self.next_spawn = pg.time.get_ticks()
+        self.time_passed = 0
+        self.next_spawn = 0
+        
         self.rotation = 0
         self.current_enemy = None
 
@@ -153,6 +160,8 @@ class Tower(Obstacle):
 
         if not self.area_of_effect and self.current_enemy == None:
             self.search_for_enemy()
+            
+        self.time_passed += self.clock.get_time()
             
     def upgrade(self):
         if self.game.protein >= self.upgrade_cost and self.stage < 2:

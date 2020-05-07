@@ -176,7 +176,7 @@ class Game(Display):
 
         for i in self.level_data["waves"][self.wave]:
             self.starts.append(
-                Start(self.clock, self, i["start"], i["enemy_type"], i["enemy_count"],
+                Start(self, i["start"], i["enemy_type"], i["enemy_count"],
                       i["spawn_delay"], i["spawn_rate"]))
 
         self.wave += 1
@@ -435,8 +435,8 @@ class Game(Display):
         return -1
     
 class Start():
-    def __init__(self, clock, game, start, enemy_type, enemy_count, spawn_delay, spawn_rate):
-        self.clock = clock
+    def __init__(self, game, start, enemy_type, enemy_count, spawn_delay, spawn_rate):
+        self.clock = game.clock
         self.game = game
         self.start = start
         self.rect = game.start_data[start]
@@ -459,7 +459,6 @@ class Start():
         self.time_passed += self.clock.get_time()
         if (self.time_passed >= self.next_spawn and (self.infinity or self.enemy_count > 0)):
             self.game.enemies.add(Enemy(
-                clock = self.clock,
                 game = self.game,
                 x = self.rect.x + random.randrange(1, self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width()),
                 y = self.rect.y + random.randrange(1, self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height()),
