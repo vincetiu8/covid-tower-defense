@@ -156,8 +156,8 @@ class Tower(Obstacle):
                         else:
                             Projectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage)
 
-                self.sound.play()
-                self.next_spawn = pg.time.get_ticks() + self.attack_speed * 1000
+                    self.sound.play()
+                    self.next_spawn = pg.time.get_ticks() + self.attack_speed * 1000
 
         if not self.area_of_effect and self.current_enemy == None:
             self.search_for_enemy()
