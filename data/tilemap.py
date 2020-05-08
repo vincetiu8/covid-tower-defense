@@ -143,10 +143,9 @@ class Camera():
         if (amount > 0 and self.current_zoom >= self.minzoom * 4 or amount < 0 and self.current_zoom <= self.minzoom):
             return False
 
-        self.current_zoom += amount
-
-        center = self.correct_mouse((self.width / 2, self.height / 2))
+        center = self.correct_mouse((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
         self.move(-amount * center[0], -amount * center[1])
+        self.current_zoom += amount
 
     def move(self, x, y):
         self.camera = self.camera.move(x, y)
