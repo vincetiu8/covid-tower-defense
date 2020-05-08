@@ -90,13 +90,17 @@ class Game(Display):
                                        pg.Rect(tile_object.x, tile_object.y, tile_object.width, tile_object.height))
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
-                        self.map.set_valid_tower_tile(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
-                                                      tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
-                                                      0)  # make start tile a wall so you can't place a tower on it
-                        # this does not affect the path finding algo
+                        self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
+                                            tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
+                                            1)  # make start tile a wall so you can't place a tower on it
+                                                # this does not affect the path finding algo
             if tile_object.name == "goal":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
+                        self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
+                                            tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
+                                            1)  # make start tile a wall so you can't place a tower on it
+                                                # this does not affect the path finding algo
                         Goal(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "wall":
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
