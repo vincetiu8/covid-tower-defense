@@ -197,11 +197,13 @@ class Game(Display):
         for goal in self.goals:
             pg.draw.rect(self, GREEN, self.camera.apply_rect(goal.rect))
 
-        self.blit(self.camera.apply_image(self.path_surf), self.camera.apply_rect(self.path_surf.get_rect()))
+        self.blit(self.camera.apply_image(self.path_surf), self.camera.apply_tuple((0, 0)))
         self.blit(self.camera.apply_image(self.tower_bases_surf),
                      self.camera.apply_rect(self.tower_bases_surf.get_rect()))
 
         for tower in self.towers:
+            if tower.area_of_effect or not tower.rotating:
+                continue
             rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             self.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
@@ -217,6 +219,8 @@ class Game(Display):
 
         for projectile in self.projectiles:
             self.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
+
+        self.blit(self.camera.apply_image(self.aoe_surf), self.camera.apply_tuple((0, 0)))
 
         if self.current_tower != None:
             self.draw_tower_preview()
@@ -290,8 +294,15 @@ class Game(Display):
     def draw_tower_bases(self, surface):
         self.tower_bases_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
         self.tower_bases_surf.fill((0, 0, 0, 0))
+        self.aoe_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
+        self.aoe_surf.fill((0, 0, 0, 0))
         for tower in self.towers:
             self.tower_bases_surf.blit(tower.base_image, tower.rect)
+            if tower.area_of_effect:
+                s = pg.Surface(tower.aoe_sprite.rect.size, pg.SRCALPHA)
+                s.fill(AURA_COLORS[tower.aura_color])
+                self.aoe_surf.blit(s, tower.aoe_sprite.rect, special_flags=pg.BLEND_RGBA_MAX)
+
 
     def draw_tower_preview(self):
         mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
@@ -358,8 +369,8 @@ class Game(Display):
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
                 if self.map.get_node(x_coord, y_coord) == 1:
-                    self.map.upgrade_tower(x_coord, y_coord)  # don't need to upgrade tower if clicking on empty space
-                    self.draw_tower_bases(self)
+                    if self.map.upgrade_tower(x_coord, y_coord):
+                        self.draw_tower_bases(self)
                     return -1
 
                 if self.map.is_valid_tower_tile(x_coord, y_coord) == 0:

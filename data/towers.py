@@ -81,19 +81,31 @@ class Tower(Obstacle):
 
     def load_tower_data(self):
         data = TOWER_DATA[self.name]["stages"][self.stage]
-        self.bullet_spawn_speed = data["bullet_spawn_speed"]
-        self.bullet_speed = data["bullet_speed"]
-        self.bullet_lifetime = data["bullet_lifetime"]
         self.slow_speed = data["slow_speed"]
         self.slow_duration = data["slow_duration"]
         self.damage = data["damage"]
         self.range = data["range"]
         self.base_image = data["base_image"]
-        self.gun_image = data["gun_image"]
-        self.bullet_image = data["bullet_image"]
-        self.directions = data["directions"]
-        self.rotating = data["rotating"]
-        self.tracking = data["tracking"]
+        self.attack_speed = data["attack_speed"]
+        self.area_of_effect = data["area_of_effect"]
+        if self.area_of_effect:
+            self.aoe_sprite = pg.sprite.Sprite()
+            self.aoe_sprite.rect = self.rect.copy()
+            self.aoe_sprite.rect.x -= (self.range - self.game.map.tilesize) / 2
+            self.aoe_sprite.rect.y -= (self.range - self.game.map.tilesize) / 2
+            self.aoe_sprite.rect.width = self.aoe_sprite.rect.height = self.range
+            self.aura_color = data["aura_color"]
+
+        else:
+            self.bullet_speed = data["bullet_speed"]
+            self.bullet_lifetime = data["bullet_lifetime"]
+            self.rotating = data["rotating"]
+            self.tracking = data["tracking"]
+            self.bullet_image = data["bullet_image"]
+            self.directions = data["directions"]
+            if self.rotating:
+                self.gun_image = data["gun_image"]
+
         self.sound = pg.mixer.Sound(data["shoot_sound_path"])
 
         if (self.stage < 2):
@@ -101,44 +113,53 @@ class Tower(Obstacle):
             self.upgrade_cost = data["upgrade_cost"]
 
     def update(self):
-        if (self.time_passed >= self.next_spawn and self.current_enemy != None):
-            enemy_center = self.current_enemy.rect.center
-            if (not self.current_enemy.damagable or not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.rect.x, self.rect.y)) > self.range):
-                self.current_enemy = None
-            else:
-                if self.rotating:
-                    temp_x = enemy_center[0]
-                    temp_y = enemy_center[1]
+        if pg.time.get_ticks() >= self.next_spawn:
+            if self.area_of_effect:
+                hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.enemies, False)
+                if (hits):
+                    for hit in hits:
+                        hit.hp -= self.damage
+                        if self.slow_speed != 1:
+                            hits[0].slow(self.slow_speed, self.slow_duration)
+                    self.sound.play()
+                    self.next_spawn = pg.time.get_ticks() + self.attack_speed * 1000
 
-                    if (temp_x - self.rect.x == 0):
-                        if (temp_y - self.rect.y > 0):
-                            angle = math.pi / 2
+            elif self.current_enemy != None:
+                enemy_center = self.current_enemy.rect.center
+                if (not self.current_enemy.damagable or not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.rect.x, self.rect.y)) > self.range):
+                    self.current_enemy = None
+                else:
+                    if self.rotating:
+                        temp_x = enemy_center[0]
+                        temp_y = enemy_center[1]
+
+                        if (temp_x - self.rect.x == 0):
+                            if (temp_y - self.rect.y > 0):
+                                angle = math.pi / 2
+                            else:
+                                angle = math.pi / 2 * 3
+
                         else:
-                            angle = math.pi / 2 * 3
+                            angle = math.atan((temp_y - self.rect.y) / (temp_x - self.rect.x))
+                            if (temp_x - self.rect.x < 0):
+                                angle += math.pi
 
-                    else:
-                        angle = math.atan((temp_y - self.rect.y) / (temp_x - self.rect.x))
-                        if (temp_x - self.rect.x < 0):
-                            angle += math.pi
+                        self.rotation = 180 - math.degrees(angle)
 
-                    self.rotation = 180 - math.degrees(angle)
+                    rotation = self.rotation
+                    increment = math.pi * 2 / self.directions
+                    for i in range(self.directions):
+                        rotation += increment
+                        if self.tracking:
+                            TrackingProjectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed,
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.current_enemy)
+                        else:
+                            Projectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage)
 
-                rotation = self.rotation
-                increment = math.pi * 2 / self.directions
-                for i in range(self.directions):
-                    rotation += increment
-                    if self.tracking:
-                        TrackingProjectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed,
-                                   self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.current_enemy)
-                    else:
-                        Projectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage)
+                    self.sound.play()
+                    self.next_spawn = pg.time.get_ticks() + self.attack_speed * 1000
 
-                self.sound.play()
-                self.shot = True
-                self.time_passed = 0
-                self.next_spawn = self.bullet_spawn_speed * 1000
-
-        if (self.current_enemy == None):
+        if not self.area_of_effect and self.current_enemy == None:
             self.search_for_enemy()
             
         self.time_passed += self.clock.get_time()

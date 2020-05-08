@@ -70,14 +70,14 @@ class DevClass(Game):
         self.ui.new_attr(Attribute("tower_name", {
             "type": "select",
             "values": self.tower_names
-        }, self.current_tower))
+        }, self.current_tower, reload_on_change=True))
         self.ui.new_attr(Attribute("tower_stage", {
             "type": "float",
             "min": 0,
             "max": 2,
             "dp": 0,
             "increment": 1
-        }, self.current_stage))
+        }, self.current_stage, reload_on_change=True))
 
     def reload_towers(self):
         for x, list in enumerate(self.map.get_tower_map()):
@@ -117,6 +117,8 @@ class DevClass(Game):
                      self.tower_bases_surf.get_rect())
 
         for tower in self.towers:
+            if tower.area_of_effect or not tower.rotating:
+                continue
             rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             surface.blit(rotated_image, new_rect)
@@ -133,6 +135,7 @@ class DevClass(Game):
         for projectile in self.projectiles:
             surface.blit(projectile.image, projectile.rect)
 
+        surface.blit(self.aoe_surf, (0, 0))
         surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         surf.blit(self.camera.apply_image((surface)), self.camera.apply_tuple((0, 0)))
 
@@ -162,12 +165,6 @@ class DevClass(Game):
 
         elif isinstance(result, str):
             return result
-        
-        elif isinstance(result, Attribute):
-            name = result.name
-
-            if name == "tower_name" or name == "tower_level" or name == "enemy_name":
-                return -3
 
         return -2
 
@@ -193,8 +190,22 @@ class TowerPreview(DevClass):
         for attr in ATTR_DATA["tower"]:
             self.ui.new_attr(Attribute(attr, ATTR_DATA["tower"][attr], TOWER_DATA[self.tower_names[self.current_tower]][attr]))
 
+        ignore = []
         for attr in ATTR_DATA["stage"]:
-            self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr], TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr]))
+            if attr in ignore:
+                continue
+            if ATTR_DATA["stage"][attr]["type"] == "bool" and "ignore_if_true" in ATTR_DATA["stage"][attr] or "ignore_if_false" in ATTR_DATA["stage"][attr]:
+                self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr],
+                                           TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
+                                               self.current_stage][attr], reload_on_change=True))
+                if "ignore_if_true" in ATTR_DATA["stage"][attr] and TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr]:
+                    ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_true"])
+                elif "ignore_if_false" in ATTR_DATA["stage"][attr] and not TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr]:
+                    ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_false"])
+            else:
+                self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr],
+                                           TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
+                                               self.current_stage][attr]))
 
         self.reload_enemies()
         self.reload_towers()
@@ -235,10 +246,7 @@ class TowerPreview(DevClass):
                 self.load_ui()
             else:
                 self.reload_attrs()
-
-        elif result == -3:
-            self.reload_attrs()
-            self.load_ui()
+                self.load_ui()
 
         elif result == -2:
             self.reload_attrs()
@@ -323,15 +331,12 @@ class EnemyPreview(DevClass):
         if isinstance(result, str):
             if result == "menu":
                 return result
-            elif result == "new_enemy_name":
-                self.create_new_enemy()
+            elif result == "new_tower_name":
+                self.create_new_tower()
                 self.load_ui()
             else:
                 self.reload_attrs()
-
-        elif result == -3:
-            self.reload_attrs()
-            self.load_ui()
+                self.load_ui()
 
         elif result == -2:
             self.reload_attrs()
@@ -483,16 +488,15 @@ class LevelPreview(DevClass):
 
     def event(self, event):
         result = super().event(event)
-        
         if isinstance(result, str):
             if result == "menu":
                 return result
+            elif result == "new_tower_name":
+                self.create_new_tower()
+                self.load_ui()
             else:
                 self.reload_attrs()
-
-        elif result == -3:
-            self.reload_attrs()
-            self.load_ui()
+                self.load_ui()
 
         elif result == -2:
             self.reload_attrs()
@@ -568,7 +572,7 @@ class DevUI():
         width += self.done_button_rect.width + MENU_OFFSET
 
         temp_surf = pg.Surface((width, self.save_button_rect.height))
-        temp_surf.fill(DARKGREY)
+        temp_surf.fill(DARK_GREY)
         t_width = MENU_OFFSET
         for save_surf in [save_button, done_button]:
             temp_surf.blit(save_surf, (t_width, 0))
@@ -604,7 +608,7 @@ class DevUI():
                 surf_list.insert(-1, attr_surf)
 
         surf = pg.Surface((width + MENU_OFFSET, height))
-        surf.fill(DARKGREY)
+        surf.fill(DARK_GREY)
         height = MENU_OFFSET
         for attr in surf_list:
             surf.blit(attr, (MENU_OFFSET, height))
@@ -661,18 +665,24 @@ class DevUI():
                         json.dump(TOWER_DATA, out_file, indent=4)
                     for tower in TOWER_DATA:
                         for stage in range(3):
-                            TOWER_DATA[tower]["stages"][stage]["gun_image"] = pg.image.load(
-                                path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(stage) + ".png"))
                             TOWER_DATA[tower]["stages"][stage]["base_image"] = pg.image.load(
                                 path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(stage) + ".png"))
-                            TOWER_DATA[tower]["stages"][stage]["bullet_image"] = pg.image.load(
-                                path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(stage) + ".png"))
                             TOWER_DATA[tower]["stages"][stage]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER,
-                                                                                     "{}.wav".format(tower))
+                                                                                               "{}.wav".format(tower))
+
                             temp_base = TOWER_DATA[tower]["stages"][stage]["base_image"].copy()
-                            temp_base.blit(TOWER_DATA[tower]["stages"][stage]["gun_image"],
-                                           TOWER_DATA[tower]["stages"][stage]["gun_image"].get_rect(
-                                               center=TOWER_DATA[tower]["stages"][stage]["base_image"].get_rect().center))
+                            base = TOWER_DATA[tower]["stages"][stage]["base_image"]
+                            if not TOWER_DATA[tower]["stages"][stage]["area_of_effect"]:
+                                TOWER_DATA[tower]["stages"][stage]["bullet_image"] = pg.image.load(
+                                    path.join(TOWERS_IMG_FOLDER, tower + "_bullet" + str(stage) + ".png"))
+
+                                if TOWER_DATA[tower]["stages"][stage]["rotating"]:
+                                    TOWER_DATA[tower]["stages"][stage]["gun_image"] = pg.image.load(
+                                        path.join(TOWERS_IMG_FOLDER, tower + "_gun" + str(stage) + ".png"))
+                                    temp_base.blit(TOWER_DATA[tower]["stages"][stage]["gun_image"],
+                                                   TOWER_DATA[tower]["stages"][stage]["gun_image"].get_rect(
+                                                       center=base.get_rect().center))
+
                             TOWER_DATA[tower]["stages"][stage]["image"] = temp_base
                             
                     self.save_text = "Settings Saved!"
@@ -731,6 +741,8 @@ class DevUI():
                     else:
                         if attr.change_val(attr.current_value + event.unicode):
                             return_val = attr
+        if isinstance(return_val, Attribute) and return_val.reload_on_change:
+            return_val = return_val.name
                             
         if event.type == pg.USEREVENT + 1:
             self.save_text = "Save Settings"
@@ -740,7 +752,7 @@ class DevUI():
         return return_val
 
 class Attribute():
-    def __init__(self, name, data, value):
+    def __init__(self, name, data, value, reload_on_change = False):
         self.name = name
         self.data = data
         self.type = data["type"]
@@ -753,6 +765,7 @@ class Attribute():
             self.values = data["values"]
         elif self.type == "string":
             self.over = False
+        self.reload_on_change = reload_on_change
         self.change_val(value)
 
     def draw(self):
@@ -763,7 +776,7 @@ class Attribute():
                 if self.over:
                     attr_text = font.render("{}...".format(self.name), 1, WHITE)
                 else:
-                    attr_text = font.render("{}...".format(self.name), 1, LIGHTGREY)
+                    attr_text = font.render("{}...".format(self.name), 1, LIGHT_GREY)
             else:
                 attr_text = font.render(self.current_value, 1, WHITE)
             textbox = pg.transform.scale(LEVEL_BUTTON_IMG, (
@@ -848,7 +861,7 @@ class Attribute():
             width += surf.get_rect().width + MENU_OFFSET
 
         attr_surf = pg.Surface((width, attr_text.get_rect().height))
-        attr_surf.fill(DARKGREY)
+        attr_surf.fill(DARK_GREY)
 
         temp_w = MENU_OFFSET
         for surf in surf_list:
