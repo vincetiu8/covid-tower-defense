@@ -82,35 +82,35 @@
   <object id="68" name="start0" x="294" y="0" width="42" height="42"/>
   <object id="69" name="goal" x="588" y="294" width="42" height="42"/>
   <object id="70" name="wall" x="252" y="0" width="42" height="84"/>
-  <object id="71" name="wall" x="210" y="42" width="42" height="84"/>
-  <object id="72" name="wall" x="168" y="84" width="42" height="84"/>
-  <object id="73" name="wall" x="126" y="126" width="42" height="84"/>
-  <object id="74" name="wall" x="84" y="168" width="42" height="84"/>
-  <object id="75" name="wall" x="42" y="210" width="42" height="84"/>
-  <object id="76" name="wall" x="0" y="252" width="42" height="42"/>
-  <object id="77" name="wall" x="42" y="336" width="42" height="84"/>
+  <object id="71" name="wall" x="210" y="0" width="42" height="126"/>
+  <object id="72" name="wall" x="168" y="0" width="42" height="168"/>
+  <object id="73" name="wall" x="126" y="0" width="42" height="210"/>
+  <object id="74" name="wall" x="84" y="0" width="42" height="252"/>
+  <object id="75" name="wall" x="42" y="0" width="42" height="294"/>
+  <object id="76" name="wall" x="0" y="0" width="42" height="294"/>
+  <object id="77" name="wall" x="42" y="336" width="42" height="126"/>
   <object id="78" name="wall" x="84" y="378" width="42" height="84"/>
   <object id="79" name="wall" x="126" y="420" width="84" height="42"/>
-  <object id="80" name="wall" x="168" y="462" width="42" height="84"/>
-  <object id="81" name="wall" x="210" y="504" width="42" height="84"/>
+  <object id="80" name="wall" x="0" y="462" width="210" height="168"/>
+  <object id="81" name="wall" x="210" y="504" width="42" height="126"/>
   <object id="82" name="wall" x="252" y="546" width="42" height="84"/>
-  <object id="83" name="wall" x="294" y="588" width="84" height="42"/>
-  <object id="84" name="wall" x="336" y="546" width="84" height="42"/>
-  <object id="85" name="wall" x="378" y="504" width="84" height="42"/>
-  <object id="86" name="wall" x="420" y="462" width="84" height="42"/>
-  <object id="87" name="wall" x="462" y="420" width="84" height="42"/>
-  <object id="88" name="wall" x="504" y="378" width="84" height="42"/>
+  <object id="83" name="wall" x="294" y="588" width="336" height="42"/>
+  <object id="84" name="wall" x="336" y="546" width="294" height="42"/>
+  <object id="85" name="wall" x="378" y="504" width="252" height="42"/>
+  <object id="86" name="wall" x="420" y="462" width="210" height="42"/>
+  <object id="87" name="wall" x="462" y="420" width="168" height="42"/>
+  <object id="88" name="wall" x="504" y="378" width="126" height="42"/>
   <object id="89" name="wall" x="546" y="336" width="84" height="42"/>
   <object id="90" name="wall" x="546" y="252" width="84" height="42"/>
-  <object id="91" name="wall" x="504" y="210" width="84" height="42"/>
-  <object id="92" name="wall" x="378" y="168" width="168" height="42"/>
+  <object id="91" name="wall" x="504" y="210" width="126" height="42"/>
+  <object id="92" name="wall" x="378" y="168" width="252" height="42"/>
   <object id="93" name="wall" x="336" y="210" width="126" height="42"/>
   <object id="94" name="wall" x="294" y="252" width="126" height="42"/>
   <object id="95" name="wall" x="294" y="294" width="84" height="42"/>
-  <object id="96" name="wall" x="420" y="84" width="42" height="84"/>
-  <object id="97" name="wall" x="378" y="42" width="42" height="84"/>
+  <object id="96" name="wall" x="420" y="0" width="210" height="168"/>
+  <object id="97" name="wall" x="378" y="0" width="42" height="126"/>
   <object id="98" name="wall" x="336" y="0" width="42" height="84"/>
-  <object id="99" name="wall" x="0" y="336" width="42" height="42"/>
+  <object id="99" name="wall" x="0" y="336" width="42" height="126"/>
   <object id="100" name="start1" x="0" y="294" width="42" height="42"/>
  </objectgroup>
 </map>
