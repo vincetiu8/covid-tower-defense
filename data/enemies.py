@@ -19,6 +19,7 @@ class Enemy(pg.sprite.Sprite):
         self.original_image = data["image"]
         self.raw_image = self.original_image
         self.sound = pg.mixer.Sound(data["death_sound_path"])
+        self.flying = data["flying"]
         
         self.image = data["image"].copy()
         self.image_size = self.image.get_size()[0]
@@ -90,7 +91,7 @@ class Enemy(pg.sprite.Sprite):
         return pg.Rect(x, y, w, h)
 
     def recreate_path(self):
-        self.path = self.game.pathfinder.astar((self.new_node[0], self.new_node[1]), self.game.goals)
+        self.path = self.game.pathfinder.astar((self.new_node[0], self.new_node[1]), self.game.goals, self.flying)
         self.load_next_node()
 
     def load_next_node(self):

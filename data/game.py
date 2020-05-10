@@ -94,7 +94,7 @@ class Game(Display):
                                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
                                             1)  # make start tile a wall so you can't place a tower on it
                                                 # this does not affect the path finding algo
-            if tile_object.name == "goal":
+            elif tile_object.name == "goal":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
@@ -102,9 +102,9 @@ class Game(Display):
                                             1)  # make start tile a wall so you can't place a tower on it
                                                 # this does not affect the path finding algo
                         Goal(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
-            if tile_object.name == "wall":
+            elif tile_object.name == "wall":
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
-            if tile_object.name == "artery":
+            elif tile_object.name == "artery":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         arteries[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
@@ -125,16 +125,16 @@ class Game(Display):
                         vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
 
-        self.new_wave()
         self.pathfinder = Pathfinder(
             arteries = arteries,
             artery_entrances = artery_entrances,
             veins = veins,
-            vein_entrances = vein_entrances
+            vein_entrances = vein_entrances,
+            base_map = self.map.get_map()
         )
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
-        self.make_stripped_path(self)
+        self.new_wave()
         self.draw_tower_bases(self)
         self.ui = UI(self, 200, 10)
 
@@ -184,7 +184,7 @@ class Game(Display):
                       i["spawn_delay"], i["spawn_rate"]))
 
         self.wave += 1
-
+        self.make_stripped_path(self)
     #     def draw_grid(self):
     #         for x in range(0, self.map.width, self.map.tilesize):
     #             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, self.map.height))
@@ -255,7 +255,8 @@ class Game(Display):
             ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
             for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
                 for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
-                    path = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals)
+                    flying = ENEMY_DATA[start.enemy_type]["flying"]
+                    path = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, flying)
                     self.stripped_path = []
                     for i, node in enumerate(path):
                         if (i < len(path) - 1):
@@ -292,7 +293,13 @@ class Game(Display):
                             else:
                                 print("PATH DRAWING ERROR")  # this should never occur
 
-                            self.path_surf.blit(image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize,
+                            if flying:
+                                new_image = image.copy()
+                                new_image.fill(GREEN, None, pg.BLEND_RGBA_MULT)
+                                print(node)
+                            else:
+                                new_image = image
+                            self.path_surf.blit(new_image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize,
                                                                self.map.tilesize, self.map.tilesize))
 
     def draw_tower_bases(self, surface):
@@ -306,7 +313,6 @@ class Game(Display):
                 s = pg.Surface(tower.aoe_sprite.rect.size, pg.SRCALPHA)
                 s.fill(AURA_COLORS[tower.aura_color])
                 self.aoe_surf.blit(s, tower.aoe_sprite.rect, special_flags=pg.BLEND_RGBA_MAX)
-
 
     def draw_tower_preview(self):
         mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
@@ -328,7 +334,7 @@ class Game(Display):
                 self.pathfinder.clear_nodes(self.map.get_map())
                 result = self.pathfinder.astar(((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
                                                  tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
-                                               self.goals)
+                                               self.goals, False)
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize),
                                      tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
                 self.pathfinder.clear_nodes(self.map.get_map())
@@ -391,7 +397,7 @@ class Game(Display):
                 for start in self.starts:
                     path = self.pathfinder.astar(((tile_from_xcoords(start.rect.x, self.map.tilesize),
                                                    tile_from_xcoords(start.rect.y, self.map.tilesize)), 0),
-                                                 self.goals)
+                                                 self.goals, ENEMY_DATA[start.enemy_type]["flying"])
                     if path == False:
                         self.map.change_node(x_coord, y_coord, 0)
                         self.pathfinder.clear_nodes(self.map.get_map())

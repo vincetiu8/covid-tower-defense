@@ -23,6 +23,10 @@
       "increment": 1,
       "dp": 0,
       "default": 3
+    },
+    "flying": {
+      "type": "bool",
+      "default": "false"
     }
   },
   "tower": {
