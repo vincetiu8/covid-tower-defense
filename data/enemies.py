@@ -20,6 +20,14 @@ class Enemy(pg.sprite.Sprite):
         self.raw_image = self.original_image
         self.sound = pg.mixer.Sound(data["death_sound_path"])
         self.flying = data["flying"]
+        if data["shield"]:
+            self.shield = True
+            self.shield_max_hp = data["shield_hp"]
+            self.shield_hp = data["shield_hp"]
+            self.shield_max_recharge_delay = data["shield_recharge_delay"]
+            self.shield_recharge_rate = data["shield_recharge_rate"]
+        else:
+            self.shield = False
         
         self.image = data["image"].copy()
         self.image_size = self.image.get_size()[0]
@@ -35,18 +43,21 @@ class Enemy(pg.sprite.Sprite):
 
         self.slowed = False
         self.slow_end = 0
+        self.shield_end = 0
         
         self.recreate_path()
 
     def update(self):
-        if (self.hp <= 0):
-            self.sound.play()
-            self.game.protein += self.dropped_protein
-            self.kill()
-            return
-
         passed_time = self.clock.get_time() / 1000
         self.slow_end -= passed_time
+
+        if self.shield and self.shield_hp != self.shield_max_hp:
+            if self.shield_recharge_delay <= 0:
+                self.shield_hp += 1
+                self.shield_recharge_delay = self.shield_recharge_rate
+
+            else:
+                self.shield_recharge_delay -= passed_time
 
         if self.slowed and self.slow_end <= 0:
             self.reset_speed()
@@ -83,12 +94,40 @@ class Enemy(pg.sprite.Sprite):
         if (self.new_node_rect.collidepoint(self.rect.topleft) and self.new_node_rect.collidepoint(self.rect.bottomright)):
             self.load_next_node()
 
-    def get_hp_rect(self):
-        h = 5
-        w = self.hp * 2
-        x = self.rect.x + (self.game.map.tilesize - w) / 2
-        y = self.rect.y - 12
-        return pg.Rect(x, y, w, h)
+    def damage(self, amount):
+        if self.shield and self.shield_hp > 0:
+            self.shield_recharge_delay = self.shield_max_recharge_delay
+            if amount > self.shield_hp:
+                self.shield_hp = 0
+                self.hp -= amount - self.shield_hp
+            else:
+                self.shield_hp -= amount
+
+        else:
+            self.hp -= amount
+
+        if (self.hp <= 0):
+            self.sound.play()
+            self.game.protein += self.dropped_protein
+            self.kill()
+
+    def get_hp_surf(self):
+        hp_surf = pg.Surface((self.hp * 2, 5))
+        if self.is_slowed():
+            hp_surf.fill(RED)
+        else:
+            hp_surf.fill(GREEN)
+
+        if not self.shield:
+            return hp_surf
+
+        shield_surf = pg.Surface((self.shield_hp * 2, 5))
+        shield_surf.fill(CYAN)
+        combo_surf = pg.Surface((max(self.shield_hp, self.hp) * 2, 10)).convert_alpha()
+        combo_surf.fill((0, 0, 0, 0))
+        combo_surf.blit(hp_surf, hp_surf.get_rect(center=(combo_surf.get_rect().center[0], 7)))
+        combo_surf.blit(shield_surf, shield_surf.get_rect(center=(combo_surf.get_rect().center[0], 2)))
+        return combo_surf
 
     def recreate_path(self):
         self.path = self.game.pathfinder.astar((self.new_node[0], self.new_node[1]), self.game.goals, self.flying)

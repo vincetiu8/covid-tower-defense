@@ -8,6 +8,35 @@
       "dp": 0,
       "default": 5
     },
+    "shield": {
+      "type": "bool",
+      "ignore_if_false": ["shield_hp", "shield_recharge_delay", "shield_recharge_rate"],
+      "default": false
+    },
+    "shield_hp": {
+      "type": "float",
+      "min": 1,
+      "max": 10000,
+      "increment": 1,
+      "dp": 0,
+      "default": 5
+    },
+    "shield_recharge_delay": {
+      "type": "float",
+      "min": 0.05,
+      "max": 10,
+      "increment": 0.05,
+      "dp": 2,
+      "default": 1
+    },
+    "shield_recharge_rate": {
+      "type": "float",
+      "min": 0.05,
+      "max": 10,
+      "increment": 0.05,
+      "dp": 2,
+      "default": 0.1
+    },
     "speed": {
       "type": "float",
       "min": 10,
@@ -26,7 +55,7 @@
     },
     "flying": {
       "type": "bool",
-      "default": "false"
+      "default": false
     }
   },
   "tower": {

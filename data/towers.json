@@ -15,8 +15,7 @@
                 "directions": 1,
                 "rotating": true,
                 "tracking": true,
-                "at": 2,
-                "scroll_position": 1
+                "at": 2
             },
             {
                 "damage": 3,
@@ -44,8 +43,7 @@
                 "upgrade_cost": 10,
                 "directions": 1,
                 "rotating": true,
-                "tracking": true,
-                "scroll_position": 1
+                "tracking": true
             }
         ]
     },
@@ -65,8 +63,7 @@
                 "directions": 4,
                 "rotating": false,
                 "tracking": false,
-                "at": 0,
-                "scroll_position": 1
+                "at": 0
             },
             {
                 "damage": 4,
@@ -80,8 +77,7 @@
                 "upgrade_cost": 10,
                 "directions": 4,
                 "rotating": false,
-                "tracking": false,
-                "scroll_position": 1
+                "tracking": false
             },
             {
                 "damage": 5,
@@ -95,8 +91,7 @@
                 "upgrade_cost": 10,
                 "directions": 4,
                 "rotating": true,
-                "tracking": false,
-                "scroll_position": 1
+                "tracking": false
             }
         ]
     },
@@ -115,8 +110,7 @@
                 "upgrade_cost": 20,
                 "directions": 1,
                 "rotating": true,
-                "tracking": true,
-                "scroll_position": 1
+                "tracking": true
             },
             {
                 "damage": 0,
@@ -130,8 +124,7 @@
                 "upgrade_cost": 20,
                 "directions": 1,
                 "rotating": true,
-                "tracking": true,
-                "scroll_position": 1
+                "tracking": true
             },
             {
                 "damage": 0,
@@ -145,8 +138,7 @@
                 "upgrade_cost": 15,
                 "directions": 1,
                 "rotating": true,
-                "tracking": true,
-                "scroll_position": 1
+                "tracking": true
             }
         ]
     },
@@ -161,8 +153,7 @@
                 "range": 150,
                 "upgrade_cost": 50,
                 "slow_speed": 1,
-                "slow_duration": 0,
-                "scroll_position": 1
+                "slow_duration": 0
             },
             {
                 "damage": 2,

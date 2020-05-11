@@ -130,14 +130,13 @@ class DevClass(Game):
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             surface.blit(rotated_image, new_rect)
 
+        total_hp_surf = pg.Surface((self.map.width, self.map.height)).convert_alpha()
+        total_hp_surf.fill((0, 0, 0, 0))
         for enemy in self.enemies:
             surface.blit(enemy.image, enemy.rect)
-            
-            hp_color = GREEN
-            if enemy.is_slowed():
-                hp_color = RED
-                
-            pg.draw.rect(surface, hp_color, enemy.get_hp_rect())
+            hp_surf = enemy.get_hp_surf()
+            total_hp_surf.blit(hp_surf, hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - enemy.image_size // 2 - 10)))
+        surface.blit(total_hp_surf, (0, 0))
 
         for projectile in self.projectiles:
             surface.blit(projectile.image, projectile.rect)
@@ -210,9 +209,12 @@ class TowerPreview(DevClass):
                 elif "ignore_if_false" in ATTR_DATA["stage"][attr] and not TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr]:
                     ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_false"])
             else:
-                self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr],
-                                           TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
-                                               self.current_stage][attr]))
+                try:
+                    self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr],
+                                               TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
+                                                   self.current_stage][attr]))
+                except:
+                    self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr], ATTR_DATA["stage"][attr]["default"]))
 
         self.reload_enemies()
         self.reload_towers()
@@ -322,8 +324,11 @@ class EnemyPreview(DevClass):
                 ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]:
                     ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_false"])
             else:
-                self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
-                                           ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
+                try:
+                    self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
+                                               ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
+                except:
+                    self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr], ATTR_DATA["enemy"][attr]["default"]))
         self.reload_enemies()
         self.reload_towers()
         self.get_attr_surf()
@@ -649,6 +654,8 @@ class DevUI():
                     for i, level in enumerate(LEVEL_DATA):
                         if "enemies" in level:
                             level.pop("enemies")
+                        if "scroll_position" in level:
+                            level.pop("scroll_position")
                         with open(path.join(LEVELS_FOLDER, "level{}.json".format(i)), 'w') as out_file:
                             json.dump(level, out_file, indent=4)
                     for level in LEVEL_DATA:
@@ -660,6 +667,8 @@ class DevUI():
                                     enemies.append(enemy)
                         level["enemies"] = enemies
                     for enemy in ENEMY_DATA:
+                        if "scroll_position" in enemy:
+                            enemy.pop("scroll_position")
                         if "image" in ENEMY_DATA[enemy]:
                             ENEMY_DATA[enemy].pop("image")
                         if "death_sound_path" in ENEMY_DATA[enemy]:
@@ -671,17 +680,21 @@ class DevUI():
                             path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
                         ENEMY_DATA[enemy]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy))
                     for tower in TOWER_DATA:
+                        if "scroll_position" in tower:
+                            tower.pop("scroll_position")
                         for stage in range(3):
+                            if "scroll_position" in TOWER_DATA[tower]["stages"][stage]:
+                                TOWER_DATA[tower]["stages"][stage].pop("scroll_position")
                             if "gun_image" in TOWER_DATA[tower]["stages"][stage]:
-                                TOWER_DATA[tower]["stages"][stage].pop("gun_image", None)
+                                TOWER_DATA[tower]["stages"][stage].pop("gun_image")
                             if "base_image" in TOWER_DATA[tower]["stages"][stage]:
-                                TOWER_DATA[tower]["stages"][stage].pop("base_image", None)
+                                TOWER_DATA[tower]["stages"][stage].pop("base_image")
                             if "bullet_image" in TOWER_DATA[tower]["stages"][stage]:
-                                TOWER_DATA[tower]["stages"][stage].pop("bullet_image", None)
+                                TOWER_DATA[tower]["stages"][stage].pop("bullet_image")
                             if "shoot_sound_path" in TOWER_DATA[tower]["stages"][stage]:
-                                TOWER_DATA[tower]["stages"][stage].pop("shoot_sound_path", None)
+                                TOWER_DATA[tower]["stages"][stage].pop("shoot_sound_path")
                             if "image" in TOWER_DATA[tower]["stages"][stage]:
-                                TOWER_DATA[tower]["stages"][stage].pop("image", None)
+                                TOWER_DATA[tower]["stages"][stage].pop("image")
                     with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
                         json.dump(TOWER_DATA, out_file, indent=4)
                     for tower in TOWER_DATA:

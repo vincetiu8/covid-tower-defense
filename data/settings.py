@@ -22,6 +22,7 @@ ZOOM_AMT_MENU = 0.1
 
 # define some colors (R, G, B)
 WHITE = pg.Color(255, 255, 255)
+CYAN = pg.Color(0, 255, 255)
 BLACK = pg.Color(0, 0, 0)
 DARK_GREY = pg.Color(40, 40, 40)
 LIGHT_GREY = pg.Color(100, 100, 100)
