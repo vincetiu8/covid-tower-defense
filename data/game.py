@@ -35,6 +35,7 @@ class Game(Display):
         super().__init__()
         self.clock = clock
         self.paused = False
+        self.in_a_wave = False
         self.starts = []
         self.game_done_event = pg.event.Event(pg.USEREVENT)
 
@@ -71,11 +72,13 @@ class Game(Display):
         self.protein = PROTEIN
         self.lives = LIVES
 
-        self.wave = 0  # only updated at the end of new_wave()
+        self.wave = -1  # only updated at the start of prepare_next_wave()
         self.cause_of_death = "IB"
         self.start_data = []
         self.map.clear_map()
         self.buy_sound = pg.mixer.Sound(AUDIO_BUY_PATH)
+        
+        self.time_passed = 0
 
         width = round(self.map.width / self.map.tilesize)
         height = round(self.map.height / self.map.tilesize)
@@ -124,8 +127,7 @@ class Game(Display):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
-
-        self.new_wave()
+                        
         self.pathfinder = Pathfinder(
             arteries = arteries,
             artery_entrances = artery_entrances,
@@ -137,6 +139,8 @@ class Game(Display):
         self.make_stripped_path(self)
         self.draw_tower_bases(self)
         self.ui = UI(self, 200, 10)
+        
+        self.prepare_next_wave()
 
     def update(self):
         # update portion of the game loop
@@ -149,10 +153,15 @@ class Game(Display):
         
         if self.lives <= 0:
             pg.event.post(self.game_done_event)
+            
+        if not self.in_a_wave and self.wave > 0:
+            self.time_passed += self.clock.get_time()
+            if self.time_passed >= WAVE_DELAY * 1000:
+                self.start_next_wave()
 
-        if self.current_wave_done():
-            if self.wave < self.max_wave:
-                self.new_wave()
+        if self.current_wave_done() and self.in_a_wave:
+            if self.wave < self.max_wave - 1:
+                self.prepare_next_wave()                
             elif len(self.enemies) == 0:
                 pg.event.post(self.game_done_event)
 
@@ -174,16 +183,25 @@ class Game(Display):
             if not start.is_done_spawning():
                 return False
         return True
-
-    def new_wave(self):
+    
+    def prepare_next_wave(self):
+        self.wave += 1
+        self.in_a_wave = False
+        self.ui.set_next_wave_btn(True)
+        self.time_passed = 0
+        
         self.starts.clear()
-
         for i in self.level_data["waves"][self.wave]:
             self.starts.append(
                 Start(self, i["start"], i["enemy_type"], i["enemy_count"],
                       i["spawn_delay"], i["spawn_rate"]))
 
-        self.wave += 1
+    def start_next_wave(self):
+        self.in_a_wave = True
+        self.ui.set_next_wave_btn(False)
+
+        for start in self.starts:
+            start.enable_spawning()
 
     #     def draw_grid(self):
     #         for x in range(0, self.map.width, self.map.tilesize):
@@ -307,7 +325,6 @@ class Game(Display):
                 s.fill(AURA_COLORS[tower.aura_color])
                 self.aoe_surf.blit(s, tower.aoe_sprite.rect, special_flags=pg.BLEND_RGBA_MAX)
 
-
     def draw_tower_preview(self):
         mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
         towerxy = (
@@ -367,6 +384,12 @@ class Game(Display):
                         if temp_rect.collidepoint(event.pos):
                             self.current_tower = self.available_towers[i]
                             return -1
+                        
+                    next_wave_rect = self.ui.next_wave_rect.copy()
+                    next_wave_rect.x += self.get_size()[0] - self.ui.width
+                    
+                    if self.ui.next_wave_btn_enabled and next_wave_rect.collidepoint(event.pos):
+                        self.start_next_wave()
 
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
@@ -458,9 +481,12 @@ class Start():
         self.next_spawn = self.spawn_delay * 1000
         
         self.done_spawning = False
+        self.start_spawning = False
 
     def update(self):
-        self.time_passed += self.clock.get_time()
+        if self.start_spawning:
+            self.time_passed += self.clock.get_time()
+            
         if (self.time_passed >= self.next_spawn and (self.infinity or self.enemy_count > 0)):
             self.game.enemies.add(Enemy(
                 game = self.game,
@@ -476,6 +502,9 @@ class Start():
     
     def is_done_spawning(self):
         return self.done_spawning
+    
+    def enable_spawning(self):
+        self.start_spawning = True
     
     def get_rect(self):
         return self.rect
