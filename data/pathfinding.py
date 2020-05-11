@@ -27,15 +27,12 @@ class Pathfinder():
         else:
             self.neighbors = [(0, 1, 0), (0, -1, 0), (1, 0, 0), (-1, 0, 0), (0, 0, -1), (0, 0, 1)]
 
-        self.base_map = numpy.array(kwargs.get('base_map', None))
+        self.base_map = numpy.array(kwargs.get('base_map'))
 
     def clear_nodes(self, map):
         self.paths = {}
         self.flying_paths = {}
         self.map[0] = numpy.array(map)
-
-    def set_tower_map(self, map):
-        self.tower_map = map
 
     def astar(self, start, goals, ignore_towers):
         try:

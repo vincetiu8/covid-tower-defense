@@ -58,7 +58,13 @@ class DevClass(Game):
                                    Tower(self, tile_object.x, tile_object.y, self.tower_names[self.current_tower]))
 
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
-        self.pathfinder = Pathfinder()
+        base_map = deepcopy(self.map.get_map())
+        tower_map = self.map.get_tower_map()
+        for i, row in enumerate(base_map):
+            for j, cell in enumerate(row):
+                if tower_map[i][j] != None:
+                    base_map[i][j] = 0
+        self.pathfinder = Pathfinder(base_map = base_map)
         self.pathfinder.clear_nodes(self.map.get_map())
         self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
 
@@ -93,6 +99,7 @@ class DevClass(Game):
     def reload_enemies(self):
         for start in self.starts:
             start.enemy_type = self.enemy_names[self.current_enemy]
+        self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
 
     def update(self):
         for start in self.starts:
@@ -297,12 +304,26 @@ class EnemyPreview(DevClass):
         self.ui.new_attr(Attribute("enemy_name", {
             "type": "select",
             "values": self.enemy_names
-        }, self.current_enemy))
+        }, self.current_enemy, reload_on_change=True))
         self.ui.new_attr(Attribute("new_enemy_name", {"type": "string"}, ""))
 
+        ignore = []
         for attr in ATTR_DATA["enemy"]:
-            self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
-                                       ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
+            if attr in ignore:
+                continue
+            if ATTR_DATA["enemy"][attr]["type"] == "bool" and "ignore_if_true" in ATTR_DATA["enemy"][
+                attr] or "ignore_if_false" in ATTR_DATA["enemy"][attr]:
+                self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
+                                           ENEMY_DATA[self.enemy_names[self.current_enemy]][attr], reload_on_change=True))
+                if "ignore_if_true" in ATTR_DATA["enemy"][attr] and \
+                        ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]:
+                    ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_true"])
+                elif "ignore_if_false" in ATTR_DATA["enemy"][attr] and not \
+                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]:
+                    ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_false"])
+            else:
+                self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
+                                           ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
         self.reload_enemies()
         self.reload_towers()
         self.get_attr_surf()
@@ -331,8 +352,8 @@ class EnemyPreview(DevClass):
         if isinstance(result, str):
             if result == "menu":
                 return result
-            elif result == "new_tower_name":
-                self.create_new_tower()
+            elif result == "new_enemy_name":
+                self.create_new_enemy()
                 self.load_ui()
             else:
                 self.reload_attrs()
@@ -732,12 +753,13 @@ class DevUI():
         elif event.type == pg.KEYDOWN:
             for attr in self.attributes:
                 if attr.type == "string" and attr.over:
-                    if event.key == pg.K_BACKSPACE and attr.current_value != "":
-                        if attr.change_val(attr.current_value[:-1]):
+                    if event.key == pg.K_BACKSPACE:
+                        if attr.current_value != "" and attr.change_val(attr.current_value[:-1]):
                             return_val = attr
-                    elif event.key == pg.K_RETURN and attr.current_value != "":
-                        attr.over = False
-                        return_val = attr.name
+                    elif event.key == pg.K_RETURN:
+                        if attr.current_value != "":
+                            attr.over = False
+                            return_val = attr.name
                     else:
                         if attr.change_val(attr.current_value + event.unicode):
                             return_val = attr
