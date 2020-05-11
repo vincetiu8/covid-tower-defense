@@ -127,7 +127,10 @@ class Game(Display):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
-                        
+        
+        self.ui = UI(self, 200, 10)
+        self.prepare_next_wave()
+        
         self.pathfinder = Pathfinder(
             arteries = arteries,
             artery_entrances = artery_entrances,
@@ -138,9 +141,6 @@ class Game(Display):
         self.pathfinder.clear_nodes(self.map.get_map())
         self.make_stripped_path(self)
         self.draw_tower_bases(self)
-        self.ui = UI(self, 200, 10)
-        
-        self.prepare_next_wave()
 
     def update(self):
         # update portion of the game loop
