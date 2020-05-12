@@ -626,7 +626,7 @@ class DevUI():
         if self.max_attrs == 0:
             for attr in self.attributes[1:]:
                 attr_surf = attr.draw()
-                attr.fix_offset(MENU_OFFSET, height - self.save_button_rect.height - MENU_OFFSET * 2)
+                attr.fix_offset(0, height - self.save_button_rect.height - MENU_OFFSET)
                 height += attr_surf.get_height() + MENU_OFFSET
                 if height >= SCREEN_HEIGHT - MENU_OFFSET:
                     height -= attr_surf.get_height() + MENU_OFFSET
@@ -640,7 +640,7 @@ class DevUI():
         else:
             for attr in self.attributes[self.attributes[0].current_value:self.attributes[0].current_value + self.max_attrs]:
                 attr_surf = attr.draw()
-                attr.fix_offset(MENU_OFFSET, height - self.save_button_rect.height - MENU_OFFSET * 2)
+                attr.fix_offset(0, height - self.save_button_rect.height - MENU_OFFSET)
                 height += attr_surf.get_height() + MENU_OFFSET
                 if attr_surf.get_width() > width:
                     width = attr_surf.get_width()
