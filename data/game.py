@@ -364,23 +364,25 @@ class Game(Display):
                             continue
                         temp_rect = tower_rect.copy()
                         temp_rect.x += self.get_size()[0] - self.ui.width
+                        
                         if temp_rect.collidepoint(event.pos):
-                            self.current_tower = self.available_towers[i]
+                            if self.current_tower == self.available_towers[i]:
+                                self.current_tower = None
+                            else:
+                                self.current_tower = self.available_towers[i]
                             return -1
 
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
-                if self.map.get_node(x_coord, y_coord) == 1:
-                    if self.map.upgrade_tower(x_coord, y_coord):
-                        self.draw_tower_bases(self)
+                if self.current_tower == None:
+                    if self.map.get_node(x_coord, y_coord) == 1:
+                        if self.map.upgrade_tower(x_coord, y_coord):
+                            self.draw_tower_bases(self)
                     return -1
 
                 if self.map.is_valid_tower_tile(x_coord, y_coord) == 0:
-                    return -1
-
-                if self.current_tower == None:
                     return -1
 
                 if self.map.change_node(x_coord, y_coord, 1) == False:
