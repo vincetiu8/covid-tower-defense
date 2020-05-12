@@ -20,6 +20,8 @@ PROTEIN = 50
 ZOOM_AMT_GAME = 0.05
 ZOOM_AMT_MENU = 0.1
 
+WAVE_DELAY = 10 # in seconds
+
 # define some colors (R, G, B)
 WHITE = pg.Color(255, 255, 255)
 BLACK = pg.Color(0, 0, 0)
