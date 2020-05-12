@@ -29,6 +29,7 @@ class DevClass(Game):
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
         self.goals = pg.sprite.Group()
+        self.explosions = pg.sprite.Group()
 
         self.protein = 0
         self.lives = 0
@@ -66,10 +67,17 @@ class DevClass(Game):
                     base_map[i][j] = 0
         self.pathfinder = Pathfinder(base_map = base_map)
         self.pathfinder.clear_nodes(self.map.get_map())
-        self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
+        self.draw_tower_bases_wrapper()
 
     def get_attr_surf(self):
         self.attr_surf = self.ui.get_ui()
+
+    def draw_tower_bases_wrapper(self):
+        self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
+
+    def make_stripped_path_wrapper(self):
+        self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
+        print(self.map.get_map())
 
     def load_ui(self):
         self.ui = DevUI()
@@ -94,12 +102,12 @@ class DevClass(Game):
                     temp_tower.load_tower_data()
                     self.map.remove_tower(x, y)
                     self.map.add_tower(x, y, temp_tower)
-        self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
+        self.draw_tower_bases_wrapper()
 
     def reload_enemies(self):
         for start in self.starts:
             start.enemy_type = self.enemy_names[self.current_enemy]
-        self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
+        self.make_stripped_path_wrapper()
 
     def update(self):
         for start in self.starts:
@@ -107,6 +115,7 @@ class DevClass(Game):
         self.enemies.update()
         self.towers.update()
         self.projectiles.update()
+        self.explosions.update()
 
     def draw(self):
         surface = pg.Surface((self.map.width, self.map.height))
@@ -142,6 +151,10 @@ class DevClass(Game):
             surface.blit(projectile.image, projectile.rect)
 
         surface.blit(self.aoe_surf, (0, 0))
+
+        for explosion in self.explosions:
+            surface.blit(explosion.get_surf(), (explosion.x, explosion.y))
+
         surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         surf.blit(self.camera.apply_image((surface)), self.camera.apply_tuple((0, 0)))
 
@@ -181,7 +194,7 @@ class TowerPreview(DevClass):
         super().load_data()
         super().new()
         self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in range(len(self.start_data))]
-        self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
+        self.make_stripped_path_wrapper()
         self.new_tower_name = ""
         self.load_ui()
 
@@ -296,8 +309,8 @@ class EnemyPreview(DevClass):
         super().reload_level("enemy_test")
         super().load_data()
         super().new()
-        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in range(len(self.start_data))]
-        self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
+        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 2) for start in range(len(self.start_data))]
+        self.make_stripped_path_wrapper()
         self.new_enemy_name = ""
         self.load_ui()
 
@@ -391,7 +404,7 @@ class LevelPreview(DevClass):
         super().load_data()
         super().new()
         self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in range(len(self.start_data))]
-        self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
+        self.make_stripped_path_wrapper()
 
     def new(self, args):
         # initialize all variables and do all the setup for a new game

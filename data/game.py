@@ -66,6 +66,7 @@ class Game(Display):
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
         self.goals = pg.sprite.Group()
+        self.explosions = pg.sprite.Group()
 
         self.current_tower = None
         self.protein = PROTEIN
@@ -135,7 +136,7 @@ class Game(Display):
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
         self.new_wave()
-        self.draw_tower_bases(self)
+        self.draw_tower_bases_wrapper()
         self.ui = UI(self, 200, 10)
 
     def update(self):
@@ -146,6 +147,7 @@ class Game(Display):
         self.towers.update()
         self.projectiles.update()
         self.ui.update()
+        self.explosions.update()
         
         if self.lives <= 0:
             pg.event.post(self.game_done_event)
@@ -184,7 +186,7 @@ class Game(Display):
                       i["spawn_delay"], i["spawn_rate"]))
 
         self.wave += 1
-        self.make_stripped_path(self)
+        self.make_stripped_path_wrapper()
     #     def draw_grid(self):
     #         for x in range(0, self.map.width, self.map.tilesize):
     #             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, self.map.height))
@@ -222,6 +224,9 @@ class Game(Display):
 
         self.blit(self.camera.apply_image(self.aoe_surf), self.camera.apply_tuple((0, 0)))
 
+        for explosion in self.explosions:
+            self.blit(self.camera.apply_image(explosion.get_surf()), self.camera.apply_tuple((explosion.x, explosion.y)))
+
         if self.current_tower != None:
             self.draw_tower_preview()
 
@@ -237,6 +242,9 @@ class Game(Display):
             self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright=ui_pos))
         
         return self
+
+    def make_stripped_path_wrapper(self):
+        self.make_stripped_path(self)
 
     def make_stripped_path(self, surface):
         self.path_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
@@ -297,6 +305,9 @@ class Game(Display):
                                 new_image = image
                             self.path_surf.blit(new_image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize,
                                                                self.map.tilesize, self.map.tilesize))
+
+    def draw_tower_bases_wrapper(self):
+        self.draw_tower_bases_wrapper()
 
     def draw_tower_bases(self, surface):
         self.tower_bases_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
@@ -376,7 +387,7 @@ class Game(Display):
 
                 if self.map.get_node(x_coord, y_coord) == 1:
                     if self.map.upgrade_tower(x_coord, y_coord):
-                        self.draw_tower_bases(self)
+                        self.draw_tower_bases_wrapper()
                     return -1
 
                 if self.map.is_valid_tower_tile(x_coord, y_coord) == 0:
@@ -409,8 +420,8 @@ class Game(Display):
                 self.current_tower = None
 
                 self.buy_sound.play()
-                self.make_stripped_path(self)
-                self.draw_tower_bases(self)
+                self.make_stripped_path_wrapper()
+                self.draw_tower_bases_wrapper()
                 for enemy in self.enemies:
                     enemy.recreate_path()
 
@@ -421,8 +432,8 @@ class Game(Display):
 
                 self.map.remove_tower(x_coord, y_coord)
                 self.pathfinder.clear_nodes(self.map.get_map())
-                self.make_stripped_path(self)
-                self.draw_tower_bases(self)
+                self.make_stripped_path_wrapper()
+                self.draw_tower_bases_wrapper()
                 for enemy in self.enemies:
                     enemy.recreate_path()
 
