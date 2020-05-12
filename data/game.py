@@ -124,7 +124,6 @@ class Game(Display):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
-
         self.new_wave()
         self.pathfinder = Pathfinder(
             arteries = arteries,
@@ -250,7 +249,7 @@ class Game(Display):
         for start in self.starts:
             if start.start in done:
                 continue
-
+            done.append(start.start)
             xpos = tile_from_xcoords(start.rect.x, self.map.tilesize)
             ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
             for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
@@ -311,9 +310,9 @@ class Game(Display):
     def draw_tower_preview(self):
         mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
         towerxy = (
-        round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
+            round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
         tower_tile = (
-        tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
+            tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
         pos = self.map.get_node(tower_tile[0], tower_tile[1])
 
         if pos != -1:
@@ -325,14 +324,33 @@ class Game(Display):
             elif validity == -1:
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize),
                                      tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
-                self.pathfinder.clear_nodes(self.map.get_map())
-                result = self.pathfinder.astar(((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
-                                                 tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
-                                               self.goals)
+                
+                result = True
+                done = []
+                for start in self.starts:
+                    if start.start in done:
+                        continue
+                    done.append(start.start)
+                    
+                    xpos = tile_from_xcoords(start.rect.x, self.map.tilesize)
+                    ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
+                    
+                    for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
+                        for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
+                            self.pathfinder.clear_nodes(self.map.get_map())
+                            temp_result = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals)
+                            
+                            if temp_result == False:
+                                result = False
+                                break
+                            
+                    if not result:
+                        break
+                
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize),
-                                     tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
+                                        tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
                 self.pathfinder.clear_nodes(self.map.get_map())
-
+                            
                 if result != False:
                     tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
                     self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
