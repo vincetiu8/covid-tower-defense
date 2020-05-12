@@ -92,6 +92,7 @@ class DevClass(Game):
 
     def reload_enemies(self):
         for start in self.starts:
+            start.enable_spawning()
             start.enemy_type = self.enemy_names[self.current_enemy]
 
     def update(self):
