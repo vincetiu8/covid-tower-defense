@@ -268,7 +268,7 @@ class Game(Display):
         for start in self.starts:
             if start.start in done:
                 continue
-
+            done.append(start.start)
             xpos = tile_from_xcoords(start.rect.x, self.map.tilesize)
             ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
             for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
@@ -328,9 +328,9 @@ class Game(Display):
     def draw_tower_preview(self):
         mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
         towerxy = (
-        round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
+            round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
         tower_tile = (
-        tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
+            tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
         pos = self.map.get_node(tower_tile[0], tower_tile[1])
 
         if pos != -1:
@@ -342,14 +342,33 @@ class Game(Display):
             elif validity == -1:
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize),
                                      tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
-                self.pathfinder.clear_nodes(self.map.get_map())
-                result = self.pathfinder.astar(((tile_from_xcoords(self.starts[0].rect.x, self.map.tilesize),
-                                                 tile_from_xcoords(self.starts[0].rect.y, self.map.tilesize)), 0),
-                                               self.goals)
+                
+                result = True
+                done = []
+                for start in self.starts:
+                    if start.start in done:
+                        continue
+                    done.append(start.start)
+                    
+                    xpos = tile_from_xcoords(start.rect.x, self.map.tilesize)
+                    ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
+                    
+                    for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
+                        for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
+                            self.pathfinder.clear_nodes(self.map.get_map())
+                            temp_result = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals)
+                            
+                            if temp_result == False:
+                                result = False
+                                break
+                            
+                    if not result:
+                        break
+                
                 self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize),
-                                     tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
+                                        tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
                 self.pathfinder.clear_nodes(self.map.get_map())
-
+                            
                 if result != False:
                     tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
                     self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
@@ -381,8 +400,12 @@ class Game(Display):
                             continue
                         temp_rect = tower_rect.copy()
                         temp_rect.x += self.get_size()[0] - self.ui.width
+                        
                         if temp_rect.collidepoint(event.pos):
-                            self.current_tower = self.available_towers[i]
+                            if self.current_tower == self.available_towers[i]:
+                                self.current_tower = None
+                            else:
+                                self.current_tower = self.available_towers[i]
                             return -1
                         
                     next_wave_rect = self.ui.next_wave_rect.copy()
@@ -395,15 +418,13 @@ class Game(Display):
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
-                if self.map.get_node(x_coord, y_coord) == 1:
-                    if self.map.upgrade_tower(x_coord, y_coord):
-                        self.draw_tower_bases(self)
+                if self.current_tower == None:
+                    if self.map.get_node(x_coord, y_coord) == 1:
+                        if self.map.upgrade_tower(x_coord, y_coord):
+                            self.draw_tower_bases(self)
                     return -1
 
                 if self.map.is_valid_tower_tile(x_coord, y_coord) == 0:
-                    return -1
-
-                if self.current_tower == None:
                     return -1
 
                 if self.map.change_node(x_coord, y_coord, 1) == False:
