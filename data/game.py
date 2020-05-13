@@ -130,7 +130,6 @@ class Game(Display):
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
         self.ui = UI(self, 200, 10)
         self.prepare_next_wave()
-        self.new_wave()
         
         self.pathfinder = Pathfinder(
             arteries = arteries,
