@@ -371,7 +371,7 @@ class Game(Display):
                     for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
                         for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
                             self.pathfinder.clear_nodes(self.map.get_map())
-                            temp_result = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals)
+                            temp_result = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, False)
                             
                             if temp_result == False:
                                 result = False
