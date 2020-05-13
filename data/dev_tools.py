@@ -76,8 +76,8 @@ class DevClass(Game):
         self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
 
     def make_stripped_path_wrapper(self):
+        print("STRIPP")
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
-        print(self.map.get_map())
 
     def load_ui(self):
         self.ui = DevUI()
@@ -97,12 +97,16 @@ class DevClass(Game):
         for x, list in enumerate(self.map.get_tower_map()):
             for y, tower in enumerate(list):
                 if tower != None:
+                    self.map.remove_tower(x, y)
                     temp_tower = Tower(self, tower.rect.x, tower.rect.y, self.tower_names[self.current_tower])
                     temp_tower.stage = self.current_stage
                     temp_tower.load_tower_data()
-                    self.map.remove_tower(x, y)
                     self.map.add_tower(x, y, temp_tower)
+        for enemy in self.enemies:
+            enemy.recreate_path()
+        self.pathfinder.clear_nodes(self.map.get_map())
         self.draw_tower_bases_wrapper()
+        self.make_stripped_path_wrapper()
 
     def reload_enemies(self):
         for start in self.starts:
@@ -144,7 +148,8 @@ class DevClass(Game):
         for enemy in self.enemies:
             surface.blit(enemy.image, enemy.rect)
             hp_surf = enemy.get_hp_surf()
-            total_hp_surf.blit(hp_surf, hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - enemy.image_size // 2 - 10)))
+            if hp_surf != None:
+                total_hp_surf.blit(hp_surf, hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - enemy.image_size // 2 - 10)))
         surface.blit(total_hp_surf, (0, 0))
 
         for projectile in self.projectiles:
@@ -228,6 +233,7 @@ class TowerPreview(DevClass):
                                                    self.current_stage][attr]))
                 except:
                     self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr], ATTR_DATA["stage"][attr]["default"]))
+                    TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] = ATTR_DATA["stage"][attr]["default"]
 
         self.reload_enemies()
         self.reload_towers()
@@ -239,24 +245,32 @@ class TowerPreview(DevClass):
         self.current_enemy = attrs.pop("enemy_name")
         self.new_tower_name = attrs.pop("new_tower_name")
         for attr in attrs:
-            if attr == "tower_name":
+            if attr == "scroll_position":
+               continue
+            elif attr == "tower_name":
                 if self.current_tower != attrs[attr]:
                     reload = True
+                continue
             elif attr == "tower_stage":
                 if self.current_stage != attrs[attr]:
                     reload = True
+                continue
             elif attr in ATTR_DATA["tower"]:
                 TOWER_DATA[self.tower_names[self.current_tower]][attr] = attrs[attr]
+                continue
             else:
                 TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] = attrs[attr]
+                if ATTR_DATA["stage"][attr]["type"] == "bool" and ((attrs[attr] and "ignore_if_true" in ATTR_DATA["stage"][attr]) or (not attrs[attr] and "ignore_if_false" in ATTR_DATA["stage"][attr])):
+                    reload = True
         if reload:
             self.current_tower = attrs["tower_name"]
             self.current_stage = attrs["tower_stage"]
             self.load_ui() # has to be called so UI reloads when changing tower_name while editing a description
 
-        self.reload_towers()
-        self.reload_enemies()
-        self.get_attr_surf()
+        else:
+            self.reload_towers()
+            self.reload_enemies()
+            self.get_attr_surf()
 
     def event(self, event):
         result = super().event(event)
@@ -342,6 +356,8 @@ class EnemyPreview(DevClass):
                                                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
                 except:
                     self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr], ATTR_DATA["enemy"][attr]["default"]))
+                    ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = ATTR_DATA["enemy"][attr]["default"]
+
         self.reload_enemies()
         self.reload_towers()
         self.get_attr_surf()
@@ -353,17 +369,24 @@ class EnemyPreview(DevClass):
         self.current_stage = attrs.pop("tower_stage")
         self.new_enemy_name = attrs.pop("new_enemy_name")
         for attr in attrs:
-            if attr == "enemy_name":
+            if attr == "scroll_position":
+               continue
+            elif attr == "enemy_name":
                 if self.current_enemy != attrs[attr]:
                     reload = True
+                continue
             else:
                 ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
+                if ATTR_DATA["enemy"][attr]["type"] == "bool" and ((attrs[attr] and "ignore_if_true" in ATTR_DATA["enemy"][attr]) or (not attrs[attr] and "ignore_if_false" in ATTR_DATA["enemy"][attr])):
+                    reload = True
         if reload:
             self.current_enemy = attrs["enemy_name"]
+            self.load_ui() # has to be called so UI reloads when changing tower_name while editing a description
 
-        self.reload_towers()
-        self.reload_enemies()
-        self.get_attr_surf()
+        else:
+            self.reload_towers()
+            self.reload_enemies()
+            self.get_attr_surf()
 
     def event(self, event):
         result = super().event(event)
@@ -667,8 +690,6 @@ class DevUI():
                     for i, level in enumerate(LEVEL_DATA):
                         if "enemies" in level:
                             level.pop("enemies")
-                        if "scroll_position" in level:
-                            level.pop("scroll_position")
                         with open(path.join(LEVELS_FOLDER, "level{}.json".format(i)), 'w') as out_file:
                             json.dump(level, out_file, indent=4)
                     for level in LEVEL_DATA:
@@ -680,8 +701,6 @@ class DevUI():
                                     enemies.append(enemy)
                         level["enemies"] = enemies
                     for enemy in ENEMY_DATA:
-                        if "scroll_position" in enemy:
-                            enemy.pop("scroll_position")
                         if "image" in ENEMY_DATA[enemy]:
                             ENEMY_DATA[enemy].pop("image")
                         if "death_sound_path" in ENEMY_DATA[enemy]:
@@ -693,11 +712,7 @@ class DevUI():
                             path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
                         ENEMY_DATA[enemy]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy))
                     for tower in TOWER_DATA:
-                        if "scroll_position" in tower:
-                            tower.pop("scroll_position")
                         for stage in range(3):
-                            if "scroll_position" in TOWER_DATA[tower]["stages"][stage]:
-                                TOWER_DATA[tower]["stages"][stage].pop("scroll_position")
                             if "gun_image" in TOWER_DATA[tower]["stages"][stage]:
                                 TOWER_DATA[tower]["stages"][stage].pop("gun_image")
                             if "base_image" in TOWER_DATA[tower]["stages"][stage]:
