@@ -217,7 +217,8 @@ class Game(Display):
         for enemy in self.enemies:
             self.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
             hp_surf = enemy.get_hp_surf()
-            self.blit(self.camera.apply_image(hp_surf), self.camera.apply_rect(hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - 15))))
+            if hp_surf != None:
+                self.blit(self.camera.apply_image(hp_surf), self.camera.apply_rect(hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - 15))))
 
         for projectile in self.projectiles:
             self.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))

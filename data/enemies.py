@@ -119,6 +119,9 @@ class Enemy(pg.sprite.Sprite):
             self.kill()
 
     def get_hp_surf(self):
+        if self.hp < 0:
+            return None
+
         hp_surf = pg.Surface((self.hp * 2, 5))
         if self.is_slowed():
             hp_surf.fill(RED)
@@ -197,6 +200,7 @@ class Explosion(pg.sprite.Sprite):
         for tile_x in range(tile_from_coords(x, game.map.tilesize), tile_from_coords(x + rad, game.map.tilesize) + 1):
             for tile_y in range(tile_from_coords(y, game.map.tilesize), tile_from_coords(y + rad, game.map.tilesize) + 1):
                 game.map.remove_tower(tile_x, tile_y)
+
         game.pathfinder.clear_nodes(game.map.get_map())
         game.draw_tower_bases_wrapper()
         game.make_stripped_path_wrapper()
