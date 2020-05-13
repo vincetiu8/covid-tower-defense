@@ -67,6 +67,7 @@ class Game(Display):
         self.enemies = pg.sprite.Group()
         self.projectiles = pg.sprite.Group()
         self.goals = pg.sprite.Group()
+        self.explosions = pg.sprite.Group()
 
         self.current_tower = None
         self.protein = PROTEIN
@@ -97,7 +98,7 @@ class Game(Display):
                                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
                                             1)  # make start tile a wall so you can't place a tower on it
                                                 # this does not affect the path finding algo
-            if tile_object.name == "goal":
+            elif tile_object.name == "goal":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
@@ -105,9 +106,9 @@ class Game(Display):
                                             1)  # make start tile a wall so you can't place a tower on it
                                                 # this does not affect the path finding algo
                         Goal(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
-            if tile_object.name == "wall":
+            elif tile_object.name == "wall":
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
-            if tile_object.name == "artery":
+            elif tile_object.name == "artery":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         arteries[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
@@ -127,7 +128,6 @@ class Game(Display):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
-        
         self.ui = UI(self, 200, 10)
         self.prepare_next_wave()
         
@@ -135,12 +135,13 @@ class Game(Display):
             arteries = arteries,
             artery_entrances = artery_entrances,
             veins = veins,
-            vein_entrances = vein_entrances
+            vein_entrances = vein_entrances,
+            base_map = self.map.get_map()
         )
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
-        self.make_stripped_path(self)
-        self.draw_tower_bases(self)
+        self.draw_tower_bases_wrapper()
+        self.make_stripped_path_wrapper()
 
     def update(self):
         # update portion of the game loop
@@ -150,6 +151,7 @@ class Game(Display):
         self.towers.update()
         self.projectiles.update()
         self.ui.update()
+        self.explosions.update()
         
         if self.lives <= 0:
             pg.event.post(self.game_done_event)
@@ -232,17 +234,17 @@ class Game(Display):
 
         for enemy in self.enemies:
             self.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
-            
-            hp_color = GREEN
-            if enemy.is_slowed():
-                hp_color = RED
-                
-            pg.draw.rect(self, hp_color, self.camera.apply_rect(enemy.get_hp_rect()))
+            hp_surf = enemy.get_hp_surf()
+            if hp_surf != None:
+                self.blit(self.camera.apply_image(hp_surf), self.camera.apply_rect(hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - 15))))
 
         for projectile in self.projectiles:
             self.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
 
         self.blit(self.camera.apply_image(self.aoe_surf), self.camera.apply_tuple((0, 0)))
+
+        for explosion in self.explosions:
+            self.blit(self.camera.apply_image(explosion.get_surf()), self.camera.apply_tuple((explosion.x, explosion.y)))
 
         if self.current_tower != None:
             self.draw_tower_preview()
@@ -260,6 +262,9 @@ class Game(Display):
         
         return self
 
+    def make_stripped_path_wrapper(self):
+        self.make_stripped_path(self)
+
     def make_stripped_path(self, surface):
         self.path_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
         self.path_surf.fill((0, 0, 0, 0))
@@ -273,7 +278,8 @@ class Game(Display):
             ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
             for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
                 for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
-                    path = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals)
+                    flying = ENEMY_DATA[start.enemy_type]["flying"]
+                    path = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, flying)
                     self.stripped_path = []
                     for i, node in enumerate(path):
                         if (i < len(path) - 1):
@@ -310,8 +316,17 @@ class Game(Display):
                             else:
                                 print("PATH DRAWING ERROR")  # this should never occur
 
-                            self.path_surf.blit(image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize,
+                            if flying:
+                                new_image = image.copy()
+                                new_image.fill(GREEN, None, pg.BLEND_RGBA_MULT)
+                                print(node)
+                            else:
+                                new_image = image
+                            self.path_surf.blit(new_image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize,
                                                                self.map.tilesize, self.map.tilesize))
+
+    def draw_tower_bases_wrapper(self):
+        self.draw_tower_bases(self)
 
     def draw_tower_bases(self, surface):
         self.tower_bases_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
@@ -356,7 +371,7 @@ class Game(Display):
                     for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
                         for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
                             self.pathfinder.clear_nodes(self.map.get_map())
-                            temp_result = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals)
+                            temp_result = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, False)
                             
                             if temp_result == False:
                                 result = False
@@ -435,7 +450,7 @@ class Game(Display):
                 for start in self.starts:
                     path = self.pathfinder.astar(((tile_from_xcoords(start.rect.x, self.map.tilesize),
                                                    tile_from_xcoords(start.rect.y, self.map.tilesize)), 0),
-                                                 self.goals)
+                                                 self.goals, ENEMY_DATA[start.enemy_type]["flying"])
                     if path == False:
                         self.map.change_node(x_coord, y_coord, 0)
                         self.pathfinder.clear_nodes(self.map.get_map())
@@ -451,8 +466,8 @@ class Game(Display):
                 self.current_tower = None
 
                 self.buy_sound.play()
-                self.make_stripped_path(self)
-                self.draw_tower_bases(self)
+                self.make_stripped_path_wrapper()
+                self.draw_tower_bases_wrapper()
                 for enemy in self.enemies:
                     enemy.recreate_path()
 
@@ -463,8 +478,8 @@ class Game(Display):
 
                 self.map.remove_tower(x_coord, y_coord)
                 self.pathfinder.clear_nodes(self.map.get_map())
-                self.make_stripped_path(self)
-                self.draw_tower_bases(self)
+                self.make_stripped_path_wrapper()
+                self.draw_tower_bases_wrapper()
                 for enemy in self.enemies:
                     enemy.recreate_path()
 

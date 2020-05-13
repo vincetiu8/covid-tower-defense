@@ -27,15 +27,24 @@ class Pathfinder():
         else:
             self.neighbors = [(0, 1, 0), (0, -1, 0), (1, 0, 0), (-1, 0, 0), (0, 0, -1), (0, 0, 1)]
 
+        self.base_map = numpy.array(kwargs.get('base_map'))
+
     def clear_nodes(self, map):
         self.paths = {}
+        self.flying_paths = {}
         self.map[0] = numpy.array(map)
 
-    def astar(self, start, goals):
+    def astar(self, start, goals, ignore_towers):
         try:
+            if ignore_towers:
+                return self.flying_paths[start].copy()
             return self.paths[start].copy()
 
         except:
+            if ignore_towers:
+                temp_map = self.map[0].copy()
+                self.map[0] = self.base_map
+
             prevstate = self.map[0][start[0][0]][start[0][1]]
             self.map[0][start[0][0]][start[0][1]] = 0
 
@@ -59,7 +68,11 @@ class Pathfinder():
                         current = came_from[current]
                     data.append(current)
                     self.map[0][start[0][0]][start[0][1]] = prevstate
-                    self.paths[start] = data
+                    if ignore_towers:
+                        self.map[0] = temp_map
+                        self.flying_paths[start] = data
+                    else:
+                        self.paths[start] = data
                     return data.copy()
 
                 close_set.add(current)

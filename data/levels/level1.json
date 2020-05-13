@@ -15,6 +15,22 @@
         [
             {
                 "start": 0,
+                "enemy_type": "polio",
+                "enemy_count": 50,
+                "spawn_delay": 3,
+                "spawn_rate": 0.1
+            },
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 25,
+                "spawn_delay": 5,
+                "spawn_rate": 0.2
+            }
+        ],
+        [
+            {
+                "start": 0,
                 "enemy_type": "common_cold",
                 "enemy_count": 100,
                 "spawn_delay": 3,
@@ -42,6 +58,13 @@
                 "enemy_count": 50,
                 "spawn_delay": 6,
                 "spawn_rate": 0.01
+            },
+            {
+                "start": 1,
+                "enemy_type": "polio",
+                "enemy_count": 25,
+                "spawn_delay": 9,
+                "spawn_rate": 0.075
             }
         ]
     ]

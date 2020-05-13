@@ -24,6 +24,7 @@ WAVE_DELAY = 10 # in seconds
 
 # define some colors (R, G, B)
 WHITE = pg.Color(255, 255, 255)
+CYAN = pg.Color(0, 255, 255)
 BLACK = pg.Color(0, 0, 0)
 DARK_GREY = pg.Color(40, 40, 40)
 LIGHT_GREY = pg.Color(100, 100, 100)
@@ -51,6 +52,8 @@ AURA_COLORS = [HALF_RED, HALF_ORANGE, HALF_YELLOW, HALF_GREEN, HALF_CYAN, HALF_B
 FPS = 60
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
+
+EXPLOSION_TIME = 0.5
 
 # looks for img_folder and map_folder in the same folder as the code
 GAME_FOLDER = resource_path("data")
