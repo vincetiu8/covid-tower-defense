@@ -118,7 +118,7 @@ class Tower(Obstacle):
                 hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.enemies, False)
                 if (hits):
                     for hit in hits:
-                        hit.hp -= self.damage
+                        hit.damage(self.damage)
                         if self.slow_speed != 1:
                             hits[0].slow(self.slow_speed, self.slow_duration)
                     self.sound.play()
