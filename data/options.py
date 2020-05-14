@@ -8,10 +8,17 @@ class Options(Display):
         self.music_vol = SliderOption("Music Vol", min_val = 0, max_val = 100, slider_pos = 0)
         self.sfx_vol = SliderOption("SFX Vol", min_val = 0, max_val = 100, slider_pos = 0)
         
+        self.back_rect = pg.Rect((20, 20), OPTIONS_BACK_IMGS[0].get_size())
+        
         self.fullscreen_surf = self.fullscreen.draw()
         self.music_vol_surf = self.music_vol.draw()
         self.sfx_vol_surf = self.sfx_vol.draw()
         self.surfs = [self.fullscreen_surf, self.music_vol_surf, self.sfx_vol_surf]
+        
+        self.prev_display = None
+        
+    def new(self, args):
+        self.prev_display = args[0]
         
     def draw(self):
         self.fill(BLACK)
@@ -20,6 +27,9 @@ class Options(Display):
         title_text = title_font.render("OPTIONS", 1, WHITE)
         
         self.blit(title_text, ((SCREEN_WIDTH - title_text.get_width()) / 2, 0))
+        
+        back_hover = self.back_rect.collidepoint(pg.mouse.get_pos())
+        self.blit(OPTIONS_BACK_IMGS[back_hover], self.back_rect)
         
         x = 100
         y = 150
@@ -42,6 +52,8 @@ class Options(Display):
                     
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
+                if self.back_rect.collidepoint(event.pos):
+                    return self.prev_display
                 if self.fullscreen.event(event) != -1:
                     self.fullscreen_surf = self.fullscreen.draw()
         return -1
@@ -76,7 +88,7 @@ class SliderOption(Option):
         
         self.min_val = min_val
         self.max_val = max_val
-        self.slider_pos = slider_pos
+        self.slider_pos = slider_pos # Slider's x pos ranges from 0 to (SLIDER_BAR_WIDTH - SLIDER_WIDTH)
         self.held_down = False
 
         self.slider_bar_rect = pg.Rect(self.label_text.get_width() + 20, 15, SLIDER_BAR_WIDTH, SLIDER_BAR_HEIGHT)
@@ -87,7 +99,7 @@ class SliderOption(Option):
         
         super().init_surf(self.slider_bar_rect.x + SLIDER_BAR_WIDTH + 5, SLIDER_HEIGHT + 5)
         
-    def get_val(self):
+    def get_val(self): 
         return (min_val + (max_val - min_val) * self.slider_pos // (SLIDER_BAR_WIDTH - SLIDER_WIDTH))
     
     def set_coords(self, x, y):
@@ -119,7 +131,7 @@ class SliderOption(Option):
             
         elif event.type == pg.MOUSEMOTION:
             if self.held_down:
-                mouse_pos_x = event.pos[0] - self.x - self.slider_bar_rect.x
+                mouse_pos_x = event.pos[0] - self.x - self.slider_bar_rect.x # Corrects mouse_pos_x to the same reference as the slider_bar
                 self.slider_pos = min(SLIDER_BAR_WIDTH - SLIDER_WIDTH, max(0, mouse_pos_x))
                 self.update_slider_rect()
                 return True

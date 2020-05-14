@@ -24,12 +24,17 @@ class GameStop(Display):
         
     def new(self, args):
         self.game_surf = args[0]
+        self.no_fade_in = args[1]
+        
         self.alpha = 0
+        if self.no_fade_in:
+            self.alpha = 255
     
     def draw(self):
         self.alpha = min(255, self.alpha + self.alpha_speed)
-        self.draw_grid()
         
+        self.game_stop_surf.fill(BLACK)
+        self.draw_grid()
         self.draw_btns()
         self.draw_text()
         
@@ -76,11 +81,8 @@ class GameStop(Display):
         hover_restart = self.restart_rect.collidepoint(pg.mouse.get_pos())
         hover_back = self.back_rect.collidepoint(pg.mouse.get_pos())
         
-        restart_btn_img = RESTART_BTN_IMGS[self.lost][hover_restart]
-        back_btn_img = BACK_BTN_IMGS[self.lost][hover_back]
-        
-        self.game_stop_surf.blit(restart_btn_img, (self.restart_rect[0], self.restart_rect[1]))
-        self.game_stop_surf.blit(back_btn_img, (self.back_rect[0], self.back_rect[1]))
+        self.game_stop_surf.blit(RESTART_BTN_IMGS[self.lost][hover_restart], self.restart_rect)
+        self.game_stop_surf.blit(BACK_BTN_IMGS[self.lost][hover_back], self.back_rect)
         
     def is_done_fading(self):
         return self.alpha == 255
@@ -152,7 +154,8 @@ class Pause(GameStop):
     def __init__(self):
         super().__init__()
         
-        self.resume_rect = pg.Rect(500, 300, RESUME_BTN_IMGS[0].get_width(), RESUME_BTN_IMGS[0].get_height())
+        self.resume_rect = pg.Rect((500, 300), RESUME_BTN_IMGS[0].get_size())
+        self.options_rect = pg.Rect((1100, 20), OPTIONS_IMGS[0].get_size())
         self.resume_text = None
         
         self.lost = False
@@ -179,8 +182,10 @@ class Pause(GameStop):
         super().draw_btns()
         
         hover_resume = self.resume_rect.collidepoint(pg.mouse.get_pos())
-        resume_btn_img = RESUME_BTN_IMGS[hover_resume]
-        self.game_stop_surf.blit(resume_btn_img, (self.resume_rect[0], self.resume_rect[1]))
+        self.game_stop_surf.blit(RESUME_BTN_IMGS[hover_resume], self.resume_rect)
+        
+        hover_options = self.options_rect.collidepoint(pg.mouse.get_pos())
+        self.game_stop_surf.blit(OPTIONS_IMGS[hover_options], self.options_rect)
         
     def event(self, event):
         result = super().event(event)
@@ -190,6 +195,10 @@ class Pause(GameStop):
                 if event.button == 1:
                     if self.resume_rect.collidepoint(event.pos):
                         return "resume"
+                    elif self.options_rect.collidepoint(event.pos):
+                        return "options"
+            elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                return "resume"
         
         return result
         
@@ -225,7 +234,7 @@ class GameOver(GameStop):
         super().new(args)
         
         self.heartbeat_x = 0
-        self.lost, self.cause_of_death = args[1], args[2]
+        self.lost, self.cause_of_death = args[2], args[3]
         
         if self.lost:
             self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death)

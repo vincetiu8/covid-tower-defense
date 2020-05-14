@@ -46,6 +46,11 @@ class Main:
             "options":          self.options
         }
         
+        self.display_keys_reverse = {
+            self.menu:          "menu",
+            self.pause:         "pause"
+        }
+        
         self.current_display = self.start_menu
         
     def run(self):
@@ -83,10 +88,13 @@ class Main:
                         args.extend([self.menu.get_over_level(), result == "resume", self.tower_select.get_selected_towers()])
                     elif result == "tower_select":
                         args.append(self.menu.get_over_level())
+                    elif result == "options":
+                        args.append(self.display_keys_reverse[self.current_display])
                     elif result == "game_over":
-                        args.extend([self.game.draw(), self.game.get_lives() == 0, self.game.get_cause_of_death()])
+                        args.extend([self.game.draw(), self.current_display == self.options,
+                                     self.game.get_lives() == 0, self.game.get_cause_of_death()])
                     elif result == "pause":
-                        args.append(self.game.draw())
+                        args.extend([self.game.draw(), self.current_display == self.options])
                         
                     self.set_display(self.display_keys[result], args)
                     

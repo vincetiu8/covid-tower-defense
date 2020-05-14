@@ -68,6 +68,7 @@ UI_IMG_FOLDER = path.join(IMG_FOLDER, "ui")
 ENEMIES_IMG_FOLDER = path.join(IMG_FOLDER, "enemies")
 TOWERS_IMG_FOLDER = path.join(IMG_FOLDER, "towers")
 GAME_STOP_IMG_FOLDER = path.join(IMG_FOLDER, "game_stop")
+OPTIONS_IMG_FOLDER = path.join(IMG_FOLDER, "options")
 
 ENEMIES_AUD_FOLDER = path.join(AUDIO_FOLDER, "enemies")
 TOWERS_AUD_FOLDER = path.join(AUDIO_FOLDER, "towers")
@@ -169,11 +170,17 @@ PATH_CORNER2_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner2.png"))
 PATH_CORNER3_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner3.png"))
 PATH_CORNER4_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner4.png"))
 
+# load options images
+OPTIONS_IMGS = [None, None]
+OPTIONS_BACK_IMGS = [None, None]
+
+for i, to_concat in enumerate(["", "_hover"]):
+    OPTIONS_IMGS[i] = pg.image.load(path.join(OPTIONS_IMG_FOLDER, "options{}.png".format(to_concat)))
+    OPTIONS_BACK_IMGS[i] = pg.image.load(path.join(OPTIONS_IMG_FOLDER, "back_btn{}.png".format(to_concat)))
+
 # load other images
 START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
 LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
-OPTIONS_IMG = pg.image.load(path.join(IMG_FOLDER, "options.png"))
-OPTIONS_HOVER_IMG = pg.image.load(path.join(IMG_FOLDER, "options_hover.png"))
 BODY_IMG = pg.transform.scale(pg.image.load(path.join(IMG_FOLDER, "body.png")), (1920, 2610))
 
 # load game over images

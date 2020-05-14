@@ -34,7 +34,7 @@ class Menu(Display):
         self.tower_preview_button = pg.Rect((1200, 100), self.level_button_rect.size)
         self.enemy_preview_button = pg.Rect((1200, 500), self.level_button_rect.size)
         self.level_preview_button = pg.Rect((1200, 900), self.level_button_rect.size)
-        self.options_button = pg.Rect((850, -100), OPTIONS_IMG.get_size())
+        self.options_button = pg.Rect((850, -100), OPTIONS_IMGS[0].get_size())
         
         self.base_zoom = self.camera.get_zoom()
         self.zoom_step = -1
@@ -83,10 +83,8 @@ class Menu(Display):
         level_text = big_font.render("Levels", 1, WHITE)
         self.blit(self.camera.apply_image(level_text), self.camera.apply_tuple((START_SCREEN_IMG.get_rect().w / 2 - level_text.get_rect().center[0], -50 - level_text.get_rect().center[1])))
         
-        options_img = OPTIONS_IMG
-        if self.options_button.collidepoint(self.camera.correct_mouse(pg.mouse.get_pos())):
-            options_img = OPTIONS_HOVER_IMG
-        self.blit(self.camera.apply_image(options_img), self.camera.apply_rect(self.options_button))
+        hover_options = self.options_button.collidepoint(self.camera.correct_mouse(pg.mouse.get_pos()))
+        self.blit(self.camera.apply_image(OPTIONS_IMGS[hover_options]), self.camera.apply_rect(self.options_button))
 
         for i, button in enumerate(self.level_buttons):
             self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(button))
