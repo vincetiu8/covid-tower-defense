@@ -94,6 +94,15 @@ BTN_PADDING = 20
 BTN_X_MARGIN = 100
 BTN_Y = 620
 
+# Options Constants
+OPTIONS_SEPARATION = 30
+
+TICK_BOX_SIZE = 50
+SLIDER_BAR_WIDTH = 270
+SLIDER_BAR_HEIGHT = 20
+SLIDER_WIDTH = 20
+SLIDER_HEIGHT = 50
+
 # load ui images
 HEART_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "heart.png"))
 PROTEIN_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "protein.png"))
@@ -163,6 +172,8 @@ PATH_CORNER4_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner4.png"))
 # load other images
 START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
 LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
+OPTIONS_IMG = pg.image.load(path.join(IMG_FOLDER, "options.png"))
+OPTIONS_HOVER_IMG = pg.image.load(path.join(IMG_FOLDER, "options_hover.png"))
 BODY_IMG = pg.transform.scale(pg.image.load(path.join(IMG_FOLDER, "body.png")), (1920, 2610))
 
 # load game over images

@@ -5,9 +5,10 @@ from data.ui import *
 from data.game import Game
 from data.tilemap import *
 from data.towers import *
-from data.game_stop import *
+from data.game_stop import Pause, GameOver
 from data.menus import *
 from data.dev_tools import TowerPreview, EnemyPreview, LevelPreview
+from data.options import Options
 
 class Main:
     def __init__(self):
@@ -30,6 +31,7 @@ class Main:
         self.enemy_preview = EnemyPreview(self.clock)
         self.level_preview = LevelPreview(self.clock)
         self.tower_select = TowerSelectMenu()
+        self.options = Options()
         
         self.display_keys = {
             "menu":             self.menu,
@@ -40,7 +42,8 @@ class Main:
             "tower_preview":    self.tower_preview,
             "enemy_preview":    self.enemy_preview,
             "level_preview":    self.level_preview,
-            "tower_select":     self.tower_select
+            "tower_select":     self.tower_select,
+            "options":          self.options
         }
         
         self.current_display = self.start_menu
