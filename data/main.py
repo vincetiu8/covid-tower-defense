@@ -12,12 +12,10 @@ from data.options import Options
 
 class Main:
     def __init__(self):
-        pg.init()
-        pg.mixer.init()
         pg.key.set_repeat(500, 100)
         self.main_clock = pg.time.Clock()
         self.clock = pg.time.Clock()
-        self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        #self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.playing = False
         self.started_game = False
         self.game_surf = None # only used to draw static game screen when fading into game_stop screens
@@ -67,9 +65,9 @@ class Main:
     def draw(self):
         pg.display.set_caption("FPS: {:.2f}".format(self.main_clock.get_fps()))
         
-        self.screen.fill((0, 0, 0))
+        SCREEN.fill((0, 0, 0))
         surf = self.current_display.draw()
-        self.screen.blit(surf, (0, 0))
+        SCREEN.blit(surf, (0, 0))
             
         pg.display.flip()
 

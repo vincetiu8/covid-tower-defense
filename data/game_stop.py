@@ -33,7 +33,6 @@ class GameStop(Display):
     def draw(self):
         self.alpha = min(255, self.alpha + self.alpha_speed)
         
-        self.game_stop_surf.fill(BLACK)
         self.draw_grid()
         self.draw_btns()
         self.draw_text()
@@ -165,7 +164,7 @@ class Pause(GameStop):
         self.init_text("GAME PAUSED", "")
         
     def draw(self):
-        self.fill(BLACK)
+        self.game_stop_surf.fill(BLACK)
         super().draw()
         return self
         
@@ -206,11 +205,6 @@ class GameOver(GameStop):
     def __init__(self):
         super().__init__()
         
-        self.heart_beep_sfx = pg.mixer.Sound(AUDIO_HEART_BEEP_PATH)
-        self.flatline_sfx = pg.mixer.Sound(AUDIO_FLATLINE_PATH)
-        self.heart_beep_sfx.set_volume(0.6)
-        self.flatline_sfx.set_volume(0.6)
-        
         self.alpha_speed = 3
         
     def play_sfx(self):
@@ -222,13 +216,13 @@ class GameOver(GameStop):
             play_beep_x = play_beep_x[:2]
         
         if self.heartbeat_x in play_beep_x:
-            self.heart_beep_sfx.play()
+            HEART_BEEP_SFX.play()
         elif self.heartbeat_x == play_flatline_x:
-            self.flatline_sfx.play()
+            FLATLINE_SFX.play()
             
     def stop_sfx(self):
-        self.heart_beep_sfx.stop()
-        self.flatline_sfx.stop()
+        HEART_BEEP_SFX.stop()
+        FLATLINE_SFX.stop()
         
     def new(self, args):
         super().new(args)
@@ -242,7 +236,7 @@ class GameOver(GameStop):
             self.init_text("YOU SURVIVED", "But the infection still continues...")
         
     def draw(self):
-        self.fill(BLACK)
+        self.game_stop_surf.fill(BLACK)
         self.heartbeat_x = min(1280, self.heartbeat_x + 4)
         self.draw_heartbeat()
         

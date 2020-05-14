@@ -18,7 +18,6 @@ class Enemy(pg.sprite.Sprite):
         self.dropped_protein = data["protein"]
         self.original_image = data["image"]
         self.raw_image = self.original_image
-        self.sound = pg.mixer.Sound(data["death_sound_path"])
         self.flying = data["flying"]
         if data["shield"]:
             self.shield = True
@@ -112,7 +111,7 @@ class Enemy(pg.sprite.Sprite):
             self.hp -= amount
 
         if (self.hp <= 0):
-            self.sound.play()
+            ENEMY_DATA[self.name]["death_sound"].play()
             self.game.protein += self.dropped_protein
             if self.explode_on_death:
                 Explosion(self.game, self.rect.center[0] - self.explode_radius / 2, self.rect.center[1] - self.explode_radius / 2, self.explode_radius)

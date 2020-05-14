@@ -5,8 +5,8 @@ class Options(Display):
     def __init__(self):
         super().__init__()
         self.fullscreen = TickBoxOption("Fullscreen")
-        self.music_vol = SliderOption("Music Vol", min_val = 0, max_val = 100, slider_pos = 0)
-        self.sfx_vol = SliderOption("SFX Vol", min_val = 0, max_val = 100, slider_pos = 0)
+        self.music_vol = SliderOption("Music Vol", min_val = 0, max_val = 1, slider_pos = SLIDER_BAR_WIDTH - SLIDER_WIDTH)
+        self.sfx_vol = SliderOption("SFX Vol", min_val = 0, max_val = 1, slider_pos = SLIDER_BAR_WIDTH - SLIDER_WIDTH)
         
         self.back_rect = pg.Rect((20, 20), OPTIONS_BACK_IMGS[0].get_size())
         
@@ -49,6 +49,7 @@ class Options(Display):
             
         if self.sfx_vol.event(event) != -1:
             self.sfx_vol_surf = self.sfx_vol_surf.draw()
+            update_sfx_vol(self.sfx_vol.get_val()) # settings.py function
                     
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -56,6 +57,7 @@ class Options(Display):
                     return self.prev_display
                 if self.fullscreen.event(event) != -1:
                     self.fullscreen_surf = self.fullscreen.draw()
+                    toggle_fullscreen()
         return -1
     
 class Option(pg.Surface):
@@ -100,7 +102,7 @@ class SliderOption(Option):
         super().init_surf(self.slider_bar_rect.x + SLIDER_BAR_WIDTH + 5, SLIDER_HEIGHT + 5)
         
     def get_val(self): 
-        return (min_val + (max_val - min_val) * self.slider_pos // (SLIDER_BAR_WIDTH - SLIDER_WIDTH))
+        return (self.min_val + (self.max_val - self.min_val) * self.slider_pos / (SLIDER_BAR_WIDTH - SLIDER_WIDTH))
     
     def set_coords(self, x, y):
         super().set_coords(x, y)
