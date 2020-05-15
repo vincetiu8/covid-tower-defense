@@ -16,7 +16,7 @@ class Obstacle(pg.sprite.Sprite):
                 self.game.map.change_node(tile_from_xcoords(x, self.game.map.tilesize) + i, tile_from_xcoords(y, self.game.map.tilesize) + j, 1)
 
 class Projectile(pg.sprite.Sprite):
-    def __init__(self, game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage):
+    def __init__(self, game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage, shield_damage):
         self.groups = game.projectiles
         self.clock = game.clock
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -32,6 +32,7 @@ class Projectile(pg.sprite.Sprite):
         self.slow_duration = slow_duration
         self.damage = damage
         self.direction = direction
+        self.shield_damage = shield_damage
         
         self.time_passed = 0
         self.end = lifetime * 1000
@@ -46,14 +47,14 @@ class Projectile(pg.sprite.Sprite):
 
         hits = pg.sprite.spritecollide(self, self.game.enemies, False)
         if (hits):
-            hits[0].damage(self.damage)
+            hits[0].damage(self.damage, self.shield_damage)
             if self.slow_speed != 1:
                 hits[0].slow(self.slow_speed, self.slow_duration)
             self.kill()
 
 class TrackingProjectile(Projectile):
-    def __init__(self, game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage, enemy):
-        super().__init__(game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage)
+    def __init__(self, game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage, shield_damage, enemy):
+        super().__init__(game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage, shield_damage)
         self.enemy = enemy
 
     def update(self):
@@ -88,6 +89,14 @@ class Tower(Obstacle):
         self.base_image = data["base_image"]
         self.attack_speed = data["attack_speed"]
         self.area_of_effect = data["area_of_effect"]
+        self.different_shield_damage = data["different_shield_damage"]
+        self.sound = data["shoot_sound"]
+
+        if self.different_shield_damage:
+            self.shield_damage = data["shield_damage"]
+        else:
+            self.shield_damage = self.damage
+
         if self.area_of_effect:
             self.aoe_sprite = pg.sprite.Sprite()
             self.aoe_sprite.rect = self.rect.copy()
@@ -116,7 +125,7 @@ class Tower(Obstacle):
                 hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.enemies, False)
                 if (hits):
                     for hit in hits:
-                        hit.damage(self.damage)
+                        hit.damage(self.damage, self.shield_damage)
                         if self.slow_speed != 1:
                             hits[0].slow(self.slow_speed, self.slow_duration)
                     self.sound.play()
@@ -150,11 +159,11 @@ class Tower(Obstacle):
                         rotation += increment
                         if self.tracking:
                             TrackingProjectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed,
-                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.current_enemy)
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.shield_damage, self.current_enemy)
                         else:
-                            Projectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage)
+                            Projectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.shield_damage)
 
-                    TOWER_DATA[self.name]["stages"][self.stage]["shoot_sound"].play()
+                    self.sound.play()
                     self.next_spawn = pg.time.get_ticks() + self.attack_speed * 1000
 
         if not self.area_of_effect and self.current_enemy == None:

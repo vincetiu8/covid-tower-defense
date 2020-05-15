@@ -318,7 +318,6 @@ class Game(Display):
                             if flying:
                                 new_image = image.copy()
                                 new_image.fill(GREEN, None, pg.BLEND_RGBA_MULT)
-                                print(node)
                             else:
                                 new_image = image
                             self.path_surf.blit(new_image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize,

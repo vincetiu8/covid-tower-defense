@@ -76,7 +76,6 @@ class DevClass(Game):
         self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
 
     def make_stripped_path_wrapper(self):
-        print("STRIPP")
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
 
     def load_ui(self):
@@ -247,7 +246,7 @@ class TowerPreview(DevClass):
         self.new_tower_name = attrs.pop("new_tower_name")
         for attr in attrs:
             if attr == "scroll_position":
-               continue
+                continue
             elif attr == "tower_name":
                 if self.current_tower != attrs[attr]:
                     reload = True
@@ -260,9 +259,9 @@ class TowerPreview(DevClass):
                 TOWER_DATA[self.tower_names[self.current_tower]][attr] = attrs[attr]
                 continue
             else:
-                TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] = attrs[attr]
-                if ATTR_DATA["stage"][attr]["type"] == "bool" and ((attrs[attr] and "ignore_if_true" in ATTR_DATA["stage"][attr]) or (not attrs[attr] and "ignore_if_false" in ATTR_DATA["stage"][attr])):
+                if ATTR_DATA["stage"][attr]["type"] == "bool" and ((attrs[attr] and not TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] and "ignore_if_true" in ATTR_DATA["stage"][attr]) or (not attrs[attr] and TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] and "ignore_if_false" in ATTR_DATA["stage"][attr])):
                     reload = True
+                TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] = attrs[attr]
         if reload:
             self.current_tower = attrs["tower_name"]
             self.current_stage = attrs["tower_stage"]
@@ -278,6 +277,8 @@ class TowerPreview(DevClass):
         if isinstance(result, str):
             if result == "menu":
                 return result
+            elif result == "scroll_position":
+                self.get_attr_surf()
             elif result == "new_tower_name":
                 self.create_new_tower()
                 self.load_ui()
@@ -308,7 +309,7 @@ class TowerPreview(DevClass):
                 path.join(TOWERS_IMG_FOLDER, self.new_tower_name + "_base" + str(stage) + ".png"))
             TOWER_DATA[self.new_tower_name]["stages"][stage]["bullet_image"] = pg.image.load(
                 path.join(TOWERS_IMG_FOLDER, self.new_tower_name + "_bullet" + str(stage) + ".png"))
-            TOWER_DATA[self.new_tower_name]["stages"][stage]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER, "{}.wav".format(self.new_tower_name))
+            TOWER_DATA[self.new_tower_name]["stages"][stage]["shoot_sound"] = pg.mixer.Sound(path.join(TOWERS_AUD_FOLDER, "{}.wav".format(self.new_tower_name)))
             temp_base = TOWER_DATA[self.new_tower_name]["stages"][stage]["base_image"].copy()
             temp_base.blit(TOWER_DATA[self.new_tower_name]["stages"][stage]["gun_image"],
                            TOWER_DATA[self.new_tower_name][stage]["gun_image"].get_rect(
@@ -377,9 +378,10 @@ class EnemyPreview(DevClass):
                     reload = True
                 continue
             else:
-                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
-                if ATTR_DATA["enemy"][attr]["type"] == "bool" and ((attrs[attr] and "ignore_if_true" in ATTR_DATA["enemy"][attr]) or (not attrs[attr] and "ignore_if_false" in ATTR_DATA["enemy"][attr])):
+                if ATTR_DATA["enemy"][attr]["type"] == "bool" and ((attrs[attr] and not ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] and "ignore_if_true" in ATTR_DATA["enemy"][attr]) or (not attrs[attr] and ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] and "ignore_if_false" in ATTR_DATA["enemy"][attr])):
                     reload = True
+                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
+
         if reload:
             self.current_enemy = attrs["enemy_name"]
             self.load_ui() # has to be called so UI reloads when changing tower_name while editing a description
@@ -394,6 +396,8 @@ class EnemyPreview(DevClass):
         if isinstance(result, str):
             if result == "menu":
                 return result
+            elif result == "scroll_position":
+                self.get_attr_surf()
             elif result == "new_enemy_name":
                 self.create_new_enemy()
                 self.load_ui()
@@ -411,7 +415,7 @@ class EnemyPreview(DevClass):
         for attr in ATTR_DATA["enemy"]:
             ENEMY_DATA[self.new_enemy_name][attr] = ATTR_DATA["enemy"][attr]["default"]
         ENEMY_DATA[self.new_enemy_name]["image"] = pg.image.load(path.join(ENEMIES_IMG_FOLDER, "{}.png".format(self.new_enemy_name)))
-        ENEMY_DATA[self.new_enemy_name]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(self.new_enemy_name))
+        ENEMY_DATA[enemy]["death_sound"] = pg.mixer.Sound(path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy)))
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_enemy = self.enemy_names.index(self.new_enemy_name)
 
@@ -554,6 +558,8 @@ class LevelPreview(DevClass):
         if isinstance(result, str):
             if result == "menu":
                 return result
+            elif result == "scroll_position":
+                self.get_attr_surf()
             elif result == "new_tower_name":
                 self.create_new_tower()
                 self.load_ui()
@@ -704,14 +710,15 @@ class DevUI():
                     for enemy in ENEMY_DATA:
                         if "image" in ENEMY_DATA[enemy]:
                             ENEMY_DATA[enemy].pop("image")
-                        if "death_sound_path" in ENEMY_DATA[enemy]:
-                            ENEMY_DATA[enemy].pop("death_sound_path")
+                        if "death_sound" in ENEMY_DATA[enemy]:
+                            ENEMY_DATA[enemy].pop("death_sound")
                     with open(path.join(GAME_FOLDER, "enemies.json"), 'w') as out_file:
                         json.dump(ENEMY_DATA, out_file, indent=4)
                     for enemy in ENEMY_DATA:
                         ENEMY_DATA[enemy]["image"] = pg.image.load(
                             path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
-                        ENEMY_DATA[enemy]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy))
+                        ENEMY_DATA[enemy]["death_sound"] = pg.mixer.Sound(
+                            path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy)))
                     for tower in TOWER_DATA:
                         for stage in range(3):
                             if "gun_image" in TOWER_DATA[tower]["stages"][stage]:
@@ -720,8 +727,8 @@ class DevUI():
                                 TOWER_DATA[tower]["stages"][stage].pop("base_image")
                             if "bullet_image" in TOWER_DATA[tower]["stages"][stage]:
                                 TOWER_DATA[tower]["stages"][stage].pop("bullet_image")
-                            if "shoot_sound_path" in TOWER_DATA[tower]["stages"][stage]:
-                                TOWER_DATA[tower]["stages"][stage].pop("shoot_sound_path")
+                            if "shoot_sound" in TOWER_DATA[tower]["stages"][stage]:
+                                TOWER_DATA[tower]["stages"][stage].pop("shoot_sound")
                             if "image" in TOWER_DATA[tower]["stages"][stage]:
                                 TOWER_DATA[tower]["stages"][stage].pop("image")
                     with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
@@ -730,8 +737,8 @@ class DevUI():
                         for stage in range(3):
                             TOWER_DATA[tower]["stages"][stage]["base_image"] = pg.image.load(
                                 path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(stage) + ".png"))
-                            TOWER_DATA[tower]["stages"][stage]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER,
-                                                                                               "{}.wav".format(tower))
+                            TOWER_DATA[tower]["stages"][stage]["shoot_sound"] = pg.mixer.Sound(
+                                path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower)))
 
                             temp_base = TOWER_DATA[tower]["stages"][stage]["base_image"].copy()
                             base = TOWER_DATA[tower]["stages"][stage]["base_image"]
@@ -756,10 +763,12 @@ class DevUI():
                     return_val = "menu"
 
                 else:
-                    if self.attributes[0].minus_button_rect.collidepoint(offset) and self.attributes[0].change_val(self.attributes[0].current_value - 1):
-                        return_val = self.attributes[0]
-                    elif self.attributes[0].plus_button_rect.collidepoint(offset) and self.attributes[0].change_val(self.attributes[0].current_value + 1):
-                        return_val = self.attributes[0]
+                    if self.attributes[0].minus_button_rect.collidepoint(offset):
+                        if self.attributes[0].change_val(self.attributes[0].current_value - 1):
+                            return_val = "scroll_position"
+                    elif self.attributes[0].plus_button_rect.collidepoint(offset):
+                        if self.attributes[0].change_val(self.attributes[0].current_value + 1):
+                            return_val = "scroll_position"
 
                     else:
                         for attr in self.attributes[self.attributes[0].current_value:self.attributes[0].current_value + self.max_attrs]:
