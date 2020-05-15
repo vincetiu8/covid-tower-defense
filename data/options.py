@@ -72,8 +72,8 @@ class Option(pg.Surface):
         label_font = pg.font.Font(FONT, 80)
         self.label_text = label_font.render(label, 1, WHITE)
         
-    def init_surf(self, width, height):
-        super().__init__((width, height), pg.SRCALPHA)
+    def init_surf(self, width, height): 
+        super().__init__((width, height), pg.SRCALPHA) # gives surfaces an alpha channel
         self.convert_alpha()
         
     def are_coords_unset(self):
@@ -101,7 +101,7 @@ class SliderOption(Option):
         self.slider_bar_rect = pg.Rect(self.label_text.get_width() + 20, 15, SLIDER_BAR_WIDTH, SLIDER_BAR_HEIGHT)
         
         self.slider_rect = None
-        self.slider_true_rect = None
+        self.slider_true_rect = None # used for event handling
         self.update_slider_rect()
         
         super().init_surf(self.slider_bar_rect.x + SLIDER_BAR_WIDTH + 5, SLIDER_HEIGHT + 5)
@@ -118,7 +118,7 @@ class SliderOption(Option):
         self.slider_true_rect = pg.Rect(self.slider_rect.x + self.x, self.y, SLIDER_WIDTH, SLIDER_HEIGHT)
         
     def draw(self):
-        self.fill((0, 0, 0, 0))
+        self.fill((0, 0, 0, 0)) # fill with transparency
         
         self.blit(self.label_text, (0, -15))
         pg.draw.rect(self, WHITE, self.slider_bar_rect, 5)
@@ -151,7 +151,7 @@ class TickBoxOption(Option):
         self.ticked = False
         
         self.tick_box_rect = pg.Rect(self.label_text.get_width() + 20, 5, TICK_BOX_SIZE, TICK_BOX_SIZE) # Needs some buffer on the top
-        self.tick_box_true_rect = None
+        self.tick_box_true_rect = None # used for event handling
         
         super().init_surf(self.tick_box_rect.x + TICK_BOX_SIZE + 5, TICK_BOX_SIZE + 10) # Needs some buffer on the right and bottom
         
@@ -163,7 +163,7 @@ class TickBoxOption(Option):
         self.tick_box_true_rect = pg.Rect(self.tick_box_rect.x + self.x, self.tick_box_rect.y + self.y, TICK_BOX_SIZE, TICK_BOX_SIZE)
         
     def draw(self):
-        self.fill((0, 0, 0, 0))
+        self.fill((0, 0, 0, 0)) # fill with transparency
         small_font = pg.font.Font(FONT, 70)
         
         self.blit(self.label_text, (0, -10))
