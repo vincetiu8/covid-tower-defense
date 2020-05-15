@@ -14,6 +14,15 @@ def resource_path(relative_path):
 
     return path.join(base_path, relative_path)
 
+# init pygame here lol
+pg.init()
+pg.mixer.init()
+
+# game settings
+FPS = 60
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
+
 LIVES = 5
 PROTEIN = 50
               
@@ -21,6 +30,20 @@ ZOOM_AMT_GAME = 0.05
 ZOOM_AMT_MENU = 0.1
 
 WAVE_DELAY = 10 # in seconds
+
+EXPLOSION_TIME = 0.5
+
+FULLSCREEN = False
+SCREEN = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+def toggle_fullscreen():
+    global FULLSCREEN
+    FULLSCREEN = not FULLSCREEN
+    
+    if FULLSCREEN:
+        SCREEN = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.FULLSCREEN)
+    else:
+        SCREEN = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # define some colors (R, G, B)
 WHITE = pg.Color(255, 255, 255)
@@ -48,13 +71,6 @@ HALF_PINK = pg.Color(255, 0, 255, 127)
 
 AURA_COLORS = [HALF_RED, HALF_ORANGE, HALF_YELLOW, HALF_GREEN, HALF_CYAN, HALF_BLUE, HALF_PURPLE, HALF_PINK]
 
-# game settings
-FPS = 60
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
-
-EXPLOSION_TIME = 0.5
-
 # looks for img_folder and map_folder in the same folder as the code
 GAME_FOLDER = resource_path("data")
 IMG_FOLDER = path.join(GAME_FOLDER, "img")
@@ -68,6 +84,7 @@ UI_IMG_FOLDER = path.join(IMG_FOLDER, "ui")
 ENEMIES_IMG_FOLDER = path.join(IMG_FOLDER, "enemies")
 TOWERS_IMG_FOLDER = path.join(IMG_FOLDER, "towers")
 GAME_STOP_IMG_FOLDER = path.join(IMG_FOLDER, "game_stop")
+OPTIONS_IMG_FOLDER = path.join(IMG_FOLDER, "options")
 
 ENEMIES_AUD_FOLDER = path.join(AUDIO_FOLDER, "enemies")
 TOWERS_AUD_FOLDER = path.join(AUDIO_FOLDER, "towers")
@@ -94,6 +111,15 @@ BTN_PADDING = 20
 BTN_X_MARGIN = 100
 BTN_Y = 620
 
+# Options Constants
+OPTIONS_SEPARATION = 30
+
+TICK_BOX_SIZE = 50
+SLIDER_BAR_WIDTH = 270
+SLIDER_BAR_HEIGHT = 20
+SLIDER_WIDTH = 20
+SLIDER_HEIGHT = 50
+
 # load ui images
 HEART_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "heart.png"))
 PROTEIN_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "protein.png"))
@@ -102,9 +128,9 @@ RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_IMG_FOLDER, "le
 
 # Initializing the mixer in the settings file lol but rn i don't see a better way.
 # Audio
-AUDIO_HEART_BEEP_PATH = path.join(GAME_STOP_AUD_FOLDER, "heart_beep.wav")
-AUDIO_FLATLINE_PATH = path.join(GAME_STOP_AUD_FOLDER, "flatline.wav")
-AUDIO_BUY_PATH = path.join(AUDIO_FOLDER, "buy_sound.wav")
+HEART_BEEP_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "heart_beep.wav"))
+FLATLINE_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "flatline.wav"))
+BUY_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "buy_sound.wav"))
 
 LEVEL_DATA = []
 
@@ -124,7 +150,7 @@ with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
     ENEMY_DATA = json.load(data_file)
     for enemy in ENEMY_DATA:
         ENEMY_DATA[enemy]["image"] = pg.image.load(path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
-        ENEMY_DATA[enemy]["death_sound_path"] = path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy))
+        ENEMY_DATA[enemy]["death_sound"] = pg.mixer.Sound(path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy)))
 
 # load tower data
 with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
@@ -132,7 +158,7 @@ with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
     for tower in TOWER_DATA:
         for stage in range(3):
             TOWER_DATA[tower]["stages"][stage]["base_image"] = pg.image.load(path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(stage) + ".png"))
-            TOWER_DATA[tower]["stages"][stage]["shoot_sound_path"] = path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower))
+            TOWER_DATA[tower]["stages"][stage]["shoot_sound"] = pg.mixer.Sound(path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower)))
             
             temp_base = TOWER_DATA[tower]["stages"][stage]["base_image"].copy()
             base = TOWER_DATA[tower]["stages"][stage]["base_image"]
@@ -151,6 +177,21 @@ with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
 
 with open(path.join(GAME_FOLDER, "attributes.json"), "r") as data_file:
     ATTR_DATA = json.load(data_file)
+    
+# Update audio volume
+def update_sfx_vol(vol):
+    HEART_BEEP_SFX.set_volume(vol * 0.75)
+    FLATLINE_SFX.set_volume(vol * 0.75)
+    BUY_SFX.set_volume(vol)
+    
+    for tower in TOWER_DATA:
+        for stage in range(3):
+            TOWER_DATA[tower]["stages"][stage]["shoot_sound"].set_volume(vol)
+            
+    for enemy in ENEMY_DATA:
+        ENEMY_DATA[enemy]["death_sound"].set_volume(vol)
+        
+update_sfx_vol(1)
 
 # load path images
 PATH_VERTICAL_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "vertical.png"))
@@ -159,6 +200,15 @@ PATH_CORNER1_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner1.png"))
 PATH_CORNER2_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner2.png"))
 PATH_CORNER3_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner3.png"))
 PATH_CORNER4_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner4.png"))
+
+# load options images
+BRAIN_IMG = pg.image.load(path.join(OPTIONS_IMG_FOLDER, "brain.png"))
+OPTIONS_IMGS = [None, None]
+OPTIONS_BACK_IMGS = [None, None]
+
+for i, to_concat in enumerate(["", "_hover"]):
+    OPTIONS_IMGS[i] = pg.image.load(path.join(OPTIONS_IMG_FOLDER, "options{}.png".format(to_concat)))
+    OPTIONS_BACK_IMGS[i] = pg.image.load(path.join(OPTIONS_IMG_FOLDER, "back_btn{}.png".format(to_concat)))
 
 # load other images
 START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))

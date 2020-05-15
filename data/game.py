@@ -77,7 +77,6 @@ class Game(Display):
         self.cause_of_death = "IB"
         self.start_data = []
         self.map.clear_map()
-        self.buy_sound = pg.mixer.Sound(AUDIO_BUY_PATH)
         
         self.time_passed = 0
 
@@ -465,7 +464,7 @@ class Game(Display):
                 self.protein -= TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"]
                 self.current_tower = None
 
-                self.buy_sound.play()
+                BUY_SFX.play()
                 self.make_stripped_path_wrapper()
                 self.draw_tower_bases_wrapper()
                 for enemy in self.enemies:
