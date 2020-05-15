@@ -312,7 +312,7 @@ class TowerPreview(DevClass):
             TOWER_DATA[self.new_tower_name]["stages"][stage]["shoot_sound"] = pg.mixer.Sound(path.join(TOWERS_AUD_FOLDER, "{}.wav".format(self.new_tower_name)))
             temp_base = TOWER_DATA[self.new_tower_name]["stages"][stage]["base_image"].copy()
             temp_base.blit(TOWER_DATA[self.new_tower_name]["stages"][stage]["gun_image"],
-                           TOWER_DATA[self.new_tower_name][stage]["gun_image"].get_rect(
+                           TOWER_DATA[self.new_tower_name]["stages"][stage]["gun_image"].get_rect(
                                center=TOWER_DATA[self.new_tower_name]["stages"][stage]["base_image"].get_rect().center))
             TOWER_DATA[self.new_tower_name]["stages"][stage]["image"] = temp_base
         self.tower_names = list(TOWER_DATA.keys())

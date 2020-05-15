@@ -188,5 +188,58 @@
                 "slow_duration": 0
             }
         ]
+    },
+    "mast_cell": {
+        "description": "A shield-breaker! Deals minimal damage to normal enemies, but loads of damage to shields!",
+        "stages": [
+            {
+                "damage": 1,
+                "different_shield_damage": false,
+                "shield_damage": 8,
+                "area_of_effect": false,
+                "attack_speed": 1,
+                "bullet_speed": 20,
+                "bullet_lifetime": 0.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 250,
+                "upgrade_cost": 15,
+                "directions": 1,
+                "rotating": true,
+                "tracking": true
+            },
+            {
+                "damage": 2,
+                "different_shield_damage": true,
+                "shield_damage": 12,
+                "area_of_effect": false,
+                "attack_speed": 0.75,
+                "bullet_speed": 20,
+                "bullet_lifetime": 0.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 275,
+                "upgrade_cost": 15,
+                "directions": 1,
+                "rotating": true,
+                "tracking": true
+            },
+            {
+                "damage": 3,
+                "different_shield_damage": true,
+                "shield_damage": 20,
+                "area_of_effect": false,
+                "attack_speed": 0.5,
+                "bullet_speed": 20,
+                "bullet_lifetime": 0.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 300,
+                "upgrade_cost": 15,
+                "directions": 1,
+                "rotating": true,
+                "tracking": true
+            }
+        ]
     }
 }
