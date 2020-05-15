@@ -202,6 +202,7 @@ PATH_CORNER3_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner3.png"))
 PATH_CORNER4_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "corner4.png"))
 
 # load options images
+BRAIN_IMG = pg.image.load(path.join(OPTIONS_IMG_FOLDER, "brain.png"))
 OPTIONS_IMGS = [None, None]
 OPTIONS_BACK_IMGS = [None, None]
 

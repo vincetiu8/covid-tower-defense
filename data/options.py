@@ -10,6 +10,9 @@ class Options(Display):
         
         self.back_rect = pg.Rect((20, 20), OPTIONS_BACK_IMGS[0].get_size())
         
+        self.brain_img = BRAIN_IMG
+        self.brain_img.fill(LIGHT_GREY, None, pg.BLEND_RGB_MULT)
+        
         self.fullscreen_surf = self.fullscreen.draw()
         self.music_vol_surf = self.music_vol.draw()
         self.sfx_vol_surf = self.sfx_vol.draw()
@@ -26,6 +29,7 @@ class Options(Display):
         title_font = pg.font.Font(FONT, 160)
         title_text = title_font.render("OPTIONS", 1, WHITE)
         
+        self.blit(self.brain_img, ((SCREEN_WIDTH - self.brain_img.get_width()) / 2, (SCREEN_HEIGHT - self.brain_img.get_height()) / 2))
         self.blit(title_text, ((SCREEN_WIDTH - title_text.get_width()) / 2, 0))
         
         back_hover = self.back_rect.collidepoint(pg.mouse.get_pos())
@@ -69,7 +73,8 @@ class Option(pg.Surface):
         self.label_text = label_font.render(label, 1, WHITE)
         
     def init_surf(self, width, height):
-        super().__init__((width, height))
+        super().__init__((width, height), pg.SRCALPHA)
+        self.convert_alpha()
         
     def are_coords_unset(self):
         return (self.x == 0 and self.y == 0)
@@ -113,7 +118,7 @@ class SliderOption(Option):
         self.slider_true_rect = pg.Rect(self.slider_rect.x + self.x, self.y, SLIDER_WIDTH, SLIDER_HEIGHT)
         
     def draw(self):
-        self.fill(BLACK)
+        self.fill((0, 0, 0, 0))
         
         self.blit(self.label_text, (0, -15))
         pg.draw.rect(self, WHITE, self.slider_bar_rect, 5)
@@ -158,7 +163,7 @@ class TickBoxOption(Option):
         self.tick_box_true_rect = pg.Rect(self.tick_box_rect.x + self.x, self.tick_box_rect.y + self.y, TICK_BOX_SIZE, TICK_BOX_SIZE)
         
     def draw(self):
-        self.fill(BLACK)
+        self.fill((0, 0, 0, 0))
         small_font = pg.font.Font(FONT, 70)
         
         self.blit(self.label_text, (0, -10))
