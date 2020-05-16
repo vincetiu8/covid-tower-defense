@@ -136,6 +136,8 @@ class Enemy(pg.sprite.Sprite):
 
     def recreate_path(self):
         self.path = self.game.pathfinder.astar((self.new_node[0], self.new_node[1]), self.game.goals, self.flying)
+        if not self.path and not self.flying:
+            self.path = self.game.pathfinder.astar((self.new_node[0], self.new_node[1]), self.game.goals, True)
         self.load_next_node()
 
     def load_next_node(self):
