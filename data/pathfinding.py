@@ -67,12 +67,21 @@ class Pathfinder():
                         data.append(current)
                         current = came_from[current]
                     data.append(current)
+                    
                     self.map[0][start[0][0]][start[0][1]] = prevstate
                     if ignore_towers:
                         self.map[0] = temp_map
-                        self.flying_paths[start] = data
-                    else:
-                        self.paths[start] = data
+                        
+                    for i, node in enumerate(data): # Adds the path for each node in the path
+                        # this only has to be done until a node that already has a path is reached
+                        if ignore_towers:
+                            if self.flying_paths.get(node, False) != False:
+                                break
+                            self.flying_paths[node] = data[i:]
+                        else:
+                            if self.paths.get(node, False) != False:
+                                break
+                            self.paths[node] = data[i:]
                     return data.copy()
 
                 close_set.add(current)

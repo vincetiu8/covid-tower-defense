@@ -137,6 +137,8 @@ class Game(Display):
             vein_entrances = vein_entrances,
             base_map = self.map.get_map()
         )
+        
+        self.node_is_in_path = [[]]
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
         self.draw_tower_bases_wrapper()
@@ -265,6 +267,7 @@ class Game(Display):
         self.make_stripped_path(self)
 
     def make_stripped_path(self, surface):
+        self.node_is_in_path = [[False for i in range(len(self.map.get_map()[0]))] for j in range(len(self.map.get_map()))]
         self.path_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
         self.path_surf.fill((0, 0, 0, 0))
 
@@ -281,6 +284,9 @@ class Game(Display):
                     path = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, flying)
                     self.stripped_path = []
                     for i, node in enumerate(path):
+                        if node[1] == 0: # not artery or vein
+                            self.node_is_in_path[node[0][0]][node[0][1]] = True
+                            
                         if (i < len(path) - 1):
                             diff_x_after = path[i + 1][0][0] - node[0][0]
                             diff_y_after = path[i + 1][0][1] - node[0][1]
@@ -354,33 +360,32 @@ class Game(Display):
             if validity == 1:
                 tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
             elif validity == -1:
-                self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize),
-                                     tile_from_xcoords(towerxy[1], self.map.tilesize), 1)
+                self.map.change_node(tower_tile[0], tower_tile[1], 1)
+                self.pathfinder.clear_nodes(self.map.get_map())
                 
                 result = True
-                done = []
-                for start in self.starts:
-                    if start.start in done:
-                        continue
-                    done.append(start.start)
-                    
-                    xpos = tile_from_xcoords(start.rect.x, self.map.tilesize)
-                    ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
-                    
-                    for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
-                        for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
-                            self.pathfinder.clear_nodes(self.map.get_map())
-                            temp_result = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, False)
-                            
-                            if temp_result == False:
-                                result = False
-                                break
-                            
-                    if not result:
-                        break
+                if self.node_is_in_path[tower_tile[0]][tower_tile[1]]:
+                    done = []
+                    for start in self.starts:
+                        if start.start in done:
+                            continue
+                        done.append(start.start)
+                        
+                        xpos = tile_from_xcoords(start.rect.x, self.map.tilesize)
+                        ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
+                        
+                        for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
+                            for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
+                                temp_result = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, False)
+                                
+                                if temp_result == False:
+                                    result = False
+                                    break
+                                
+                        if not result:
+                            break
                 
-                self.map.change_node(tile_from_xcoords(towerxy[0], self.map.tilesize),
-                                        tile_from_xcoords(towerxy[1], self.map.tilesize), 0)
+                self.map.change_node(tower_tile[0], tower_tile[1], 0)
                 self.pathfinder.clear_nodes(self.map.get_map())
                             
                 if result != False:

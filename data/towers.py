@@ -119,7 +119,7 @@ class Tower(Obstacle):
                         hit.damage(self.damage)
                         if self.slow_speed != 1:
                             hits[0].slow(self.slow_speed, self.slow_duration)
-                    self.sound.play()
+                    TOWER_DATA[self.name]["stages"][self.stage]["shoot_sound"].play()
                     self.next_spawn = pg.time.get_ticks() + self.attack_speed * 1000
 
             elif self.current_enemy != None:
