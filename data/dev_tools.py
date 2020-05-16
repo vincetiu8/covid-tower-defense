@@ -227,6 +227,7 @@ class TowerPreview(DevClass):
                 elif "ignore_if_false" in ATTR_DATA["stage"][attr] and not TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr]:
                     ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_false"])
             else:
+                print(attr)
                 try:
                     self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr],
                                                TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
@@ -259,7 +260,7 @@ class TowerPreview(DevClass):
                 TOWER_DATA[self.tower_names[self.current_tower]][attr] = attrs[attr]
                 continue
             else:
-                if ATTR_DATA["stage"][attr]["type"] == "bool" and ((attrs[attr] and not TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] and "ignore_if_true" in ATTR_DATA["stage"][attr]) or (not attrs[attr] and TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] and "ignore_if_false" in ATTR_DATA["stage"][attr])):
+                if ATTR_DATA["stage"][attr]["type"] == "bool" and ((attrs[attr] and not TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] and "ignore_if_false" in ATTR_DATA["stage"][attr]) or (not attrs[attr] and TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] and "ignore_if_true" in ATTR_DATA["stage"][attr])):
                     reload = True
                 TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] = attrs[attr]
         if reload:
@@ -378,7 +379,7 @@ class EnemyPreview(DevClass):
                     reload = True
                 continue
             else:
-                if ATTR_DATA["enemy"][attr]["type"] == "bool" and ((attrs[attr] and not ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] and "ignore_if_true" in ATTR_DATA["enemy"][attr]) or (not attrs[attr] and ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] and "ignore_if_false" in ATTR_DATA["enemy"][attr])):
+                if ATTR_DATA["enemy"][attr]["type"] == "bool" and ((attrs[attr] and not ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] and "ignore_if_false" in ATTR_DATA["enemy"][attr]) or (not attrs[attr] and ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] and "ignore_if_true" in ATTR_DATA["enemy"][attr])):
                     reload = True
                 ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
 
@@ -712,6 +713,16 @@ class DevUI():
                             ENEMY_DATA[enemy].pop("image")
                         if "death_sound" in ENEMY_DATA[enemy]:
                             ENEMY_DATA[enemy].pop("death_sound")
+                        for attr in ATTR_DATA["enemy"]:
+                            if ATTR_DATA["enemy"][attr]["type"] == "bool":
+                                if "ignore_if_true" in ATTR_DATA["enemy"][attr] and ENEMY_DATA[enemy][attr]:
+                                    for el in ATTR_DATA["enemy"][attr]["ignore_if_true"]:
+                                        if el in ENEMY_DATA[enemy]:
+                                            ENEMY_DATA[enemy].pop(el)
+                                elif "ignore_if_false" in ATTR_DATA["enemy"][attr] and not ENEMY_DATA[enemy][attr]:
+                                    for el in ATTR_DATA["enemy"][attr]["ignore_if_false"]:
+                                        if el in ENEMY_DATA[enemy]:
+                                            ENEMY_DATA[enemy].pop(el)
                     with open(path.join(GAME_FOLDER, "enemies.json"), 'w') as out_file:
                         json.dump(ENEMY_DATA, out_file, indent=4)
                     for enemy in ENEMY_DATA:
@@ -731,6 +742,16 @@ class DevUI():
                                 TOWER_DATA[tower]["stages"][stage].pop("shoot_sound")
                             if "image" in TOWER_DATA[tower]["stages"][stage]:
                                 TOWER_DATA[tower]["stages"][stage].pop("image")
+                            for attr in ATTR_DATA["stage"]:
+                                if ATTR_DATA["stage"][attr]["type"] == "bool":
+                                    if "ignore_if_true" in ATTR_DATA["stage"][attr] and TOWER_DATA[tower]["stages"][stage][attr]:
+                                        for el in ATTR_DATA["stage"][attr]["ignore_if_true"]:
+                                            if el in TOWER_DATA[tower]["stages"][stage]:
+                                                TOWER_DATA[tower]["stages"][stage].pop(el)
+                                    elif "ignore_if_false" in ATTR_DATA["stage"][attr] and not TOWER_DATA[tower]["stages"][stage][attr]:
+                                        for el in ATTR_DATA["stage"][attr]["ignore_if_false"]:
+                                            if el in TOWER_DATA[tower]["stages"][stage]:
+                                                TOWER_DATA[tower]["stages"][stage].pop(el)
                     with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
                         json.dump(TOWER_DATA, out_file, indent=4)
                     for tower in TOWER_DATA:

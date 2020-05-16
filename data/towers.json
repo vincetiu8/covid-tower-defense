@@ -194,8 +194,7 @@
         "stages": [
             {
                 "damage": 1,
-                "different_shield_damage": false,
-                "shield_damage": 8,
+                "different_shield_damage": true,
                 "area_of_effect": false,
                 "attack_speed": 1,
                 "bullet_speed": 20,
@@ -206,7 +205,8 @@
                 "upgrade_cost": 15,
                 "directions": 1,
                 "rotating": true,
-                "tracking": true
+                "tracking": true,
+                "shield_damage": 8
             },
             {
                 "damage": 2,

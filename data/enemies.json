@@ -47,9 +47,6 @@
     "rabies": {
         "hp": 30,
         "shield": false,
-        "shield_hp": 5,
-        "shield_recharge_delay": 1,
-        "shield_recharge_rate": 0.1,
         "explode_on_death": true,
         "explode_radius": 100,
         "speed": 100,
