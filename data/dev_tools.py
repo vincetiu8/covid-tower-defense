@@ -76,7 +76,6 @@ class DevClass(Game):
         self.draw_tower_bases(pg.Surface((self.map.width, self.map.height)))
 
     def make_stripped_path_wrapper(self):
-        print("STRIPP")
         self.make_stripped_path(pg.Surface((self.map.width, self.map.height)))
 
     def load_ui(self):
