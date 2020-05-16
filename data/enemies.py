@@ -19,19 +19,16 @@ class Enemy(pg.sprite.Sprite):
         self.original_image = data["image"]
         self.raw_image = self.original_image
         self.flying = data["flying"]
-        if data["shield"]:
-            self.shield = True
+        self.shield = data["shield"]
+        if self.shield:
             self.shield_max_hp = data["shield_hp"]
             self.shield_hp = data["shield_hp"]
             self.shield_max_recharge_delay = data["shield_recharge_delay"]
             self.shield_recharge_rate = data["shield_recharge_rate"]
-        else:
-            self.shield = False
-        if data["explode_on_death"]:
-            self.explode_on_death = True
+
+        self.explode_on_death = data["explode_on_death"]
+        if self.explode_on_death:
             self.explode_radius = data["explode_radius"]
-        else:
-            self.explode_on_death = False
         
         self.image = data["image"].copy()
         self.image_size = self.image.get_size()[0]
@@ -98,17 +95,16 @@ class Enemy(pg.sprite.Sprite):
         if (self.new_node_rect.collidepoint(self.rect.topleft) and self.new_node_rect.collidepoint(self.rect.bottomright)):
             self.load_next_node()
 
-    def damage(self, amount):
+    def damage(self, dam, shield_dam):
         if self.shield and self.shield_hp > 0:
             self.shield_recharge_delay = self.shield_max_recharge_delay
-            if amount > self.shield_hp:
+            if shield_dam > self.shield_hp:
                 self.shield_hp = 0
-                self.hp -= amount - self.shield_hp
             else:
-                self.shield_hp -= amount
+                self.shield_hp -= shield_dam
 
         else:
-            self.hp -= amount
+            self.hp -= dam
 
         if (self.hp <= 0):
             ENEMY_DATA[self.name]["death_sound"].play()
