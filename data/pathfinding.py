@@ -61,8 +61,14 @@ class Pathfinder():
             while oheap:
                 current = heappop(oheap)[1]
 
-                if current == start:
-                    data = []
+                if current == start or (ignore_towers and self.flying_paths.get(current, False) != False) or (not ignore_towers and self.paths.get(current, False) != False):
+                    if current == start:
+                        data = []
+                    elif ignore_towers:
+                        data = self.flying_paths.get(current)
+                    else:
+                        data = self.paths.get(current)
+
                     while current in came_from:
                         data.append(current)
                         current = came_from[current]
