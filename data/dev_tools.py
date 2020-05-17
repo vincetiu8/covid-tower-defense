@@ -761,42 +761,7 @@ class DevUI():
             self.save_button_rect = save_button.get_rect()
             self.save_button_rect.x = MENU_OFFSET
             width += self.save_button_rect.width + MENU_OFFSET
-            
-        reload_tower_text = font.render("Reload Towers", 1, WHITE)
-        reload_tower_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
-            round(reload_tower_text.get_rect().width * 1.5), reload_tower_text.get_height())).copy().convert_alpha()
-        reload_tower_button.blit(reload_tower_text, reload_tower_text.get_rect(center=reload_tower_button.get_rect().center))
-        self.reload_tower_button_rect = reload_tower_button.get_rect()
-        self.reload_tower_button_rect.x = MENU_OFFSET
-        width += self.reload_tower_button_rect.width + MENU_OFFSET
-        height += reload_tower_button.get_rect().height + MENU_OFFSET
 
-        reload_enemy_text = font.render("Reload Enemies", 1, WHITE)
-        reload_enemy_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
-            round(reload_enemy_text.get_rect().width * 1.5), reload_enemy_text.get_height())).copy().convert_alpha()
-        reload_enemy_button.blit(reload_enemy_text, reload_enemy_text.get_rect(center=reload_enemy_button.get_rect().center))
-        self.reload_enemy_button_rect = reload_enemy_button.get_rect()
-        self.reload_enemy_button_rect.x = self.reload_tower_button_rect.width + MENU_OFFSET * 2
-        width += self.reload_enemy_button_rect.width + MENU_OFFSET
-
-        temp_surf = pg.Surface((width, self.reload_tower_button_rect.height))
-        temp_surf.fill(DARK_GREY)
-        t_width = MENU_OFFSET
-        for save_surf in [reload_tower_button, reload_enemy_button]:
-            temp_surf.blit(save_surf, (t_width, 0))
-            t_width += save_surf.get_rect().width + MENU_OFFSET
-        surf_list.append(temp_surf)
-
-        t_width = MENU_OFFSET
-        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.2))
-        save_text = font.render(self.save_text, 1, WHITE)
-        save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
-        round(save_text.get_rect().width * 1.5), save_text.get_height())).copy().convert_alpha()
-        save_button.blit(save_text, save_text.get_rect(center=save_button.get_rect().center))
-        self.save_button_rect = save_button.get_rect()
-        self.save_button_rect.x = MENU_OFFSET
-        t_width += self.save_button_rect.width + MENU_OFFSET
-        height += save_button.get_rect().height + MENU_OFFSET
 
         done_text = font.render("Done", 1, WHITE)
         done_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
@@ -822,6 +787,31 @@ class DevUI():
 
         else:
             surf_list.append(done_button)
+
+        reload_tower_text = font.render("Reload Towers", 1, WHITE)
+        reload_tower_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
+            round(reload_tower_text.get_rect().width * 1.5), reload_tower_text.get_height())).copy().convert_alpha()
+        reload_tower_button.blit(reload_tower_text, reload_tower_text.get_rect(center=reload_tower_button.get_rect().center))
+        self.reload_tower_button_rect = reload_tower_button.get_rect()
+        self.reload_tower_button_rect.x = MENU_OFFSET
+        width += self.reload_tower_button_rect.width + MENU_OFFSET
+        height += reload_tower_button.get_rect().height + MENU_OFFSET
+
+        reload_enemy_text = font.render("Reload Enemies", 1, WHITE)
+        reload_enemy_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
+            round(reload_enemy_text.get_rect().width * 1.5), reload_enemy_text.get_height())).copy().convert_alpha()
+        reload_enemy_button.blit(reload_enemy_text, reload_enemy_text.get_rect(center=reload_enemy_button.get_rect().center))
+        self.reload_enemy_button_rect = reload_enemy_button.get_rect()
+        self.reload_enemy_button_rect.x = self.reload_tower_button_rect.width + MENU_OFFSET * 2
+        width += self.reload_enemy_button_rect.width + MENU_OFFSET
+
+        temp_surf = pg.Surface((width, self.reload_tower_button_rect.height))
+        temp_surf.fill(DARK_GREY)
+        t_width = MENU_OFFSET
+        for save_surf in [reload_tower_button, reload_enemy_button]:
+            temp_surf.blit(save_surf, (t_width, 0))
+            t_width += save_surf.get_rect().width + MENU_OFFSET
+        surf_list.insert(0, temp_surf)
 
         attr0_surf = self.attributes[0].draw()
         self.attributes[0].fix_offset(0, MENU_OFFSET)
