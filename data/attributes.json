@@ -39,6 +39,7 @@
         },
         "explode_on_death": {
             "type": "bool",
+            "ignore_if_false": ["explode_radius"],
             "default": false
         },
         "explode_radius": {

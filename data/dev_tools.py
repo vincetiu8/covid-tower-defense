@@ -416,7 +416,7 @@ class EnemyPreview(DevClass):
         for attr in ATTR_DATA["enemy"]:
             ENEMY_DATA[self.new_enemy_name][attr] = ATTR_DATA["enemy"][attr]["default"]
         ENEMY_DATA[self.new_enemy_name]["image"] = pg.image.load(path.join(ENEMIES_IMG_FOLDER, "{}.png".format(self.new_enemy_name)))
-        ENEMY_DATA[enemy]["death_sound"] = pg.mixer.Sound(path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy)))
+        ENEMY_DATA[self.new_enemy_name]["death_sound"] = pg.mixer.Sound(path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy)))
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_enemy = self.enemy_names.index(self.new_enemy_name)
 
