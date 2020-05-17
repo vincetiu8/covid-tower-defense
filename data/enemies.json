@@ -51,5 +51,28 @@
         "protein": 3,
         "flying": false,
         "scroll_position": 1
+    },
+    "hepatitis_b": {
+        "hp": 20,
+        "shield": true,
+        "shield_hp": 5,
+        "shield_recharge_delay": 1,
+        "shield_recharge_rate": 0.1,
+        "explode_on_death": false,
+        "speed": 100,
+        "protein": 3,
+        "flying": false
+    },
+    "hiv": {
+        "hp": 30,
+        "shield": true,
+        "shield_hp": 20,
+        "shield_recharge_delay": 1,
+        "shield_recharge_rate": 0.1,
+        "explode_on_death": true,
+        "explode_radius": 100,
+        "speed": 70,
+        "protein": 10,
+        "flying": false
     }
 }
