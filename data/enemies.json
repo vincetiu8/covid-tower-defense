@@ -5,9 +5,7 @@
         "protein": 10,
         "flying": false,
         "shield": false,
-        "explode_on_death": false,
-        "scroll_position": 1,
-        "explode_radius": 100
+        "explode_on_death": false
     },
     "common_cold": {
         "hp": 2,

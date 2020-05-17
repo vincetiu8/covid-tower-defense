@@ -312,7 +312,7 @@ class TowerEditMenu(TowerPreviewMenu):
                                                TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
                                                    self.current_stage][attr], disabled=False))
                 except:
-                    self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr], ATTR_DATA["stage"][attr]["default"]))
+                    self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr], ATTR_DATA["stage"][attr]["default"], disabled=False))
                     TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr] = ATTR_DATA["stage"][attr]["default"]
 
         self.reload_enemies()
@@ -383,7 +383,7 @@ class TowerEditMenu(TowerPreviewMenu):
         self.current_tower = self.tower_names.index(self.new_tower_name)
         self.current_stage = 0
 
-class EnemyEditMenu(DevClass):
+class EnemyPreviewMenu(DevClass):
     def new(self, args):
         # initialize all variables and do all the setup for a new game
         super().reload_level("enemy_test")
@@ -399,8 +399,7 @@ class EnemyEditMenu(DevClass):
         self.ui.new_attr(Attribute("enemy_name", {
             "type": "select",
             "values": self.enemy_names
-        }, self.current_enemy, reload_on_change=True))
-        self.ui.new_attr(Attribute("new_enemy_name", {"type": "string"}, ""))
+        }, self.current_enemy, disabled=False, reload_on_change=True))
 
         ignore = []
         for attr in ATTR_DATA["enemy"]:
@@ -408,21 +407,14 @@ class EnemyEditMenu(DevClass):
                 continue
             if ATTR_DATA["enemy"][attr]["type"] == "bool" and "ignore_if_true" in ATTR_DATA["enemy"][
                 attr] or "ignore_if_false" in ATTR_DATA["enemy"][attr]:
-                self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
-                                           ENEMY_DATA[self.enemy_names[self.current_enemy]][attr], reload_on_change=True))
                 if "ignore_if_true" in ATTR_DATA["enemy"][attr] and \
                         ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]:
                     ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_true"])
                 elif "ignore_if_false" in ATTR_DATA["enemy"][attr] and not \
                 ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]:
                     ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_false"])
-            else:
-                try:
-                    self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
+            self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
                                                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
-                except:
-                    self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr], ATTR_DATA["enemy"][attr]["default"]))
-                    ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = ATTR_DATA["enemy"][attr]["default"]
 
         self.reload_enemies()
         self.reload_towers()
@@ -433,7 +425,6 @@ class EnemyEditMenu(DevClass):
         attrs = self.ui.get_attrs()
         self.current_tower = attrs.pop("tower_name")
         self.current_stage = attrs.pop("tower_stage")
-        self.new_enemy_name = attrs.pop("new_enemy_name")
         for attr in attrs:
             if attr == "scroll_position":
                continue
@@ -473,6 +464,74 @@ class EnemyEditMenu(DevClass):
             self.reload_attrs()
 
         return -1
+
+class EnemyEditMenu(EnemyPreviewMenu):
+    def new(self, args):
+        super().new(args)
+
+    def load_ui(self):
+        DevClass.load_ui(self)
+        self.ui.new_attr(Attribute("enemy_name", {
+            "type": "select",
+            "values": self.enemy_names
+        }, self.current_enemy, disabled=False, reload_on_change=True))
+        self.ui.new_attr(Attribute("new_enemy_name", {"type": "string"}, "", disabled=False))
+
+        ignore = []
+        for attr in ATTR_DATA["enemy"]:
+            if attr in ignore:
+                continue
+            if ATTR_DATA["enemy"][attr]["type"] == "bool" and "ignore_if_true" in ATTR_DATA["enemy"][
+                attr] or "ignore_if_false" in ATTR_DATA["enemy"][attr]:
+                self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
+                                           ENEMY_DATA[self.enemy_names[self.current_enemy]][attr], disabled=False, reload_on_change=True))
+                if "ignore_if_true" in ATTR_DATA["enemy"][attr] and \
+                        ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]:
+                    ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_true"])
+                elif "ignore_if_false" in ATTR_DATA["enemy"][attr] and not \
+                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]:
+                    ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_false"])
+            else:
+                try:
+                    self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
+                                               ENEMY_DATA[self.enemy_names[self.current_enemy]][attr], disabled=False))
+                except:
+                    self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr], ATTR_DATA["enemy"][attr]["default"], disabled=False))
+                    ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = ATTR_DATA["enemy"][attr]["default"]
+
+        self.reload_enemies()
+        self.reload_towers()
+        self.get_attr_surf()
+
+    def reload_attrs(self):
+        reload = False
+        attrs = self.ui.get_attrs()
+        self.current_tower = attrs.pop("tower_name")
+        self.current_stage = attrs.pop("tower_stage")
+        self.new_enemy_name = attrs.pop("new_enemy_name")
+        for attr in attrs:
+            if attr == "scroll_position":
+               continue
+            elif attr == "enemy_name":
+                if self.current_enemy != attrs[attr]:
+                    reload = True
+                continue
+            else:
+                if ATTR_DATA["enemy"][attr]["type"] == "bool" and ((attrs[attr] and not ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] and "ignore_if_false" in ATTR_DATA["enemy"][attr]) or (not attrs[attr] and ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] and "ignore_if_true" in ATTR_DATA["enemy"][attr])):
+                    reload = True
+                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
+
+        if reload:
+            self.current_enemy = attrs["enemy_name"]
+            self.load_ui() # has to be called so UI reloads when changing tower_name while editing a description
+
+        else:
+            self.reload_towers()
+            self.reload_enemies()
+            self.get_attr_surf()
+
+    def event(self, event):
+        return super().event(event)
 
     def create_new_enemy(self):
         ENEMY_DATA[self.new_enemy_name] = {}
