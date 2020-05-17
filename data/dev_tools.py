@@ -108,6 +108,7 @@ class DevClass(Game):
         self.make_stripped_path_wrapper()
 
     def reload_enemies(self):
+        self.enemies = pg.sprite.Group() 
         for start in self.starts:
             start.enable_spawning()
             start.enemy_type = self.enemy_names[self.current_enemy]
@@ -188,6 +189,12 @@ class DevClass(Game):
             return -1
 
         elif isinstance(result, str):
+            if result == "reload_towers":
+                self.reload_towers()
+                return -1
+            elif result == "reload_enemies":
+                self.reload_enemies()
+                return -1
             return result
 
         return -2
@@ -416,7 +423,7 @@ class EnemyPreview(DevClass):
         for attr in ATTR_DATA["enemy"]:
             ENEMY_DATA[self.new_enemy_name][attr] = ATTR_DATA["enemy"][attr]["default"]
         ENEMY_DATA[self.new_enemy_name]["image"] = pg.image.load(path.join(ENEMIES_IMG_FOLDER, "{}.png".format(self.new_enemy_name)))
-        ENEMY_DATA[enemy]["death_sound"] = pg.mixer.Sound(path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy)))
+        ENEMY_DATA[self.new_enemy_name]["death_sound"] = pg.mixer.Sound(path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy)))
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_enemy = self.enemy_names.index(self.new_enemy_name)
 
@@ -621,8 +628,34 @@ class DevUI():
     def get_ui(self):
         surf_list = []
         height = MENU_OFFSET
-
         width = MENU_OFFSET
+        font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.2))
+        reload_tower_text = font.render("Reload Towers", 1, WHITE)
+        reload_tower_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
+            round(reload_tower_text.get_rect().width * 1.5), reload_tower_text.get_height())).copy().convert_alpha()
+        reload_tower_button.blit(reload_tower_text, reload_tower_text.get_rect(center=reload_tower_button.get_rect().center))
+        self.reload_tower_button_rect = reload_tower_button.get_rect()
+        self.reload_tower_button_rect.x = MENU_OFFSET
+        width += self.reload_tower_button_rect.width + MENU_OFFSET
+        height += reload_tower_button.get_rect().height + MENU_OFFSET
+
+        reload_enemy_text = font.render("Reload Enemies", 1, WHITE)
+        reload_enemy_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
+            round(reload_enemy_text.get_rect().width * 1.5), reload_enemy_text.get_height())).copy().convert_alpha()
+        reload_enemy_button.blit(reload_enemy_text, reload_enemy_text.get_rect(center=reload_enemy_button.get_rect().center))
+        self.reload_enemy_button_rect = reload_enemy_button.get_rect()
+        self.reload_enemy_button_rect.x = self.reload_tower_button_rect.width + MENU_OFFSET * 2
+        width += self.reload_enemy_button_rect.width + MENU_OFFSET
+
+        temp_surf = pg.Surface((width, self.reload_tower_button_rect.height))
+        temp_surf.fill(DARK_GREY)
+        t_width = MENU_OFFSET
+        for save_surf in [reload_tower_button, reload_enemy_button]:
+            temp_surf.blit(save_surf, (t_width, 0))
+            t_width += save_surf.get_rect().width + MENU_OFFSET
+        surf_list.append(temp_surf)
+
+        t_width = MENU_OFFSET
         font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.2))
         save_text = font.render(self.save_text, 1, WHITE)
         save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
@@ -630,7 +663,7 @@ class DevUI():
         save_button.blit(save_text, save_text.get_rect(center=save_button.get_rect().center))
         self.save_button_rect = save_button.get_rect()
         self.save_button_rect.x = MENU_OFFSET
-        width += self.save_button_rect.width + MENU_OFFSET
+        t_width += self.save_button_rect.width + MENU_OFFSET
         height += save_button.get_rect().height + MENU_OFFSET
 
         done_text = font.render("Done", 1, WHITE)
@@ -639,20 +672,22 @@ class DevUI():
         done_button.blit(done_text, done_text.get_rect(center=done_button.get_rect().center))
         self.done_button_rect = done_button.get_rect()
         self.done_button_rect.x = self.save_button_rect.width + MENU_OFFSET * 2
-        width += self.done_button_rect.width + MENU_OFFSET
+        t_width += self.done_button_rect.width + MENU_OFFSET
 
-        temp_surf = pg.Surface((width, self.save_button_rect.height))
+        temp_surf = pg.Surface((t_width, self.save_button_rect.height))
         temp_surf.fill(DARK_GREY)
         t_width = MENU_OFFSET
         for save_surf in [save_button, done_button]:
             temp_surf.blit(save_surf, (t_width, 0))
             t_width += save_surf.get_rect().width + MENU_OFFSET
         surf_list.append(temp_surf)
+        if width < t_width:
+            width = t_width
 
-        attr_surf = self.attributes[0].draw()
+        attr0_surf = self.attributes[0].draw()
         self.attributes[0].fix_offset(0, MENU_OFFSET)
-        height += attr_surf.get_height() + MENU_OFFSET
-        surf_list.insert(0, attr_surf)
+        height += attr0_surf.get_height() + MENU_OFFSET
+        surf_list.insert(0, attr0_surf)
 
         if self.max_attrs == 0:
             for attr in self.attributes[1:]:
@@ -684,8 +719,8 @@ class DevUI():
             surf.blit(attr, (MENU_OFFSET, height))
             height += attr.get_height() + MENU_OFFSET
 
-        self.save_button_rect.y = height - MENU_OFFSET - self.save_button_rect.height
-        self.done_button_rect.y = self.save_button_rect.y
+        self.save_button_rect.y = self.done_button_rect.y = height - MENU_OFFSET - self.save_button_rect.height
+        self.reload_enemy_button_rect.y = self.reload_tower_button_rect.y = MENU_OFFSET * 2 + attr0_surf.get_height()
 
         return surf
 
@@ -783,6 +818,12 @@ class DevUI():
                 elif self.done_button_rect.collidepoint(offset):
                     return_val = "menu"
 
+                elif self.reload_tower_button_rect.collidepoint(offset):
+                    return_val = "reload_towers"
+
+                elif self.reload_enemy_button_rect.collidepoint(offset):
+                    return_val = "reload_enemies"
+
                 else:
                     if self.attributes[0].minus_button_rect.collidepoint(offset):
                         if self.attributes[0].change_val(self.attributes[0].current_value - 1):
@@ -797,31 +838,39 @@ class DevUI():
                                 if attr.minus_button_rect.collidepoint(offset):
                                     if attr.change_val(round(attr.current_value - attr.increment, attr.dp)):
                                         return_val = attr
+                                    break
                                 elif attr.plus_button_rect.collidepoint(offset):
                                     if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
                                         return_val = attr
+                                    break
                             elif attr.type == "bool":
                                 if attr.x_button_rect.collidepoint(offset):
                                     if attr.change_val(not attr.current_value):
                                         return_val = attr
+                                    break
                             elif attr.type == "select":
                                 if attr.back_button_rect.collidepoint(offset):
                                     if attr.change_val(attr.current_value - 1):
                                         return_val = attr
+                                    break
                                 elif attr.next_button_rect.collidepoint(offset):
                                     if attr.change_val(attr.current_value + 1):
                                         return_val = attr
+                                    break
                             elif attr.type == "string":
                                 if attr.textbox_rect.collidepoint(offset):
                                     if not attr.over:
                                         attr.over = True
                                         return_val = attr
+                                    break
                                 elif attr.enter_button_rect.collidepoint(offset):
                                     attr.over = False
                                     return_val = attr.name
+                                    break
                                 elif attr.over:
                                     attr.over = False
                                     return_val = attr
+                                    break
         elif event.type == pg.KEYDOWN:
             for attr in self.attributes:
                 if attr.type == "string" and attr.over:
@@ -835,6 +884,7 @@ class DevUI():
                     else:
                         if attr.change_val(attr.current_value + event.unicode):
                             return_val = attr
+                    break
         if isinstance(return_val, Attribute) and return_val.reload_on_change:
             return_val = return_val.name
                             
