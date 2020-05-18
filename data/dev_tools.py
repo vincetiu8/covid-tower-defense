@@ -127,7 +127,7 @@ class DevClass(Game):
     def draw(self):
         surface = pg.Surface((self.map.width, self.map.height))
         surface.fill((0, 0, 0))
-
+        
         surface.blit(self.map_img, self.map_rect)
 
         for start in self.starts:
@@ -164,7 +164,7 @@ class DevClass(Game):
             surface.blit(explosion.get_surf(), (explosion.x, explosion.y))
 
         surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-        surf.blit(self.camera.apply_image((surface)), self.camera.apply_tuple((0, 0)))
+        surf.blit(self.camera.apply_image((surface)), (0, 0))
 
         ui_pos = (SCREEN_WIDTH - MENU_OFFSET, MENU_OFFSET)
         if self.ui.active:
