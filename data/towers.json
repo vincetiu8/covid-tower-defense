@@ -1,103 +1,52 @@
 {
-    "t_cell": {
-        "description": "Your standard cell with standard range and standard damage.",
-        "stages": [
-            {
-                "damage": 2,
-                "different_shield_damage": false,
-                "area_of_effect": false,
-                "attack_speed": 0.25,
-                "bullet_speed": 25,
-                "bullet_lifetime": 0.3,
-                "slow_speed": 1,
-                "slow_duration": 0,
-                "range": 200,
-                "upgrade_cost": 10,
-                "directions": 1,
-                "rotating": true,
-                "tracking": true,
-                "at": 2
-            },
-            {
-                "damage": 3,
-                "different_shield_damage": false,
-                "area_of_effect": false,
-                "attack_speed": 0.2,
-                "bullet_speed": 35,
-                "bullet_lifetime": 0.3,
-                "slow_speed": 1,
-                "slow_duration": 0,
-                "range": 220,
-                "upgrade_cost": 5,
-                "directions": 1,
-                "rotating": true,
-                "tracking": true
-            },
-            {
-                "damage": 4,
-                "different_shield_damage": false,
-                "area_of_effect": false,
-                "attack_speed": 0.15,
-                "bullet_speed": 45,
-                "bullet_lifetime": 0.3,
-                "slow_speed": 1,
-                "slow_duration": 0,
-                "range": 250,
-                "upgrade_cost": 10,
-                "directions": 1,
-                "rotating": true,
-                "tracking": true
-            }
-        ]
-    },
     "b_cell": {
         "description": "These cells fire in 4 directions and have huge range! They can't track enemies, though.",
         "stages": [
             {
+                "area_of_effect": false,
+                "at": 0,
+                "attack_speed": 0.4,
+                "bullet_lifetime": 0.5,
+                "bullet_speed": 20,
                 "damage": 3,
                 "different_shield_damage": false,
-                "area_of_effect": false,
-                "attack_speed": 0.4,
-                "bullet_speed": 20,
-                "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
-                "range": 400,
-                "upgrade_cost": 15,
                 "directions": 4,
+                "range": 400,
                 "rotating": false,
+                "slow_duration": 0,
+                "slow_speed": 1,
                 "tracking": false,
-                "at": 0
+                "upgrade_cost": 15
             },
             {
-                "damage": 4,
-                "different_shield_damage": false,
                 "area_of_effect": false,
                 "attack_speed": 0.35,
-                "bullet_speed": 20,
                 "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
-                "range": 400,
-                "upgrade_cost": 10,
+                "bullet_speed": 20,
+                "damage": 4,
+                "different_shield_damage": false,
                 "directions": 4,
+                "range": 400,
                 "rotating": false,
-                "tracking": false
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": false,
+                "upgrade_cost": 10
             },
             {
-                "damage": 5,
-                "different_shield_damage": false,
                 "area_of_effect": false,
                 "attack_speed": 0.3,
-                "bullet_speed": 20,
                 "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
-                "range": 400,
-                "upgrade_cost": 10,
+                "bullet_speed": 20,
+                "damage": 5,
+                "different_shield_damage": false,
                 "directions": 4,
+                "range": 400,
                 "rotating": true,
-                "tracking": false
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": false,
+                "upgrade_cost": 10
             }
         ]
     },
@@ -105,87 +54,49 @@
         "description": "These cells shoot mucus that deal no damage but slow enemies down. Gross but effective.",
         "stages": [
             {
-                "damage": 0,
-                "different_shield_damage": false,
                 "area_of_effect": false,
                 "attack_speed": 0.7,
-                "bullet_speed": 15,
                 "bullet_lifetime": 0.5,
-                "slow_speed": 0.5,
-                "slow_duration": 3,
-                "range": 150,
-                "upgrade_cost": 20,
-                "directions": 1,
-                "rotating": true,
-                "tracking": true
-            },
-            {
+                "bullet_speed": 15,
                 "damage": 0,
                 "different_shield_damage": false,
+                "directions": 1,
+                "range": 150,
+                "rotating": true,
+                "slow_duration": 3,
+                "slow_speed": 0.5,
+                "tracking": true,
+                "upgrade_cost": 20
+            },
+            {
                 "area_of_effect": false,
                 "attack_speed": 0.7,
-                "bullet_speed": 15,
                 "bullet_lifetime": 0.5,
-                "slow_speed": 0.5,
-                "slow_duration": 3,
-                "range": 150,
-                "upgrade_cost": 20,
-                "directions": 1,
-                "rotating": true,
-                "tracking": true
-            },
-            {
+                "bullet_speed": 15,
                 "damage": 0,
                 "different_shield_damage": false,
+                "directions": 1,
+                "range": 150,
+                "rotating": true,
+                "slow_duration": 3,
+                "slow_speed": 0.5,
+                "tracking": true,
+                "upgrade_cost": 20
+            },
+            {
                 "area_of_effect": false,
                 "attack_speed": 0.5,
-                "bullet_speed": 15,
                 "bullet_lifetime": 0.5,
-                "slow_speed": 0.5,
+                "bullet_speed": 15,
+                "damage": 0,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 200,
+                "rotating": true,
                 "slow_duration": 5,
-                "range": 200,
-                "upgrade_cost": 15,
-                "directions": 1,
-                "rotating": true,
-                "tracking": true
-            }
-        ]
-    },
-    "neutrophil": {
-        "description": "This cell deals area-of-effect damage to any enemies around it.",
-        "stages": [
-            {
-                "damage": 1,
-                "different_shield_damage": false,
-                "area_of_effect": true,
-                "aura_color": 2,
-                "attack_speed": 0.5,
-                "range": 150,
-                "upgrade_cost": 50,
-                "slow_speed": 1,
-                "slow_duration": 0
-            },
-            {
-                "damage": 2,
-                "different_shield_damage": false,
-                "area_of_effect": true,
-                "aura_color": 2,
-                "attack_speed": 0.4,
-                "range": 175,
-                "upgrade_cost": 25,
-                "slow_speed": 1,
-                "slow_duration": 0
-            },
-            {
-                "damage": 3,
-                "different_shield_damage": false,
-                "area_of_effect": true,
-                "aura_color": 2,
-                "attack_speed": 0.3,
-                "range": 200,
-                "upgrade_cost": 20,
-                "slow_speed": 1,
-                "slow_duration": 0
+                "slow_speed": 0.5,
+                "tracking": true,
+                "upgrade_cost": 15
             }
         ]
     },
@@ -193,52 +104,141 @@
         "description": "A shield-breaker! Deals minimal damage to normal enemies, but loads of damage to shields!",
         "stages": [
             {
-                "damage": 1,
-                "different_shield_damage": true,
                 "area_of_effect": false,
                 "attack_speed": 1,
-                "bullet_speed": 20,
                 "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
-                "range": 250,
-                "upgrade_cost": 15,
+                "bullet_speed": 20,
+                "damage": 1,
+                "different_shield_damage": true,
                 "directions": 1,
+                "range": 250,
                 "rotating": true,
+                "shield_damage": 8,
+                "slow_duration": 0,
+                "slow_speed": 1,
                 "tracking": true,
-                "shield_damage": 8
+                "upgrade_cost": 15
             },
             {
-                "damage": 2,
-                "different_shield_damage": true,
-                "shield_damage": 12,
                 "area_of_effect": false,
                 "attack_speed": 0.75,
-                "bullet_speed": 20,
                 "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
-                "range": 275,
-                "upgrade_cost": 15,
+                "bullet_speed": 20,
+                "damage": 2,
+                "different_shield_damage": true,
                 "directions": 1,
+                "range": 275,
                 "rotating": true,
-                "tracking": true
+                "shield_damage": 12,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 15
             },
             {
-                "damage": 3,
-                "different_shield_damage": true,
-                "shield_damage": 20,
                 "area_of_effect": false,
                 "attack_speed": 0.5,
-                "bullet_speed": 20,
                 "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
-                "range": 300,
-                "upgrade_cost": 15,
+                "bullet_speed": 20,
+                "damage": 3,
+                "different_shield_damage": true,
                 "directions": 1,
+                "range": 300,
                 "rotating": true,
-                "tracking": true
+                "shield_damage": 20,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 15
+            }
+        ]
+    },
+    "neutrophil": {
+        "description": "This cell deals area-of-effect damage to any enemies around it.",
+        "stages": [
+            {
+                "area_of_effect": true,
+                "attack_speed": 0.5,
+                "aura_color": 2,
+                "damage": 1,
+                "different_shield_damage": false,
+                "range": 150,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "upgrade_cost": 50
+            },
+            {
+                "area_of_effect": true,
+                "attack_speed": 0.4,
+                "aura_color": 2,
+                "damage": 2,
+                "different_shield_damage": false,
+                "range": 175,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "upgrade_cost": 25
+            },
+            {
+                "area_of_effect": true,
+                "attack_speed": 0.3,
+                "aura_color": 2,
+                "damage": 3,
+                "different_shield_damage": false,
+                "range": 200,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "upgrade_cost": 20
+            }
+        ]
+    },
+    "t_cell": {
+        "description": "Your standard cell with standard range and standard damage.",
+        "stages": [
+            {
+                "area_of_effect": false,
+                "at": 2,
+                "attack_speed": 0.25,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 25,
+                "damage": 2,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 200,
+                "rotating": true,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 10
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.2,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 35,
+                "damage": 3,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 220,
+                "rotating": true,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 5
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.15,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 45,
+                "damage": 4,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 250,
+                "rotating": true,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 10
             }
         ]
     }

@@ -108,6 +108,8 @@ class DevClass(Game):
         self.make_stripped_path_wrapper()
 
     def reload_enemies(self):
+        for enemy in self.enemies:
+            enemy.kill()
         self.enemies = pg.sprite.Group() 
         for start in self.starts:
             start.enable_spawning()
