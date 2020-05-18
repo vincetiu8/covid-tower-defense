@@ -5,10 +5,7 @@ from data.tilemap import Camera, TiledMap
 from data.settings import *
 from data.dev_tools import TowerEditMenu, EnemyEditMenu
 
-class StartMenu(Display):
-    def __init__(self):
-        super().__init__()
-        
+class StartMenu(Display):        
     def draw(self):
         self.fill(BLACK)
         self.blit(START_SCREEN_IMG, ((SCREEN_WIDTH - START_SCREEN_IMG.get_width()) / 2, 0))
