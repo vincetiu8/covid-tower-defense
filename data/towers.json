@@ -241,5 +241,55 @@
                 "upgrade_cost": 10
             }
         ]
+    },
+    "m_cell": {
+        "description": "",
+        "stages": [
+            {
+                "damage": 5,
+                "different_shield_damage": false,
+                "area_of_effect": false,
+                "attack_speed": 1.5,
+                "bullet_speed": 1,
+                "bullet_lifetime": 2.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 400,
+                "upgrade_cost": 15,
+                "directions": 1,
+                "rotating": true,
+                "tracking": true
+            },
+            {
+                "damage": 7,
+                "different_shield_damage": false,
+                "area_of_effect": false,
+                "attack_speed": 1.25,
+                "bullet_speed": 1,
+                "bullet_lifetime": 2.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 500,
+                "upgrade_cost": 15,
+                "directions": 1,
+                "rotating": true,
+                "tracking": true
+            },
+            {
+                "damage": 10,
+                "different_shield_damage": false,
+                "area_of_effect": false,
+                "attack_speed": 1.0,
+                "bullet_speed": 2,
+                "bullet_lifetime": 2.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 600,
+                "upgrade_cost": 15,
+                "directions": 1,
+                "rotating": true,
+                "tracking": true
+            }
+        ]
     }
 }
