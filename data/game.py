@@ -55,7 +55,7 @@ class Game(Display):
         
         if not to_resume:
             self.new_game()
-
+    
     def new_game(self):
         self.map = TiledMap(path.join(MAP_FOLDER, "map{}.tmx".format(self.level)))
         self.load_data()

@@ -5,8 +5,10 @@ class Options(Display):
     def __init__(self):
         super().__init__()
         self.fullscreen = TickBoxOption("Fullscreen")
-        self.music_vol = SliderOption("Music Vol", min_val = 0, max_val = 1, slider_pos = SLIDER_BAR_WIDTH - SLIDER_WIDTH)
-        self.sfx_vol = SliderOption("SFX Vol", min_val = 0, max_val = 1, slider_pos = SLIDER_BAR_WIDTH - SLIDER_WIDTH)
+        self.music_vol = SliderOption("Music Vol", min_val = 0, max_val = 1,
+                                      slider_pos = (SLIDER_BAR_WIDTH - SLIDER_WIDTH) * SAVE_DATA["music_vol"])
+        self.sfx_vol = SliderOption("SFX Vol", min_val = 0, max_val = 1,
+                                    slider_pos = (SLIDER_BAR_WIDTH - SLIDER_WIDTH) * SAVE_DATA["sfx_vol"])
         
         self.back_rect = pg.Rect((20, 20), OPTIONS_BACK_IMGS[0].get_size())
         
@@ -50,10 +52,12 @@ class Options(Display):
     def event(self, event):
         if self.music_vol.event(event) != -1:
             self.music_vol_surf = self.music_vol_surf.draw()
+            SAVE_DATA["music_vol"] = self.music_vol.get_val()
             
         if self.sfx_vol.event(event) != -1:
             self.sfx_vol_surf = self.sfx_vol_surf.draw()
-            update_sfx_vol(self.sfx_vol.get_val()) # settings.py function
+            SAVE_DATA["sfx_vol"] = self.sfx_vol.get_val()
+            update_sfx_vol() # settings.py function
                     
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -61,6 +65,7 @@ class Options(Display):
                     return self.prev_display
                 if self.fullscreen.event(event) != -1:
                     self.fullscreen_surf = self.fullscreen.draw()
+                    SAVE_DATA["fullscreen"] = self.fullscreen.is_ticked()
                     toggle_fullscreen()
         return -1
     
