@@ -1,3 +1,6 @@
 {
-    "level": 1
+    "level": 1,
+    "music_vol": 0.86,
+    "sfx_vol": 0.0,
+    "fullscreen": false
 }

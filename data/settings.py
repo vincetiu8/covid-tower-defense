@@ -33,18 +33,6 @@ WAVE_DELAY = 10 # in seconds
 
 EXPLOSION_TIME = 0.5
 
-FULLSCREEN = False
-SCREEN = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-def toggle_fullscreen():
-    global FULLSCREEN
-    FULLSCREEN = not FULLSCREEN
-    
-    if FULLSCREEN:
-        SCREEN = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.FULLSCREEN)
-    else:
-        SCREEN = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
 # define some colors (R, G, B)
 WHITE = pg.Color(255, 255, 255)
 CYAN = pg.Color(0, 255, 255)
@@ -91,6 +79,21 @@ ENEMIES_AUD_FOLDER = path.join(AUDIO_FOLDER, "enemies")
 TOWERS_AUD_FOLDER = path.join(AUDIO_FOLDER, "towers")
 GAME_STOP_AUD_FOLDER = path.join(AUDIO_FOLDER, "game_stop")
 
+# init save data
+with open(path.join(GAME_FOLDER, "save.json"), "r") as data_file:
+    SAVE_DATA = json.load(data_file)
+
+# init screen
+SCREEN = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+def toggle_fullscreen():
+    if SAVE_DATA["fullscreen"]:
+        SCREEN = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.FULLSCREEN)
+    else:
+        SCREEN = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        
+toggle_fullscreen()
+
 # UI Constants
 MENU_OFFSET = 10
 MENU_OFFSET_2 = 5
@@ -133,9 +136,7 @@ HEART_BEEP_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "heart_beep.wav"
 FLATLINE_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "flatline.wav"))
 BUY_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "buy_sound.wav"))
 
-with open(path.join(GAME_FOLDER, "save.json"), "r") as data_file:
-    SAVE_DATA = json.load(data_file)
-
+# init level data
 LEVEL_DATA = []
 level_list = sorted(listdir(LEVELS_FOLDER))
 
@@ -184,7 +185,8 @@ with open(path.join(GAME_FOLDER, "attributes.json"), "r") as data_file:
     ATTR_DATA = json.load(data_file)
     
 # Update audio volume
-def update_sfx_vol(vol):
+def update_sfx_vol():
+    vol = SAVE_DATA["sfx_vol"]
     HEART_BEEP_SFX.set_volume(vol * 0.75)
     FLATLINE_SFX.set_volume(vol * 0.75)
     BUY_SFX.set_volume(vol)
@@ -196,7 +198,7 @@ def update_sfx_vol(vol):
     for enemy in ENEMY_DATA:
         ENEMY_DATA[enemy]["death_sound"].set_volume(vol)
         
-update_sfx_vol(1)
+update_sfx_vol()
 
 # load path images
 PATH_VERTICAL_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "vertical.png"))
