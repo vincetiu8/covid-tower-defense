@@ -137,8 +137,9 @@ with open(path.join(GAME_FOLDER, "save.json"), "r") as data_file:
     SAVE_DATA = json.load(data_file)
 
 LEVEL_DATA = []
+level_list = sorted(listdir(LEVELS_FOLDER))
 
-for file in listdir(LEVELS_FOLDER):
+for file in level_list:
     with open(path.join(LEVELS_FOLDER, file)) as data_file:
         level = json.load(data_file)
         enemies = []
@@ -215,7 +216,7 @@ for i, to_concat in enumerate(["", "_hover"]):
     OPTIONS_BACK_IMGS[i] = pg.image.load(path.join(OPTIONS_IMG_FOLDER, "back_btn{}.png".format(to_concat)))
 
 # load other images
-START_SCREEN_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "start_screen.png"))
+START_SCREEN_IMG = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "start_screen.png")), (720, 720))
 LEVEL_BUTTON_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "level_button.png"))
 LOCK_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "lock.png"))
 BODY_IMG = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "body.png")), (1920, 2610))
