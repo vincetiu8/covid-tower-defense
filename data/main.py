@@ -9,6 +9,7 @@ from data.game_stop import Pause, GameOver
 from data.menus import *
 from data.dev_tools import TowerPreview, EnemyPreview, LevelPreview
 from data.options import Options
+from data.settings import SAVE_DATA
 
 class Main:
     def __init__(self):
@@ -90,7 +91,7 @@ class Main:
                         args.append(self.display_keys_reverse[self.current_display])
                     elif result == "game_over":
                         args.extend([self.game.draw(), self.current_display == self.options,
-                                     self.game.get_lives() == 0, self.game.get_cause_of_death()])
+                                     self.game.get_lives() == 0, self.game.get_cause_of_death(), self.game.level])
                     elif result == "pause":
                         args.extend([self.game.draw(), self.current_display == self.options])
                         
@@ -101,5 +102,7 @@ class Main:
         self.current_display = display
 
     def quit(self):
+        with open(path.join(GAME_FOLDER, "save.json"), 'w') as out_file:
+            json.dump(SAVE_DATA, out_file, indent=4)
         pg.quit()
         sys.exit()
