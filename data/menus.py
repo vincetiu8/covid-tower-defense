@@ -44,8 +44,7 @@ class Menu(Display):
         self.body_image = self.camera.apply_image(BODY_IMG)
         
         self.init_body_1()
-        
-        self.level_infos = [None for i in range(len(LEVEL_DATA))]
+
         self.over_level = -1
         
     def init_body_1(self): #inits half the body_images on game startup
@@ -54,6 +53,7 @@ class Menu(Display):
             self.body_images.append(self.camera.apply_image(BODY_IMG))
         
     def new(self, args): #inits the other half
+        self.level_infos = [None for i in range(len(LEVEL_DATA))]
         if len(self.body_images) < 6: # so this will only run when first switching to menu
             while self.camera.zoom(ZOOM_AMT_MENU) != False:
                 self.body_images.append(self.camera.apply_image(BODY_IMG))
@@ -89,9 +89,15 @@ class Menu(Display):
         self.blit(self.camera.apply_image(OPTIONS_IMGS[hover_options]), self.camera.apply_rect(self.options_button))
 
         for i, button in enumerate(self.level_buttons):
-            self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(button))
-            lives_text = lives_font.render(str(i + 1), 1, WHITE)
-            self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple((button.center[0] - lives_text.get_rect().center[0], button.center[1] - lives_text.get_rect().center[1])))
+            if SAVE_DATA["level"] >= i:
+                self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(button))
+                lives_text = lives_font.render(str(i + 1), 1, WHITE)
+                self.blit(self.camera.apply_image(lives_text), self.camera.apply_rect(lives_text.get_rect(center=button.center)))
+            else:
+                grey_image = LEVEL_BUTTON_IMG.copy()
+                grey_image.fill(DARK_GREY, special_flags=pg.BLEND_RGB_MIN)
+                self.blit(self.camera.apply_image(grey_image), self.camera.apply_rect(button))
+                self.blit(self.camera.apply_image(LOCK_IMG), self.camera.apply_rect(LOCK_IMG.get_rect(center=button.center)))
 
         self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.tower_preview_button))
         lives_text = lives_font.render("Tower", 1, WHITE)
@@ -161,60 +167,6 @@ class Menu(Display):
                 
         return self
 
-    def get_level_info(self, level):
-        height = MENU_OFFSET
-
-        level_data = LEVEL_DATA[level]
-        title_font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
-        texts = []
-        title_text = title_font.render(level_data["title"], 1, WHITE)
-        texts.append(title_text)
-        height += title_text.get_height() + MENU_OFFSET
-
-        description_font = pg.font.Font(FONT, MENU_TEXT_SIZE)
-        text = textwrap.fill(level_data["description"], 30 - round(MENU_TEXT_SIZE / 30)) # No idea how to really calculate this.
-        counter = 0
-        for part in text.split('\n'):
-            rendered_text = description_font.render(part, 1, WHITE)
-            texts.append(rendered_text)
-            height += rendered_text.get_height() + MENU_OFFSET
-            counter += 1
-
-        if level_data["difficulty"] == 0:
-            difficulty_text = description_font.render("Easy", 1, GREEN)
-        elif level_data["difficulty"] == 1:
-            difficulty_text = description_font.render("Medium", 1, YELLOW)
-        elif level_data["difficulty"] == 2:
-            difficulty_text = description_font.render("Hard", 1, ORANGE)
-        elif level_data["difficulty"] == 3:
-            difficulty_text = description_font.render("Very Hard", 1, RED)
-        elif level_data["difficulty"] == 4:
-            difficulty_text = description_font.render("Extreme", 1, MAROON)
-        texts.append(difficulty_text)
-        height += difficulty_text.get_height() + MENU_OFFSET
-
-        waves_text = description_font.render("{} Waves".format(len(level_data["waves"])), 1, WHITE)
-        texts.append(waves_text)
-        height += waves_text.get_height() + MENU_OFFSET
-
-        enemy_surf = pg.Surface((title_text.get_size()[0] + MENU_OFFSET * 2, MENU_TEXT_SIZE))
-        enemy_surf.fill(DARK_GREY)
-        for i, enemy in enumerate(level_data["enemies"]):
-            enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE))
-            enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + MENU_OFFSET), 0))
-
-        texts.append(enemy_surf)
-        height += enemy_surf.get_height()
-
-        level_surf = pg.Surface((title_text.get_width() + MENU_OFFSET * 2, height + MENU_OFFSET))
-        level_surf.fill(DARK_GREY)
-        temp_height = MENU_OFFSET
-        for text in texts:
-            level_surf.blit(text, (MENU_OFFSET, temp_height))
-            temp_height += text.get_height() + MENU_OFFSET
-
-        self.level_descs[level] = level_surf
-
     def update_level(self):
         mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
         for i, button in enumerate(self.level_buttons):
@@ -250,7 +202,7 @@ class Menu(Display):
                 elif self.options_button.collidepoint(mouse_pos):
                     return "options"
                 
-                if self.over_level != -1:
+                if self.over_level != -1 and self.over_level <= SAVE_DATA["level"]:
                     return "tower_select"
 
             elif event.button == 4:
@@ -536,32 +488,37 @@ class HoverInfo(pg.Surface):
     
 class LevelInfo(HoverInfo):
     def __init__(self, level):
-        self.level_data = LEVEL_DATA[level]
-        super().__init__(self.level_data["title"], self.level_data["description"], MENU_OFFSET)
+        self.unlocked = level <= SAVE_DATA["level"]
+        if self.unlocked:
+            self.level_data = LEVEL_DATA[level]
+            super().__init__(self.level_data["title"], self.level_data["description"], MENU_OFFSET)
+        else:
+            super().__init__("???", "An unknown level. Complete the previous levels to unlock this one!", MENU_OFFSET)
         
     def make_other_info(self):
-        if self.level_data["difficulty"] == 0:
-            difficulty_text = self.info_font.render("Easy", 1, GREEN)
-        elif self.level_data["difficulty"] == 1:
-            difficulty_text = self.info_font.render("Medium", 1, YELLOW)
-        elif self.level_data["difficulty"] == 2:
-            difficulty_text = self.info_font.render("Hard", 1, ORANGE)
-        elif self.level_data["difficulty"] == 3:
-            difficulty_text = self.info_font.render("Very Hard", 1, RED)
-        elif self.level_data["difficulty"] == 4:
-            difficulty_text = self.info_font.render("Extreme", 1, MAROON)
-        self.add_text(difficulty_text)
+        if self.unlocked:
+            if self.level_data["difficulty"] == 0:
+                difficulty_text = self.info_font.render("Easy", 1, GREEN)
+            elif self.level_data["difficulty"] == 1:
+                difficulty_text = self.info_font.render("Medium", 1, YELLOW)
+            elif self.level_data["difficulty"] == 2:
+                difficulty_text = self.info_font.render("Hard", 1, ORANGE)
+            elif self.level_data["difficulty"] == 3:
+                difficulty_text = self.info_font.render("Very Hard", 1, RED)
+            elif self.level_data["difficulty"] == 4:
+                difficulty_text = self.info_font.render("Extreme", 1, MAROON)
+            self.add_text(difficulty_text)
 
-        waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"])), 1, WHITE)
-        self.add_text(waves_text)
+            waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"])), 1, WHITE)
+            self.add_text(waves_text)
 
-        enemy_surf = pg.Surface((self.texts[0].get_width() + self.menu_offset * 2, MENU_TEXT_SIZE))
-        enemy_surf.fill(DARK_GREY)
-        for i, enemy in enumerate(self.level_data["enemies"]):
-            enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE))
-            enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + self.menu_offset), 0))
+            enemy_surf = pg.Surface((self.texts[0].get_width() + self.menu_offset * 2, MENU_TEXT_SIZE))
+            enemy_surf.fill(DARK_GREY)
+            for i, enemy in enumerate(self.level_data["enemies"]):
+                enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE))
+                enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + self.menu_offset), 0))
 
-        self.add_text(enemy_surf)
+            self.add_text(enemy_surf)
         
 class TowerInfo(HoverInfo):
     def __init__(self, tower):

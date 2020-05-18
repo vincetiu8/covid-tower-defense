@@ -229,7 +229,10 @@ class GameOver(GameStop):
         
         self.heartbeat_x = 0
         self.lost, self.cause_of_death = args[2], args[3]
-        
+
+        if not self.lost and args[4] == SAVE_DATA["level"]:
+            SAVE_DATA["level"] += 1
+
         if self.lost:
             self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death)
         else:

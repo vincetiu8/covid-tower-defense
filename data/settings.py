@@ -85,6 +85,7 @@ ENEMIES_IMG_FOLDER = path.join(IMG_FOLDER, "enemies")
 TOWERS_IMG_FOLDER = path.join(IMG_FOLDER, "towers")
 GAME_STOP_IMG_FOLDER = path.join(IMG_FOLDER, "game_stop")
 OPTIONS_IMG_FOLDER = path.join(IMG_FOLDER, "options")
+MENU_IMG_FOLDER = path.join(IMG_FOLDER, "menu")
 
 ENEMIES_AUD_FOLDER = path.join(AUDIO_FOLDER, "enemies")
 TOWERS_AUD_FOLDER = path.join(AUDIO_FOLDER, "towers")
@@ -131,6 +132,9 @@ RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_IMG_FOLDER, "le
 HEART_BEEP_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "heart_beep.wav"))
 FLATLINE_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "flatline.wav"))
 BUY_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "buy_sound.wav"))
+
+with open(path.join(GAME_FOLDER, "save.json"), "r") as data_file:
+    SAVE_DATA = json.load(data_file)
 
 LEVEL_DATA = []
 
@@ -211,9 +215,10 @@ for i, to_concat in enumerate(["", "_hover"]):
     OPTIONS_BACK_IMGS[i] = pg.image.load(path.join(OPTIONS_IMG_FOLDER, "back_btn{}.png".format(to_concat)))
 
 # load other images
-START_SCREEN_IMG = pg.image.load(path.join(IMG_FOLDER, "start_screen.png"))
-LEVEL_BUTTON_IMG = pg.image.load(path.join(IMG_FOLDER, "level_button.png"))
-BODY_IMG = pg.transform.scale(pg.image.load(path.join(IMG_FOLDER, "body.png")), (1920, 2610))
+START_SCREEN_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "start_screen.png"))
+LEVEL_BUTTON_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "level_button.png"))
+LOCK_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "lock.png"))
+BODY_IMG = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "body.png")), (1920, 2610))
 
 # load game over images
 RESTART_BTN_IMGS = [[None, None], [None, None]]
