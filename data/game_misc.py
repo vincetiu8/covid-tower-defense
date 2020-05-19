@@ -112,3 +112,24 @@ class UI:
                      pg.Rect(10, self.next_wave_rect.y - self.offset - timer_height, self.width - 10, timer_height))
         pg.draw.rect(self.ui, GREEN,
                     pg.Rect(10, self.next_wave_rect.y - self.offset - timer_height, timer_width, timer_height))
+
+class Explosion(pg.sprite.Sprite):
+    def __init__(self, game, x, y, rad):
+        super().__init__(game.explosions)
+        self.clock = game.clock
+        self.x = x - rad / 2
+        self.y = y - rad / 2
+        self.rad = rad
+        self.state = 0
+        self.surf = pg.Surface((rad, rad)).convert_alpha()
+
+    def update(self):
+        passed_time = self.clock.get_time() / 1000
+        self.state += passed_time / EXPLOSION_TIME
+        if self.state >= 1:
+            self.kill()
+        else:
+            self.surf.fill((255, 0, 0, 127 * self.state))
+
+    def get_surf(self):
+        return self.surf

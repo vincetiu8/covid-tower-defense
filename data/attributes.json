@@ -101,7 +101,7 @@
         },
         "area_of_effect": {
             "type": "bool",
-            "ignore_if_true": ["bullet_speed", "bullet_lifetime", "rotating", "tracking", "bullet_image", "directions", "rotation_speed"],
+            "ignore_if_true": ["bullet_speed", "bullet_lifetime", "rotating", "tracking", "bullet_image", "directions", "rotation_speed", "explode_on_impact", "explosion_radius"],
             "ignore_if_false": ["aura_color"],
             "default": false
         },
@@ -190,6 +190,19 @@
         "tracking": {
             "type": "bool",
             "default": true
+        },
+        "explode_on_impact": {
+            "type": "bool",
+            "default": false,
+            "ignore_if_false": ["explosion_radius"]
+        },
+        "explosion_radius": {
+            "type": "float",
+            "min": 25,
+            "max": 10000,
+            "increment": 25,
+            "dp": -1,
+            "default": 250
         }
     },
     "level": {

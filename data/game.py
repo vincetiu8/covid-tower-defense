@@ -1,7 +1,7 @@
 from data.tilemap import *
 from data.enemies import *
 from data.pathfinding import *
-from data.ui import *
+from data.game_misc import *
 from data.towers import *
 from data.display import *
 
@@ -557,3 +557,4 @@ class Goal(pg.sprite.Sprite):
 
     def get_node(self):
         return ((round(self.rect.x / self.game.map.tilesize), round(self.rect.y / self.game.map.tilesize)), 0)
+
