@@ -217,11 +217,6 @@ class Game(Display):
 
         self.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
-        for start in self.starts:
-            pg.draw.rect(self, GREEN, self.camera.apply_rect(start.rect))
-        for goal in self.goals:
-            pg.draw.rect(self, GREEN, self.camera.apply_rect(goal.rect))
-
         self.blit(self.camera.apply_image(self.path_surf), self.camera.apply_tuple((0, 0)))
         self.blit(self.camera.apply_image(self.tower_bases_surf),
                      self.camera.apply_rect(self.tower_bases_surf.get_rect()))

@@ -2,7 +2,7 @@
     "common_cold": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 2,
+        "hp": 5,
         "protein": 1,
         "shield": false,
         "speed": 200
@@ -11,14 +11,14 @@
         "explode_on_death": false,
         "flying": false,
         "hp": 50,
-        "protein": 10,
+        "protein": 5,
         "shield": false,
         "speed": 70
     },
     "hepatitis_a": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 10,
+        "hp": 15,
         "protein": 2,
         "shield": false,
         "speed": 110
@@ -49,7 +49,7 @@
     "polio": {
         "explode_on_death": false,
         "flying": true,
-        "hp": 5,
+        "hp": 8,
         "protein": 2,
         "shield": false,
         "speed": 100

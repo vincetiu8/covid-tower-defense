@@ -129,11 +129,7 @@ class DevClass(Game):
         surface.fill((0, 0, 0))
 
         surface.blit(self.map_img, self.map_rect)
-
-        for start in self.starts:
-            pg.draw.rect(surface, GREEN, start.rect)
-        for goal in self.goals:
-            pg.draw.rect(surface, GREEN, goal.rect)
+        surface.blit(self.map_objects, self.map_rect)
 
         surface.blit(self.path_surf, self.path_surf.get_rect())
         surface.blit(self.tower_bases_surf,
