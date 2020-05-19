@@ -3,10 +3,12 @@ from data.main import Game
 from data.tilemap import *
 from data.pathfinding import *
 from data.game import *
-from os import path
 from data.settings import TOWER_DATA
 import data.settings as settings
+
 import json
+import textwrap
+from os import path
 from copy import deepcopy
 
 class DevClass(Game):
@@ -127,7 +129,7 @@ class DevClass(Game):
     def draw(self):
         surface = pg.Surface((self.map.width, self.map.height))
         surface.fill((0, 0, 0))
-
+        
         surface.blit(self.map_img, self.map_rect)
         surface.blit(self.map_objects, self.map_rect)
 
@@ -160,7 +162,7 @@ class DevClass(Game):
             surface.blit(explosion.get_surf(), (explosion.x, explosion.y))
 
         surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-        surf.blit(self.camera.apply_image((surface)), self.camera.apply_tuple((0, 0)))
+        surf.blit(self.camera.apply_image((surface)), (0, 0))
 
         ui_pos = (SCREEN_WIDTH - MENU_OFFSET, MENU_OFFSET)
         if self.ui.active:
@@ -749,8 +751,10 @@ class DevUI():
     def get_ui(self):
         surf_list = []
         height = MENU_OFFSET
-        width = MENU_OFFSET
+        width_1 = MENU_OFFSET
+        width_2 = MENU_OFFSET
         font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.2))
+        
         if self.save:
             save_text = font.render(self.save_text, 1, WHITE)
             save_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
@@ -758,8 +762,7 @@ class DevUI():
             save_button.blit(save_text, save_text.get_rect(center=save_button.get_rect().center))
             self.save_button_rect = save_button.get_rect()
             self.save_button_rect.x = MENU_OFFSET
-            width += self.save_button_rect.width + MENU_OFFSET
-
+            width_1 += self.save_button_rect.width + MENU_OFFSET
 
         done_text = font.render("Done", 1, WHITE)
         done_button = pg.transform.scale(LEVEL_BUTTON_IMG, (
@@ -771,11 +774,11 @@ class DevUI():
             self.done_button_rect.x = self.save_button_rect.width + MENU_OFFSET * 2
         else:
             self.done_button_rect.x = MENU_OFFSET
-        width += self.done_button_rect.width + MENU_OFFSET
+        width_1 += self.done_button_rect.width + MENU_OFFSET
         height += self.done_button_rect.height + MENU_OFFSET
 
         if self.save:
-            temp_surf = pg.Surface((width, self.done_button_rect.height))
+            temp_surf = pg.Surface((width_1, self.done_button_rect.height))
             temp_surf.fill(DARK_GREY)
             t_width = MENU_OFFSET
             for save_surf in [save_button, done_button]:
@@ -792,7 +795,7 @@ class DevUI():
         reload_tower_button.blit(reload_tower_text, reload_tower_text.get_rect(center=reload_tower_button.get_rect().center))
         self.reload_tower_button_rect = reload_tower_button.get_rect()
         self.reload_tower_button_rect.x = MENU_OFFSET
-        width += self.reload_tower_button_rect.width + MENU_OFFSET
+        width_2 += self.reload_tower_button_rect.width + MENU_OFFSET
         height += reload_tower_button.get_rect().height + MENU_OFFSET
 
         reload_enemy_text = font.render("Reload Enemies", 1, WHITE)
@@ -801,15 +804,18 @@ class DevUI():
         reload_enemy_button.blit(reload_enemy_text, reload_enemy_text.get_rect(center=reload_enemy_button.get_rect().center))
         self.reload_enemy_button_rect = reload_enemy_button.get_rect()
         self.reload_enemy_button_rect.x = self.reload_tower_button_rect.width + MENU_OFFSET * 2
-        width += self.reload_enemy_button_rect.width + MENU_OFFSET
+        width_2 += self.reload_enemy_button_rect.width + MENU_OFFSET
+        
 
-        temp_surf = pg.Surface((width, self.reload_tower_button_rect.height))
+        temp_surf = pg.Surface((width_2, self.reload_tower_button_rect.height))
         temp_surf.fill(DARK_GREY)
         t_width = MENU_OFFSET
-        for save_surf in [reload_tower_button, reload_enemy_button]:
-            temp_surf.blit(save_surf, (t_width, 0))
-            t_width += save_surf.get_rect().width + MENU_OFFSET
+        for reload_surf in [reload_tower_button, reload_enemy_button]:
+            temp_surf.blit(reload_surf, (t_width, 0))
+            t_width += reload_surf.get_rect().width + MENU_OFFSET
         surf_list.insert(0, temp_surf)
+        
+        width = max(width_1, width_2)
 
         attr0_surf = self.attributes[0].draw()
         self.attributes[0].fix_offset(0, MENU_OFFSET)
@@ -820,23 +826,26 @@ class DevUI():
             for attr in self.attributes[1:]:
                 attr_surf = attr.draw()
                 attr.fix_offset(0, height - self.done_button_rect.height - MENU_OFFSET)
+                
+                width = max(width, attr_surf.get_width())
                 height += attr_surf.get_height() + MENU_OFFSET
                 if height >= SCREEN_HEIGHT - MENU_OFFSET:
                     height -= attr_surf.get_height() + MENU_OFFSET
                     break
+                
                 self.max_attrs += 1
-                if attr_surf.get_width() > width:
-                    width = attr_surf.get_width()
                 surf_list.insert(-1, attr_surf)
+                
             self.attributes[0].max = len(self.attributes) - self.max_attrs
 
         else:
             for attr in self.attributes[self.attributes[0].current_value:self.attributes[0].current_value + self.max_attrs]:
                 attr_surf = attr.draw()
                 attr.fix_offset(0, height - self.done_button_rect.height - MENU_OFFSET)
+                
+                width = max(width, attr_surf.get_width())
                 height += attr_surf.get_height() + MENU_OFFSET
-                if attr_surf.get_width() > width:
-                    width = attr_surf.get_width()
+                
                 surf_list.insert(-1, attr_surf)
 
         surf = pg.Surface((width + MENU_OFFSET, height))
@@ -1051,16 +1060,34 @@ class Attribute():
         font = pg.font.Font(FONT, round(MENU_TEXT_SIZE * 1.2))
         surf_list = []
         if self.type == "string":
+            texts = textwrap.fill(self.current_value, 40 - round(MENU_TEXT_SIZE / 30))
+            attr_texts = []
+            height = 0
+            width = 0
+            
             if self.current_value == "":
                 if self.over:
                     attr_text = font.render("{}...".format(self.name), 1, WHITE)
                 else:
                     attr_text = font.render("{}...".format(self.name), 1, LIGHT_GREY)
+                attr_texts.append(attr_text)
+                height = attr_text.get_height()
+                width = attr_text.get_width()
             else:
-                attr_text = font.render(self.current_value, 1, WHITE)
-            textbox = pg.transform.scale(LEVEL_BUTTON_IMG, (
-            attr_text.get_rect().width + MENU_OFFSET * 4, attr_text.get_rect().height)).copy().convert_alpha()
-            textbox.blit(attr_text, attr_text.get_rect(center=textbox.get_rect().center))
+                for text in texts.split("\n"):
+                    attr_text = font.render(text, 1, WHITE)
+                    attr_texts.append(font.render(text, 1, WHITE))
+                    
+                    height += attr_text.get_height()
+                    width = max(width, attr_text.get_width())
+                
+            textbox = pg.transform.scale(LEVEL_BUTTON_IMG, (width + MENU_OFFSET * 4, height)).copy().convert_alpha()
+            
+            y = 0
+            for attr_text in attr_texts:
+                textbox.blit(attr_text, (MENU_OFFSET, y))
+                y += attr_text.get_height()
+                
             self.textbox_rect = textbox.get_rect()
             surf_list.append(textbox)
 
@@ -1144,8 +1171,13 @@ class Attribute():
                     else:
                         self.enter_button_rect.x = width
             width += surf.get_rect().width + MENU_OFFSET
-
-        attr_surf = pg.Surface((width, attr_text.get_rect().height))
+        
+        if self.type == "string":
+            height = self.textbox_rect.h
+        else:
+            height = attr_text.get_rect().height
+        
+        attr_surf = pg.Surface((width, height))
         attr_surf.fill(DARK_GREY)
 
         temp_w = MENU_OFFSET
