@@ -25,7 +25,7 @@ class Menu(Display):
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT)
         
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
-        self.level_buttons = [pg.Rect((20, 400), self.level_button_rect.size), pg.Rect((160, 400), self.level_button_rect.size), pg.Rect((300, 400), self.level_button_rect.size)]
+        self.level_buttons = [pg.Rect((-80 + 140 * i, 400), self.level_button_rect.size) for i in range(len(LEVEL_DATA))]
 
         self.tower_preview_button = pg.Rect((800, 200), self.level_button_rect.size)
         self.enemy_preview_button = pg.Rect((800, 600), self.level_button_rect.size)

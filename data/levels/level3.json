@@ -1,0 +1,60 @@
+{
+    "title": "Testing Ground 4",
+    "description": "Manage two different paths this time with some scary enemies!",
+    "difficulty": 3,
+    "waves": [
+        [
+            {
+                "start": 0,
+                "enemy_type": "hepatitis_a",
+                "enemy_count": 50,
+                "spawn_delay": 1,
+                "spawn_rate": 0.5
+            },
+            {
+                "start": 0,
+                "enemy_type": "smallpox",
+                "enemy_count": 30,
+                "spawn_delay": 10,
+                "spawn_rate": 0.5
+            },
+            {
+                "start": 1,
+                "enemy_type": "hepatitis_b",
+                "enemy_count": 30,
+                "spawn_delay": 3,
+                "spawn_rate": 0.8
+            }
+        ],
+        [
+            {
+                "start": 0,
+                "enemy_type": "coronavirus",
+                "enemy_count": 80,
+                "spawn_delay": 1,
+                "spawn_rate": 0.5
+            },
+            {
+                "start": 0,
+                "enemy_type": "rabies",
+                "enemy_count": 15,
+                "spawn_delay": 5,
+                "spawn_rate": 2
+            },
+            {
+                "start": 0,
+                "enemy_type": "coronavirus",
+                "enemy_count": 40,
+                "spawn_delay": 1,
+                "spawn_rate": 1
+            },
+            {
+                "start": 1,
+                "enemy_type": "hiv",
+                "enemy_count": 10,
+                "spawn_delay": 5,
+                "spawn_rate": 4
+            }
+        ]
+    ]
+}
