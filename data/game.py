@@ -229,7 +229,7 @@ class Game(Display):
         for tower in self.towers:
             if tower.area_of_effect or not tower.rotating:
                 continue
-            rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
+            rotated_image = pg.transform.rotate(tower.gun_image, math.degrees(tower.rotation))
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             self.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
 
