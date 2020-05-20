@@ -101,7 +101,7 @@
         },
         "area_of_effect": {
             "type": "bool",
-            "ignore_if_true": ["bullet_speed", "bullet_lifetime", "rotating", "tracking", "bullet_image", "directions"],
+            "ignore_if_true": ["bullet_speed", "bullet_lifetime", "rotating", "tracking", "bullet_image", "directions", "rotation_speed", "explode_on_impact", "explosion_radius"],
             "ignore_if_false": ["aura_color"],
             "default": false
         },
@@ -120,11 +120,11 @@
         },
         "bullet_speed": {
             "type": "float",
-            "min": 1,
-            "max": 50,
-            "increment": 1,
-            "dp": 0,
-            "default": 20
+            "min": 100,
+            "max": 5000,
+            "increment": 100,
+            "dp": -2,
+            "default": 1000
         },
         "bullet_lifetime": {
             "type": "float",
@@ -176,11 +176,33 @@
         },
         "rotating": {
             "type": "bool",
-            "default": true
+            "default": true,
+            "ignore_if_false": ["rotation_speed"]
+        },
+        "rotation_speed": {
+            "type": "float",
+            "min": 1,
+            "max": 360,
+            "increment": 1,
+            "dp": 0,
+            "default": 180
         },
         "tracking": {
             "type": "bool",
             "default": true
+        },
+        "explode_on_impact": {
+            "type": "bool",
+            "default": false,
+            "ignore_if_false": ["explosion_radius"]
+        },
+        "explosion_radius": {
+            "type": "float",
+            "min": 25,
+            "max": 10000,
+            "increment": 25,
+            "dp": -1,
+            "default": 250
         }
     },
     "level": {

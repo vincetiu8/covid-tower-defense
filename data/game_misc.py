@@ -73,9 +73,7 @@ class UI:
         
         # Draws towers
         for i, tower in enumerate(self.game.available_towers):
-            tower_img = pg.transform.scale(TOWER_DATA[tower]["stages"][0]["base_image"], self.tower_rects[i].size).convert_alpha()
-            if not TOWER_DATA[tower]["stages"][0]["area_of_effect"] and TOWER_DATA[tower]["stages"][0]["rotating"]:
-                tower_img.blit(pg.transform.scale(TOWER_DATA[tower]["stages"][0]["gun_image"], self.tower_rects[i].size), (0, 0))
+            tower_img = pg.transform.scale(TOWER_DATA[tower]["stages"][0]["image"], self.tower_rects[i].size)
             if (self.game.protein < TOWER_DATA[tower]["stages"][0]["upgrade_cost"]):
                 tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
             ui.blit(tower_img, self.tower_rects[i])
@@ -114,3 +112,24 @@ class UI:
                      pg.Rect(10, self.next_wave_rect.y - self.offset - timer_height, self.width - 10, timer_height))
         pg.draw.rect(self.ui, GREEN,
                     pg.Rect(10, self.next_wave_rect.y - self.offset - timer_height, timer_width, timer_height))
+
+class Explosion(pg.sprite.Sprite):
+    def __init__(self, game, x, y, rad):
+        super().__init__(game.explosions)
+        self.clock = game.clock
+        self.x = x - rad / 2
+        self.y = y - rad / 2
+        self.rad = rad
+        self.state = 0
+        self.surf = pg.Surface((rad, rad)).convert_alpha()
+
+    def update(self):
+        passed_time = self.clock.get_time() / 1000
+        self.state += passed_time / EXPLOSION_TIME
+        if self.state >= 1:
+            self.kill()
+        else:
+            self.surf.fill((255, 0, 0, 127 * self.state))
+
+    def get_surf(self):
+        return self.surf
