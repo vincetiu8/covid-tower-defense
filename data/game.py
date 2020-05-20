@@ -550,6 +550,9 @@ class Goal(pg.sprite.Sprite):
         super().__init__(self.groups)
         self.rect = pg.Rect(x, y, w, h)
 
+    def get_nodes(self):
+        return [((tile_from_xcoords(self.rect.x, self.game.map.tilesize) + x, tile_from_xcoords(self.rect.y, self.game.map.tilesize) + y), 0) for x in range(tile_from_xcoords(self.rect.width, self.game.map.tilesize)) for y in range(tile_from_xcoords(self.rect.height, self.game.map.tilesize))]
+
     def get_node(self):
         return ((round(self.rect.x / self.game.map.tilesize), round(self.rect.y / self.game.map.tilesize)), 0)
 
