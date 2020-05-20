@@ -4,6 +4,7 @@ from data.tilemap import round_to_mtilesize
 from data.pathfinding import heuristic
 from data.settings import TOWER_DATA
 from data.tilemap import *
+from data.game_misc import Explosion
 
 class Obstacle(pg.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
@@ -16,35 +17,45 @@ class Obstacle(pg.sprite.Sprite):
                 self.game.map.change_node(tile_from_xcoords(x, self.game.map.tilesize) + i, tile_from_xcoords(y, self.game.map.tilesize) + j, 1)
 
 class Projectile(pg.sprite.Sprite):
-    def __init__(self, game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage, shield_damage):
-        self.groups = game.projectiles
-        self.clock = game.clock
+    def __init__(self, args):
+        self.groups = args[0].projectiles
+        self.clock = args[0].clock
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.game = game
+        self.game = args[0]
         self.type = type
-        self.size = image.get_size()
-        self.x = round_to_mtilesize(x, game.map.tilesize) - self.size[0] / 2
-        self.y = round_to_mtilesize(y, game.map.tilesize) - self.size[1] / 2
-        self.rect = pg.Rect(self.x, self.y, self.size[0], self.size[1])
-        self.image = image
-        self.speed = speed
-        self.slow_speed = slow_speed
-        self.slow_duration = slow_duration
-        self.damage = damage
-        self.direction = direction
-        self.shield_damage = shield_damage
-        
+        self.size = args[3].get_size()
+        self.rect = pg.Rect(args[1], args[2], self.size[0], self.size[1])
+        self.rect.centerx = args[1]
+        self.rect.centery = args[2]
+        self.raw_image = args[3]
+        self.image = self.raw_image.copy()
+        self.speed = args[4]
+        self.slow_speed = args[6]
+        self.slow_duration = args[7]
+        self.damage = args[9]
+        self.direction = args[8]
+        pg.transform.rotate(self.image, args[8])
+        self.shield_damage = args[10]
         self.time_passed = 0
-        self.end = lifetime * 1000
+        self.carry = 0
+        self.end = args[5] * 1000
 
     def update(self):
         if self.time_passed > self.end:
             self.kill()
-        
-        self.time_passed += self.clock.get_time()
-        self.rect.x += self.speed * math.cos(self.direction)
-        self.rect.y += self.speed * math.sin(self.direction)
 
+        self.delta = self.clock.get_time()
+        self.time_passed += self.delta
+        self.delta /= 1000
+        self.carry += self.delta
+        if self.carry >= 1 / self.speed:
+            self.rect.centerx -= round(self.carry * self.speed * math.sin(self.direction))
+            self.rect.centery -= round(self.carry * self.speed * math.cos(self.direction))
+            self.carry = 0
+
+        self.check_for_impact()
+
+    def check_for_impact(self):
         hits = pg.sprite.spritecollide(self, self.game.enemies, False)
         if (hits):
             hits[0].damage(self.damage, self.shield_damage)
@@ -53,14 +64,89 @@ class Projectile(pg.sprite.Sprite):
             self.kill()
 
 class TrackingProjectile(Projectile):
-    def __init__(self, game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage, shield_damage, enemy):
-        super().__init__(game, x, y, image, speed, lifetime, slow_speed, slow_duration, direction, damage, shield_damage)
-        self.enemy = enemy
+    def __init__(self, args):
+        Projectile.__init__(self, args[:-3])
+        self.rotation_speed = math.radians(args[-3])
+        self.range = args[-2]
+        self.enemy = args[-1]
 
     def update(self):
-        if self.enemy != None and self.enemy.alive():
-            self.direction = math.atan2(self.enemy.rect.center[1] - self.y, self.enemy.rect.center[0] - self.x)
+        if self.enemy != None:
+            enemy_center = self.enemy.rect.center
+            if (not self.enemy.damagable or not self.enemy.alive() or heuristic(
+                    enemy_center, self.rect.center) > self.range):
+                self.enemy = None
+
+            else:
+                temp_x = enemy_center[0]
+                temp_y = enemy_center[1]
+
+                if (temp_y - self.rect.centery == 0):
+                    if (temp_x - self.rect.centerx > 0):
+                        direction = math.pi * 3 / 2
+                    else:
+                        direction = math.pi / 2
+
+                else:
+                    direction = math.atan((temp_x - self.rect.centerx) / (temp_y - self.rect.centery))
+                    if (temp_y - self.rect.centery > 0):
+                        direction += math.pi
+
+                if direction - self.direction > math.pi:
+                    direction -= math.pi * 2
+
+                elif direction - self.direction < -math.pi:
+                    direction += math.pi * 2
+
+                if direction - self.direction > self.rotation_speed:
+                    self.direction += self.rotation_speed
+                    self.direction %= 2 * math.pi
+                elif direction - self.direction < -self.rotation_speed:
+                    self.direction -= self.rotation_speed
+                    self.direction %= 2 * math.pi
+                else:
+                    self.direction = direction
+                    self.direction %= 2 * math.pi
+                self.image = pg.transform.rotate(self.raw_image, math.degrees(self.direction))
+
+        if self.enemy == None:
+            self.search_for_enemy()
+
         super().update()
+
+    def search_for_enemy(self):
+        if self.enemy != None:
+            enemy_her = heuristic(self.enemy.rect.center, self.rect.center)
+
+        for enemy in self.game.enemies:
+            t_enemy_her = heuristic(enemy.rect.center, self.rect.center)
+            if self.enemy == None or t_enemy_her < enemy_her:
+                self.enemy = enemy
+                enemy_her = t_enemy_her
+
+class ExplodingProjectile(Projectile):
+    def __init__(self, args):
+        Projectile.__init__(self, args[:-1])
+        self.explosion_radius = args[-1]
+
+    def check_for_impact(self):
+        hits = pg.sprite.spritecollide(self, self.game.enemies, False)
+        if (hits):
+            center = self.rect.center
+            self.rect.width = self.rect.height = self.explosion_radius
+            self.rect.center = center
+            hits = pg.sprite.spritecollide(self, self.game.enemies, False)
+            Explosion(self.game, self.rect.center[0], self.rect.center[1], self.explosion_radius)
+            for hit in hits:
+                hit.damage(self.damage, self.shield_damage)
+                if self.slow_speed != 1:
+                    hit.slow(self.slow_speed, self.slow_duration)
+            self.kill()
+
+class TrackingExplodingProjectile(TrackingProjectile, ExplodingProjectile):
+    def __init__(self, args):
+        TrackingProjectile.__init__(self, args[:-1])
+        self.explosion_radius = args[-1]
 
 class Tower(Obstacle):
     def __init__(self, game, x, y, name):
@@ -114,6 +200,11 @@ class Tower(Obstacle):
             self.directions = data["directions"]
             if self.rotating:
                 self.gun_image = data["gun_image"]
+                self.rotation_speed = data["rotation_speed"]
+
+            self.explode_on_impact = data["explode_on_impact"]
+            if self.explode_on_impact:
+                self.explosion_radius = data["explosion_radius"]
 
         if (self.stage < 2):
             data = TOWER_DATA[self.name]["stages"][self.stage + 1]
@@ -140,28 +231,38 @@ class Tower(Obstacle):
                         temp_x = enemy_center[0]
                         temp_y = enemy_center[1]
 
-                        if (temp_x - self.rect.x == 0):
-                            if (temp_y - self.rect.y > 0):
-                                angle = math.pi / 2
+                        if (temp_y - self.rect.centery == 0):
+                            if (temp_x - self.rect.centerx > 0):
+                                angle = math.pi * 3 / 2
                             else:
-                                angle = math.pi / 2 * 3
+                                angle = math.pi / 2
 
                         else:
-                            angle = math.atan((temp_y - self.rect.y) / (temp_x - self.rect.x))
-                            if (temp_x - self.rect.x < 0):
+                            angle = math.atan((temp_x - self.rect.centerx) / (temp_y - self.rect.centery))
+                            if (temp_y - self.rect.centery > 0):
                                 angle += math.pi
 
-                        self.rotation = 180 - math.degrees(angle)
+                        self.rotation = angle
 
                     rotation = self.rotation
                     increment = math.pi * 2 / self.directions
                     for i in range(self.directions):
-                        rotation += increment
                         if self.tracking:
-                            TrackingProjectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed,
-                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.shield_damage, self.current_enemy)
+                            if self.explode_on_impact:
+                                TrackingExplodingProjectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.shield_damage, self.rotation_speed, self.range, self.current_enemy, self.explosion_radius])
+                            else:
+                                TrackingProjectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.shield_damage, self.rotation_speed, self.range, self.current_enemy])
+
                         else:
-                            Projectile(self.game, self.rect.x, self.rect.y, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.shield_damage)
+                            if self.explode_on_impact:
+                                ExplodingProjectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.shield_damage, self.rotation_speed, self.range, self.current_enemy, self.explosion_radius])
+                            else:
+                                Projectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.damage, self.shield_damage])
+
+                        rotation += increment
 
                     self.sound.play()
                     self.next_spawn = pg.time.get_ticks() + self.attack_speed * 1000

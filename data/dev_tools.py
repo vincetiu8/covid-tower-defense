@@ -140,7 +140,7 @@ class DevClass(Game):
         for tower in self.towers:
             if tower.area_of_effect or not tower.rotating:
                 continue
-            rotated_image = pg.transform.rotate(tower.gun_image, tower.rotation)
+            rotated_image = pg.transform.rotate(tower.gun_image, math.degrees(tower.rotation))
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             surface.blit(rotated_image, new_rect)
 
@@ -205,7 +205,7 @@ class TowerPreviewMenu(DevClass):
         super().reload_level("tower_test")
         super().load_data()
         super().new()
-        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in
+        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 5) for start in
                        range(len(self.start_data))]
         self.make_stripped_path_wrapper()
         self.new_tower_name = ""

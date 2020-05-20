@@ -1,6 +1,7 @@
 from data.settings import *
 import random
 from data.tilemap import tile_from_coords
+from data.game_misc import Explosion
 
 class Enemy(pg.sprite.Sprite):
     def __init__(self, game, x, y, name):
@@ -110,7 +111,7 @@ class Enemy(pg.sprite.Sprite):
             ENEMY_DATA[self.name]["death_sound"].play()
             self.game.protein += self.dropped_protein
             if self.explode_on_death:
-                Explosion(self.game, self.rect.center[0] - self.explode_radius / 2, self.rect.center[1] - self.explode_radius / 2, self.explode_radius)
+                EnemyExplosion(self.game, self.rect.center[0], self.rect.center[1], self.explode_radius)
             self.kill()
 
     def get_hp_surf(self):
@@ -192,7 +193,7 @@ class Enemy(pg.sprite.Sprite):
         self.raw_image = image_surf
         self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
 
-class Explosion(pg.sprite.Sprite):
+class EnemyExplosion(Explosion):
     def __init__(self, game, x, y, rad):
         for tile_x in range(tile_from_coords(x, game.map.tilesize), tile_from_coords(x + rad, game.map.tilesize) + 1):
             for tile_y in range(tile_from_coords(y, game.map.tilesize), tile_from_coords(y + rad, game.map.tilesize) + 1):
@@ -203,21 +204,4 @@ class Explosion(pg.sprite.Sprite):
         game.make_stripped_path_wrapper()
         for enemy in game.enemies:
             enemy.recreate_path()
-        super().__init__(game.explosions)
-        self.clock = game.clock
-        self.x = x
-        self.y = y
-        self.rad = rad
-        self.state = 0
-        self.surf = pg.Surface((rad, rad)).convert_alpha()
-
-    def update(self):
-        passed_time = self.clock.get_time() / 1000
-        self.state += passed_time / EXPLOSION_TIME
-        if self.state >= 1:
-            self.kill()
-        else:
-            self.surf.fill((255, 0, 0, 127 * self.state))
-
-    def get_surf(self):
-        return self.surf
+        super().__init__(game, x, y, rad)

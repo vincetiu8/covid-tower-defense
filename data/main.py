@@ -1,7 +1,7 @@
 import sys
 
 from data.pathfinding import *
-from data.ui import *
+from data.game_misc import *
 from data.game import Game
 from data.tilemap import *
 from data.towers import *
