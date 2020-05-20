@@ -55,7 +55,7 @@
         ]
     },
     "goblet_cell": {
-        "description": "These cells shoot mucus that deal no damage but slow enemies down. Gross but effective.",
+        "description": "Goblet Cells shoot mucus that deal no damage but slow enemies down. Gross but effective.",
         "stages": [
             {
                 "area_of_effect": false,
@@ -170,7 +170,7 @@
         ]
     },
     "neutrophil": {
-        "description": "This cell deals area-of-effect damage to any enemies around it.",
+        "description": "Want a cell that damages all enemies in its radius? Neutrophils are your best bet.",
         "stages": [
             {
                 "area_of_effect": true,
@@ -265,7 +265,7 @@
         ]
     },
     "m_cell": {
-        "description": "",
+        "description": "Exploding missiles are the main method of massacre for M Cells.",
         "stages": [
             {
                 "damage": 5,

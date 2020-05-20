@@ -345,6 +345,7 @@ class TowerSelectMenu(Display):
     
     def draw_map(self, map):
         img = map.make_map()
+        img.blit(map.make_objects(), (0, 0))
         
         # scales map down so that it is no bigger than a rectangle with dimensions (SCREEN_WIDTH / 2, SCREEN_WIDTH / 4)
         scale_factor = min((SCREEN_WIDTH / 2 - GRID_MARGIN_X) / img.get_width(), (SCREEN_HEIGHT / 2 - 40) / img.get_height())
@@ -531,20 +532,9 @@ class TowerInfo(HoverInfo):
         stages_text = self.info_font.render("Stages: {}".format(len(self.stages_data)), 1, WHITE)
         self.add_text(stages_text)
         
-        for i in range(len(text_names)):
-            self.make_text(text_names[i], keys[i])
-        
-    def make_text(self, text_name, key):
-        texts = []
-        map_tf = {True: "Yes", False: "No"}
-        
+        costs = []
         for i in range(len(self.stages_data)):
-            to_add = self.stages_data[i][key]
-            
-            if isinstance(to_add, bool):
-                texts.append(map_tf[to_add])
-            else:
-                texts.append(str(to_add))
-            
-        text = self.info_font.render("{}: {}".format(text_name, "/".join(texts)), 1, WHITE)
-        self.add_text(text)
+            costs.append(str(self.stages_data[i]["upgrade_cost"]))
+        
+        cost_text = self.info_font.render("Cost: {}".format("/".join(costs)), 1, WHITE)
+        self.add_text(cost_text)
