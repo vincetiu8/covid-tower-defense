@@ -128,7 +128,6 @@ class Game(Display):
                         vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
         self.ui = UI(self, 200, 10)
-        self.prepare_next_wave()
         
         self.pathfinder = Pathfinder(
             arteries = arteries,
@@ -141,6 +140,7 @@ class Game(Display):
         self.node_is_in_path = [[]]
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
+        self.prepare_next_wave()
         self.draw_tower_bases_wrapper()
         self.make_stripped_path_wrapper()
 
@@ -198,6 +198,8 @@ class Game(Display):
             self.starts.append(
                 Start(self, i["start"], i["enemy_type"], i["enemy_count"],
                       i["spawn_delay"], i["spawn_rate"]))
+
+        self.make_stripped_path_wrapper()
 
     def start_next_wave(self):
         self.in_a_wave = True
