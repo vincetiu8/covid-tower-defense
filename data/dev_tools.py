@@ -477,7 +477,7 @@ class EnemyEditMenu(EnemyPreviewMenu):
         super().new(args)
 
     def load_ui(self):
-        DevClass.load_ui(self)
+        DevClass.load_ui(self, True)
         self.ui.new_attr(Attribute("enemy_name", {
             "type": "select",
             "values": self.enemy_names
@@ -561,7 +561,7 @@ class LevelEditMenu(DevClass):
         super().reload_level("map{}".format(self.level))
         super().load_data()
         super().new()
-        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 0.5) for start in range(len(self.start_data))]
+        self.reload_enemies()
         self.make_stripped_path_wrapper()
 
     def new(self, args):
@@ -570,7 +570,7 @@ class LevelEditMenu(DevClass):
         self.load_ui()
 
     def load_ui(self):
-        super().load_ui()
+        DevClass.load_ui(self, True)
 
         self.ui.new_attr(Attribute("level",
                                    {"type": "float",
@@ -578,10 +578,10 @@ class LevelEditMenu(DevClass):
                                     "max": len(LEVEL_DATA),
                                     "increment": 1,
                                     "dp": 0
-                                    }, self.level))
+                                    }, self.level, disabled=False))
         for attr in ATTR_DATA["level"]:
             self.ui.new_attr(Attribute(attr, ATTR_DATA["level"][attr],
-                                       LEVEL_DATA[self.level][attr]))
+                                       LEVEL_DATA[self.level][attr], disabled=False))
 
         self.ui.new_attr(Attribute("wave",
                                    {"type": "float",
@@ -589,14 +589,14 @@ class LevelEditMenu(DevClass):
                                     "max": len(LEVEL_DATA[self.level]["waves"]),
                                     "increment": 1,
                                     "dp": 0
-                                    }, self.wave))
+                                    }, self.wave, disabled=False))
         self.ui.new_attr(Attribute("sub_wave",
                                     {"type": "float",
                                      "min": 0,
                                      "max": len(LEVEL_DATA[self.level]["waves"][self.wave]),
                                      "increment": 1,
                                      "dp": 0
-                                     }, self.sub_wave))
+                                     }, self.sub_wave, disabled=False))
 
         for attr in ATTR_DATA["sub_wave"]:
             temp_dat = ATTR_DATA["sub_wave"][attr].copy()
@@ -606,17 +606,21 @@ class LevelEditMenu(DevClass):
             elif attr == "enemy_type":
                 temp_dat["values"] = self.enemy_types
                 temp_val = self.enemy_types.index(temp_val)
-            self.ui.new_attr(Attribute(attr, temp_dat, temp_val))
+            self.ui.new_attr(Attribute(attr, temp_dat, temp_val, disabled=False))
 
         self.reload_enemies()
         self.reload_towers()
         self.get_attr_surf()
 
     def reload_enemies(self):
-        self.starts.clear()
+        for enemy in self.enemies:
+            enemy.kill()
+
+        self.starts = []
         self.enemies = pg.sprite.Group()
         for s in LEVEL_DATA[self.level]["waves"][self.wave]:
             self.starts.append(Start(self, s["start"], s["enemy_type"], s["enemy_count"], s["spawn_delay"], s["spawn_rate"]))
+            self.starts[-1].enable_spawning()
 
     def update(self):
         super().update()
@@ -629,8 +633,6 @@ class LevelEditMenu(DevClass):
         create_level = False
         create_wave = False
         create_sub_wave = False
-        self.current_tower = attrs.pop("tower_name")
-        self.current_stage = attrs.pop("tower_stage")
         for attr in attrs:
             if attr == "level":
                 if self.level != attrs[attr]:
@@ -888,16 +890,15 @@ class DevUI():
                             ENEMY_DATA[enemy].pop("image")
                         if "death_sound" in ENEMY_DATA[enemy]:
                             ENEMY_DATA[enemy].pop("death_sound")
+                        ignore = []
                         for attr in ATTR_DATA["enemy"]:
+                            if attr in ignore:
+                                continue
                             if ATTR_DATA["enemy"][attr]["type"] == "bool":
                                 if "ignore_if_true" in ATTR_DATA["enemy"][attr] and ENEMY_DATA[enemy][attr]:
-                                    for el in ATTR_DATA["enemy"][attr]["ignore_if_true"]:
-                                        if el in ENEMY_DATA[enemy]:
-                                            ENEMY_DATA[enemy].pop(el)
+                                    ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_true"])
                                 elif "ignore_if_false" in ATTR_DATA["enemy"][attr] and not ENEMY_DATA[enemy][attr]:
-                                    for el in ATTR_DATA["enemy"][attr]["ignore_if_false"]:
-                                        if el in ENEMY_DATA[enemy]:
-                                            ENEMY_DATA[enemy].pop(el)
+                                    ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_false"])
                     with open(path.join(GAME_FOLDER, "enemies.json"), 'w') as out_file:
                         json.dump(ENEMY_DATA, out_file, indent=4)
                     for enemy in ENEMY_DATA:
@@ -917,16 +918,15 @@ class DevUI():
                                 TOWER_DATA[tower]["stages"][stage].pop("shoot_sound")
                             if "image" in TOWER_DATA[tower]["stages"][stage]:
                                 TOWER_DATA[tower]["stages"][stage].pop("image")
+                            ignore = []
                             for attr in ATTR_DATA["stage"]:
+                                if attr in ignore:
+                                    continue
                                 if ATTR_DATA["stage"][attr]["type"] == "bool":
                                     if "ignore_if_true" in ATTR_DATA["stage"][attr] and TOWER_DATA[tower]["stages"][stage][attr]:
-                                        for el in ATTR_DATA["stage"][attr]["ignore_if_true"]:
-                                            if el in TOWER_DATA[tower]["stages"][stage]:
-                                                TOWER_DATA[tower]["stages"][stage].pop(el)
+                                        ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_true"])
                                     elif "ignore_if_false" in ATTR_DATA["stage"][attr] and not TOWER_DATA[tower]["stages"][stage][attr]:
-                                        for el in ATTR_DATA["stage"][attr]["ignore_if_false"]:
-                                            if el in TOWER_DATA[tower]["stages"][stage]:
-                                                TOWER_DATA[tower]["stages"][stage].pop(el)
+                                        ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_false"])
                     with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
                         json.dump(TOWER_DATA, out_file, indent=4)
                     for tower in TOWER_DATA:
