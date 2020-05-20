@@ -95,7 +95,7 @@ class Game(Display):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
                                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
-                                            1)  # make start tile a wall so you can't place a tower on it
+                                            0)  # make start tile a wall so you can't place a tower on it
                                                 # this does not affect the path finding algo
             elif tile_object.name == "goal":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
@@ -127,8 +127,13 @@ class Game(Display):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+
+        for start in self.start_data:
+            for x in range(tile_from_xcoords(start.width, self.map.tilesize)):
+                for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
+                    self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x, tile_from_xcoords(start.y, self.map.tilesize) + y, 0)
+
         self.ui = UI(self, 200, 10)
-        
         self.pathfinder = Pathfinder(
             arteries = arteries,
             artery_entrances = artery_entrances,
@@ -356,35 +361,23 @@ class Game(Display):
             if validity == 1:
                 tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
             elif validity == -1:
-                self.map.change_node(tower_tile[0], tower_tile[1], 1)
-                self.pathfinder.clear_nodes(self.map.get_map())
-                
                 result = True
+
                 if self.node_is_in_path[tower_tile[0]][tower_tile[1]]:
-                    done = []
-                    for start in self.starts:
-                        if start.start in done:
-                            continue
-                        done.append(start.start)
-                        
-                        xpos = tile_from_xcoords(start.rect.x, self.map.tilesize)
-                        ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
-                        
-                        for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
-                            for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
-                                temp_result = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, False)
-                                
-                                if temp_result == False:
-                                    result = False
-                                    break
-                                
-                        if not result:
+                    self.map.change_node(tower_tile[0], tower_tile[1], 1)
+                    self.pathfinder.clear_nodes(self.map.get_map())
+                    for start in self.start_data:
+                        path = self.pathfinder.astar(((tile_from_xcoords(start.x, self.map.tilesize),
+                                                       tile_from_xcoords(start.y, self.map.tilesize)), 0),
+                                                     self.goals, False)
+
+                        if not path:
+                            result = False
                             break
-                
-                self.map.change_node(tower_tile[0], tower_tile[1], 0)
-                self.pathfinder.clear_nodes(self.map.get_map())
+                    self.map.change_node(tower_tile[0], tower_tile[1], 0)
+                    self.pathfinder.clear_nodes(self.map.get_map())
                             
-                if result != False:
+                if result:
                     tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
                     self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
                 else:
@@ -447,10 +440,10 @@ class Game(Display):
 
                 self.pathfinder.clear_nodes(self.map.get_map())
 
-                for start in self.starts:
-                    path = self.pathfinder.astar(((tile_from_xcoords(start.rect.x, self.map.tilesize),
-                                                   tile_from_xcoords(start.rect.y, self.map.tilesize)), 0),
-                                                 self.goals, ENEMY_DATA[start.enemy_type]["flying"])
+                for start in self.start_data:
+                    path = self.pathfinder.astar(((tile_from_xcoords(start.x, self.map.tilesize),
+                                                   tile_from_xcoords(start.y, self.map.tilesize)), 0),
+                                                 self.goals, False)
                     if path == False:
                         self.map.change_node(x_coord, y_coord, 0)
                         self.pathfinder.clear_nodes(self.map.get_map())
@@ -462,6 +455,11 @@ class Game(Display):
                     y=round_to_tilesize(pos[1], self.map.tilesize),
                     name=self.current_tower)
                 self.map.add_tower(x_coord, y_coord, new_tower)
+                for start in self.start_data:
+                    for x in range(tile_from_xcoords(start.width, self.map.tilesize)):
+                        for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
+                            self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x,
+                                                          tile_from_xcoords(start.y, self.map.tilesize) + y, 0)
                 self.protein -= TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"]
                 self.current_tower = None
 
@@ -476,12 +474,17 @@ class Game(Display):
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
-                self.map.remove_tower(x_coord, y_coord)
-                self.pathfinder.clear_nodes(self.map.get_map())
-                self.make_stripped_path_wrapper()
-                self.draw_tower_bases_wrapper()
-                for enemy in self.enemies:
-                    enemy.recreate_path()
+                if self.map.remove_tower(x_coord, y_coord):
+                    self.pathfinder.clear_nodes(self.map.get_map())
+                    for start in self.start_data:
+                        for x in range(tile_from_xcoords(start.width, self.map.tilesize)):
+                            for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
+                                self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x,
+                                                              tile_from_xcoords(start.y, self.map.tilesize) + y, 0)
+                    self.make_stripped_path_wrapper()
+                    self.draw_tower_bases_wrapper()
+                    for enemy in self.enemies:
+                        enemy.recreate_path()
 
             elif event.button == 4:
                 self.camera.zoom(ZOOM_AMT_GAME)

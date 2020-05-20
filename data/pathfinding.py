@@ -45,6 +45,7 @@ class Pathfinder():
                 temp_map = self.map[0].copy()
                 self.map[0] = self.base_map
 
+            print(self.map[0])
             prevstate = self.map[0][start[0][0]][start[0][1]]
             self.map[0][start[0][0]][start[0][1]] = 0
 

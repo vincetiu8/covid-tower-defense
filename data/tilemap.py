@@ -80,6 +80,7 @@ class TiledMap:
         self.tower_map[x][y].kill()
         self.change_node(x, y, 0)
         self.reset_valid_tower_tiles()
+        return True
 
     def get_map(self):
         return self.map
