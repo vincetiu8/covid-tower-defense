@@ -5,7 +5,8 @@
         "hp": 5,
         "protein": 1,
         "shield": false,
-        "speed": 200
+        "speed": 200,
+        "description": "Although it's fast, the common cold doesn't pose much of a threat due to its low HP."
     },
     "coronavirus": {
         "explode_on_death": false,
@@ -13,7 +14,8 @@
         "hp": 50,
         "protein": 5,
         "shield": false,
-        "speed": 70
+        "speed": 70,
+        "description": "This devil may be slow, but its high health makes it a force to be reckoned with."
     },
     "hepatitis_a": {
         "explode_on_death": false,
@@ -21,7 +23,8 @@
         "hp": 15,
         "protein": 2,
         "shield": false,
-        "speed": 110
+        "speed": 110,
+        "description": "A very average virus. Has medium health and moves at medium speed."
     },
     "hepatitis_b": {
         "explode_on_death": false,
@@ -32,7 +35,8 @@
         "shield_hp": 5,
         "shield_recharge_delay": 1,
         "shield_recharge_rate": 0.1,
-        "speed": 100
+        "speed": 100,
+        "description": "Bulkier than their purple cousins, Hepatitis B has a shield to better survive the immune system."
     },
     "hiv": {
         "explode_on_death": true,
@@ -44,7 +48,8 @@
         "shield_hp": 20,
         "shield_recharge_delay": 1,
         "shield_recharge_rate": 0.1,
-        "speed": 70
+        "speed": 70,
+        "description": "HIV is not only difficult to kill, but it also destroys nearby towers on death. Stay sharp!"
     },
     "polio": {
         "explode_on_death": false,
@@ -52,7 +57,8 @@
         "hp": 8,
         "protein": 2,
         "shield": false,
-        "speed": 100
+        "speed": 100,
+        "description": "The polio virus is weak, but it can fly over cells and go straight to the goal."
     },
     "rabies": {
         "explode_on_death": true,
@@ -62,7 +68,8 @@
         "protein": 3,
         "scroll_position": 1,
         "shield": false,
-        "speed": 100
+        "speed": 100,
+        "description": "Danger! This virus moves quickly and explodes when it dies, destroying any nearby towers!"
     },
     "smallpox": {
         "explode_on_death": false,
@@ -73,6 +80,7 @@
         "shield_hp": 10,
         "shield_recharge_delay": 1,
         "shield_recharge_rate": 0.1,
-        "speed": 70
+        "speed": 70,
+        "description": "This virus would be weak if not for its regenerating shield."
     }
 }
