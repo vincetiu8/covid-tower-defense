@@ -477,7 +477,7 @@ class EnemyEditMenu(EnemyPreviewMenu):
         super().new(args)
 
     def load_ui(self):
-        DevClass.load_ui(self)
+        DevClass.load_ui(self, True)
         self.ui.new_attr(Attribute("enemy_name", {
             "type": "select",
             "values": self.enemy_names
@@ -570,7 +570,7 @@ class LevelEditMenu(DevClass):
         self.load_ui()
 
     def load_ui(self):
-        super().load_ui()
+        DevClass.load_ui(self, True)
 
         self.ui.new_attr(Attribute("level",
                                    {"type": "float",
@@ -890,16 +890,15 @@ class DevUI():
                             ENEMY_DATA[enemy].pop("image")
                         if "death_sound" in ENEMY_DATA[enemy]:
                             ENEMY_DATA[enemy].pop("death_sound")
+                        ignore = []
                         for attr in ATTR_DATA["enemy"]:
+                            if attr in ignore:
+                                continue
                             if ATTR_DATA["enemy"][attr]["type"] == "bool":
                                 if "ignore_if_true" in ATTR_DATA["enemy"][attr] and ENEMY_DATA[enemy][attr]:
-                                    for el in ATTR_DATA["enemy"][attr]["ignore_if_true"]:
-                                        if el in ENEMY_DATA[enemy]:
-                                            ENEMY_DATA[enemy].pop(el)
+                                    ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_true"])
                                 elif "ignore_if_false" in ATTR_DATA["enemy"][attr] and not ENEMY_DATA[enemy][attr]:
-                                    for el in ATTR_DATA["enemy"][attr]["ignore_if_false"]:
-                                        if el in ENEMY_DATA[enemy]:
-                                            ENEMY_DATA[enemy].pop(el)
+                                    ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_false"])
                     with open(path.join(GAME_FOLDER, "enemies.json"), 'w') as out_file:
                         json.dump(ENEMY_DATA, out_file, indent=4)
                     for enemy in ENEMY_DATA:
@@ -919,16 +918,15 @@ class DevUI():
                                 TOWER_DATA[tower]["stages"][stage].pop("shoot_sound")
                             if "image" in TOWER_DATA[tower]["stages"][stage]:
                                 TOWER_DATA[tower]["stages"][stage].pop("image")
+                            ignore = []
                             for attr in ATTR_DATA["stage"]:
+                                if attr in ignore:
+                                    continue
                                 if ATTR_DATA["stage"][attr]["type"] == "bool":
                                     if "ignore_if_true" in ATTR_DATA["stage"][attr] and TOWER_DATA[tower]["stages"][stage][attr]:
-                                        for el in ATTR_DATA["stage"][attr]["ignore_if_true"]:
-                                            if el in TOWER_DATA[tower]["stages"][stage]:
-                                                TOWER_DATA[tower]["stages"][stage].pop(el)
+                                        ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_true"])
                                     elif "ignore_if_false" in ATTR_DATA["stage"][attr] and not TOWER_DATA[tower]["stages"][stage][attr]:
-                                        for el in ATTR_DATA["stage"][attr]["ignore_if_false"]:
-                                            if el in TOWER_DATA[tower]["stages"][stage]:
-                                                TOWER_DATA[tower]["stages"][stage].pop(el)
+                                        ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_false"])
                     with open(path.join(GAME_FOLDER, "towers.json"), 'w') as out_file:
                         json.dump(TOWER_DATA, out_file, indent=4)
                     for tower in TOWER_DATA:
