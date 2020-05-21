@@ -474,7 +474,8 @@ class Game(Display):
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
-                if self.map.remove_tower(x_coord, y_coord):
+                tower_dat = self.map.remove_tower(x_coord, y_coord)
+                if tower_dat != False:
                     self.pathfinder.clear_nodes(self.map.get_map())
                     for start in self.start_data:
                         for x in range(tile_from_xcoords(start.width, self.map.tilesize)):
@@ -485,6 +486,9 @@ class Game(Display):
                     self.draw_tower_bases_wrapper()
                     for enemy in self.enemies:
                         enemy.recreate_path()
+                    for stage in range(tower_dat[1] + 1):
+                        self.protein += round(TOWER_DATA[tower_dat[0]]["stages"][stage]["upgrade_cost"] / 2)
+                    BUY_SFX.play()
 
             elif event.button == 4:
                 self.camera.zoom(ZOOM_AMT_GAME)
