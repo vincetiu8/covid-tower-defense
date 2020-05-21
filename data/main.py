@@ -28,6 +28,7 @@ class Main:
         self.pause = Pause()
         self.tower_preview = TowerPreviewMenu(self.clock)
         self.enemy_preview = EnemyPreviewMenu(self.clock)
+        self.upgrades_menu = UpgradesMenu()
         self.tower_edit = TowerEditMenu(self.clock)
         self.enemy_edit = EnemyEditMenu(self.clock)
         self.level_edit = LevelEditMenu(self.clock)
@@ -42,6 +43,7 @@ class Main:
             "pause":            self.pause,
             "tower_preview":    self.tower_preview,
             "enemy_preview":    self.enemy_preview,
+            "upgrades_menu":    self.upgrades_menu,
             "tower_edit":       self.tower_edit,
             "enemy_edit":       self.enemy_edit,
             "level_edit":       self.level_edit,

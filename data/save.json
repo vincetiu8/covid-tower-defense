@@ -3,5 +3,10 @@
     "music_vol": 0.86,
     "sfx_vol": 0.0,
     "fullscreen": false,
-    "dna": 0
+    "max_dna": 100,
+    "used_dna": 500,
+    "owned_towers": [
+        "t_cell",
+        "b_cell"
+    ]
 }

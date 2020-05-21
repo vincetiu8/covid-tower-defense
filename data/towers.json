@@ -1,4 +1,61 @@
 {
+        "t_cell": {
+        "description": "Your standard cell with standard range and standard damage.",
+        "stages": [
+            {
+                "area_of_effect": false,
+                "at": 2,
+                "attack_speed": 0.25,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 1000,
+                "damage": 2,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 200,
+                "rotating": true,
+                "rotation_speed": 360,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 10,
+                "explode_on_impact": false
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.2,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 1250,
+                "damage": 3,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 220,
+                "rotating": true,
+                "rotation_speed": 360,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 5,
+                "explode_on_impact": false
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.15,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 1500,
+                "damage": 4,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 250,
+                "rotating": true,
+                "rotation_speed": 360,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 10,
+                "explode_on_impact": false
+            }
+        ]
+    },
     "b_cell": {
         "description": "These cells fire in 4 directions and have huge range! They can't track enemies, though.",
         "stages": [
@@ -204,63 +261,6 @@
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "upgrade_cost": 20
-            }
-        ]
-    },
-    "t_cell": {
-        "description": "Your standard cell with standard range and standard damage.",
-        "stages": [
-            {
-                "area_of_effect": false,
-                "at": 2,
-                "attack_speed": 0.25,
-                "bullet_lifetime": 0.3,
-                "bullet_speed": 1000,
-                "damage": 2,
-                "different_shield_damage": false,
-                "directions": 1,
-                "range": 200,
-                "rotating": true,
-                "rotation_speed": 360,
-                "slow_duration": 0,
-                "slow_speed": 1,
-                "tracking": true,
-                "upgrade_cost": 10,
-                "explode_on_impact": false
-            },
-            {
-                "area_of_effect": false,
-                "attack_speed": 0.2,
-                "bullet_lifetime": 0.3,
-                "bullet_speed": 1250,
-                "damage": 3,
-                "different_shield_damage": false,
-                "directions": 1,
-                "range": 220,
-                "rotating": true,
-                "rotation_speed": 360,
-                "slow_duration": 0,
-                "slow_speed": 1,
-                "tracking": true,
-                "upgrade_cost": 5,
-                "explode_on_impact": false
-            },
-            {
-                "area_of_effect": false,
-                "attack_speed": 0.15,
-                "bullet_lifetime": 0.3,
-                "bullet_speed": 1500,
-                "damage": 4,
-                "different_shield_damage": false,
-                "directions": 1,
-                "range": 250,
-                "rotating": true,
-                "rotation_speed": 360,
-                "slow_duration": 0,
-                "slow_speed": 1,
-                "tracking": true,
-                "upgrade_cost": 10,
-                "explode_on_impact": false
             }
         ]
     },
