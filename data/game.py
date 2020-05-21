@@ -34,10 +34,14 @@ class Game(Display):
     def __init__(self, clock):
         super().__init__()
         self.clock = clock
+        
         self.paused = False
         self.in_a_wave = False
+        
         self.starts = []
         self.game_done_event = pg.event.Event(pg.USEREVENT)
+        
+        self.ui_pos = None
 
     def load_data(self):
         self.map_img = self.map.make_map()
@@ -253,15 +257,16 @@ class Game(Display):
             self.draw_tower_preview()
 
         self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
-
-        ui_pos = (self.get_size()[0] - self.ui.offset, self.ui.offset)
+        
+        self.ui_pos = [self.get_size()[0] - self.ui.offset, self.ui.offset]
         if self.ui.active:
+            self.ui_pos[0] -= self.ui.width
             ui = self.ui.ui
-            ui_rect = ui.get_rect(topright=ui_pos)
+            ui_rect = ui.get_rect(topleft = self.ui_pos)
             self.blit(ui, ui_rect)
-            self.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright=ui_rect.topleft))
+            self.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright = ui_rect.topleft))
         else:
-            self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright=ui_pos))
+            self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = ui_pos))
         
         return self
 
@@ -407,7 +412,8 @@ class Game(Display):
                         if (self.protein < TOWER_DATA[self.available_towers[i]]["stages"][0]["upgrade_cost"]):
                             continue
                         temp_rect = tower_rect.copy()
-                        temp_rect.x += self.get_size()[0] - self.ui.width
+                        temp_rect.x += self.ui_pos[0]
+                        temp_rect.y += self.ui_pos[1]
                         
                         if temp_rect.collidepoint(event.pos):
                             if self.current_tower == self.available_towers[i]:
@@ -415,9 +421,10 @@ class Game(Display):
                             else:
                                 self.current_tower = self.available_towers[i]
                             return -1
-                        
+                    
                     next_wave_rect = self.ui.next_wave_rect.copy()
-                    next_wave_rect.x += self.get_size()[0] - self.ui.width
+                    next_wave_rect.x += self.ui_pos[0]
+                    next_wave_rect.y += self.ui_pos[1]
                     
                     if self.ui.next_wave_btn_enabled and next_wave_rect.collidepoint(event.pos):
                         self.start_next_wave()
