@@ -4,9 +4,8 @@
     "sfx_vol": 0.0,
     "fullscreen": false,
     "max_dna": 100,
-    "used_dna": 100,
+    "used_dna": 0,
     "owned_towers": [
-        "t_cell",
-        "b_cell"
+        "t_cell"
     ]
 }

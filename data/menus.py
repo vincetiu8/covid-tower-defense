@@ -593,6 +593,8 @@ class UpgradesMenu(TowerMenu):
         super().__init__()
         self.done_btn = self.make_btn("Done")
         self.done_btn_rect = pg.Rect(BTN_X_MARGIN, BTN_Y, self.done_btn.get_width(), self.done_btn.get_height())
+        self.confirm_tower_menu = ActionMenu("Are you sure you want to buy this tower?", "Yes", "No")
+        self.confirming = False
 
     def new(self, args):
         self.towers = []
@@ -614,6 +616,8 @@ class UpgradesMenu(TowerMenu):
             self.tower_owned[row].append(tower_names[i] in SAVE_DATA["owned_towers"])
 
         self.tower_infos = [None for i in range(len(tower_names))]
+        font = pg.font.Font(FONT, 70)
+        self.dna_text = font.render("DNA: " + str(SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"]), 1, WHITE)
 
     def draw(self):
         self.fill(BLACK)
@@ -639,7 +643,7 @@ class UpgradesMenu(TowerMenu):
         title_2 = title_font.render("Upgrades", 1, WHITE)
         self.blit(title_2, (SCREEN_WIDTH * 3 / 4 - title_1.get_width() / 2, 0))
 
-        if self.over_tower[0] != -1:
+        if not self.confirming and self.over_tower[0] != -1:
             row, col = self.over_tower
             ind = row * GRID_ROW_SIZE + col
 
@@ -649,7 +653,11 @@ class UpgradesMenu(TowerMenu):
 
             self.blit(self.tower_infos[ind], self.tower_rects[row][col].topright)
 
-        self.blit(self.done_btn, (BTN_X_MARGIN, BTN_Y))
+        self.blit(self.done_btn, self.done_btn_rect)
+        self.blit(self.dna_text, self.dna_text.get_rect(topright=(SCREEN_WIDTH - BTN_X_MARGIN, BTN_Y)))
+
+        if self.confirming:
+            self.blit(self.confirm_menu_surf, self.confirm_menu_rect)
 
         return self
 
@@ -660,17 +668,36 @@ class UpgradesMenu(TowerMenu):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 mouse_pos = pg.mouse.get_pos()
-                if self.done_btn_rect.collidepoint(mouse_pos):
-                    return "menu"
-                elif self.over_tower[0] != -1:
-                    row, col = self.over_tower
-                    if not self.tower_owned[row][col] and self.is_tower_buyable(self.towers[row][col]):
-                        SAVE_DATA["owned_towers"].append(self.towers[row][col])
-                        SAVE_DATA["used_dna"] += TOWER_PURCHASE_COST
-                        self.tower_owned[row][col] = True
-                        self.tower_infos[row * GRID_ROW_SIZE + col] = None
+                if self.confirming:
+                    if self.confirm_menu_rect.collidepoint(mouse_pos):
+                        result = self.confirm_menu.event((mouse_pos[0] - self.confirm_menu_rect.x, mouse_pos[1] - self.confirm_menu_rect.y))
+                        if result == 1:
+                            row, col = self.over_tower
+                            SAVE_DATA["owned_towers"].append(self.towers[row][col])
+                            SAVE_DATA["used_dna"] += TOWER_PURCHASE_COST
+                            self.tower_owned[row][col] = True
+                            self.tower_infos[row * GRID_ROW_SIZE + col] = None
+                            font = pg.font.Font(FONT, 70)
+                            self.dna_text = font.render("DNA: " + str(SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"]), 1,
+                                                        WHITE)
+                        elif result == -1:
+                            return -1
+                    self.confirming = False
+                    self.over_tower = [-1, -1]
 
-        if event.type == pg.MOUSEMOTION:
+                else:
+                    if self.done_btn_rect.collidepoint(mouse_pos):
+                        return "menu"
+                    elif self.over_tower[0] != -1:
+                        row, col = self.over_tower
+                        if not self.tower_owned[row][col] and self.is_tower_buyable(self.towers[row][col]):
+                            self.confirm_menu = self.confirm_tower_menu
+                            self.confirm_menu_surf = self.confirm_menu.draw()
+                            self.confirm_menu_rect = self.confirm_menu_surf.get_rect(
+                                center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+                            self.confirming = True
+
+        if event.type == pg.MOUSEMOTION and not self.confirming:
             mouse_pos = pg.mouse.get_pos()
             for row, grid_row in enumerate(self.tower_rects):
                 for col, rect in enumerate(grid_row):
@@ -693,3 +720,55 @@ class BuyTowerInfo(TowerInfo):
             self.add_text(error_text)
 
         super().make_other_info()
+
+# In the future we can use this for other menus that only take up 
+
+class ActionMenu(pg.Surface):
+    def __init__(self, message, btn1txt, btn2txt):
+        large_font = pg.font.Font(FONT, 70)
+        self.texts = []
+        self.height = MENU_OFFSET * 2
+        self.width = SCREEN_WIDTH / 2
+        text = textwrap.fill(message, 30)  # Hardcoding lmao
+
+        for part in text.split('\n'):
+            rendered_text = large_font.render(part, 1, WHITE)
+            self.texts.append(rendered_text)
+            self.height += rendered_text.get_height() + round(MENU_OFFSET / 2)
+            self.width = max(self.width, rendered_text.get_width() + MENU_OFFSET * 4)
+
+        self.button1 = self.make_btn(btn1txt)
+        self.button2 = self.make_btn(btn2txt)
+        self.height += self.button1.get_height() + round(MENU_OFFSET / 2)
+        self.button1_rect = self.button1.get_rect(bottomleft=(MENU_OFFSET, self.height - MENU_OFFSET))
+        self.button2_rect = self.button2.get_rect(bottomright=(self.width - MENU_OFFSET, self.height - MENU_OFFSET))
+
+    def draw(self):
+        super().__init__((self.width, self.height))
+
+        self.fill(DARK_GREY)
+        t_height = MENU_OFFSET
+        for text in self.texts:
+            self.blit(text, text.get_rect(centerx=self.width / 2, y=t_height))
+            t_height += text.get_height() + round(MENU_OFFSET / 2)
+
+        self.blit(self.button1, self.button1_rect)
+        self.blit(self.button2, self.button2_rect)
+
+        return self
+
+    def make_btn(self, string):
+        font = pg.font.Font(FONT, 70)
+        text = font.render(string, 1, WHITE)
+        btn = pg.transform.scale(LEVEL_BUTTON_IMG,
+                                 (text.get_width() + BTN_PADDING * 2, text.get_height())).copy().convert_alpha()
+        btn.blit(text, text.get_rect(center=btn.get_rect().center))
+        return btn
+
+    def event(self, mouse_pos):
+        if self.button1_rect.collidepoint(mouse_pos):
+            return 1
+        elif self.button2_rect.collidepoint(mouse_pos):
+            return 2
+        else:
+            return -1
