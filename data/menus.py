@@ -286,10 +286,10 @@ class TowerSelectMenu(TowerMenu):
         self.over_enemy = None
         self.wave_data = {}
         
-        tower_names = list(TOWER_DATA)
+        tower_names = SAVE_DATA["owned_towers"]
         
         row = -1
-        for i in range(len(TOWER_DATA)):
+        for i in range(len(tower_names)):
             if i % GRID_ROW_SIZE == 0:
                 row += 1
                 self.towers.append([])
@@ -649,6 +649,8 @@ class UpgradesMenu(TowerMenu):
 
             self.blit(self.tower_infos[ind], self.tower_rects[row][col].topright)
 
+        self.blit(self.done_btn, (BTN_X_MARGIN, BTN_Y))
+
         return self
 
     def is_tower_buyable(self, tower):
@@ -664,9 +666,9 @@ class UpgradesMenu(TowerMenu):
                     row, col = self.over_tower
                     if not self.tower_owned[row][col] and self.is_tower_buyable(self.towers[row][col]):
                         SAVE_DATA["owned_towers"].append(self.towers[row][col])
-                    SAVE_DATA["used_dna"] += TOWER_PURCHASE_COST
-                    self.tower_owned[row][col] = True
-                    self.tower_infos[row * GRID_ROW_SIZE + col] = None
+                        SAVE_DATA["used_dna"] += TOWER_PURCHASE_COST
+                        self.tower_owned[row][col] = True
+                        self.tower_infos[row * GRID_ROW_SIZE + col] = None
 
         if event.type == pg.MOUSEMOTION:
             mouse_pos = pg.mouse.get_pos()
