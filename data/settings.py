@@ -241,3 +241,5 @@ HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "hear
 
 # load fonts path
 FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
+
+DNA_ON_FINISH = 100

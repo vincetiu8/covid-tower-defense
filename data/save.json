@@ -1,6 +1,7 @@
 {
-    "level": 3,
+    "level": 0,
     "music_vol": 0.86,
     "sfx_vol": 0.0,
-    "fullscreen": false
+    "fullscreen": false,
+    "dna": 0
 }

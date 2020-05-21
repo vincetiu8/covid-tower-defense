@@ -232,6 +232,7 @@ class GameOver(GameStop):
 
         if not self.lost and args[4] == SAVE_DATA["level"]:
             SAVE_DATA["level"] += 1
+            SAVE_DATA["dna"] += DNA_ON_FINISH
 
         if self.lost:
             self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death)
