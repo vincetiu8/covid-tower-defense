@@ -79,6 +79,14 @@
         "description": {
             "type": "string",
             "default": ""
+        },
+        "unlock_cost": {
+            "type": "float",
+            "min": 0,
+            "max": 2500,
+            "increment": 100,
+            "dp": -2,
+            "default": 500
         }
     },
     "stage": {

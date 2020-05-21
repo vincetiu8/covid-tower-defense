@@ -691,7 +691,7 @@ class UpgradesMenu(TowerMenu):
         return surf, btn_rect
 
     def is_tower_buyable(self, tower):
-        return SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"] >= TOWER_PURCHASE_COST
+        return SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"] >= TOWER_DATA[tower]["unlock_cost"]
 
     def is_upgrade_buyable(self, upgrade):
         return SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"] >= TOWER_PURCHASE_COST
@@ -709,7 +709,7 @@ class UpgradesMenu(TowerMenu):
                                 SAVE_DATA["owned_towers"].append(self.towers[row][col])
                                 SAVE_DATA["used_dna"] += TOWER_PURCHASE_COST
                                 self.tower_owned[row][col] = True
-                                self.tower_infos[row * GRID_ROW_SIZE + col] = None
+                                self.tower_infos = [None for i in range(len(TOWER_DATA))] # Force a reload of all tower infos when buying a new tower
                             else:
                                 upgrades = list(SAVE_DATA["game_attrs"])
                                 upgrade_name = upgrades[self.over_upgrade]
@@ -720,6 +720,7 @@ class UpgradesMenu(TowerMenu):
                                 self.upgrade_rects[self.over_upgrade] = surf.get_rect(topright=(SCREEN_WIDTH - GRID_MARGIN_X, self.upgrade_rects[self.over_upgrade].top))
                                 rect.topright = self.upgrade_rects[-1].topright
                                 self.upgrade_button_rects[self.over_upgrade] = rect
+                                self.tower_infos = [None for i in range(len(TOWER_DATA))]
                             font = pg.font.Font(FONT, 70)
                             self.dna_text = font.render("DNA: " + str(SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"]), 1,
                                                         WHITE)
@@ -769,8 +770,13 @@ class BuyTowerInfo(TowerInfo):
 
     def make_other_info(self):
         if not self.buyable:
+            unlock_text = self.info_font.render("Unlock Cost: " + str(self.tower_data["unlock_cost"]), 1, RED)
+            self.add_text(unlock_text)
             error_text = self.info_font.render("Insufficient DNA to buy this tower!", 1, RED)
             self.add_text(error_text)
+        else:
+            unlock_text = self.info_font.render("Unlock Cost: " + str(self.tower_data["unlock_cost"]), 1, YELLOW)
+            self.add_text(unlock_text)
 
         super().make_other_info()
 

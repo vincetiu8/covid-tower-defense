@@ -3,13 +3,14 @@
     "music_vol": 0.86,
     "sfx_vol": 0.0,
     "fullscreen": false,
-    "max_dna": 100,
+    "max_dna": 500,
     "used_dna": 100,
     "owned_towers": [
-        "t_cell"
+        "t_cell",
+        "b_cell"
     ],
     "game_attrs": {
-        "lives": 6,
+        "lives": 5,
         "starting_protein": 50
     }
 }
