@@ -22,9 +22,6 @@ pg.mixer.init()
 FPS = 60
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
-
-LIVES = 5
-PROTEIN = 50
               
 ZOOM_AMT_GAME = 0.05
 ZOOM_AMT_MENU = 0.1

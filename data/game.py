@@ -70,8 +70,8 @@ class Game(Display):
         self.explosions = pg.sprite.Group()
 
         self.current_tower = None
-        self.protein = PROTEIN
-        self.lives = LIVES
+        self.protein = SAVE_DATA["game_attrs"]["starting_protein"]
+        self.lives = SAVE_DATA["game_attrs"]["lives"]
 
         self.wave = -1  # only updated at the start of prepare_next_wave()
         self.cause_of_death = "IB"
