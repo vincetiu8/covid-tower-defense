@@ -953,7 +953,9 @@ class DevUI():
                                                        center=base.get_rect().center))
 
                             TOWER_DATA[tower]["stages"][stage]["image"] = temp_base
-                            
+                    
+                    update_sfx_vol() # Has to be called since saving settings resets enemy and tower sounds
+                    
                     self.save_text = "Settings Saved!"
                     pg.time.set_timer(pg.USEREVENT + 1, 2000)
                     return_val = -2

@@ -26,10 +26,6 @@ SCREEN_HEIGHT = 720
 ZOOM_AMT_GAME = 0.05
 ZOOM_AMT_MENU = 0.1
 
-WAVE_DELAY = 10 # in seconds
-
-EXPLOSION_TIME = 0.5
-
 # define some colors (R, G, B)
 WHITE = pg.Color(255, 255, 255)
 CYAN = pg.Color(0, 255, 255)
@@ -239,5 +235,11 @@ HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "hear
 # load fonts path
 FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
 
+
 DNA_ON_FINISH = 100
 TOWER_PURCHASE_COST = 100
+
+WAVE_DELAY = 10
+EXPLOSION_TIME = 0.25
+REFUND_AMOUNT = 0.5
+
