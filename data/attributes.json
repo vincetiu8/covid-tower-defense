@@ -1,5 +1,9 @@
 {
     "enemy": {
+        "description": {
+            "type": "string",
+            "default": ""
+        },
         "hp": {
             "type": "float",
             "min": 1,

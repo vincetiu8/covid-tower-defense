@@ -246,7 +246,9 @@ class TowerSelectMenu(Display):
         self.num_selected = 0
         
         self.wave_info = None
-        self.draw_wave_info()
+        
+        self.over_enemy = None
+        self.wave_data = {}
         
         tower_names = list(TOWER_DATA)
         
@@ -263,6 +265,7 @@ class TowerSelectMenu(Display):
             self.tower_selected[row].append(False)
             
         self.tower_infos = [None for i in range(len(tower_names))]
+        self.enemy_infos = {}
         
     def draw(self):
         self.fill(BLACK)
@@ -310,8 +313,9 @@ class TowerSelectMenu(Display):
                 self.blit(tower_img, self.get_locs(row, col))
                 
         # Draws waves info
-        self.draw_wave_info()
-        self.blit(self.wave_info, (SCREEN_WIDTH / 2, GRID_MARGIN_Y - selected_text.get_height()))
+        wave_coords = (SCREEN_WIDTH / 2, GRID_MARGIN_Y - selected_text.get_height())
+        self.draw_wave_info(wave_coords)
+        self.blit(self.wave_info, wave_coords)
         
         # Draws map
         self.blit(self.map_img, (SCREEN_WIDTH * 3 / 4 - self.map_img.get_width() / 2, SCREEN_HEIGHT / 2 - 80))
@@ -336,31 +340,50 @@ class TowerSelectMenu(Display):
                 new_tower_info = TowerInfo(self.towers[row][col])
                 self.tower_infos[ind] = new_tower_info.draw()
                 
-            if self.tower_rects[row][col].centerx < self.get_width() / 2:
-                self.blit(self.tower_infos[ind], self.tower_rects[row][col].topright)
-            else:
-                self.blit(self.tower_infos[ind], self.tower_infos[ind].get_rect(topright = self.tower_rects[row][col].topleft))
+            self.blit(self.tower_infos[ind], self.tower_rects[row][col].topright)
+                
+        # Draws enemy infos
+        if self.over_enemy != None:
+            if self.enemy_infos.get(self.over_enemy) == None:
+                enemy_name = (" ".join(self.over_enemy.split("_"))).title()
+                new_enemy_info = HoverInfo(enemy_name, ENEMY_DATA[self.over_enemy]["description"])
+                self.enemy_infos[self.over_enemy] = new_enemy_info.draw()
+            
+            self.blit(self.enemy_infos[self.over_enemy],
+                      self.enemy_infos[self.over_enemy].get_rect(topright = self.wave_data[self.over_enemy ]["rect"].topleft))
                 
         return self
     
     def draw_map(self, map):
         img = map.make_map()
+        img.blit(map.make_objects(), (0, 0))
         
         # scales map down so that it is no bigger than a rectangle with dimensions (SCREEN_WIDTH / 2, SCREEN_WIDTH / 4)
         scale_factor = min((SCREEN_WIDTH / 2 - GRID_MARGIN_X) / img.get_width(), (SCREEN_HEIGHT / 2 - 40) / img.get_height())
         self.map_img = pg.transform.scale(img, (int(img.get_width() * scale_factor), int(img.get_height() * scale_factor)))
     
-    def draw_wave_info(self):
+    def draw_wave_info(self, wave_coords):
         wave_font = pg.font.Font(FONT, 50)
         enemy_surfs = []
+        self.wave_data = {}
         
         for sub_wave in self.level_data["waves"][self.curr_wave]:
-            text = wave_font.render("{}x".format(sub_wave["enemy_count"]), 1, WHITE)
-            enemy_img = pg.transform.scale(ENEMY_DATA[sub_wave["enemy_type"]]["image"], (GRID_2_CELL_SIZE, GRID_2_CELL_SIZE))
+            if self.wave_data.get(sub_wave["enemy_type"]):
+                self.wave_data[sub_wave["enemy_type"]]["count"] += sub_wave["enemy_count"]
+            else:
+                self.wave_data[sub_wave["enemy_type"]] = {"count": sub_wave["enemy_count"]}
+        
+        wave_data_keys = list(self.wave_data)
+        
+        for enemy_type in wave_data_keys:
+            text = wave_font.render("{}x".format(self.wave_data[enemy_type]["count"]), 1, WHITE)
+            enemy_img = pg.transform.scale(ENEMY_DATA[enemy_type]["image"], (GRID_2_CELL_SIZE, GRID_2_CELL_SIZE))
             enemy_surf = pg.Surface((text.get_width() + enemy_img.get_width(), max(text.get_height(), enemy_img.get_height())))
             
             enemy_surf.blit(text, (0, 0))
             enemy_surf.blit(enemy_img, (text.get_width(), 0))
+            
+            self.wave_data[enemy_type]["rect"] = pg.Rect(text.get_width(), 0, GRID_2_CELL_SIZE, GRID_2_CELL_SIZE)
             
             enemy_surfs.append(enemy_surf)
         
@@ -373,6 +396,10 @@ class TowerSelectMenu(Display):
                 y += GRID_2_CELL_SIZE + GRID_SEPARATION
                 
             self.wave_info.blit(surf, (x, y))
+            
+            self.wave_data[wave_data_keys[i]]["rect"].x += x + wave_coords[0]
+            self.wave_data[wave_data_keys[i]]["rect"].y += y + wave_coords[1]
+            
             x += surf.get_width() + GRID_2_SEPARATION
                 
     def get_dims(self):
@@ -410,10 +437,8 @@ class TowerSelectMenu(Display):
                     return "game"
                 elif self.left_btn_rect.collidepoint(mouse_pos):
                     self.curr_wave = max(self.curr_wave - 1, 0)
-                    self.draw_wave_info()
                 elif self.right_btn_rect.collidepoint(mouse_pos):
                     self.curr_wave = min(self.curr_wave + 1, self.max_wave - 1)
-                    self.draw_wave_info()
                 elif self.over_tower[0] != -1:
                     row, col = self.over_tower
                     if self.tower_selected[row][col]:
@@ -431,21 +456,26 @@ class TowerSelectMenu(Display):
                         self.over_tower = [row, col]
                         return -1
                     
+            for enemy_type in self.wave_data:
+                if self.wave_data[enemy_type]["rect"].collidepoint(mouse_pos):
+                    self.over_enemy = enemy_type
+                    return -1
+                    
             self.over_tower = [-1, -1]
+            self.over_enemy = None
                         
         return -1
 
 class HoverInfo(pg.Surface):
-    def __init__(self, title, description, menu_offset):
-        self.menu_offset = menu_offset
+    def __init__(self, title, description):
         self.info_font = pg.font.Font(FONT, MENU_TEXT_SIZE)
         
         self.title = title
         self.description = description
         
         self.texts = []
-        self.height = self.menu_offset
-        self.width = self.menu_offset
+        self.height = MENU_OFFSET
+        self.width = MENU_OFFSET
         
     def make_title(self):
         title_font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
@@ -464,21 +494,21 @@ class HoverInfo(pg.Surface):
     
     def add_text(self, text):
         self.texts.append(text)
-        self.height += text.get_height() + self.menu_offset
-        self.width = max(self.width, text.get_width() + self.menu_offset * 2)
+        self.height += text.get_height() + MENU_OFFSET
+        self.width = max(self.width, text.get_width() + MENU_OFFSET * 2)
             
     def draw(self):
         self.make_title()
         self.make_description()
         self.make_other_info()
         
-        super().__init__((self.width, self.height + self.menu_offset))
+        super().__init__((self.width, self.height + MENU_OFFSET))
         self.fill(DARK_GREY)
         
-        temp_height = self.menu_offset
+        temp_height = MENU_OFFSET
         for text in self.texts:
-            self.blit(text, (self.menu_offset, temp_height))
-            temp_height += text.get_height() + self.menu_offset
+            self.blit(text, (MENU_OFFSET, temp_height))
+            temp_height += text.get_height() + MENU_OFFSET
             
         return self
     
@@ -487,9 +517,9 @@ class LevelInfo(HoverInfo):
         self.unlocked = level <= SAVE_DATA["level"]
         if self.unlocked:
             self.level_data = LEVEL_DATA[level]
-            super().__init__(self.level_data["title"], self.level_data["description"], MENU_OFFSET)
+            super().__init__(self.level_data["title"], self.level_data["description"])
         else:
-            super().__init__("???", "An unknown level. Complete the previous levels to unlock this one!", MENU_OFFSET)
+            super().__init__("???", "An unknown level. Complete the previous levels to unlock this one!")
         
     def make_other_info(self):
         if self.unlocked:
@@ -508,11 +538,11 @@ class LevelInfo(HoverInfo):
             waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"])), 1, WHITE)
             self.add_text(waves_text)
 
-            enemy_surf = pg.Surface((self.texts[0].get_width() + self.menu_offset * 2, MENU_TEXT_SIZE))
+            enemy_surf = pg.Surface((self.texts[0].get_width() + MENU_OFFSET * 2, MENU_TEXT_SIZE))
             enemy_surf.fill(DARK_GREY)
             for i, enemy in enumerate(self.level_data["enemies"]):
                 enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE))
-                enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + self.menu_offset), 0))
+                enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + MENU_OFFSET), 0))
 
             self.add_text(enemy_surf)
         
@@ -522,7 +552,7 @@ class TowerInfo(HoverInfo):
         self.stages_data = self.tower_data["stages"]
         
         tower_name = (" ".join(tower.split("_"))).title() # removes underscores, capitalizes it properly
-        super().__init__(tower_name, self.tower_data["description"], MENU_OFFSET_2)
+        super().__init__(tower_name, self.tower_data["description"])
         
     def make_other_info(self):
         text_names = ["Damage", "Attack Speed", "Range", "Cost"]
@@ -531,20 +561,9 @@ class TowerInfo(HoverInfo):
         stages_text = self.info_font.render("Stages: {}".format(len(self.stages_data)), 1, WHITE)
         self.add_text(stages_text)
         
-        for i in range(len(text_names)):
-            self.make_text(text_names[i], keys[i])
-        
-    def make_text(self, text_name, key):
-        texts = []
-        map_tf = {True: "Yes", False: "No"}
-        
+        costs = []
         for i in range(len(self.stages_data)):
-            to_add = self.stages_data[i][key]
-            
-            if isinstance(to_add, bool):
-                texts.append(map_tf[to_add])
-            else:
-                texts.append(str(to_add))
-            
-        text = self.info_font.render("{}: {}".format(text_name, "/".join(texts)), 1, WHITE)
-        self.add_text(text)
+            costs.append(str(self.stages_data[i]["upgrade_cost"]))
+        
+        cost_text = self.info_font.render("Cost: {}".format("/".join(costs)), 1, WHITE)
+        self.add_text(cost_text)
