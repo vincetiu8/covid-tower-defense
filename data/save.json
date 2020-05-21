@@ -4,8 +4,12 @@
     "sfx_vol": 0.0,
     "fullscreen": false,
     "max_dna": 100,
-    "used_dna": 0,
+    "used_dna": 100,
     "owned_towers": [
         "t_cell"
-    ]
+    ],
+    "game_attrs": {
+        "lives": 6,
+        "starting_protein": 50
+    }
 }

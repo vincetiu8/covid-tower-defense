@@ -594,6 +594,7 @@ class UpgradesMenu(TowerMenu):
         self.done_btn = self.make_btn("Done")
         self.done_btn_rect = pg.Rect(BTN_X_MARGIN, BTN_Y, self.done_btn.get_width(), self.done_btn.get_height())
         self.confirm_tower_menu = ActionMenu("Are you sure you want to buy this tower?", "Yes", "No")
+        self.confirm_upgrade_menu = ActionMenu("Are you sure you want to buy this upgrade?", "Yes", "No")
         self.confirming = False
 
     def new(self, args):
@@ -616,6 +617,19 @@ class UpgradesMenu(TowerMenu):
             self.tower_owned[row].append(tower_names[i] in SAVE_DATA["owned_towers"])
 
         self.tower_infos = [None for i in range(len(tower_names))]
+
+        self.upgrades = []
+        self.upgrade_rects = []
+        self.upgrade_button_rects = []
+        height = GRID_MARGIN_Y
+        for attr in SAVE_DATA["game_attrs"]:
+            surf, rect = self.make_upgrade(attr, SAVE_DATA["game_attrs"][attr])
+            self.upgrades.append(surf)
+            self.upgrade_rects.append(surf.get_rect(topright=(SCREEN_WIDTH - GRID_MARGIN_X, height)))
+            rect.topright = self.upgrade_rects[-1].topright
+            self.upgrade_button_rects.append(rect)
+            height += self.upgrade_button_rects[-1].height + MENU_OFFSET
+
         font = pg.font.Font(FONT, 70)
         self.dna_text = font.render("DNA: " + str(SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"]), 1, WHITE)
 
@@ -643,6 +657,9 @@ class UpgradesMenu(TowerMenu):
         title_2 = title_font.render("Upgrades", 1, WHITE)
         self.blit(title_2, (SCREEN_WIDTH * 3 / 4 - title_1.get_width() / 2, 0))
 
+        for i, attr in enumerate(self.upgrades):
+            self.blit(attr, self.upgrade_rects[i])
+
         if not self.confirming and self.over_tower[0] != -1:
             row, col = self.over_tower
             ind = row * GRID_ROW_SIZE + col
@@ -661,7 +678,22 @@ class UpgradesMenu(TowerMenu):
 
         return self
 
+    def make_upgrade(self, string, value):
+        font = pg.font.Font(FONT, 70)
+        text = font.render(string + ": " + str(value), 1, WHITE)
+        plus_text = font.render("+", 1, WHITE)
+        btn = pg.transform.scale(LEVEL_BUTTON_IMG, (plus_text.get_height(), plus_text.get_height())).copy().convert_alpha()
+        btn.blit(plus_text, plus_text.get_rect(center=btn.get_rect().center))
+        btn_rect = btn.get_rect(topleft=(text.get_width() + MENU_OFFSET, 0))
+        surf = pg.Surface((text.get_width() + MENU_OFFSET + btn.get_width(), btn_rect.height))
+        surf.blit(text, (0, 0))
+        surf.blit(btn, btn_rect)
+        return surf, btn_rect
+
     def is_tower_buyable(self, tower):
+        return SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"] >= TOWER_PURCHASE_COST
+
+    def is_upgrade_buyable(self, upgrade):
         return SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"] >= TOWER_PURCHASE_COST
 
     def event(self, event):
@@ -672,11 +704,22 @@ class UpgradesMenu(TowerMenu):
                     if self.confirm_menu_rect.collidepoint(mouse_pos):
                         result = self.confirm_menu.event((mouse_pos[0] - self.confirm_menu_rect.x, mouse_pos[1] - self.confirm_menu_rect.y))
                         if result == 1:
-                            row, col = self.over_tower
-                            SAVE_DATA["owned_towers"].append(self.towers[row][col])
-                            SAVE_DATA["used_dna"] += TOWER_PURCHASE_COST
-                            self.tower_owned[row][col] = True
-                            self.tower_infos[row * GRID_ROW_SIZE + col] = None
+                            if self.over_tower[0] != -1:
+                                row, col = self.over_tower
+                                SAVE_DATA["owned_towers"].append(self.towers[row][col])
+                                SAVE_DATA["used_dna"] += TOWER_PURCHASE_COST
+                                self.tower_owned[row][col] = True
+                                self.tower_infos[row * GRID_ROW_SIZE + col] = None
+                            else:
+                                upgrades = list(SAVE_DATA["game_attrs"])
+                                upgrade_name = upgrades[self.over_upgrade]
+                                SAVE_DATA["game_attrs"][upgrade_name] += 1
+                                SAVE_DATA["used_dna"] += TOWER_PURCHASE_COST
+                                surf, rect = self.make_upgrade(upgrade_name, SAVE_DATA["game_attrs"][upgrade_name])
+                                self.upgrades[self.over_upgrade] = surf
+                                self.upgrade_rects[self.over_upgrade] = surf.get_rect(topright=(SCREEN_WIDTH - GRID_MARGIN_X, self.upgrade_rects[self.over_upgrade].top))
+                                rect.topright = self.upgrade_rects[-1].topright
+                                self.upgrade_button_rects[self.over_upgrade] = rect
                             font = pg.font.Font(FONT, 70)
                             self.dna_text = font.render("DNA: " + str(SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"]), 1,
                                                         WHITE)
@@ -696,6 +739,16 @@ class UpgradesMenu(TowerMenu):
                             self.confirm_menu_rect = self.confirm_menu_surf.get_rect(
                                 center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
                             self.confirming = True
+                    else:
+                        for i, rect in enumerate(self.upgrade_button_rects):
+                            if rect.collidepoint(mouse_pos):
+                                if self.is_upgrade_buyable(i):
+                                    self.confirm_menu = self.confirm_upgrade_menu
+                                    self.confirm_menu_surf = self.confirm_menu.draw()
+                                    self.confirm_menu_rect = self.confirm_menu_surf.get_rect(
+                                        center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+                                    self.over_upgrade = i
+                                    self.confirming = True
 
         if event.type == pg.MOUSEMOTION and not self.confirming:
             mouse_pos = pg.mouse.get_pos()
