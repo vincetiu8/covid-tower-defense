@@ -437,10 +437,8 @@ class TowerSelectMenu(Display):
                     return "game"
                 elif self.left_btn_rect.collidepoint(mouse_pos):
                     self.curr_wave = max(self.curr_wave - 1, 0)
-                    self.draw_wave_info()
                 elif self.right_btn_rect.collidepoint(mouse_pos):
                     self.curr_wave = min(self.curr_wave + 1, self.max_wave - 1)
-                    self.draw_wave_info()
                 elif self.over_tower[0] != -1:
                     row, col = self.over_tower
                     if self.tower_selected[row][col]:
