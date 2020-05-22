@@ -235,10 +235,6 @@ HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "hear
 # load fonts path
 FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
 
-
-DNA_ON_FINISH = 100
-TOWER_PURCHASE_COST = 100
-
 WAVE_DELAY = 10
 EXPLOSION_TIME = 0.25
 REFUND_AMOUNT = 0.5

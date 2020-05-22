@@ -618,17 +618,21 @@ class UpgradesMenu(TowerMenu):
 
         self.tower_infos = [None for i in range(len(tower_names))]
 
+        self.upgrade_names = list(SAVE_DATA["game_attrs"])
         self.upgrades = []
         self.upgrade_rects = []
         self.upgrade_button_rects = []
+        self.over_upgrade = -1
         height = GRID_MARGIN_Y
         for attr in SAVE_DATA["game_attrs"]:
-            surf, rect = self.make_upgrade(attr, SAVE_DATA["game_attrs"][attr])
+            surf, rect = self.make_upgrade(attr, SAVE_DATA["game_attrs"][attr]["value"])
             self.upgrades.append(surf)
             self.upgrade_rects.append(surf.get_rect(topright=(SCREEN_WIDTH - GRID_MARGIN_X, height)))
             rect.topright = self.upgrade_rects[-1].topright
             self.upgrade_button_rects.append(rect)
             height += self.upgrade_button_rects[-1].height + MENU_OFFSET
+
+        self.upgrade_infos = [None for i in range(len(self.upgrade_names))]
 
         font = pg.font.Font(FONT, 70)
         self.dna_text = font.render("DNA: " + str(SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"]), 1, WHITE)
@@ -660,15 +664,21 @@ class UpgradesMenu(TowerMenu):
         for i, attr in enumerate(self.upgrades):
             self.blit(attr, self.upgrade_rects[i])
 
-        if not self.confirming and self.over_tower[0] != -1:
-            row, col = self.over_tower
-            ind = row * GRID_ROW_SIZE + col
+        if not self.confirming:
+            if self.over_tower[0] != -1:
+                row, col = self.over_tower
+                ind = row * GRID_ROW_SIZE + col
 
-            if self.tower_infos[ind] == None:
-                new_tower_info = BuyTowerInfo(self.towers[row][col], self.tower_owned[row][col] or self.is_tower_buyable(self.towers[row][col]))
-                self.tower_infos[ind] = new_tower_info.draw()
+                if self.tower_infos[ind] == None:
+                    new_tower_info = BuyTowerInfo(self.towers[row][col], -1 if self.tower_owned[row][col] else 1 if self.is_tower_buyable(self.towers[row][col]) else 0)
+                    self.tower_infos[ind] = new_tower_info.draw()
 
-            self.blit(self.tower_infos[ind], self.tower_rects[row][col].topright)
+                self.blit(self.tower_infos[ind], self.tower_rects[row][col].topright)
+            elif self.over_upgrade != -1:
+                if self.upgrade_infos[self.over_upgrade] == None:
+                    new_upgrade_info = UpgradeInfo(self.upgrade_names[self.over_upgrade], 1 if self.is_upgrade_buyable(self.over_upgrade) else 0)
+                    self.upgrade_infos[self.over_upgrade] = new_upgrade_info.draw()
+                self.blit(self.upgrade_infos[self.over_upgrade], self.upgrade_infos[self.over_upgrade].get_rect(top=self.upgrade_button_rects[self.over_upgrade].topleft[1], right = self.upgrade_button_rects[self.over_upgrade].topleft[0] - MENU_OFFSET))
 
         self.blit(self.done_btn, self.done_btn_rect)
         self.blit(self.dna_text, self.dna_text.get_rect(topright=(SCREEN_WIDTH - BTN_X_MARGIN, BTN_Y)))
@@ -694,7 +704,7 @@ class UpgradesMenu(TowerMenu):
         return SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"] >= TOWER_DATA[tower]["unlock_cost"]
 
     def is_upgrade_buyable(self, upgrade):
-        return SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"] >= TOWER_PURCHASE_COST
+        return SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"] >= SAVE_DATA["game_attrs"][self.upgrade_names[upgrade]]["upgrade_cost"]
 
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -707,20 +717,19 @@ class UpgradesMenu(TowerMenu):
                             if self.over_tower[0] != -1:
                                 row, col = self.over_tower
                                 SAVE_DATA["owned_towers"].append(self.towers[row][col])
-                                SAVE_DATA["used_dna"] += TOWER_PURCHASE_COST
+                                SAVE_DATA["used_dna"] += TOWER_DATA[self.towers[row][col]]["unlock_cost"]
                                 self.tower_owned[row][col] = True
                                 self.tower_infos = [None for i in range(len(TOWER_DATA))] # Force a reload of all tower infos when buying a new tower
                             else:
-                                upgrades = list(SAVE_DATA["game_attrs"])
-                                upgrade_name = upgrades[self.over_upgrade]
-                                SAVE_DATA["game_attrs"][upgrade_name] += 1
-                                SAVE_DATA["used_dna"] += TOWER_PURCHASE_COST
-                                surf, rect = self.make_upgrade(upgrade_name, SAVE_DATA["game_attrs"][upgrade_name])
+                                upgrade_name = self.upgrade_names[self.over_upgrade]
+                                SAVE_DATA["game_attrs"][upgrade_name]["value"] += SAVE_DATA["game_attrs"][upgrade_name]["increment"]
+                                SAVE_DATA["used_dna"] += SAVE_DATA["game_attrs"][upgrade_name]["upgrade_cost"]
+                                surf, rect = self.make_upgrade(upgrade_name, SAVE_DATA["game_attrs"][upgrade_name]["value"])
                                 self.upgrades[self.over_upgrade] = surf
                                 self.upgrade_rects[self.over_upgrade] = surf.get_rect(topright=(SCREEN_WIDTH - GRID_MARGIN_X, self.upgrade_rects[self.over_upgrade].top))
-                                rect.topright = self.upgrade_rects[-1].topright
+                                rect.topright = self.upgrade_rects[self.over_upgrade].topright
                                 self.upgrade_button_rects[self.over_upgrade] = rect
-                                self.tower_infos = [None for i in range(len(TOWER_DATA))]
+                                self.upgrade_infos = [None for i in self.upgrade_names]
                             font = pg.font.Font(FONT, 70)
                             self.dna_text = font.render("DNA: " + str(SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"]), 1,
                                                         WHITE)
@@ -741,15 +750,14 @@ class UpgradesMenu(TowerMenu):
                                 center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
                             self.confirming = True
                     else:
-                        for i, rect in enumerate(self.upgrade_button_rects):
-                            if rect.collidepoint(mouse_pos):
-                                if self.is_upgrade_buyable(i):
-                                    self.confirm_menu = self.confirm_upgrade_menu
-                                    self.confirm_menu_surf = self.confirm_menu.draw()
-                                    self.confirm_menu_rect = self.confirm_menu_surf.get_rect(
-                                        center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
-                                    self.over_upgrade = i
-                                    self.confirming = True
+                        if self.over_upgrade != -1:
+                            if self.is_upgrade_buyable(self.over_upgrade):
+                                self.confirm_menu = self.confirm_upgrade_menu
+                                self.confirm_menu_surf = self.confirm_menu.draw()
+                                self.confirm_menu_rect = self.confirm_menu_surf.get_rect(
+                                    center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+                                self.over_upgrade = self.over_upgrade
+                                self.confirming = True
 
         if event.type == pg.MOUSEMOTION and not self.confirming:
             mouse_pos = pg.mouse.get_pos()
@@ -757,9 +765,16 @@ class UpgradesMenu(TowerMenu):
                 for col, rect in enumerate(grid_row):
                     if rect.collidepoint(mouse_pos):
                         self.over_tower = [row, col]
+                        self.over_upgrade = -1
                         return -1
 
             self.over_tower = [-1, -1]
+            for i, rect in enumerate(self.upgrade_button_rects):
+                if rect.collidepoint(mouse_pos):
+                    self.over_upgrade = i
+                    return -1
+
+            self.over_upgrade = -1
 
         return -1
 
@@ -769,18 +784,47 @@ class BuyTowerInfo(TowerInfo):
         super().__init__(tower)
 
     def make_other_info(self):
-        if not self.buyable:
+        if self.buyable == 0:
             unlock_text = self.info_font.render("Unlock Cost: " + str(self.tower_data["unlock_cost"]), 1, RED)
             self.add_text(unlock_text)
             error_text = self.info_font.render("Insufficient DNA to buy this tower!", 1, RED)
             self.add_text(error_text)
-        else:
+        elif self.buyable == 1:
             unlock_text = self.info_font.render("Unlock Cost: " + str(self.tower_data["unlock_cost"]), 1, YELLOW)
+            self.add_text(unlock_text)
+        else:
+            unlock_text = self.info_font.render("You own this tower!", 1, GREEN)
             self.add_text(unlock_text)
 
         super().make_other_info()
 
-# In the future we can use this for other menus that only take up 
+class UpgradeInfo(HoverInfo):
+    def __init__(self, upgrade, buyable):
+        self.buyable = buyable
+        self.upgrade_data = SAVE_DATA["game_attrs"][upgrade]
+        upgrade_name = (" ".join(upgrade.split("_"))).title()  # removes underscores, capitalizes it properly
+        super().__init__(upgrade_name, self.upgrade_data["description"])
+
+    def make_other_info(self):
+        if self.buyable == 0:
+            unlock_text = self.info_font.render("Upgrade Cost: " + str(self.upgrade_data["upgrade_cost"]), 1, RED)
+            self.add_text(unlock_text)
+            error_text = self.info_font.render("Insufficient DNA to buy this upgrade!", 1, RED)
+            self.add_text(error_text)
+        else:
+            unlock_text = self.info_font.render("Upgrade Cost: " + str(self.upgrade_data["upgrade_cost"]), 1, YELLOW)
+            self.add_text(unlock_text)
+
+        new_value_text = self.info_font.render("Current Value: " + str(self.upgrade_data["value"]), 1, WHITE)
+        self.add_text(new_value_text)
+
+        if self.buyable == 1:
+            new_value_text = self.info_font.render("Upgraded Value: " + str(self.upgrade_data["value"] + self.upgrade_data["increment"]), 1, GREEN)
+            self.add_text(new_value_text)
+
+        super().make_other_info()
+
+# In the future we can use this for other menus that only take up half the screen e.g. in tutorials, and such.
 
 class ActionMenu(pg.Surface):
     def __init__(self, message, btn1txt, btn2txt):
