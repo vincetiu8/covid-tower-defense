@@ -59,7 +59,7 @@
     },
     "b_cell": {
         "description": "These cells fire in 4 directions and have huge range! They can't track enemies, though.",
-        "unlock_cost": 150,
+        "unlock_cost": 15,
         "stages": [
             {
                 "area_of_effect": false,
@@ -115,7 +115,7 @@
     },
     "goblet_cell": {
         "description": "Goblet Cells shoot mucus that deal no damage but slow enemies down. Gross but effective.",
-        "unlock_cost": 200,
+        "unlock_cost": 20,
         "stages": [
             {
                 "area_of_effect": false,
@@ -172,7 +172,7 @@
     },
     "mast_cell": {
         "description": "A shield-breaker! Deals minimal damage to normal enemies, but loads of damage to shields!",
-        "unlock_cost": 350,
+        "unlock_cost": 35,
         "stages": [
             {
                 "area_of_effect": false,
@@ -232,7 +232,7 @@
     },
     "neutrophil": {
         "description": "Want a cell that damages all enemies in its radius? Neutrophils are your best bet.",
-        "unlock_cost": 500,
+        "unlock_cost": 50,
         "stages": [
             {
                 "area_of_effect": true,
@@ -271,7 +271,7 @@
     },
     "m_cell": {
         "description": "Exploding missiles are the main method of massacre for M Cells.",
-        "unlock_cost": 750,
+        "unlock_cost": 75,
         "stages": [
             {
                 "damage": 5,

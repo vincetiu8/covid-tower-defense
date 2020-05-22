@@ -97,7 +97,7 @@ class Main:
                         args.append(self.display_keys_reverse[self.current_display])
                     elif result == "game_over":
                         args.extend([self.game.draw(), self.current_display == self.options,
-                                     self.game.get_lives() == 0, self.game.get_cause_of_death(), self.game.level])
+                                     self.game.get_lives() == 0, self.game.get_cause_of_death(), self.game.level, self.game.protein])
                     elif result == "pause":
                         args.extend([self.game.draw(), self.current_display == self.options])
                         

@@ -83,10 +83,10 @@
         "unlock_cost": {
             "type": "float",
             "min": 0,
-            "max": 2500,
-            "increment": 100,
-            "dp": -2,
-            "default": 500
+            "max": 250,
+            "increment": 10,
+            "dp": -1,
+            "default": 50
         }
     },
     "stage": {
