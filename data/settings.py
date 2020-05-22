@@ -14,6 +14,9 @@ def resource_path(relative_path):
 
     return path.join(base_path, relative_path)
 
+def clean_title(string): # Removes underscores, capitalizes it properly
+    return " ".join(string.split("_")).title()
+
 # init pygame here lol
 pg.init()
 pg.mixer.init()
@@ -158,7 +161,6 @@ with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
     for tower in TOWER_DATA:
         for stage in range(3):
             TOWER_DATA[tower]["stages"][stage]["base_image"] = pg.image.load(path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(stage) + ".png"))
-            TOWER_DATA[tower]["stages"][stage]["shoot_sound"] = pg.mixer.Sound(path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower)))
             
             temp_base = TOWER_DATA[tower]["stages"][stage]["base_image"].copy()
             base = TOWER_DATA[tower]["stages"][stage]["base_image"]
@@ -173,6 +175,12 @@ with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
                                TOWER_DATA[tower]["stages"][stage]["gun_image"].get_rect(center = base.get_rect().center))
             
             TOWER_DATA[tower]["stages"][stage]["image"] = temp_base
+            
+            if TOWER_DATA[tower]["stages"][stage]["area_of_effect"]:
+                if TOWER_DATA[tower]["stages"][stage]["aoe_buff"]:
+                    continue
+                
+            TOWER_DATA[tower]["stages"][stage]["shoot_sound"] = pg.mixer.Sound(path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower)))
 
 
 with open(path.join(GAME_FOLDER, "attributes.json"), "r") as data_file:
@@ -187,7 +195,8 @@ def update_sfx_vol():
     
     for tower in TOWER_DATA:
         for stage in range(3):
-            TOWER_DATA[tower]["stages"][stage]["shoot_sound"].set_volume(vol)
+            if TOWER_DATA[tower]["stages"][stage].get("shoot_sound"):
+                TOWER_DATA[tower]["stages"][stage]["shoot_sound"].set_volume(vol)
             
     for enemy in ENEMY_DATA:
         ENEMY_DATA[enemy]["death_sound"].set_volume(vol)

@@ -345,7 +345,7 @@ class TowerSelectMenu(Display):
         # Draws enemy infos
         if self.over_enemy != None:
             if self.enemy_infos.get(self.over_enemy) == None:
-                enemy_name = (" ".join(self.over_enemy.split("_"))).title()
+                enemy_name = clean_title(self.over_enemy)
                 new_enemy_info = HoverInfo(enemy_name, ENEMY_DATA[self.over_enemy]["description"])
                 self.enemy_infos[self.over_enemy] = new_enemy_info.draw()
             
@@ -551,7 +551,7 @@ class TowerInfo(HoverInfo):
         self.tower_data = TOWER_DATA[tower]
         self.stages_data = self.tower_data["stages"]
         
-        tower_name = (" ".join(tower.split("_"))).title() # removes underscores, capitalizes it properly
+        tower_name = clean_title(tower)
         super().__init__(tower_name, self.tower_data["description"])
         
     def make_other_info(self):

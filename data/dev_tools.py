@@ -933,8 +933,6 @@ class DevUI():
                         for stage in range(3):
                             TOWER_DATA[tower]["stages"][stage]["base_image"] = pg.image.load(
                                 path.join(TOWERS_IMG_FOLDER, tower + "_base" + str(stage) + ".png"))
-                            TOWER_DATA[tower]["stages"][stage]["shoot_sound"] = pg.mixer.Sound(
-                                path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower)))
 
                             temp_base = TOWER_DATA[tower]["stages"][stage]["base_image"].copy()
                             base = TOWER_DATA[tower]["stages"][stage]["base_image"]
@@ -950,6 +948,13 @@ class DevUI():
                                                        center=base.get_rect().center))
 
                             TOWER_DATA[tower]["stages"][stage]["image"] = temp_base
+                            
+                            if TOWER_DATA[tower]["stages"][stage]["area_of_effect"]:
+                                if TOWER_DATA[tower]["stages"][stage]["aoe_buff"]:
+                                    continue # skip adding shoot sounds for AOE buff towers
+                            
+                            TOWER_DATA[tower]["stages"][stage]["shoot_sound"] = pg.mixer.Sound(
+                                path.join(TOWERS_AUD_FOLDER, "{}.wav".format(tower)))
                     
                     update_sfx_vol() # Has to be called since saving settings resets enemy and tower sounds
                     
@@ -1141,7 +1146,7 @@ class Attribute():
                     self.back_button_rect = back_button.get_rect()
                     surf_list.append(back_button)
 
-                text = font.render(self.values[self.current_value], 1, WHITE)
+                text = font.render(clean_title(self.values[self.current_value]), 1, WHITE)
                 surf_list.append(text)
 
                 if not self.disabled:

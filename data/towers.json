@@ -174,6 +174,7 @@
         "stages": [
             {
                 "area_of_effect": true,
+                "aoe_buff": false,
                 "attack_speed": 0.5,
                 "aura_color": 2,
                 "damage": 1,
@@ -185,6 +186,7 @@
             },
             {
                 "area_of_effect": true,
+                "aoe_buff": false,
                 "attack_speed": 0.4,
                 "aura_color": 2,
                 "damage": 2,
@@ -196,6 +198,7 @@
             },
             {
                 "area_of_effect": true,
+                "aoe_buff": false,
                 "attack_speed": 0.3,
                 "aura_color": 2,
                 "damage": 3,
@@ -320,6 +323,80 @@
                 "tracking": true,
                 "explode_on_impact": true,
                 "explosion_radius": 100
+            }
+        ]
+    },
+    "mitochondria": {
+        "description": "The powerhouse of the cell. Increases the damage of all nearby cells.",
+        "stages": [
+            {
+                "aoe_buff": true,
+                "damage": 3,
+                "different_shield_damage": false,
+                "shield_damage": 3,
+                "area_of_effect": true,
+                "aura_color": 3,
+                "attack_speed": 0.5,
+                "bullet_speed": 1000,
+                "bullet_lifetime": 0.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 125,
+                "upgrade_cost": 10,
+                "directions": 1,
+                "rotating": true,
+                "rotation_speed": 180,
+                "tracking": true,
+                "explode_on_impact": false,
+                "explosion_radius": 250,
+                "aoe_buff_type": 0,
+                "aoe_buff_amount": 1
+            },
+            {
+                "aoe_buff": true,
+                "damage": 3,
+                "different_shield_damage": false,
+                "shield_damage": 3,
+                "area_of_effect": true,
+                "aura_color": 3,
+                "attack_speed": 0.5,
+                "bullet_speed": 1000,
+                "bullet_lifetime": 0.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 125,
+                "upgrade_cost": 15,
+                "directions": 1,
+                "rotating": true,
+                "rotation_speed": 180,
+                "tracking": true,
+                "explode_on_impact": false,
+                "explosion_radius": 250,
+                "aoe_buff_type": 0,
+                "aoe_buff_amount": 3
+            },
+            {
+                "aoe_buff": true,
+                "damage": 3,
+                "different_shield_damage": false,
+                "shield_damage": 3,
+                "area_of_effect": true,
+                "aura_color": 3,
+                "attack_speed": 0.5,
+                "bullet_speed": 1000,
+                "bullet_lifetime": 0.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 200,
+                "upgrade_cost": 15,
+                "directions": 1,
+                "rotating": true,
+                "rotation_speed": 180,
+                "tracking": true,
+                "explode_on_impact": false,
+                "explosion_radius": 250,
+                "aoe_buff_type": 0,
+                "aoe_buff_amount": 3
             }
         ]
     }
