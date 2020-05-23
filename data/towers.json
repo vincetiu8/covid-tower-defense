@@ -334,6 +334,7 @@
     },
     "mitochondria": {
         "description": "The powerhouse of the cell. Increases the damage of all nearby cells.",
+        "unlock_cost": 25,
         "stages": [
             {
                 "aoe_buff": true,
@@ -408,6 +409,7 @@
     },
     "monocyte": {
         "description": "These cells buff the range of all nearby attacking towers!",
+        "unlock_cost": 15,
         "stages": [
             {
                 "area_of_effect": true,
