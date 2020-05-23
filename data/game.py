@@ -247,7 +247,8 @@ class Game(Display):
 
         for projectile in self.projectiles:
             self.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
-
+        
+        self.draw_aoe_sprites(self)
         self.blit(self.camera.apply_image(self.aoe_surf), self.camera.apply_tuple((0, 0)))
 
         for explosion in self.explosions:
@@ -342,10 +343,15 @@ class Game(Display):
     def draw_tower_bases(self, surface):
         self.tower_bases_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
         self.tower_bases_surf.fill((0, 0, 0, 0))
+        for tower in self.towers:
+            self.tower_bases_surf.blit(tower.base_image, tower.rect)
+            
+        self.draw_aoe_sprites(surface)
+                
+    def draw_aoe_sprites(self, surface):
         self.aoe_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
         self.aoe_surf.fill((0, 0, 0, 0))
         for tower in self.towers:
-            self.tower_bases_surf.blit(tower.base_image, tower.rect)
             if tower.area_of_effect:
                 s = pg.Surface(tower.aoe_sprite.rect.size, pg.SRCALPHA)
                 s.fill(AURA_COLORS[tower.aura_color])

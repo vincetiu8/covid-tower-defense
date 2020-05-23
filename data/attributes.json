@@ -90,6 +90,36 @@
         }
     },
     "stage": {
+        "area_of_effect": {
+            "type": "bool",
+            "ignore_if_true": ["bullet_speed", "bullet_lifetime", "rotating", "tracking", "bullet_image", "directions", "rotation_speed", "explode_on_impact", "explosion_radius"],
+            "ignore_if_false": ["aura_color", "aoe_buff", "aoe_buff_type", "aoe_buff_amount"],
+            "default": false
+        },
+        "aura_color": {
+            "type": "select",
+            "values": ["red","orange","yellow","green","cyan","blue","purple","pink"],
+            "default": 3
+        },
+        "aoe_buff": {
+            "type": "bool",
+            "ignore_if_true": ["attack_speed", "slow_speed", "slow_duration", "damage", "different_shield_damage", "shield_damage"],
+            "ignore_if_false": ["aoe_buff_type", "aoe_buff_amount"],
+            "default": false
+        },
+        "aoe_buff_type": {
+            "type": "select",
+            "values": ["damage", "range"],
+            "default": 0
+        },
+        "aoe_buff_amount": {
+            "type": "float",
+            "min": 0,
+            "max": 10000,
+            "increment": 1,
+            "dp": 0,
+            "default": 3
+        },
         "damage": {
             "type": "float",
             "min": 0,
@@ -109,17 +139,6 @@
             "max": 10000,
             "increment": 1,
             "dp": 0,
-            "default": 3
-        },
-        "area_of_effect": {
-            "type": "bool",
-            "ignore_if_true": ["bullet_speed", "bullet_lifetime", "rotating", "tracking", "bullet_image", "directions", "rotation_speed", "explode_on_impact", "explosion_radius"],
-            "ignore_if_false": ["aura_color"],
-            "default": false
-        },
-        "aura_color": {
-            "type": "select",
-            "values": ["red","orange","yellow","green","cyan","blue","purple","pink"],
             "default": 3
         },
         "attack_speed": {
