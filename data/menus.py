@@ -311,7 +311,7 @@ class TowerSelectMenu(TowerMenu):
         
         # Draws upper left text
         title_1 = title_font.render("Select Towers", 1, WHITE)
-        selected_text = text_font.render("Selected: {}/{}".format(self.num_selected, NUM_ALLOWED), 1, WHITE)
+        selected_text = text_font.render("Selected: {}/{}".format(self.num_selected, SAVE_DATA["game_attrs"]["max_towers"]["value"]), 1, WHITE)
         
         self.blit(title_1, (SCREEN_WIDTH / 4 - title_1.get_width() / 2, 0)) # puts these on the x center of the screnn's left half
         self.blit(selected_text, (SCREEN_WIDTH / 4 - selected_text.get_width() / 2, title_1.get_height() - 20))
@@ -341,7 +341,7 @@ class TowerSelectMenu(TowerMenu):
                 tower_img = pg.transform.scale(TOWER_DATA[tower]["stages"][0]["image"].convert_alpha(), self.get_dims())
 
                 if not self.tower_selected[row][col]:
-                    if self.num_selected == NUM_ALLOWED:
+                    if self.num_selected == SAVE_DATA["game_attrs"]["max_towers"]["value"]:
                         tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
                     else:
                         tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
@@ -464,7 +464,7 @@ class TowerSelectMenu(TowerMenu):
                     if self.tower_selected[row][col]:
                         self.num_selected -= 1
                         self.tower_selected[row][col] = False
-                    elif self.num_selected < NUM_ALLOWED:
+                    elif self.num_selected < SAVE_DATA["game_attrs"]["max_towers"]["value"]:
                         self.num_selected += 1
                         self.tower_selected[row][col] = True
                             
@@ -724,6 +724,7 @@ class UpgradesMenu(TowerMenu):
                                 upgrade_name = self.upgrade_names[self.over_upgrade]
                                 SAVE_DATA["game_attrs"][upgrade_name]["value"] += SAVE_DATA["game_attrs"][upgrade_name]["increment"]
                                 SAVE_DATA["used_dna"] += SAVE_DATA["game_attrs"][upgrade_name]["upgrade_cost"]
+                                SAVE_DATA["game_attrs"][upgrade_name]["upgrade_cost"] += SAVE_DATA["game_attrs"][upgrade_name]["cost_increment"]
                                 surf, rect = self.make_upgrade(upgrade_name, SAVE_DATA["game_attrs"][upgrade_name]["value"])
                                 self.upgrades[self.over_upgrade] = surf
                                 self.upgrade_rects[self.over_upgrade] = surf.get_rect(topright=(SCREEN_WIDTH - GRID_MARGIN_X, self.upgrade_rects[self.over_upgrade].top))
