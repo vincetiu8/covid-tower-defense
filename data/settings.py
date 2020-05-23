@@ -93,7 +93,6 @@ MENU_OFFSET_2 = 5
 MENU_TEXT_SIZE = 30
 
 # TowerSelectMenu Constants
-NUM_ALLOWED = 2
 GRID_ROW_SIZE = 5
 GRID_CELL_SIZE = 80 # both width and height
 GRID_SEPARATION = 30
