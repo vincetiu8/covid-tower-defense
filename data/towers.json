@@ -399,5 +399,79 @@
                 "aoe_buff_amount": 3
             }
         ]
+    },
+    "monocyte": {
+        "description": "These cells buff the range of all nearby attacking towers!",
+        "stages": [
+            {
+                "area_of_effect": true,
+                "aura_color": 1,
+                "aoe_buff": true,
+                "aoe_buff_type": 1,
+                "aoe_buff_amount": 25,
+                "damage": 3,
+                "different_shield_damage": false,
+                "shield_damage": 3,
+                "attack_speed": 0.5,
+                "bullet_speed": 1000,
+                "bullet_lifetime": 0.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 125,
+                "upgrade_cost": 10,
+                "directions": 1,
+                "rotating": true,
+                "rotation_speed": 180,
+                "tracking": true,
+                "explode_on_impact": false,
+                "explosion_radius": 250
+            },
+            {
+                "area_of_effect": true,
+                "aura_color": 1,
+                "aoe_buff": true,
+                "aoe_buff_type": 1,
+                "aoe_buff_amount": 50,
+                "damage": 3,
+                "different_shield_damage": false,
+                "shield_damage": 3,
+                "attack_speed": 0.5,
+                "bullet_speed": 1000,
+                "bullet_lifetime": 0.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 125,
+                "upgrade_cost": 10,
+                "directions": 1,
+                "rotating": true,
+                "rotation_speed": 180,
+                "tracking": true,
+                "explode_on_impact": false,
+                "explosion_radius": 250
+            },
+            {
+                "area_of_effect": true,
+                "aura_color": 1,
+                "aoe_buff": true,
+                "aoe_buff_type": 1,
+                "aoe_buff_amount": 50,
+                "damage": 3,
+                "different_shield_damage": false,
+                "shield_damage": 3,
+                "attack_speed": 0.5,
+                "bullet_speed": 1000,
+                "bullet_lifetime": 0.5,
+                "slow_speed": 1,
+                "slow_duration": 0,
+                "range": 200,
+                "upgrade_cost": 10,
+                "directions": 1,
+                "rotating": true,
+                "rotation_speed": 180,
+                "tracking": true,
+                "explode_on_impact": false,
+                "explosion_radius": 250
+            }
+        ]
     }
 }

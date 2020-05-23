@@ -164,9 +164,12 @@ class Tower(Obstacle):
         self.rotation = 0
         self.current_enemy = None
         
-        self.buff_damage = 0
+        self.buffs = {
+            "damage": 0,
+            "range": 0
+        }
 
-        self.search_for_enemy()
+        self.search_for_enemy(self.range)
 
     def load_tower_data(self):
         data = TOWER_DATA[self.name]["stages"][self.stage]
@@ -179,14 +182,12 @@ class Tower(Obstacle):
         if self.area_of_effect:
             self.aoe_sprite = pg.sprite.Sprite()
             self.aoe_sprite.rect = self.rect.copy()
-            self.aoe_sprite.rect.x -= (self.range - self.game.map.tilesize) / 2
-            self.aoe_sprite.rect.y -= (self.range - self.game.map.tilesize) / 2
-            self.aoe_sprite.rect.width = self.aoe_sprite.rect.height = self.range
+            self.update_aoe_sprite(self.range)
             self.aura_color = data["aura_color"]
             self.aoe_buff = data["aoe_buff"]
             
             if self.aoe_buff:
-                aoe_buff_types = ["damage"]
+                aoe_buff_types = ["damage", "range"]
                 load_attack_attrs = False
                 self.aoe_buff_type = aoe_buff_types[data["aoe_buff_type"]]
                 self.aoe_buff_amount = data["aoe_buff_amount"]
@@ -223,12 +224,15 @@ class Tower(Obstacle):
             self.upgrade_cost = data["upgrade_cost"]
 
     def update(self):
+        true_range = self.range + self.buffs["range"]
+        
         if self.time_passed >= self.next_spawn:
-            damage = self.damage + self.buff_damage
-            shield_damage = self.shield_damage + self.buff_damage
+            damage = self.damage + self.buffs["damage"]
+            shield_damage = self.shield_damage + self.buffs["damage"]
             
             if self.area_of_effect:
                 if not self.aoe_buff:
+                    self.update_aoe_sprite(true_range)
                     hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.enemies, False)
                     if (hits):
                         for hit in hits:
@@ -240,7 +244,7 @@ class Tower(Obstacle):
 
             elif self.current_enemy != None:
                 enemy_center = self.current_enemy.rect.center
-                if (not self.current_enemy.damagable or not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.rect.x, self.rect.y)) > self.range):
+                if (not self.current_enemy.damagable or not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.rect.x, self.rect.y)) > true_range):
                     self.current_enemy = None
                 else:
                     if self.rotating:
@@ -266,15 +270,15 @@ class Tower(Obstacle):
                         if self.tracking:
                             if self.explode_on_impact:
                                 TrackingExplodingProjectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
-                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage, self.rotation_speed, self.range, self.current_enemy, self.explosion_radius])
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage, self.rotation_speed, true_range, self.current_enemy, self.explosion_radius])
                             else:
                                 TrackingProjectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
-                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage, self.rotation_speed, self.range, self.current_enemy])
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage, self.rotation_speed, true_range, self.current_enemy])
 
                         else:
                             if self.explode_on_impact:
                                 ExplodingProjectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
-                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage, self.rotation_speed, self.range, self.current_enemy, self.explosion_radius])
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage, self.rotation_speed, true_range, self.current_enemy, self.explosion_radius])
                             else:
                                 Projectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage])
 
@@ -285,7 +289,7 @@ class Tower(Obstacle):
                     self.time_passed = 0
 
         if not self.area_of_effect and self.current_enemy == None:
-            self.search_for_enemy()
+            self.search_for_enemy(true_range)
         
         if self.area_of_effect:
             if self.aoe_buff:
@@ -296,11 +300,16 @@ class Tower(Obstacle):
                 return # do not update passed_time for AOE Buff towers
             
         self.time_passed += self.clock.get_time()
-        self.buff_damage = 0
+        for buff in self.buffs:
+            self.buffs[buff] = 0
+            
+    def update_aoe_sprite(self, true_range):
+        self.aoe_sprite.rect.x = self.rect.x - (true_range - self.game.map.tilesize) / 2
+        self.aoe_sprite.rect.y = self.rect.y - (true_range - self.game.map.tilesize) / 2
+        self.aoe_sprite.rect.width = self.aoe_sprite.rect.height = true_range
         
     def buff(self, buff_type, amount):
-        if buff_type == "damage":
-            self.buff_damage = amount
+        self.buffs[buff_type] = amount
             
     def upgrade(self):
         if self.game.protein >= self.upgrade_cost and self.stage < 2:
@@ -308,7 +317,7 @@ class Tower(Obstacle):
             self.stage += 1
             self.load_tower_data()
 
-    def search_for_enemy(self):
+    def search_for_enemy(self, true_range):
         for enemy in self.game.enemies:
-            if (heuristic((enemy.rect.center[0], enemy.rect.center[1]), (self.rect.center[0], self.rect.center[1])) <= self.range and (self.current_enemy == None or enemy.end_dist < self.current_enemy.end_dist)):
+            if (heuristic((enemy.rect.center[0], enemy.rect.center[1]), (self.rect.center[0], self.rect.center[1])) <= true_range and (self.current_enemy == None or enemy.end_dist < self.current_enemy.end_dist)):
                 self.current_enemy = enemy

@@ -101,7 +101,7 @@
         },
         "aoe_buff_type": {
             "type": "select",
-            "values": ["damage"],
+            "values": ["damage", "range"],
             "default": 0
         },
         "aoe_buff_amount": {
