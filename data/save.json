@@ -3,7 +3,7 @@
     "music_vol": 0.0,
     "sfx_vol": 0.0,
     "fullscreen": false,
-    "max_dna": 10000,
+    "max_dna": 0,
     "used_dna": 0,
     "highscores": [
         0
