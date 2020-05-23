@@ -28,6 +28,7 @@ class Main:
         self.pause = Pause()
         self.tower_preview = TowerPreviewMenu(self.clock)
         self.enemy_preview = EnemyPreviewMenu(self.clock)
+        self.upgrades_menu = UpgradesMenu()
         self.tower_edit = TowerEditMenu(self.clock)
         self.enemy_edit = EnemyEditMenu(self.clock)
         self.level_edit = LevelEditMenu(self.clock)
@@ -42,6 +43,7 @@ class Main:
             "pause":            self.pause,
             "tower_preview":    self.tower_preview,
             "enemy_preview":    self.enemy_preview,
+            "upgrades_menu":    self.upgrades_menu,
             "tower_edit":       self.tower_edit,
             "enemy_edit":       self.enemy_edit,
             "level_edit":       self.level_edit,
@@ -95,7 +97,7 @@ class Main:
                         args.append(self.display_keys_reverse[self.current_display])
                     elif result == "game_over":
                         args.extend([self.game.draw(), self.current_display == self.options,
-                                     self.game.get_lives() == 0, self.game.get_cause_of_death(), self.game.level])
+                                     self.game.get_lives() == 0, self.game.get_cause_of_death(), self.game.level, self.game.protein])
                     elif result == "pause":
                         args.extend([self.game.draw(), self.current_display == self.options])
                         

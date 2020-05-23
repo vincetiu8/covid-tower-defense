@@ -1,6 +1,65 @@
 {
+        "t_cell": {
+        "description": "Your standard cell with standard range and standard damage.",
+        "unlock_cost": 0,
+        "stages": [
+            {
+                "area_of_effect": false,
+                "at": 2,
+                "attack_speed": 0.25,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 1000,
+                "damage": 2,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 200,
+                "rotating": true,
+                "rotation_speed": 360,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 10,
+                "explode_on_impact": false
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.2,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 1250,
+                "damage": 3,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 220,
+                "rotating": true,
+                "rotation_speed": 360,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 5,
+                "explode_on_impact": false
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.15,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 1500,
+                "damage": 4,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 250,
+                "rotating": true,
+                "rotation_speed": 360,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 10,
+                "explode_on_impact": false
+            }
+        ]
+    },
     "b_cell": {
         "description": "These cells fire in 4 directions and have huge range! They can't track enemies, though.",
+        "unlock_cost": 15,
         "stages": [
             {
                 "area_of_effect": false,
@@ -56,6 +115,7 @@
     },
     "goblet_cell": {
         "description": "Goblet Cells shoot mucus that deal no damage but slow enemies down. Gross but effective.",
+        "unlock_cost": 20,
         "stages": [
             {
                 "area_of_effect": false,
@@ -112,6 +172,7 @@
     },
     "mast_cell": {
         "description": "A shield-breaker! Deals minimal damage to normal enemies, but loads of damage to shields!",
+        "unlock_cost": 35,
         "stages": [
             {
                 "area_of_effect": false,
@@ -171,6 +232,7 @@
     },
     "neutrophil": {
         "description": "Want a cell that damages all enemies in its radius? Neutrophils are your best bet.",
+        "unlock_cost": 50,
         "stages": [
             {
                 "area_of_effect": true,
@@ -207,65 +269,9 @@
             }
         ]
     },
-    "t_cell": {
-        "description": "Your standard cell with standard range and standard damage.",
-        "stages": [
-            {
-                "area_of_effect": false,
-                "at": 2,
-                "attack_speed": 0.25,
-                "bullet_lifetime": 0.3,
-                "bullet_speed": 1000,
-                "damage": 2,
-                "different_shield_damage": false,
-                "directions": 1,
-                "range": 200,
-                "rotating": true,
-                "rotation_speed": 360,
-                "slow_duration": 0,
-                "slow_speed": 1,
-                "tracking": true,
-                "upgrade_cost": 10,
-                "explode_on_impact": false
-            },
-            {
-                "area_of_effect": false,
-                "attack_speed": 0.2,
-                "bullet_lifetime": 0.3,
-                "bullet_speed": 1250,
-                "damage": 3,
-                "different_shield_damage": false,
-                "directions": 1,
-                "range": 220,
-                "rotating": true,
-                "rotation_speed": 360,
-                "slow_duration": 0,
-                "slow_speed": 1,
-                "tracking": true,
-                "upgrade_cost": 5,
-                "explode_on_impact": false
-            },
-            {
-                "area_of_effect": false,
-                "attack_speed": 0.15,
-                "bullet_lifetime": 0.3,
-                "bullet_speed": 1500,
-                "damage": 4,
-                "different_shield_damage": false,
-                "directions": 1,
-                "range": 250,
-                "rotating": true,
-                "rotation_speed": 360,
-                "slow_duration": 0,
-                "slow_speed": 1,
-                "tracking": true,
-                "upgrade_cost": 10,
-                "explode_on_impact": false
-            }
-        ]
-    },
     "m_cell": {
         "description": "Exploding missiles are the main method of massacre for M Cells.",
+        "unlock_cost": 75,
         "stages": [
             {
                 "damage": 5,

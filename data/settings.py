@@ -22,7 +22,6 @@ pg.mixer.init()
 FPS = 60
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
-
               
 ZOOM_AMT_GAME = 0.05
 ZOOM_AMT_MENU = 0.1
@@ -236,9 +235,7 @@ HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "hear
 # load fonts path
 FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
 
-# Game Settings
-LIVES = 5
-PROTEIN = 50
 WAVE_DELAY = 10
 EXPLOSION_TIME = 0.25
 REFUND_AMOUNT = 0.5
+

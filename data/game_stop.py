@@ -52,21 +52,25 @@ class GameStop(Display):
         for y in range(0, SCREEN_HEIGHT, 40):
             pg.draw.line(self.game_stop_surf, color, (0, y), (SCREEN_WIDTH, y))
         
-    def init_text(self, str_1, str_2):
+    def init_text(self, *args):
         color = WHITE
         if self.lost:
             color = RED
-            
-        self.text_1 = self.render_text(str_1, self.font_1, color, BLACK)
-        self.text_2 = self.render_text(str_2, self.font_2, color, BLACK)
+
+        self.texts = []
+        self.texts.append(self.render_text(args[0], self.font_1, color, BLACK))
+
+        for arg in args[1:]:
+            self.texts.append(self.render_text(arg, self.font_2, color, BLACK))
         
         self.restart_text = self.render_text("Restart", self.font_2, color, BLACK)
         self.back_text_1 = self.render_text("Back to", self.font_2, color, BLACK)
         self.back_text_2 = self.render_text("Level Select", self.font_2, color, BLACK)
         
     def draw_text(self):
-        self.game_stop_surf.blit(self.text_1, (self.center_text_x(0, SCREEN_WIDTH, self.text_1), 70))
-        self.game_stop_surf.blit(self.text_2, (self.center_text_x(0, SCREEN_WIDTH, self.text_2), 260))
+        self.game_stop_surf.blit(self.texts[0], (self.center_text_x(0, SCREEN_WIDTH, self.texts[0]), 70))
+        for i, text in enumerate(self.texts[1:]):
+            self.game_stop_surf.blit(text, (self.center_text_x(0, SCREEN_WIDTH, text), 260 + i * 50))
         
         self.game_stop_surf.blit(self.restart_text, (self.center_text_x(self.restart_rect.x, self.restart_rect.w, self.restart_text),
                                     self.center_text_y(self.restart_rect.y, self.restart_rect.h, self.restart_text)))
@@ -230,13 +234,23 @@ class GameOver(GameStop):
         self.heartbeat_x = 0
         self.lost, self.cause_of_death = args[2], args[3]
 
-        if not self.lost and args[4] == SAVE_DATA["level"]:
-            SAVE_DATA["level"] += 1
+        highscore_beaten = False
+        if not self.lost:
+            if args[4] == SAVE_DATA["level"]:
+                SAVE_DATA["level"] += 1
+                while len(SAVE_DATA["highscores"]) < SAVE_DATA["level"] + 1:
+                    SAVE_DATA["highscores"].append(0)
+            if SAVE_DATA["highscores"][args[4]] <= args[5]:
+                SAVE_DATA["max_dna"] += args[5] - SAVE_DATA["highscores"][args[4]]
+                SAVE_DATA["highscores"][args[4]] = args[5]
+                highscore_beaten = True
 
         if self.lost:
-            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death)
+            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death, "High Score: " + str(SAVE_DATA["highscores"][args[4]]))
+        elif highscore_beaten:
+            self.init_text("YOU SURVIVED", "But the infection still continues...", "New High Score: " + str(SAVE_DATA["highscores"][args[4]]))
         else:
-            self.init_text("YOU SURVIVED", "But the infection still continues...")
+            self.init_text("YOU SURVIVED", "But the infection still continues...", "Score: " + str(args[5]), "High Score: " + str(SAVE_DATA["highscores"][args[4]]))
         
     def draw(self):
         self.game_stop_surf.fill(BLACK)
