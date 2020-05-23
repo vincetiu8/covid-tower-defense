@@ -74,8 +74,8 @@ class Game(Display):
         self.explosions = pg.sprite.Group()
 
         self.current_tower = None
-        self.protein = PROTEIN
-        self.lives = LIVES
+        self.protein = SAVE_DATA["game_attrs"]["starting_protein"]["value"]
+        self.lives = SAVE_DATA["game_attrs"]["lives"]["value"]
 
         self.wave = -1  # only updated at the start of prepare_next_wave()
         self.cause_of_death = "IB"
@@ -267,7 +267,7 @@ class Game(Display):
             self.blit(ui, ui_rect)
             self.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright = ui_rect.topleft))
         else:
-            self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = ui_pos))
+            self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = (SCREEN_WIDTH - MENU_OFFSET, MENU_OFFSET)))
         
         return self
 

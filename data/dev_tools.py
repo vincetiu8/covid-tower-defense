@@ -14,14 +14,14 @@ from copy import deepcopy
 class DevClass(Game):
     def __init__(self, clock):
         self.clock = clock
+        self.tower_names = SAVE_DATA["owned_towers"]
+        self.enemy_names = list(ENEMY_DATA.keys())
 
     def reload_level(self, map):
         self.map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(map)))
         super().load_data()
 
     def new(self):
-        self.tower_names = list(TOWER_DATA.keys())
-        self.enemy_names = list(ENEMY_DATA.keys())
         self.current_tower = 0
         self.current_stage = 0
         self.current_enemy = 0
@@ -287,6 +287,7 @@ class TowerPreviewMenu(DevClass):
 
 class TowerEditMenu(TowerPreviewMenu):
     def new(self, args):
+        self.tower_names = list(TOWER_DATA.keys())
         # initialize all variables and do all the setup for a new game
         super().new(args)
 
@@ -474,6 +475,7 @@ class EnemyPreviewMenu(DevClass):
 
 class EnemyEditMenu(EnemyPreviewMenu):
     def new(self, args):
+        self.tower_names = list(TOWER_DATA.keys())
         super().new(args)
 
     def load_ui(self):
@@ -565,6 +567,7 @@ class LevelEditMenu(DevClass):
         self.make_stripped_path_wrapper()
 
     def new(self, args):
+        self.tower_names = list(TOWER_DATA.keys())
         # initialize all variables and do all the setup for a new game
         self.reload_level()
         self.load_ui()
