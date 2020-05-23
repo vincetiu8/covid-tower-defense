@@ -27,7 +27,7 @@
             "description": "The amount of protein you start with on each level."
         },
         "max_towers": {
-            "value": 3,
+            "value": 2,
             "increment": 1,
             "upgrade_cost": 100,
             "cost_increment": 100,

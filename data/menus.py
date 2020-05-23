@@ -724,7 +724,7 @@ class UpgradesMenu(TowerMenu):
                                 upgrade_name = self.upgrade_names[self.over_upgrade]
                                 SAVE_DATA["game_attrs"][upgrade_name]["value"] += SAVE_DATA["game_attrs"][upgrade_name]["increment"]
                                 SAVE_DATA["used_dna"] += SAVE_DATA["game_attrs"][upgrade_name]["upgrade_cost"]
-
+                                SAVE_DATA["game_attrs"][upgrade_name]["upgrade_cost"] += SAVE_DATA["game_attrs"][upgrade_name]["cost_increment"]
                                 surf, rect = self.make_upgrade(upgrade_name, SAVE_DATA["game_attrs"][upgrade_name]["value"])
                                 self.upgrades[self.over_upgrade] = surf
                                 self.upgrade_rects[self.over_upgrade] = surf.get_rect(topright=(SCREEN_WIDTH - GRID_MARGIN_X, self.upgrade_rects[self.over_upgrade].top))
