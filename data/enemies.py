@@ -12,8 +12,24 @@ class Enemy(pg.sprite.Sprite):
         self.game = game
         self.name = name
         
-        data = ENEMY_DATA[name]
-        self.name = name
+        self.load_attributes(x, y)
+        
+        self.direction = [1 if random.random() < 0.5 else -1, 1 if random.random() < 0.5 else -1]
+        self.carry_x = 0
+        self.carry_y = 0
+        self.new_node = ((tile_from_coords(x, self.game.map.tilesize), tile_from_coords(y, self.game.map.tilesize)), 0)
+        self.maximising = 0
+        self.damagable = True
+
+        self.slowed = False
+        self.slow_end = 0
+        self.shield_end = 0
+        self.total_time_passed = 0
+        
+        self.recreate_path()
+        
+    def load_attributes(self, x, y):
+        data = ENEMY_DATA[self.name]
         self.hp = data["hp"]
         self.speed = data["speed"]
         self.dropped_protein = data["protein"]
@@ -31,27 +47,24 @@ class Enemy(pg.sprite.Sprite):
         if self.explode_on_death:
             self.explode_radius = data["explode_radius"]
         
-        self.image = data["image"].copy()
-        self.image_size = self.image.get_size()[0]
+        self.mutate = data["mutate"]
+        if self.mutate:
+            self.mutation_type = data["mutation_type"]
+            self.mutation_time = data["mutation_time"]
+            
+        try:
+            difference = self.image_size // self.raw_image.get_size()[0]
+        except:
+            difference = 1
+        self.image_size = self.raw_image.get_size()[0] * difference
+        self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
         image_size = self.image.get_size()
         self.rect = pg.Rect(x, y, image_size[0], image_size[1])
-        
-        self.direction = [1 if random.random() < 0.5 else -1, 1 if random.random() < 0.5 else -1]
-        self.carry_x = 0
-        self.carry_y = 0
-        self.new_node = ((tile_from_coords(x, self.game.map.tilesize), tile_from_coords(y, self.game.map.tilesize)), 0)
-        self.maximising = 0
-        self.damagable = True
-
-        self.slowed = False
-        self.slow_end = 0
-        self.shield_end = 0
-        
-        self.recreate_path()
 
     def update(self):
         passed_time = self.clock.get_time() / 1000
         self.slow_end -= passed_time
+        self.total_time_passed += passed_time
 
         if self.shield and self.shield_hp != self.shield_max_hp:
             if self.shield_recharge_delay <= 0:
@@ -63,8 +76,14 @@ class Enemy(pg.sprite.Sprite):
 
         if self.slowed and self.slow_end <= 0:
             self.reset_speed()
+            
+        if self.mutate:
+            if self.total_time_passed >= self.mutation_time:
+                self.name = list(ENEMY_DATA)[self.mutation_type]
+                self.load_attributes(self.rect.x, self.rect.y)
 
         if (self.maximising != 0 and self.image.get_size()[0] + self.maximising > 0 and self.image.get_size()[0] + self.maximising <= self.rect.w):
+            print(self.image_size)
             self.image_size += self.maximising
             self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
 
@@ -95,7 +114,7 @@ class Enemy(pg.sprite.Sprite):
 
         if (self.new_node_rect.collidepoint(self.rect.topleft) and self.new_node_rect.collidepoint(self.rect.bottomright)):
             self.load_next_node()
-
+            
     def damage(self, dam, shield_dam):
         if self.shield and self.shield_hp > 0:
             self.shield_recharge_delay = self.shield_max_recharge_delay

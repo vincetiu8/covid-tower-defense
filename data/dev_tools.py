@@ -421,6 +421,8 @@ class EnemyPreviewMenu(DevClass):
                 elif "ignore_if_false" in ATTR_DATA["enemy"][attr] and not \
                 ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]:
                     ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_false"])
+            if attr == "mutation_type":
+                ATTR_DATA["enemy"][attr]["values"] = self.enemy_names
             self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
                                                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
 
@@ -501,6 +503,9 @@ class EnemyEditMenu(EnemyPreviewMenu):
                 ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]:
                     ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_false"])
             else:
+                if attr == "mutation_type":
+                    ATTR_DATA["enemy"][attr]["values"] = self.enemy_names
+                    
                 try:
                     self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
                                                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr], disabled=False))
@@ -1110,7 +1115,7 @@ class Attribute():
                 surf_list.append(enter_button)
 
         else:
-            attr_text = font.render(self.name.replace('_', ' '), 1, WHITE)
+            attr_text = font.render(clean_title(self.name) + ":", 1, WHITE)
             surf_list.append(attr_text)
 
             if self.type == "float":

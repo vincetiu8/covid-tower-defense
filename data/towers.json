@@ -1,5 +1,5 @@
 {
-        "t_cell": {
+    "t_cell": {
         "description": "Your standard cell with standard range and standard damage.",
         "unlock_cost": 0,
         "stages": [

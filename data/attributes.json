@@ -54,6 +54,24 @@
             "dp": 0,
             "default": 100
         },
+        "mutate": {
+            "type": "bool",
+            "ignore_if_false": ["mutation_type", "mutation_time"],
+            "default": false
+        },
+        "mutation_type": {
+            "type": "select",
+            "values": [],
+            "default": 0
+        },
+        "mutation_time": {
+            "type": "float",
+            "min": 1,
+            "max": 100,
+            "increment": 0.5,
+            "dp": 1,
+            "default": 1
+        },
         "speed": {
             "type": "float",
             "min": 10,
