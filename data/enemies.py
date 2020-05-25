@@ -51,14 +51,16 @@ class Enemy(pg.sprite.Sprite):
         if self.mutate:
             self.mutation_type = data["mutation_type"]
             self.mutation_time = data["mutation_time"]
-            
+        
+        # in case of mutation and the original enemy was in an artery/vein
         try:
             difference = self.image_size // self.raw_image.get_size()[0]
         except:
-            difference = 1
+            difference = 1 # if it's a new enemy (not from mutation), leave image_size as is
+            
         self.image_size = self.raw_image.get_size()[0] * difference
         self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
-        image_size = self.image.get_size()
+        image_size = self.raw_image.get_size()
         self.rect = pg.Rect(x, y, image_size[0], image_size[1])
 
     def update(self):
@@ -83,7 +85,6 @@ class Enemy(pg.sprite.Sprite):
                 self.load_attributes(self.rect.x, self.rect.y)
 
         if (self.maximising != 0 and self.image.get_size()[0] + self.maximising > 0 and self.image.get_size()[0] + self.maximising <= self.rect.w):
-            print(self.image_size)
             self.image_size += self.maximising
             self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
 
