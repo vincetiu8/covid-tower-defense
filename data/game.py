@@ -264,7 +264,7 @@ class Game(Display):
             tower_range_img = pg.Surface((tower.range * 2, tower.range * 2)).convert_alpha()
             tower_range_img.fill(BLANK)
             pg.draw.circle(tower_range_img, HALF_WHITE, (tower.range, tower.range), tower.range)
-            self.blit(self.camera.apply_image(tower_range_img), self.camera.apply_rect(tower_range_img.get_rect(center=tower.rect.center)))
+            self.blit(self.camera.apply_image(tower_range_img), self.camera.apply_rect(tower_range_img.get_rect(center=self.ui.tower.rect.center)))
 
         self.ui_pos = [self.get_size()[0] - self.ui.offset, self.ui.offset]
         if self.ui.active:
@@ -465,6 +465,9 @@ class Game(Display):
                         return -1
 
                     elif result > -1:
+                        if self.protein < TOWER_DATA[self.available_towers[result]]["stages"][0]["upgrade_cost"]:
+                            self.current_tower = None
+                            return -1
                         self.current_tower = self.available_towers[result]
 
                     elif result == -1:
@@ -480,10 +483,9 @@ class Game(Display):
                     self.ui.select_tower(x_coord, y_coord)
                     return -1
 
-                if self.map.is_valid_tower_tile(x_coord, y_coord) == 0:
-                    return -1
-
-                if self.map.change_node(x_coord, y_coord, 1) == False:
+                if self.protein < TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"] or \
+                        self.map.is_valid_tower_tile(x_coord, y_coord) == 0 or \
+                        self.map.change_node(x_coord, y_coord, 1) == False:
                     return -1
 
                 self.pathfinder.clear_nodes(self.map.get_map())
@@ -508,7 +510,6 @@ class Game(Display):
                         for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
                             self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x,
                                                           tile_from_xcoords(start.y, self.map.tilesize) + y, 0)
-                self.ui.select_tower(x_coord, y_coord)
                 self.protein -= TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"]
                 self.current_tower = None
 
