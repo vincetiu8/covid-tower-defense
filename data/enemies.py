@@ -113,6 +113,8 @@ class Enemy(pg.sprite.Sprite):
             if self.explode_on_death:
                 EnemyExplosion(self.game, self.rect.center[0], self.rect.center[1], self.explode_radius)
             self.kill()
+            return True
+        return False
 
     def get_hp_surf(self):
         if self.hp < 0:

@@ -23,22 +23,23 @@ class Projectile(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = args[0]
         self.type = type
-        self.size = args[3].get_size()
-        self.rect = pg.Rect(args[1], args[2], self.size[0], self.size[1])
-        self.rect.centerx = args[1]
-        self.rect.centery = args[2]
-        self.raw_image = args[3]
+        self.size = args[4].get_size()
+        self.rect = pg.Rect(args[2], args[3], self.size[0], self.size[1])
+        self.rect.centerx = args[2]
+        self.rect.centery = args[3]
+        self.raw_image = args[4]
         self.image = self.raw_image.copy()
-        self.speed = args[4]
-        self.slow_speed = args[6]
-        self.slow_duration = args[7]
-        self.damage = args[9]
-        self.direction = args[8]
-        pg.transform.rotate(self.image, args[8])
-        self.shield_damage = args[10]
+        self.speed = args[5]
+        self.slow_speed = args[7]
+        self.slow_duration = args[8]
+        self.damage = args[10]
+        self.direction = args[9]
+        pg.transform.rotate(self.image, args[9])
+        self.shield_damage = args[11]
         self.time_passed = 0
         self.carry = 0
-        self.end = args[5] * 1000
+        self.end = args[6] * 1000
+        self.tower = args[1]
 
     def update(self):
         if self.time_passed > self.end:
@@ -58,7 +59,9 @@ class Projectile(pg.sprite.Sprite):
     def check_for_impact(self):
         hits = pg.sprite.spritecollide(self, self.game.enemies, False)
         if (hits):
-            hits[0].damage(self.damage, self.shield_damage)
+            self.tower.hits += 1
+            if hits[0].damage(self.damage, self.shield_damage):
+                self.tower.kills += 1
             if self.slow_speed != 1:
                 hits[0].slow(self.slow_speed, self.slow_duration)
             self.kill()
@@ -138,7 +141,9 @@ class ExplodingProjectile(Projectile):
             hits = pg.sprite.spritecollide(self, self.game.enemies, False)
             Explosion(self.game, self.rect.center[0], self.rect.center[1], self.explosion_radius)
             for hit in hits:
-                hit.damage(self.damage, self.shield_damage)
+                self.tower.hits += 1
+                if hit.damage(self.damage, self.shield_damage):
+                    self.tower.kills += 1
                 if self.slow_speed != 1:
                     hit.slow(self.slow_speed, self.slow_duration)
             self.kill()
@@ -163,6 +168,8 @@ class Tower(Obstacle):
         
         self.rotation = 0
         self.current_enemy = None
+        self.hits = 0
+        self.kills = 0
         
         self.buffs = {
             "damage": 0,
@@ -269,18 +276,18 @@ class Tower(Obstacle):
                     for i in range(self.directions):
                         if self.tracking:
                             if self.explode_on_impact:
-                                TrackingExplodingProjectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
+                                TrackingExplodingProjectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
                                        self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage, self.rotation_speed, true_range, self.current_enemy, self.explosion_radius])
                             else:
-                                TrackingProjectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
+                                TrackingProjectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
                                        self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage, self.rotation_speed, true_range, self.current_enemy])
 
                         else:
                             if self.explode_on_impact:
-                                ExplodingProjectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
+                                ExplodingProjectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
                                        self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage, self.rotation_speed, true_range, self.current_enemy, self.explosion_radius])
                             else:
-                                Projectile([self.game, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage])
+                                Projectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, damage, shield_damage])
 
                         rotation += increment
 

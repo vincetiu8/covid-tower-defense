@@ -432,11 +432,13 @@ class Game(Display):
                 elif self.ui.active:
                     result = self.ui.event((event.pos[0] - self.ui_pos[0], event.pos[1] - self.ui_pos[1]))
                     if isinstance(result, str):
-                        tower_coords = tile_from_xcoords(self.ui.tower.rect.x, self.map.tilesize), tile_from_xcoords(self.ui.tower.rect.y, self.map.tilesize)
                         if result == "start_wave":
                             self.start_next_wave()
+                            return -1
 
-                        elif result == "sell":
+                        tower_coords = tile_from_xcoords(self.ui.tower.rect.x, self.map.tilesize), tile_from_xcoords(self.ui.tower.rect.y, self.map.tilesize)
+
+                        if result == "sell":
                             tower_dat = self.map.remove_tower(tower_coords[0], tower_coords[1])
                             self.pathfinder.clear_nodes(self.map.get_map())
                             for start in self.start_data:

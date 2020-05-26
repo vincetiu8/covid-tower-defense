@@ -98,6 +98,19 @@ class UI:
             tower_img = pg.transform.scale(tower_dat["stages"][self.tower.stage]["image"], (self.width - MENU_OFFSET * 2, self.width - MENU_OFFSET * 2))
             ui.blit(tower_img, self.tower_rects[0])
 
+            font = pg.font.Font(FONT, int(HEART_IMG.get_size()[0] * 1.3))
+            text = font.render("Damage: " + str(tower_dat["stages"][self.tower.stage]["damage"]), 1, WHITE)
+            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height()))
+
+            text = font.render("Speed: " + str(tower_dat["stages"][self.tower.stage]["attack_speed"]) + "s", 1, WHITE)
+            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + MENU_OFFSET + text.get_height()))
+
+            text = font.render("Hits: " + str(self.tower.hits), 1, WHITE)
+            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + MENU_OFFSET * 2 + text.get_height() * 2))
+
+            text = font.render("Kills: " + str(self.tower.kills), 1, WHITE)
+            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + MENU_OFFSET * 3 + text.get_height() * 3))
+
             refund = 0
             for stage in range(self.tower.stage + 1):
                 refund += round(tower_dat["stages"][stage]["upgrade_cost"] / 2)
@@ -140,9 +153,9 @@ class UI:
         timer_width = (self.width - 10) * (WAVE_DELAY * 1000 - self.game.time_passed) // (WAVE_DELAY * 1000)
         timer_height = 8
         pg.draw.rect(self.ui, DARK_GREY,
-                     pg.Rect(10, self.next_wave_rect.y - self.offset - timer_height, self.width - 10, timer_height))
+                     pg.Rect(10, self.next_wave_rect.y - timer_height, self.width - 10, timer_height))
         pg.draw.rect(self.ui, GREEN,
-                    pg.Rect(10, self.next_wave_rect.y - self.offset - timer_height, timer_width, timer_height))
+                    pg.Rect(10, self.next_wave_rect.y - timer_height, timer_width, timer_height))
 
     def event(self, pos):
         if pos[0] < 0 or pos[0] > self.width or pos[1] < 0 or pos[1] > SCREEN_HEIGHT - MENU_OFFSET * 2:
