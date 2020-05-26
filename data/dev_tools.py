@@ -152,9 +152,9 @@ class DevClass(Game):
             rotated_image = pg.transform.rotate(tower.gun_image, math.degrees(tower.rotation))
             new_rect = rotated_image.get_rect(center=tower.rect.center)
             surface.blit(rotated_image, new_rect)
-            tower_range_img = pg.Surface((tower.range * 2, tower.range * 2)).convert_alpha()
+            tower_range_img = pg.Surface((tower.true_range * 2, tower.true_range * 2)).convert_alpha()
             tower_range_img.fill(BLANK)
-            pg.draw.circle(tower_range_img, HALF_WHITE, (tower.range, tower.range), tower.range)
+            pg.draw.circle(tower_range_img, HALF_WHITE, (tower.true_range, tower.true_range), tower.true_range)
             surface.blit((tower_range_img), tower_range_img.get_rect(center=tower.rect.center))
 
         for projectile in self.projectiles:

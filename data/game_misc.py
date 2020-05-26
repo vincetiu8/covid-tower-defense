@@ -48,8 +48,11 @@ class UI:
             self.update_timer()
 
     def select_tower(self, x, y):
-        self.tower = self.game.map.get_tower_map()[x][y]
-        self.ui = self.get_ui()
+        try:
+            self.tower = self.game.map.get_tower_map()[x][y]
+            self.ui = self.get_ui()
+        except:
+            pass
 
     def deselect_tower(self):
         self.tower = None
