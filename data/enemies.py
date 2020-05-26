@@ -12,8 +12,6 @@ class Enemy(pg.sprite.Sprite):
         self.game = game
         self.name = name
         
-        self.load_attributes(x, y)
-        
         self.direction = [1 if random.random() < 0.5 else -1, 1 if random.random() < 0.5 else -1]
         self.carry_x = 0
         self.carry_y = 0
@@ -26,9 +24,18 @@ class Enemy(pg.sprite.Sprite):
         self.shield_end = 0
         self.total_time_passed = 0
         
+        self.load_attributes(x, y)
+        
         self.recreate_path()
         
     def load_attributes(self, x, y):
+        # in case of mutation and the original enemy was in an artery/vein
+        # scale new enemy image appopriately
+        try:
+            prev_scale = self.image_size / self.raw_image.get_size()[0]
+        except:
+            prev_scale = 1 # if it's a new enemy (not from mutation), leave image_size as is
+            
         data = ENEMY_DATA[self.name]
         self.hp = data["hp"]
         self.speed = data["speed"]
@@ -52,13 +59,7 @@ class Enemy(pg.sprite.Sprite):
             self.mutation_type = data["mutation_type"]
             self.mutation_time = data["mutation_time"]
         
-        # in case of mutation and the original enemy was in an artery/vein
-        try:
-            difference = self.image_size // self.raw_image.get_size()[0]
-        except:
-            difference = 1 # if it's a new enemy (not from mutation), leave image_size as is
-            
-        self.image_size = self.raw_image.get_size()[0] * difference
+        self.image_size = int(self.raw_image.get_size()[0] * prev_scale)
         self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
         image_size = self.raw_image.get_size()
         self.rect = pg.Rect(x, y, image_size[0], image_size[1])
