@@ -1,7 +1,7 @@
 import math
 import pygame as pg
 from data.tilemap import round_to_mtilesize
-from data.pathfinding import heuristic
+from data.pathfinding import heuristic, manhattan
 from data.settings import TOWER_DATA
 from data.tilemap import *
 from data.game_misc import Explosion
@@ -225,7 +225,7 @@ class Tower(Obstacle):
 
     def update(self):
         true_range = self.range + self.buffs["range"]
-        
+
         if self.time_passed >= self.next_spawn:
             damage = self.damage + self.buffs["damage"]
             shield_damage = self.shield_damage + self.buffs["damage"]
@@ -244,7 +244,7 @@ class Tower(Obstacle):
 
             elif self.current_enemy != None:
                 enemy_center = self.current_enemy.rect.center
-                if (not self.current_enemy.damagable or not self.current_enemy.alive() or heuristic((enemy_center[0], enemy_center[1]), (self.rect.x, self.rect.y)) > true_range):
+                if (not self.current_enemy.damagable or not self.current_enemy.alive() or manhattan((enemy_center[0], enemy_center[1]), (self.rect.x, self.rect.y)) > true_range):
                     self.current_enemy = None
                 else:
                     if self.rotating:
@@ -312,12 +312,11 @@ class Tower(Obstacle):
         self.buffs[buff_type] = amount
             
     def upgrade(self):
-        if self.game.protein >= self.upgrade_cost and self.stage < 2:
-            self.game.protein -= self.upgrade_cost
-            self.stage += 1
-            self.load_tower_data()
+        self.game.protein -= self.upgrade_cost
+        self.stage += 1
+        self.load_tower_data()
 
     def search_for_enemy(self, true_range):
         for enemy in self.game.enemies:
-            if (heuristic((enemy.rect.center[0], enemy.rect.center[1]), (self.rect.center[0], self.rect.center[1])) <= true_range and (self.current_enemy == None or enemy.end_dist < self.current_enemy.end_dist)):
+            if (manhattan((enemy.rect.center[0], enemy.rect.center[1]), (self.rect.center[0], self.rect.center[1])) <= true_range and (self.current_enemy == None or enemy.end_dist < self.current_enemy.end_dist)):
                 self.current_enemy = enemy

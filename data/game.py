@@ -229,6 +229,7 @@ class Game(Display):
         self.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
         self.blit(self.camera.apply_image(self.path_surf), self.camera.apply_tuple((0, 0)))
+
         self.blit(self.camera.apply_image(self.tower_bases_surf),
                      self.camera.apply_rect(self.tower_bases_surf.get_rect()))
 
@@ -254,11 +255,17 @@ class Game(Display):
         for explosion in self.explosions:
             self.blit(self.camera.apply_image(explosion.get_surf()), self.camera.apply_tuple((explosion.x, explosion.y)))
 
+        self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
+
         if self.current_tower != None:
             self.draw_tower_preview()
 
-        self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
-        
+        if self.ui.tower != None and not self.ui.tower.area_of_effect:
+            tower_range_img = pg.Surface((tower.range * 2, tower.range * 2)).convert_alpha()
+            tower_range_img.fill(BLANK)
+            pg.draw.circle(tower_range_img, HALF_WHITE, (tower.range, tower.range), tower.range)
+            self.blit(self.camera.apply_image(tower_range_img), self.camera.apply_rect(tower_range_img.get_rect(center=tower.rect.center)))
+
         self.ui_pos = [self.get_size()[0] - self.ui.offset, self.ui.offset]
         if self.ui.active:
             self.ui_pos[0] -= self.ui.width
@@ -363,10 +370,15 @@ class Game(Display):
             round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
         tower_tile = (
             tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
+        tower = TOWER_DATA[self.current_tower]["stages"][0]
         pos = self.map.get_node(tower_tile[0], tower_tile[1])
 
         if pos != -1:
-            tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower]["stages"][0]["image"].copy().convert_alpha())
+            tower_range = tower["range"]
+            tower_range_img = pg.Surface((tower_range * 2, tower_range * 2)).convert_alpha()
+            tower_range_img.fill(BLANK)
+            pg.draw.circle(tower_range_img, HALF_WHITE, (tower_range, tower_range), tower_range)
+            tower_img = tower["image"].copy().convert_alpha()
             validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
 
             if validity == 1:
@@ -393,12 +405,16 @@ class Game(Display):
                     self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
                 else:
                     tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+                    tower_range_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
                     self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 0)
             else:
                 tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+                tower_range_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
 
-            tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower]["stages"][0]["base_image"].get_size())
-            self.blit(tower_img, self.camera.apply_rect(tower_pos))
+            tower_pos = tower_img.get_rect(topleft = towerxy)
+            tower_range_pos = tower_range_img.get_rect(center=tower_pos.center)
+            self.blit(self.camera.apply_image(tower_range_img), self.camera.apply_rect(tower_range_pos))
+            self.blit(self.camera.apply_image(tower_img), self.camera.apply_rect(tower_pos))
 
     def get_lives(self):
         return self.lives
