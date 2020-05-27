@@ -340,7 +340,23 @@ class Tower(Obstacle):
         self.game.protein -= self.upgrade_cost
         self.stage += 1
         self.buffs = []
+        if self.area_of_effect and self.aoe_buff:
+            hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.towers, False)
+            if (hits):
+                for hit in hits:
+                    if self == hit:
+                        continue
+                    hit.debuff(self, self.aoe_buff_type, self.aoe_buff_amount)
+
         self.load_tower_data()
+
+        if self.area_of_effect and self.aoe_buff:
+            hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.towers, False)
+            if (hits):
+                for hit in hits:
+                    if self == hit or self in hit.buffs:
+                        continue
+                    hit.buff(self, self.aoe_buff_type, self.aoe_buff_amount)
 
     def search_for_enemy(self):
         for enemy in self.game.enemies:
