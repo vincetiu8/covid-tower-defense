@@ -171,10 +171,7 @@ class Tower(Obstacle):
         self.hits = 0
         self.kills = 0
         
-        self.buffs = {
-            "damage": 0,
-            "range": 0
-        }
+        self.buffs = []
 
         self.search_for_enemy()
 
@@ -198,12 +195,6 @@ class Tower(Obstacle):
                 aoe_buff_types = ["damage", "range"]
                 self.aoe_buff_type = aoe_buff_types[data["aoe_buff_type"]]
                 self.aoe_buff_amount = data["aoe_buff_amount"]
-                hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.towers, False)
-                if (hits):
-                    for hit in hits:
-                        if self == hit:
-                            continue
-                        hit.buff(self.aoe_buff_type, self.aoe_buff_amount)
                 load_attack_attrs = False
         else:
             self.bullet_speed = data["bullet_speed"]
@@ -231,9 +222,10 @@ class Tower(Obstacle):
             
             if self.different_shield_damage:
                 self.shield_damage = data["shield_damage"]
-                self.true_shield_damage = self.shield_damage
             else:
                 self.shield_damage = self.damage
+
+            self.true_shield_damage = self.shield_damage
 
         if (self.stage < 2):
             data = TOWER_DATA[self.name]["stages"][self.stage + 1]
@@ -246,12 +238,18 @@ class Tower(Obstacle):
                 for hit in hits:
                     if self == hit:
                         continue
-                    hit.debuff(self.aoe_buff_type, self.aoe_buff_amount)
+                    hit.debuff(self, self.aoe_buff_type, self.aoe_buff_amount)
 
     def update(self):
         if self.time_passed >= self.next_spawn:
             if self.area_of_effect:
                 if self.aoe_buff:
+                    hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.towers, False)
+                    if (hits):
+                        for hit in hits:
+                            if self == hit or self in hit.buffs:
+                                continue
+                            hit.buff(self, self.aoe_buff_type, self.aoe_buff_amount)
                     return
 
                 self.update_aoe_sprite(self.true_range)
@@ -320,18 +318,17 @@ class Tower(Obstacle):
         self.aoe_sprite.rect.y = self.rect.y - (true_range - self.game.map.tilesize) / 2
         self.aoe_sprite.rect.width = self.aoe_sprite.rect.height = true_range
         
-    def buff(self, buff_type, amount):
+    def buff(self, buff_tower, buff_type, amount):
+        self.buffs.append(buff_tower)
         if buff_type == "range":
-            print(self.name)
-            print(self.true_range)
             self.true_range += amount
-            print(self.true_range)
         elif buff_type == "damage":
             self.true_damage += amount
             if self.different_shield_damage:
                 self.true_shield_damage += amount
 
-    def debuff(self, buff_type, amount):
+    def debuff(self, buff_tower, buff_type, amount):
+        self.buffs.remove(buff_tower)
         if buff_type == "range":
             self.true_range -= amount
         elif buff_type == "damage":
@@ -342,6 +339,7 @@ class Tower(Obstacle):
     def upgrade(self):
         self.game.protein -= self.upgrade_cost
         self.stage += 1
+        self.buffs = []
         self.load_tower_data()
 
     def search_for_enemy(self):
