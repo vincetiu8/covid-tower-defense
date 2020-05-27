@@ -375,9 +375,14 @@ class Game(Display):
 
         if pos != -1:
             tower_range = tower["range"]
-            tower_range_img = pg.Surface((tower_range * 2, tower_range * 2)).convert_alpha()
-            tower_range_img.fill(BLANK)
-            pg.draw.circle(tower_range_img, HALF_WHITE, (tower_range, tower_range), tower_range)
+            if tower["area_of_effect"]:
+                tower_range_img = pg.Surface((tower_range, tower_range)).convert_alpha()
+                tower_range_img.fill(AURA_COLORS[tower["aura_color"]])
+
+            else:
+                tower_range_img = pg.Surface((tower_range * 2, tower_range * 2)).convert_alpha()
+                tower_range_img.fill(BLANK)
+                pg.draw.circle(tower_range_img, HALF_WHITE, (tower_range, tower_range), tower_range)
             tower_img = tower["image"].copy().convert_alpha()
             validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
 

@@ -70,7 +70,7 @@
                 "damage": 3,
                 "different_shield_damage": false,
                 "directions": 4,
-                "range": 400,
+                "range": 300,
                 "rotating": false,
                 "slow_duration": 0,
                 "slow_speed": 1,
