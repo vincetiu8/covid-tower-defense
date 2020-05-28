@@ -535,6 +535,7 @@ class HoverInfo(pg.Surface):
 class LevelInfo(HoverInfo):
     def __init__(self, level):
         self.unlocked = level <= SAVE_DATA["level"]
+        self.level = level
         if self.unlocked:
             self.level_data = LEVEL_DATA[level]
             super().__init__(self.level_data["title"], self.level_data["description"])
@@ -565,6 +566,9 @@ class LevelInfo(HoverInfo):
                 enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + MENU_OFFSET), 0))
 
             self.add_text(enemy_surf)
+            
+            high_score_text = self.info_font.render("High Score: {}".format(SAVE_DATA["highscores"][self.level]), 1, WHITE)
+            self.add_text(high_score_text)
         
 class TowerInfo(HoverInfo):
     def __init__(self, tower):
@@ -663,6 +667,9 @@ class UpgradesMenu(TowerMenu):
 
         for i, attr in enumerate(self.upgrades):
             self.blit(attr, self.upgrade_rects[i])
+            
+        self.blit(self.done_btn, self.done_btn_rect)
+        self.blit(self.dna_text, self.dna_text.get_rect(topright=(SCREEN_WIDTH - BTN_X_MARGIN, BTN_Y)))
 
         if not self.confirming:
             if self.over_tower[0] != -1:
@@ -680,9 +687,6 @@ class UpgradesMenu(TowerMenu):
                     self.upgrade_infos[self.over_upgrade] = new_upgrade_info.draw()
                 self.blit(self.upgrade_infos[self.over_upgrade], self.upgrade_infos[self.over_upgrade].get_rect(top=self.upgrade_button_rects[self.over_upgrade].topleft[1], right = self.upgrade_button_rects[self.over_upgrade].topleft[0] - MENU_OFFSET))
 
-        self.blit(self.done_btn, self.done_btn_rect)
-        self.blit(self.dna_text, self.dna_text.get_rect(topright=(SCREEN_WIDTH - BTN_X_MARGIN, BTN_Y)))
-
         if self.confirming:
             self.blit(self.confirm_menu_surf, self.confirm_menu_rect)
 
@@ -690,7 +694,7 @@ class UpgradesMenu(TowerMenu):
 
     def make_upgrade(self, string, value):
         font = pg.font.Font(FONT, 70)
-        text = font.render(string + ": " + str(value), 1, WHITE)
+        text = font.render(clean_title(string) + ": " + str(value), 1, WHITE)
         plus_text = font.render("+", 1, WHITE)
         btn = pg.transform.scale(LEVEL_BUTTON_IMG, (plus_text.get_height(), plus_text.get_height())).copy().convert_alpha()
         btn.blit(plus_text, plus_text.get_rect(center=btn.get_rect().center))
