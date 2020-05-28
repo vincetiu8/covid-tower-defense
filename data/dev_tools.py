@@ -137,13 +137,6 @@ class DevClass(Game):
         surface.blit(self.tower_bases_surf,
                      self.tower_bases_surf.get_rect())
 
-        for tower in self.towers:
-            if tower.area_of_effect or not tower.rotating:
-                continue
-            rotated_image = pg.transform.rotate(tower.gun_image, math.degrees(tower.rotation))
-            new_rect = rotated_image.get_rect(center=tower.rect.center)
-            surface.blit(rotated_image, new_rect)
-
         total_hp_surf = pg.Surface((self.map.width, self.map.height)).convert_alpha()
         total_hp_surf.fill((0, 0, 0, 0))
         for enemy in self.enemies:
@@ -152,6 +145,18 @@ class DevClass(Game):
             if hp_surf != None:
                 total_hp_surf.blit(hp_surf, hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - enemy.image_size // 2 - 10)))
         surface.blit(total_hp_surf, (0, 0))
+
+        for tower in self.towers:
+            if tower.area_of_effect:
+                continue
+            elif tower.rotating:
+                rotated_image = pg.transform.rotate(tower.gun_image, math.degrees(tower.rotation))
+                new_rect = rotated_image.get_rect(center=tower.rect.center)
+                surface.blit(rotated_image, new_rect)
+            tower_range_img = pg.Surface((tower.true_range * 2, tower.true_range * 2)).convert_alpha()
+            tower_range_img.fill(BLANK)
+            pg.draw.circle(tower_range_img, HALF_WHITE, (tower.true_range, tower.true_range), tower.true_range)
+            surface.blit((tower_range_img), tower_range_img.get_rect(center=tower.rect.center))
 
         for projectile in self.projectiles:
             surface.blit(projectile.image, projectile.rect)

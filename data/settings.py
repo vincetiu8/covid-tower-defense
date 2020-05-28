@@ -53,6 +53,8 @@ HALF_BLUE = pg.Color(0, 0, 255, 127)
 HALF_PURPLE = pg.Color(127, 0, 255, 127)
 HALF_PINK = pg.Color(255, 0, 255, 127)
 
+BLANK = pg.Color(0, 0, 0, 0)
+
 AURA_COLORS = [HALF_RED, HALF_ORANGE, HALF_YELLOW, HALF_GREEN, HALF_CYAN, HALF_BLUE, HALF_PURPLE, HALF_PINK]
 
 # looks for img_folder and map_folder in the same folder as the code

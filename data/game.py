@@ -229,6 +229,7 @@ class Game(Display):
         self.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
         self.blit(self.camera.apply_image(self.path_surf), self.camera.apply_tuple((0, 0)))
+
         self.blit(self.camera.apply_image(self.tower_bases_surf),
                      self.camera.apply_rect(self.tower_bases_surf.get_rect()))
 
@@ -254,11 +255,17 @@ class Game(Display):
         for explosion in self.explosions:
             self.blit(self.camera.apply_image(explosion.get_surf()), self.camera.apply_tuple((explosion.x, explosion.y)))
 
+        self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
+
         if self.current_tower != None:
             self.draw_tower_preview()
 
-        self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
-        
+        if self.ui.tower != None and not self.ui.tower.area_of_effect:
+            tower_range_img = pg.Surface((self.ui.tower.true_range * 2, self.ui.tower.true_range * 2)).convert_alpha()
+            tower_range_img.fill(BLANK)
+            pg.draw.circle(tower_range_img, HALF_WHITE, (self.ui.tower.true_range, self.ui.tower.true_range), self.ui.tower.true_range)
+            self.blit(self.camera.apply_image(tower_range_img), self.camera.apply_rect(tower_range_img.get_rect(center=self.ui.tower.rect.center)))
+
         self.ui_pos = [self.get_size()[0] - self.ui.offset, self.ui.offset]
         if self.ui.active:
             self.ui_pos[0] -= self.ui.width
@@ -363,10 +370,20 @@ class Game(Display):
             round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
         tower_tile = (
             tile_from_xcoords(towerxy[0], self.map.tilesize), tile_from_xcoords(towerxy[1], self.map.tilesize))
+        tower = TOWER_DATA[self.current_tower]["stages"][0]
         pos = self.map.get_node(tower_tile[0], tower_tile[1])
 
         if pos != -1:
-            tower_img = self.camera.apply_image(TOWER_DATA[self.current_tower]["stages"][0]["image"].copy().convert_alpha())
+            tower_range = tower["range"]
+            if tower["area_of_effect"]:
+                tower_range_img = pg.Surface((tower_range, tower_range)).convert_alpha()
+                tower_range_img.fill(AURA_COLORS[tower["aura_color"]])
+
+            else:
+                tower_range_img = pg.Surface((tower_range * 2, tower_range * 2)).convert_alpha()
+                tower_range_img.fill(BLANK)
+                pg.draw.circle(tower_range_img, HALF_WHITE, (tower_range, tower_range), tower_range)
+            tower_img = tower["image"].copy().convert_alpha()
             validity = self.map.is_valid_tower_tile(tower_tile[0], tower_tile[1])
 
             if validity == 1:
@@ -393,12 +410,16 @@ class Game(Display):
                     self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 1)
                 else:
                     tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+                    tower_range_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
                     self.map.set_valid_tower_tile(tower_tile[0], tower_tile[1], 0)
             else:
                 tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+                tower_range_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
 
-            tower_pos = pg.Rect(towerxy, TOWER_DATA[self.current_tower]["stages"][0]["base_image"].get_size())
-            self.blit(tower_img, self.camera.apply_rect(tower_pos))
+            tower_pos = tower_img.get_rect(topleft = towerxy)
+            tower_range_pos = tower_range_img.get_rect(center=tower_pos.center)
+            self.blit(self.camera.apply_image(tower_range_img), self.camera.apply_rect(tower_range_pos))
+            self.blit(self.camera.apply_image(tower_img), self.camera.apply_rect(tower_pos))
 
     def get_lives(self):
         return self.lives
@@ -414,41 +435,66 @@ class Game(Display):
                     return -1
 
                 elif self.ui.active:
-                    for i, tower_rect in enumerate(self.ui.tower_rects):
-                        if (self.protein < TOWER_DATA[self.available_towers[i]]["stages"][0]["upgrade_cost"]):
-                            continue
-                        temp_rect = tower_rect.copy()
-                        temp_rect.x += self.ui_pos[0]
-                        temp_rect.y += self.ui_pos[1]
-                        
-                        if temp_rect.collidepoint(event.pos):
-                            if self.current_tower == self.available_towers[i]:
-                                self.current_tower = None
-                            else:
-                                self.current_tower = self.available_towers[i]
+                    result = self.ui.event((event.pos[0] - self.ui_pos[0], event.pos[1] - self.ui_pos[1]))
+                    if isinstance(result, str):
+                        if result == "start_wave":
+                            self.start_next_wave()
                             return -1
-                    
-                    next_wave_rect = self.ui.next_wave_rect.copy()
-                    next_wave_rect.x += self.ui_pos[0]
-                    next_wave_rect.y += self.ui_pos[1]
-                    
-                    if self.ui.next_wave_btn_enabled and next_wave_rect.collidepoint(event.pos):
-                        self.start_next_wave()
+
+                        tower_coords = tile_from_xcoords(self.ui.tower.rect.x, self.map.tilesize), tile_from_xcoords(self.ui.tower.rect.y, self.map.tilesize)
+
+                        if result == "sell":
+                            tower_dat = self.map.remove_tower(tower_coords[0], tower_coords[1])
+                            self.pathfinder.clear_nodes(self.map.get_map())
+                            for start in self.start_data:
+                                for x in range(tile_from_xcoords(start.width, self.map.tilesize)):
+                                    for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
+                                        self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x,
+                                                                      tile_from_xcoords(start.y, self.map.tilesize) + y,
+                                                                      0)
+                            self.make_stripped_path_wrapper()
+                            self.draw_tower_bases_wrapper()
+                            for enemy in self.enemies:
+                                enemy.recreate_path()
+                            for stage in range(tower_dat[1] + 1):
+                                self.protein += round(TOWER_DATA[tower_dat[0]]["stages"][stage]["upgrade_cost"] / 2)
+                            BUY_SFX.play()
+                            self.ui.deselect_tower()
+
+                        elif result == "upgrade":
+                            if self.protein > TOWER_DATA[self.ui.tower.name]["stages"][self.ui.tower.stage]["upgrade_cost"]:
+                                self.map.upgrade_tower(tower_coords[0], tower_coords[1])
+                                self.draw_tower_bases(self)
+                                BUY_SFX.play()
+                                self.ui.get_ui()
+                        return -1
+
+                    elif result > -1:
+                        if self.protein < TOWER_DATA[self.available_towers[result]]["stages"][0]["upgrade_cost"]:
+                            self.current_tower = None
+                        else:
+                            self.current_tower = self.available_towers[result]
+                        return -1
+
+                    elif result == -1:
+                        self.current_tower = None
+                        self.ui.deselect_tower()
+                        return -1
 
                 pos = self.camera.correct_mouse(event.pos)
                 x_coord = tile_from_coords(pos[0], self.map.tilesize)
                 y_coord = tile_from_coords(pos[1], self.map.tilesize)
 
                 if self.current_tower == None:
-                    if self.map.get_node(x_coord, y_coord) == 1:
-                        if self.map.upgrade_tower(x_coord, y_coord):
-                            self.draw_tower_bases(self)
+                    self.ui.select_tower(x_coord, y_coord)
                     return -1
 
-                if self.map.is_valid_tower_tile(x_coord, y_coord) == 0:
+                if self.protein < TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"]:
                     return -1
 
-                if self.map.change_node(x_coord, y_coord, 1) == False:
+                if self.map.is_valid_tower_tile(x_coord, y_coord) == 0 or \
+                        self.map.change_node(x_coord, y_coord, 1) == False:
+                    self.current_tower = None
                     return -1
 
                 self.pathfinder.clear_nodes(self.map.get_map())
@@ -481,27 +527,6 @@ class Game(Display):
                 self.draw_tower_bases_wrapper()
                 for enemy in self.enemies:
                     enemy.recreate_path()
-
-            elif event.button == 3:
-                pos = self.camera.correct_mouse(event.pos)
-                x_coord = tile_from_coords(pos[0], self.map.tilesize)
-                y_coord = tile_from_coords(pos[1], self.map.tilesize)
-
-                tower_dat = self.map.remove_tower(x_coord, y_coord)
-                if tower_dat != False:
-                    self.pathfinder.clear_nodes(self.map.get_map())
-                    for start in self.start_data:
-                        for x in range(tile_from_xcoords(start.width, self.map.tilesize)):
-                            for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
-                                self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x,
-                                                              tile_from_xcoords(start.y, self.map.tilesize) + y, 0)
-                    self.make_stripped_path_wrapper()
-                    self.draw_tower_bases_wrapper()
-                    for enemy in self.enemies:
-                        enemy.recreate_path()
-                    for stage in range(tower_dat[1] + 1):
-                        self.protein += round(TOWER_DATA[tower_dat[0]]["stages"][stage]["upgrade_cost"] / 2)
-                    BUY_SFX.play()
 
             elif event.button == 4:
                 self.camera.zoom(ZOOM_AMT_GAME)

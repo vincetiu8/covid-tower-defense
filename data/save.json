@@ -9,7 +9,8 @@
         0
     ],
     "owned_towers": [
-        "t_cell"
+        "t_cell",
+        "monocyte"
     ],
     "game_attrs": {
         "lives": {

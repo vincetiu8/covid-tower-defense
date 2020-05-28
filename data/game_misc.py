@@ -18,6 +18,7 @@ class UI:
         self.tower_rects = [pg.Rect(self.offset, self.offset * 6 + HEART_IMG.get_size()[0] * 3 + i * (self.offset + self.tower_size), self.tower_size, self.tower_size) for i, tower in enumerate(self.game.available_towers)]
         
         self.next_wave_rect = None
+        self.tower = None
         
         self.ui = self.get_ui()
         self.set_active(self.active)
@@ -46,10 +47,20 @@ class UI:
         if not self.game.in_a_wave and self.wave > 0:
             self.update_timer()
 
+    def select_tower(self, x, y):
+        try:
+            self.tower = self.game.map.get_tower_map()[x][y]
+            self.ui = self.get_ui()
+        except:
+            pass
+
+    def deselect_tower(self):
+        self.tower = None
+        self.ui = self.get_ui()
+
     def get_ui(self):
         size = HEART_IMG.get_size()[0]
         font = pg.font.Font(FONT, size * 2)
-        next_wave_font = pg.font.Font(FONT, int(size * 1.3))
         
         ui = pg.Surface((self.width, self.game.get_size()[1] - 2 * self.offset))
         ui.fill(DARK_GREY)
@@ -70,48 +81,105 @@ class UI:
         protein_text = pg.transform.scale(protein_text,
                                           (round(protein_text.get_size()[0] * size / protein_text.get_size()[1]), size))
         ui.blit(protein_text, (self.offset * 2 + size, self.offset * 5 + size * 2))
+
+        if self.tower == None:
+            # Draws towers
+            for i, tower in enumerate(self.game.available_towers):
+                tower_img = pg.transform.scale(TOWER_DATA[tower]["stages"][0]["image"], self.tower_rects[i].size)
+                if (self.game.protein < TOWER_DATA[tower]["stages"][0]["upgrade_cost"]):
+                    tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+                ui.blit(tower_img, self.tower_rects[i])
+                temp_rect = self.tower_rects[i].copy()
+                temp_rect.x += self.tower_size + self.offset
+                ui.blit(PROTEIN_IMG, temp_rect)
+                cost_text = font.render(str(TOWER_DATA[tower]["stages"][0]["upgrade_cost"]), 1, WHITE)
+                temp_rect.y += size + self.offset
+                ui.blit(cost_text, temp_rect)
+
+        else:
+            tower_dat = TOWER_DATA[self.tower.name]
+            tower_img = pg.transform.scale(tower_dat["stages"][self.tower.stage]["image"], (self.width - MENU_OFFSET * 2, self.width - MENU_OFFSET * 2))
+            ui.blit(tower_img, self.tower_rects[0])
+
+            font = pg.font.Font(FONT, int(HEART_IMG.get_size()[0] * 1.3))
+            text = font.render("Damage: " + str(tower_dat["stages"][self.tower.stage]["damage"]), 1, WHITE)
+            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height()))
+
+            text = font.render("Speed: " + str(tower_dat["stages"][self.tower.stage]["attack_speed"]) + "s", 1, WHITE)
+            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + MENU_OFFSET + text.get_height()))
+
+            text = font.render("Hits: " + str(self.tower.hits), 1, WHITE)
+            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + MENU_OFFSET * 2 + text.get_height() * 2))
+
+            text = font.render("Kills: " + str(self.tower.kills), 1, WHITE)
+            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + MENU_OFFSET * 3 + text.get_height() * 3))
+
+            refund = 0
+            for stage in range(self.tower.stage + 1):
+                refund += round(tower_dat["stages"][stage]["upgrade_cost"] / 2)
+            sell_button, self.sell_rect = self.make_button("Sell: " + str(refund), True)
+            self.sell_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 4 - self.sell_rect.height
+            ui.blit(sell_button, self.sell_rect)
+
+            if self.tower.stage < 2:
+                upgrade_cost = tower_dat["stages"][self.tower.stage + 1]["upgrade_cost"]
+                upgrade_button, self.upgrade_rect = self.make_button("Upgrade: " + str(upgrade_cost), self.game.protein >= upgrade_cost)
+                self.upgrade_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 5 - self.sell_rect.height * 2
+                ui.blit(upgrade_button, self.upgrade_rect)
         
-        # Draws towers
-        for i, tower in enumerate(self.game.available_towers):
-            tower_img = pg.transform.scale(TOWER_DATA[tower]["stages"][0]["image"], self.tower_rects[i].size)
-            if (self.game.protein < TOWER_DATA[tower]["stages"][0]["upgrade_cost"]):
-                tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
-            ui.blit(tower_img, self.tower_rects[i])
-            temp_rect = self.tower_rects[i].copy()
-            temp_rect.x += self.tower_size + self.offset
-            ui.blit(PROTEIN_IMG, temp_rect)
-            cost_text = font.render(str(TOWER_DATA[tower]["stages"][0]["upgrade_cost"]), 1, WHITE)
-            temp_rect.y += size + self.offset
-            ui.blit(cost_text, temp_rect)
-        
-        # Draws "Next Wave" btn
         text = "Next Wave"
         if self.wave == 0:
             text = "Start Wave"
-            
-        next_wave_text = next_wave_font.render(text, 1, WHITE)
-        next_wave_btn = pg.transform.scale(LEVEL_BUTTON_IMG, (next_wave_text.get_width() + BTN_PADDING * 2,             
-                                                              next_wave_text.get_height())).copy().convert_alpha()
-        next_wave_btn.blit(next_wave_text, next_wave_text.get_rect(center = next_wave_btn.get_rect().center))
-        
-        if not self.next_wave_btn_enabled:
-            next_wave_btn.fill(LIGHT_GREY, None, pg.BLEND_RGB_MULT)
-            
-        next_wave_btn_x = (self.width - next_wave_btn.get_width()) / 2
-        next_wave_btn_y = ui.get_height() - self.offset - next_wave_btn.get_height()
-        ui.blit(next_wave_btn, (next_wave_btn_x, next_wave_btn_y))
-        
-        self.next_wave_rect = pg.Rect(next_wave_btn_x, next_wave_btn_y, next_wave_btn.get_width(), next_wave_btn.get_height())
+
+        next_wave_button, self.next_wave_rect = self.make_button(text, self.next_wave_btn_enabled)
+        self.next_wave_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 3
+        ui.blit(next_wave_button, self.next_wave_rect)
 
         return ui
-    
+
+    def make_button(self, string, enabled):
+        font = pg.font.Font(FONT, int(HEART_IMG.get_size()[0] * 1.3))
+        text = font.render(string, 1, WHITE)
+        btn = pg.transform.scale(LEVEL_BUTTON_IMG, (self.width - MENU_OFFSET * 2,
+                                                              text.get_height())).copy().convert_alpha()
+        btn.blit(text, text.get_rect(center=btn.get_rect().center))
+
+        if not enabled:
+            btn.fill(LIGHT_GREY, None, pg.BLEND_RGB_MULT)
+
+        rect = btn.get_rect()
+        rect.left = MENU_OFFSET
+
+        return btn, rect
+
     def update_timer(self):
         timer_width = (self.width - 10) * (WAVE_DELAY * 1000 - self.game.time_passed) // (WAVE_DELAY * 1000)
         timer_height = 8
         pg.draw.rect(self.ui, DARK_GREY,
-                     pg.Rect(10, self.next_wave_rect.y - self.offset - timer_height, self.width - 10, timer_height))
+                     pg.Rect(10, self.next_wave_rect.y - timer_height, self.width - 10, timer_height))
         pg.draw.rect(self.ui, GREEN,
-                    pg.Rect(10, self.next_wave_rect.y - self.offset - timer_height, timer_width, timer_height))
+                    pg.Rect(10, self.next_wave_rect.y - timer_height, timer_width, timer_height))
+
+    def event(self, pos):
+        if pos[0] < 0 or pos[0] > self.width or pos[1] < 0 or pos[1] > SCREEN_HEIGHT - MENU_OFFSET * 2:
+            return -2
+
+        if self.tower == None:
+            for i, tower_rect in enumerate(self.tower_rects):
+                if tower_rect.collidepoint(pos):
+                    return i
+
+        else:
+            if self.sell_rect.collidepoint(pos):
+                return "sell"
+
+            elif self.tower.stage < 2 and self.upgrade_rect.collidepoint(pos):
+                return "upgrade"
+
+        if self.next_wave_btn_enabled and self.next_wave_rect.collidepoint(pos):
+            return "start_wave"
+
+        return -1
 
 class Explosion(pg.sprite.Sprite):
     def __init__(self, game, x, y, rad):
