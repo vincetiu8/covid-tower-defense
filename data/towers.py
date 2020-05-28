@@ -181,6 +181,8 @@ class Tower(Obstacle):
         self.true_range = self.range
         self.base_image = data["base_image"]
         self.area_of_effect = data["area_of_effect"]
+        
+        self.aoe_buff = False # initialize so that we can keep track of whether a tower is an attacking or a buff one
             
         load_attack_attrs = True # always load unless self.area_of_effect and self.aoe_buff
 
@@ -320,21 +322,23 @@ class Tower(Obstacle):
         
     def buff(self, buff_tower, buff_type, amount):
         self.buffs.append(buff_tower)
-        if buff_type == "range":
-            self.true_range += amount
-        elif buff_type == "damage":
-            self.true_damage += amount
-            if self.different_shield_damage:
-                self.true_shield_damage += amount
+        if not self.aoe_buff:
+            if buff_type == "range":
+                self.true_range += amount
+            elif buff_type == "damage":
+                self.true_damage += amount
+                if self.different_shield_damage:
+                    self.true_shield_damage += amount
 
     def debuff(self, buff_tower, buff_type, amount):
         self.buffs.remove(buff_tower)
-        if buff_type == "range":
-            self.true_range -= amount
-        elif buff_type == "damage":
-            self.true_damage -= amount
-            if self.different_shield_damage:
-                self.true_shield_damage -= amount
+        if not self.aoe_buff:
+            if buff_type == "range":
+                self.true_range -= amount
+            elif buff_type == "damage":
+                self.true_damage -= amount
+                if self.different_shield_damage:
+                    self.true_shield_damage -= amount
 
     def upgrade(self):
         self.game.protein -= self.upgrade_cost

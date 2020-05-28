@@ -462,7 +462,7 @@ class Game(Display):
                             self.ui.deselect_tower()
 
                         elif result == "upgrade":
-                            if self.protein > TOWER_DATA[self.ui.tower.name]["stages"][self.ui.tower.stage]["upgrade_cost"]:
+                            if self.protein >= TOWER_DATA[self.ui.tower.name]["stages"][self.ui.tower.stage]["upgrade_cost"]:
                                 self.map.upgrade_tower(tower_coords[0], tower_coords[1])
                                 self.draw_tower_bases(self)
                                 BUY_SFX.play()

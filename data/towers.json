@@ -333,7 +333,7 @@
         ]
     },
     "mitochondria": {
-        "description": "The powerhouse of the cell. Increases the damage of all nearby cells.",
+        "description": "The powerhouse of the cell. Increases the damage of all nearby attacking cells.",
         "unlock_cost": 25,
         "stages": [
             {
