@@ -501,20 +501,27 @@ class HoverInfo(pg.Surface):
         title_font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
         title_text = title_font.render(self.title, 1, WHITE)
         self.add_text(title_text)
-        
+    
     def make_description(self):
         text = textwrap.fill(self.description, 30 - round(MENU_TEXT_SIZE / 30)) # No idea how to really calculate this.
+        text = text.split("\n")
         
-        for part in text.split('\n'):
+        for i, part in enumerate(text):
             rendered_text = self.info_font.render(part, 1, WHITE)
-            self.add_text(rendered_text)
+            if i == len(text) - 1:
+                self.add_text(rendered_text)
+            else:
+                self.add_text_custom(rendered_text, MENU_OFFSET // 5)
             
     def make_other_info(self):
         pass # to be overrided
     
     def add_text(self, text):
-        self.texts.append(text)
-        self.height += text.get_height() + MENU_OFFSET
+        self.add_text_custom(text, MENU_OFFSET)
+        
+    def add_text_custom(self, text, line_spacing): # only used when the line spacing is changed
+        self.texts.append([text, line_spacing])
+        self.height += text.get_height() + line_spacing
         self.width = max(self.width, text.get_width() + MENU_OFFSET * 2)
             
     def draw(self):
@@ -522,13 +529,13 @@ class HoverInfo(pg.Surface):
         self.make_description()
         self.make_other_info()
         
-        super().__init__((self.width, self.height + MENU_OFFSET))
+        super().__init__((self.width, self.height))
         self.fill(DARK_GREY)
         
         temp_height = MENU_OFFSET
         for text in self.texts:
-            self.blit(text, (MENU_OFFSET, temp_height))
-            temp_height += text.get_height() + MENU_OFFSET
+            self.blit(text[0], (MENU_OFFSET, temp_height))
+            temp_height += text[0].get_height() + text[1] # text[1] = line_spacing of the text
             
         return self
     
@@ -559,7 +566,7 @@ class LevelInfo(HoverInfo):
             waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"])), 1, WHITE)
             self.add_text(waves_text)
 
-            enemy_surf = pg.Surface((self.texts[0].get_width() + MENU_OFFSET * 2, MENU_TEXT_SIZE))
+            enemy_surf = pg.Surface((self.texts[0][0].get_width() + MENU_OFFSET * 2, MENU_TEXT_SIZE))
             enemy_surf.fill(DARK_GREY)
             for i, enemy in enumerate(self.level_data["enemies"]):
                 enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE))
@@ -579,9 +586,6 @@ class TowerInfo(HoverInfo):
         super().__init__(tower_name, self.tower_data["description"])
         
     def make_other_info(self):
-        text_names = ["Damage", "Attack Speed", "Range", "Cost"]
-        keys = ["damage", "attack_speed", "range", "upgrade_cost"]
-        
         stages_text = self.info_font.render("Stages: {}".format(len(self.stages_data)), 1, WHITE)
         self.add_text(stages_text)
         
