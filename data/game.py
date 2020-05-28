@@ -472,8 +472,9 @@ class Game(Display):
                     elif result > -1:
                         if self.protein < TOWER_DATA[self.available_towers[result]]["stages"][0]["upgrade_cost"]:
                             self.current_tower = None
-                            return -1
-                        self.current_tower = self.available_towers[result]
+                        else:
+                            self.current_tower = self.available_towers[result]
+                        return -1
 
                     elif result == -1:
                         self.current_tower = None
@@ -488,9 +489,12 @@ class Game(Display):
                     self.ui.select_tower(x_coord, y_coord)
                     return -1
 
-                if self.protein < TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"] or \
-                        self.map.is_valid_tower_tile(x_coord, y_coord) == 0 or \
+                if self.protein < TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"]:
+                    return -1
+
+                if self.map.is_valid_tower_tile(x_coord, y_coord) == 0 or \
                         self.map.change_node(x_coord, y_coord, 1) == False:
+                    self.current_tower = None
                     return -1
 
                 self.pathfinder.clear_nodes(self.map.get_map())
