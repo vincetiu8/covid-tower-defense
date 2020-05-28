@@ -501,20 +501,27 @@ class HoverInfo(pg.Surface):
         title_font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
         title_text = title_font.render(self.title, 1, WHITE)
         self.add_text(title_text)
-        
+    
     def make_description(self):
         text = textwrap.fill(self.description, 30 - round(MENU_TEXT_SIZE / 30)) # No idea how to really calculate this.
+        text = text.split("\n")
         
-        for part in text.split('\n'):
+        for i, part in enumerate(text):
             rendered_text = self.info_font.render(part, 1, WHITE)
-            self.add_text(rendered_text)
+            if i == len(text) - 1:
+                self.add_text(rendered_text)
+            else:
+                self.add_text_custom(rendered_text, MENU_OFFSET // 5)
             
     def make_other_info(self):
         pass # to be overrided
     
     def add_text(self, text):
-        self.texts.append(text)
-        self.height += text.get_height() + MENU_OFFSET
+        self.add_text_custom(text, MENU_OFFSET)
+        
+    def add_text_custom(self, text, line_spacing): # only used when the line spacing is changed
+        self.texts.append([text, line_spacing])
+        self.height += text.get_height() + line_spacing
         self.width = max(self.width, text.get_width() + MENU_OFFSET * 2)
             
     def draw(self):
@@ -522,19 +529,20 @@ class HoverInfo(pg.Surface):
         self.make_description()
         self.make_other_info()
         
-        super().__init__((self.width, self.height + MENU_OFFSET))
+        super().__init__((self.width, self.height))
         self.fill(DARK_GREY)
         
         temp_height = MENU_OFFSET
         for text in self.texts:
-            self.blit(text, (MENU_OFFSET, temp_height))
-            temp_height += text.get_height() + MENU_OFFSET
+            self.blit(text[0], (MENU_OFFSET, temp_height))
+            temp_height += text[0].get_height() + text[1] # text[1] = line_spacing of the text
             
         return self
     
 class LevelInfo(HoverInfo):
     def __init__(self, level):
         self.unlocked = level <= SAVE_DATA["level"]
+        self.level = level
         if self.unlocked:
             self.level_data = LEVEL_DATA[level]
             super().__init__(self.level_data["title"], self.level_data["description"])
@@ -558,13 +566,16 @@ class LevelInfo(HoverInfo):
             waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"])), 1, WHITE)
             self.add_text(waves_text)
 
-            enemy_surf = pg.Surface((self.texts[0].get_width() + MENU_OFFSET * 2, MENU_TEXT_SIZE))
+            enemy_surf = pg.Surface((self.texts[0][0].get_width() + MENU_OFFSET * 2, MENU_TEXT_SIZE))
             enemy_surf.fill(DARK_GREY)
             for i, enemy in enumerate(self.level_data["enemies"]):
                 enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE))
                 enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + MENU_OFFSET), 0))
 
             self.add_text(enemy_surf)
+            
+            high_score_text = self.info_font.render("High Score: {}".format(SAVE_DATA["highscores"][self.level]), 1, WHITE)
+            self.add_text(high_score_text)
         
 class TowerInfo(HoverInfo):
     def __init__(self, tower):
@@ -575,9 +586,6 @@ class TowerInfo(HoverInfo):
         super().__init__(tower_name, self.tower_data["description"])
         
     def make_other_info(self):
-        text_names = ["Damage", "Attack Speed", "Range", "Cost"]
-        keys = ["damage", "attack_speed", "range", "upgrade_cost"]
-        
         stages_text = self.info_font.render("Stages: {}".format(len(self.stages_data)), 1, WHITE)
         self.add_text(stages_text)
         
@@ -663,6 +671,9 @@ class UpgradesMenu(TowerMenu):
 
         for i, attr in enumerate(self.upgrades):
             self.blit(attr, self.upgrade_rects[i])
+            
+        self.blit(self.done_btn, self.done_btn_rect)
+        self.blit(self.dna_text, self.dna_text.get_rect(topright=(SCREEN_WIDTH - BTN_X_MARGIN, BTN_Y)))
 
         if not self.confirming:
             if self.over_tower[0] != -1:
@@ -680,9 +691,6 @@ class UpgradesMenu(TowerMenu):
                     self.upgrade_infos[self.over_upgrade] = new_upgrade_info.draw()
                 self.blit(self.upgrade_infos[self.over_upgrade], self.upgrade_infos[self.over_upgrade].get_rect(top=self.upgrade_button_rects[self.over_upgrade].topleft[1], right = self.upgrade_button_rects[self.over_upgrade].topleft[0] - MENU_OFFSET))
 
-        self.blit(self.done_btn, self.done_btn_rect)
-        self.blit(self.dna_text, self.dna_text.get_rect(topright=(SCREEN_WIDTH - BTN_X_MARGIN, BTN_Y)))
-
         if self.confirming:
             self.blit(self.confirm_menu_surf, self.confirm_menu_rect)
 
@@ -690,7 +698,7 @@ class UpgradesMenu(TowerMenu):
 
     def make_upgrade(self, string, value):
         font = pg.font.Font(FONT, 70)
-        text = font.render(string + ": " + str(value), 1, WHITE)
+        text = font.render(clean_title(string) + ": " + str(value), 1, WHITE)
         plus_text = font.render("+", 1, WHITE)
         btn = pg.transform.scale(LEVEL_BUTTON_IMG, (plus_text.get_height(), plus_text.get_height())).copy().convert_alpha()
         btn.blit(plus_text, plus_text.get_rect(center=btn.get_rect().center))
