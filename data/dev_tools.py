@@ -19,6 +19,7 @@ class DevClass(Game):
 
     def reload_level(self, map):
         self.map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(map)))
+        print(map)
         super().load_data()
 
     def new(self):
@@ -38,6 +39,13 @@ class DevClass(Game):
         self.start_data = []
 
         self.map.clear_map()
+        
+        width = round(self.map.width / self.map.tilesize)
+        height = round(self.map.height / self.map.tilesize)
+        arteries = [[1 for row in range(height)] for col in range(width)]
+        veins = [[1 for row in range(height)] for col in range(width)]
+        artery_entrances = [[1 for row in range(height)] for col in range(width)]
+        vein_entrances = [[1 for row in range(height)] for col in range(width)]
 
         for tile_object in self.map.tmxdata.objects:
             if "start" in tile_object.name:
@@ -59,6 +67,26 @@ class DevClass(Game):
                 self.map.add_tower(tile_from_xcoords(tile_object.x, self.map.tilesize),
                                    tile_from_xcoords(tile_object.y, self.map.tilesize),
                                    Tower(self, tile_object.x, tile_object.y, self.tower_names[self.current_tower]))
+            if tile_object.name == "artery":
+                for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
+                    for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
+                        arteries[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
+                            tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+            if tile_object.name == "vein":
+                for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
+                    for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
+                        veins[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
+                            tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+            if tile_object.name == "artery_entrance":
+                for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
+                    for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
+                        artery_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
+                            tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+            if tile_object.name == "vein_entrance":
+                for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
+                    for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
+                        vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
+                            tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
 
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         base_map = deepcopy(self.map.get_map())
@@ -67,7 +95,12 @@ class DevClass(Game):
             for j, cell in enumerate(row):
                 if tower_map[i][j] != None:
                     base_map[i][j] = 0
-        self.pathfinder = Pathfinder(base_map = base_map)
+        self.pathfinder = Pathfinder(
+            arteries = arteries,
+            artery_entrances = artery_entrances,
+            veins = veins,
+            vein_entrances = vein_entrances,
+            base_map = base_map)
         self.pathfinder.clear_nodes(self.map.get_map())
         self.draw_tower_bases_wrapper()
 
@@ -570,7 +603,7 @@ class LevelEditMenu(DevClass):
         self.enemy_types = list(ENEMY_DATA.keys())
 
     def reload_level(self):
-        super().reload_level("map{}".format(self.level))
+        super().reload_level(list(BODY_PARTS)[LEVEL_DATA[self.level]["body_part"]])
         super().load_data()
         super().new()
         self.reload_enemies()

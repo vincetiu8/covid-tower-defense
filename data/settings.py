@@ -92,6 +92,19 @@ def toggle_fullscreen():
         
 toggle_fullscreen()
 
+# Menu Constant
+BODY_PARTS = { # All of these are relative to the body
+    "mouth":            (652, 369),
+    "esophagus":        (470, 502),
+    "trachea":          (472, 643),
+    "lung":             (346, 862),
+    "heart":            (497, 857),
+    "small_intestine":  (494, 1451),
+    "large_intestine":  (323, 1611),
+    "anus":             (477, 1721),
+    "brain":            (488, 106)
+}
+
 # UI Constants
 MENU_OFFSET = 10
 MENU_OFFSET_2 = 5
@@ -222,9 +235,10 @@ for i, to_concat in enumerate(["", "_hover"]):
 
 # load other images
 START_SCREEN_IMG = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "start_screen.png")), (720, 720))
-LEVEL_BUTTON_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "level_button.png"))
+LEVEL_BUTTON_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "button.png"))
+LEVEL_BUTTON_IMG_2 = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "level_button.png")), (64, 64))
 LOCK_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "lock.png"))
-BODY_IMG = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "body.png")), (1920, 2610))
+BODY_IMG = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "body.png")), (965, 1800))
 
 # load game over images
 RESTART_BTN_IMGS = [[None, None], [None, None]]

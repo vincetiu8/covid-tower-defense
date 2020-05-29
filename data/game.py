@@ -61,7 +61,7 @@ class Game(Display):
             self.new_game()
     
     def new_game(self):
-        self.map = TiledMap(path.join(MAP_FOLDER, "map{}.tmx".format(self.level)))
+        self.map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(list(BODY_PARTS)[LEVEL_DATA[self.level]["body_part"]])))
         self.load_data()
         self.load_level_data()
         
@@ -143,8 +143,7 @@ class Game(Display):
             artery_entrances = artery_entrances,
             veins = veins,
             vein_entrances = vein_entrances,
-            base_map = self.map.get_map()
-        )
+            base_map = self.map.get_map())
         
         self.node_is_in_path = [[]]
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
@@ -308,7 +307,6 @@ class Game(Display):
                             if (diff_x_after == 0 and diff_y_after == 0):
                                 continue
                         self.stripped_path.append(node[0])
-
                     for i, node in enumerate(self.stripped_path):
                         if (i > 0 and i < len(self.stripped_path) - 1):
                             image = None
