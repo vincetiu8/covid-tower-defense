@@ -181,7 +181,7 @@ First, you need to add these assets into the correct folders. They should be add
 
 Once you've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
 base folder. This will launch the game. In the Level Select Menu, click on the
-`Enemy Preview` button. This will open up the enemy preview screen. In the window on
+`Enemy Edit` button. This will open up the enemy preview screen. In the window on
 the top-right, there will be a text box with the text `enemy name...`. Enter the enemy name
 into this box. For the 'virus', simply enter `virus` and press the `create enemy` button.
 This will load the enemy into the game.
@@ -253,7 +253,7 @@ First, you need to add these assets into the correct folders. They should be add
 
 Once you've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
 base folder. This will launch the game. In the Level Select Menu, click on the
-`Tower Preview` button. This will open up the tower preview screen. In the window on the
+`Tower Edit` button. This will open up the tower preview screen. In the window on the
 top-right, there will be a text box with the text `tower name...`. Enter the tower name
 into this box. For the 'phagocyte', simply enter `phagocyte` and press the `create tower`
 button. This will load the tower into the game.
@@ -263,11 +263,29 @@ buttons in the window. Once you are happy with how the tower functions, click
 `save settings` at the bottom of the window. Once you have saved these settings,
 you can exit the game and push your changes to Github for others to review.
 
-### Making a Level
-To make a level, the first thing you need to do is create a map for your level. You can
-either make a new map using Tiled, or simply re-use an existing map. Either way, the map
-for your level should be named in the format `map(level).tmx`, where _level_ is the
-number of your level. For instance, if you're making level 5, name your map file `map5.tmx`.
+### Making a Map
+To make a map, the first thing you need to do is download Tiled, which is an editor that
+lets you easily create tile maps. Once you've downloaded it, the next thing you need is
+a tileset. You can make a new one based on an image file, or just use an existing tileset.
+
+The next thing to do is to decide on what part of the body the map will be based on. The
+following are the body parts the game currently recognizes:
+
+1. Mouth
+2. Esophagus
+3. Trachea
+4. Lung
+5. Heart
+6. Small Intestine
+7. Large Intestine
+8. Anus
+9. Brain
+
+Note that some of these 
+
+When you're done with your map, save it with the filename `(body part).tmx`, where _body part_
+is the name of the body part the map is based on. For instance, if you're making a map for
+the mouth, name your map `mouth.tmx`.
 
 After making the map, it has to be added into the correct folder. It should be added in:
 ```
@@ -277,17 +295,24 @@ After making the map, it has to be added into the correct folder. It should be a
         (add your map file here)
 ```
 
-Once you've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
-base folder. This will launch the game. In the Level Select Menu, click on the
-`Level Preview` button. This will open up the level preview screen. In the window on the
-top-right, there will be a text called `level`, with - and + buttons to the right of it.
-Use these buttons to change the level number until it reaches the number of your level.
+### Making a Level
+Unlike making a map, enemy, or tower, making a level doesn't require you to make any new files.
+You only need to use existing assets!
+
+Firstly, tun `sergeant_t_cell.py` in the base folder. This will launch the game. In the 
+Level Select Menu, click on the `Level Edit` button. This will open up the level preview
+screen. In the window on the top-right, there will be a text called `level`, with - and + 
+buttons to the right of it. Use these buttons to change the level number until it reaches 
+the number of your level.
 
 Once the right level number has been reached, the attributes and wave data of the level
-can be edited by using the buttons in the window. Once you are happy with the level
-click `save settings` at the bottom of the window. This will create a new level file
-and save your settings to it. Once you have saved these settings, you can exit the game
-and push your changes to Github for others to review.
+can be edited by using the buttons in the window. Note that changing the `Body Part` attribute
+will not reload the map. You must exit the Level Edit menu and go back in. To avoid crash errors,
+make sure that you selected the correct body part before exiting and re-entering the Level Edit menu.
+
+Once you are happy with the level, click `save settings` at the bottom of the window. 
+This will create a new level file and save your settings to it. Once you have saved these 
+settings, you can exit the game and push your changes to Github for others to review.
 
 ## Building the Game
 For coders, in order to make a production-ready version of the game, we need to
