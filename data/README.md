@@ -10,6 +10,8 @@ Brain image Art: https://www.kenhub.com/en/library/anatomy/midsagittal-section-o
 
 HIV, Hepatitis B, and Hepatitis D image Art: https://www.freepik.com/free-vector/close-up-isolated-object-different-types-virus_7431841.htm
 
+Body image art: https://depositphotos.com/51450531/stock-illustration-human-body-anatomy-brain-lungs.html
+
 Sounds:
 
 - http://soundbible.com/1997-Cha-Ching-Register.html
