@@ -186,9 +186,6 @@ class Game(Display):
             elif len(self.texts) == 0:
                 self.prepare_next_wave()
                 self.start_next_wave()
-            elif not self.textbox.writing:
-                self.textbox.enabled = True
-                self.textbox.set_text(self.texts[0])
             return
 
         if not self.in_a_wave and self.wave > 0:
@@ -213,7 +210,10 @@ class Game(Display):
         if isinstance(self.level_data["waves"][self.wave][0], str):
             self.text = True
             self.texts = [text for text in self.level_data["waves"][self.wave]]
+            print(self.texts)
             self.ui.set_next_wave_btn(False)
+            self.textbox.enabled = True
+            self.textbox.set_text(self.texts[0])
 
         else:
             self.text = False

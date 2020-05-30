@@ -191,6 +191,7 @@ class UI:
 
 class Textbox(pg.Surface):
     def __init__(self, game):
+        self.game = game
         self.enabled = False
         self.writing = False
         self.width = SCREEN_WIDTH - MENU_OFFSET * 2
@@ -212,6 +213,7 @@ class Textbox(pg.Surface):
         elif self.position < len(self.text):
             self.position += 1
             self.current_text = self.text[:self.position]
+            self.draw()
 
     def toggle(self, state):
         if state:
@@ -229,7 +231,7 @@ class Textbox(pg.Surface):
         text = text.split("\n")
         for i, part in enumerate(text):
             rendered_text = self.font.render(part, 1, WHITE)
-            self.blit(rendered_text, (MENU_OFFSET, height))
+            self.blit(rendered_text, (MENU_TEXT_SIZE, height))
             height += MENU_TEXT_SIZE * 2
 
     def set_text(self, text):
@@ -237,7 +239,7 @@ class Textbox(pg.Surface):
         self.current_text = ""
         self.position = 1
         self.writing = True
-        self.draw()
+
 
 class Explosion(pg.sprite.Sprite):
     def __init__(self, game, x, y, rad):
