@@ -1,12 +1,17 @@
 from data.settings import *
+import textwrap
 
 class UI:
     def __init__(self, game, width, offset):
         self.game = game
         self.width = width
         self.offset = offset
-        self.wave = game.wave
-        self.max_wave = game.max_wave
+        self.wave = 1
+        self.dialogues = []
+        for i, wave in enumerate(self.game.level_data["waves"]):
+            if isinstance(wave[0], str):
+                self.dialogues.append(i)
+        self.max_wave = game.max_wave - len(self.dialogues)
         self.lives = game.lives
         self.protein = game.protein
         
@@ -39,7 +44,10 @@ class UI:
     def update(self):
         if (self.lives != self.game.lives or self.protein != self.game.protein or self.next_wave_btn_changed):
             self.next_wave_btn_changed = False
-            self.wave = self.game.wave
+            i = 0
+            while i < len(self.dialogues) and self.dialogues[i] < self.wave:
+                i += 1
+            self.wave = self.game.wave - len(self.dialogues[:i + 1]) + 1
             self.lives = self.game.lives
             self.protein = self.game.protein
             self.ui = self.get_ui()
@@ -180,6 +188,56 @@ class UI:
             return "start_wave"
 
         return -1
+
+class Textbox(pg.Surface):
+    def __init__(self, game):
+        self.enabled = False
+        self.writing = False
+        self.width = SCREEN_WIDTH - MENU_OFFSET * 2
+        self.height = GRID_MARGIN_Y # Should probably change this later.
+        super().__init__((self.width, self.height))
+        self.set_text("")
+        self.yoffset = 0
+        self.draw()
+
+    def update(self):
+        if self.enabled and self.yoffset < self.height + MENU_OFFSET:
+            self.yoffset += 10
+            return
+
+        elif not self.enabled and self.yoffset > 0:
+            self.yoffset -= 10
+            return
+
+        elif self.position < len(self.text):
+            self.position += 1
+            self.current_text = self.text[:self.position]
+
+    def toggle(self, state):
+        if state:
+            self.enabled = True
+        else:
+            self.enabled = False
+
+    def draw(self):
+        temp_img = pg.transform.scale(LEVEL_BUTTON_IMG, (self.width, self.height))
+        self.blit(temp_img, (0, 0))
+
+        height = MENU_OFFSET
+        self.font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
+        text = textwrap.fill(self.current_text, 30 - round(MENU_TEXT_SIZE / 30))  # No idea how to really calculate this.
+        text = text.split("\n")
+        for i, part in enumerate(text):
+            rendered_text = self.font.render(part, 1, WHITE)
+            self.blit(rendered_text, (MENU_OFFSET, height))
+            height += MENU_TEXT_SIZE * 2
+
+    def set_text(self, text):
+        self.text = text
+        self.current_text = ""
+        self.position = 1
+        self.writing = True
+        self.draw()
 
 class Explosion(pg.sprite.Sprite):
     def __init__(self, game, x, y, rad):

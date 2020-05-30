@@ -289,7 +289,18 @@ class TowerSelectMenu(TowerMenu):
         self.tower_selected = []
         
         self.over_tower = [-1, -1]
-        self.curr_wave = 0
+        self.texts = []
+        self.num_texts = 0
+        self.curr_wave = -1
+        for i, wave in enumerate(self.level_data["waves"]):
+            if isinstance(wave[0], str):
+                self.texts.append(True)
+                self.num_texts += 1
+            elif self.curr_wave == -1:
+                self.texts.append(False)
+                self.curr_wave = i
+        self.min_wave = self.curr_wave
+
         self.num_selected = 0
         
         self.wave_info = None
@@ -328,7 +339,12 @@ class TowerSelectMenu(TowerMenu):
         self.blit(selected_text, (SCREEN_WIDTH / 4 - selected_text.get_width() / 2, title_1.get_height() - 20))
         
         # Draws upper right text + buttons
-        title_2 = title_font.render("Wave {}/{}".format(self.curr_wave + 1, self.max_wave), 1, WHITE)
+
+        seen_texts = 0
+        for text in self.texts[:self.curr_wave + 1]:
+            if text:
+                seen_texts += 1
+        title_2 = title_font.render("Wave {}/{}".format(self.curr_wave + 1 - seen_texts, self.max_wave - self.num_texts), 1, WHITE)
         left_btn = self.make_btn("<")
         right_btn = self.make_btn(">")
         
@@ -467,9 +483,21 @@ class TowerSelectMenu(TowerMenu):
                 elif self.start_btn_rect.collidepoint(mouse_pos) and self.num_selected > 0:
                     return "game"
                 elif self.left_btn_rect.collidepoint(mouse_pos):
-                    self.curr_wave = max(self.curr_wave - 1, 0)
+                    og_wave = self.curr_wave
+                    self.curr_wave = max(self.curr_wave - 1, self.min_wave)
+                    while isinstance(self.level_data["waves"][self.curr_wave][0], str):
+                        if self.curr_wave == self.min_wave:
+                            self.curr_wave = og_wave
+                            break
+                        self.curr_wave -= 1
                 elif self.right_btn_rect.collidepoint(mouse_pos):
+                    og_wave = self.curr_wave
                     self.curr_wave = min(self.curr_wave + 1, self.max_wave - 1)
+                    while isinstance(self.level_data["waves"][self.curr_wave][0], str):
+                        if self.curr_wave == self.max_wave - 1:
+                            self.curr_wave = og_wave
+                            break
+                        self.curr_wave += 1
                 elif self.over_tower[0] != -1:
                     row, col = self.over_tower
                     if self.tower_selected[row][col]:

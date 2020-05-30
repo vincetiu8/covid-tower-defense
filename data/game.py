@@ -148,6 +148,7 @@ class Game(Display):
         self.node_is_in_path = [[]]
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
+        self.textbox = Textbox(self)
         self.prepare_next_wave()
         self.draw_tower_bases_wrapper()
         self.make_stripped_path_wrapper()
@@ -161,20 +162,7 @@ class Game(Display):
         self.projectiles.update()
         self.ui.update()
         self.explosions.update()
-        
-        if self.lives <= 0:
-            pg.event.post(self.game_done_event)
-            
-        if not self.in_a_wave and self.wave > 0:
-            self.time_passed += self.clock.get_time()
-            if self.time_passed >= WAVE_DELAY * 1000:
-                self.start_next_wave()
-
-        if self.current_wave_done() and self.in_a_wave:
-            if self.wave < self.max_wave - 1:
-                self.prepare_next_wave()                
-            elif len(self.enemies) == 0:
-                pg.event.post(self.game_done_event)
+        self.textbox.update()
 
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
@@ -189,6 +177,31 @@ class Game(Display):
         elif keys[pg.K_DOWN]:
             self.camera.move(0, -25)
 
+        if self.lives <= 0:
+            pg.event.post(self.game_done_event)
+
+        if self.text:
+            if len(self.enemies) > 0:
+                return
+            elif len(self.texts) == 0:
+                self.prepare_next_wave()
+                self.start_next_wave()
+            elif not self.textbox.writing:
+                self.textbox.enabled = True
+                self.textbox.set_text(self.texts[0])
+            return
+
+        if not self.in_a_wave and self.wave > 0:
+            self.time_passed += self.clock.get_time()
+            if self.time_passed >= WAVE_DELAY * 1000:
+                self.start_next_wave()
+
+        if self.current_wave_done() and self.in_a_wave:
+            if self.wave < self.max_wave - 1:
+                self.prepare_next_wave()                
+            elif len(self.enemies) == 0:
+                pg.event.post(self.game_done_event)
+
     def current_wave_done(self):
         for start in self.starts:
             if not start.is_done_spawning():
@@ -197,17 +210,25 @@ class Game(Display):
     
     def prepare_next_wave(self):
         self.wave += 1
-        self.in_a_wave = False
-        self.ui.set_next_wave_btn(True)
-        self.time_passed = 0
-        
-        self.starts.clear()
-        for i in self.level_data["waves"][self.wave]:
-            self.starts.append(
-                Start(self, i["start"], i["enemy_type"], i["enemy_count"],
-                      i["spawn_delay"], i["spawn_rate"]))
+        if isinstance(self.level_data["waves"][self.wave][0], str):
+            self.text = True
+            self.texts = [text for text in self.level_data["waves"][self.wave]]
+            self.ui.set_next_wave_btn(False)
 
-        self.make_stripped_path_wrapper()
+        else:
+            self.text = False
+            self.textbox.enabled = False
+            self.in_a_wave = False
+            self.ui.set_next_wave_btn(True)
+            self.time_passed = 0
+
+            self.starts.clear()
+            for i in self.level_data["waves"][self.wave]:
+                self.starts.append(
+                    Start(self, i["start"], i["enemy_type"], i["enemy_count"],
+                          i["spawn_delay"], i["spawn_rate"]))
+
+            self.make_stripped_path_wrapper()
 
     def start_next_wave(self):
         self.in_a_wave = True
@@ -274,6 +295,9 @@ class Game(Display):
             self.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright = ui_rect.topleft))
         else:
             self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = (SCREEN_WIDTH - MENU_OFFSET, MENU_OFFSET)))
+        
+        if len(self.enemies) == 0 and self.textbox.enabled:
+            self.blit(self.textbox, (MENU_OFFSET, SCREEN_HEIGHT - self.textbox.yoffset))
         
         return self
 

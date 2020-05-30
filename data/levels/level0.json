@@ -5,6 +5,9 @@
     "body_part": 0,
     "waves": [
         [
+            "Hello there."
+        ],
+        [
             {
                 "start": 0,
                 "enemy_type": "common_cold",
