@@ -47,7 +47,7 @@ class UI:
             i = 0
             while i < len(self.dialogues) and self.dialogues[i] < self.wave:
                 i += 1
-            self.wave = self.game.wave - len(self.dialogues[:i + 1]) + 1
+            self.wave = max(self.game.wave - len(self.dialogues[:i + 1]), 0)
             self.lives = self.game.lives
             self.protein = self.game.protein
             self.ui = self.get_ui()
@@ -194,44 +194,54 @@ class Textbox(pg.Surface):
         self.game = game
         self.enabled = False
         self.writing = False
-        self.width = SCREEN_WIDTH - MENU_OFFSET * 2
-        self.height = GRID_MARGIN_Y # Should probably change this later.
-        super().__init__((self.width, self.height))
+        self.rect = pg.Rect(0, 0, SCREEN_WIDTH - MENU_OFFSET * 2, 0)
         self.set_text("")
         self.yoffset = 0
         self.draw()
 
     def update(self):
-        if self.enabled and self.yoffset < self.height + MENU_OFFSET:
-            self.yoffset += 10
-            return
-
-        elif not self.enabled and self.yoffset > 0:
+        if self.enabled and self.yoffset > 0:
             self.yoffset -= 10
             return
 
+        elif not self.enabled and self.yoffset < self.rect.height + MENU_OFFSET:
+            self.yoffset += 10
+            return
+
         elif self.position < len(self.text):
-            self.position += 1
+            self.position += 2
             self.current_text = self.text[:self.position]
             self.draw()
+
+        elif self.writing:
+            self.writing = False
 
     def toggle(self, state):
         if state:
             self.enabled = True
         else:
             self.enabled = False
+            self.game.text = False
+            self.game.prepare_next_wave()
 
     def draw(self):
-        temp_img = pg.transform.scale(LEVEL_BUTTON_IMG, (self.width, self.height))
-        self.blit(temp_img, (0, 0))
-
         height = MENU_OFFSET
         self.font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
-        text = textwrap.fill(self.current_text, 30 - round(MENU_TEXT_SIZE / 30))  # No idea how to really calculate this.
+        text = textwrap.fill(self.current_text, 57)  # No idea how to really calculate this.
         text = text.split("\n")
+        texts = []
         for i, part in enumerate(text):
             rendered_text = self.font.render(part, 1, WHITE)
-            self.blit(rendered_text, (MENU_TEXT_SIZE, height))
+            texts.append(rendered_text)
+            height += MENU_TEXT_SIZE * 2
+
+        self.rect.height = height + MENU_OFFSET
+        super().__init__((self.rect.width, self.rect.height))
+        temp_img = pg.transform.scale(LEVEL_BUTTON_IMG, (self.rect.width, self.rect.height))
+        self.blit(temp_img, (0, 0))
+        height = MENU_OFFSET
+        for text in texts:
+            self.blit(text, (MENU_OFFSET, height))
             height += MENU_TEXT_SIZE * 2
 
     def set_text(self, text):
@@ -240,6 +250,23 @@ class Textbox(pg.Surface):
         self.position = 1
         self.writing = True
 
+    def finish_text(self):
+        self.current_text = self.text
+        self.position = len(self.text)
+        self.writing = False
+        self.draw()
+        self.yoffset = 0
+
+    def fast_forward(self):
+        if self.enabled and not self.writing and self.yoffset < self.rect.height:
+            self.yoffset = self.rect.height
+            return
+
+        elif not self.enabled and self.yoffset > 0:
+            self.yoffset = 0
+            return
+
+        self.finish_text()
 
 class Explosion(pg.sprite.Sprite):
     def __init__(self, game, x, y, rad):

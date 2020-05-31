@@ -181,11 +181,6 @@ class Game(Display):
             pg.event.post(self.game_done_event)
 
         if self.text:
-            if len(self.enemies) > 0:
-                return
-            elif len(self.texts) == 0:
-                self.prepare_next_wave()
-                self.start_next_wave()
             return
 
         if not self.in_a_wave and self.wave > 0:
@@ -207,13 +202,17 @@ class Game(Display):
     
     def prepare_next_wave(self):
         self.wave += 1
-        if isinstance(self.level_data["waves"][self.wave][0], str):
+        if self.wave >= len(self.level_data["waves"]):
+            return
+
+        elif isinstance(self.level_data["waves"][self.wave][0], str):
             self.text = True
             self.texts = [text for text in self.level_data["waves"][self.wave]]
-            print(self.texts)
             self.ui.set_next_wave_btn(False)
-            self.textbox.enabled = True
             self.textbox.set_text(self.texts[0])
+            self.textbox.finish_text()
+            self.textbox.yoffset = self.textbox.rect.height
+            self.textbox.toggle(True)
 
         else:
             self.text = False
@@ -296,8 +295,8 @@ class Game(Display):
         else:
             self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = (SCREEN_WIDTH - MENU_OFFSET, MENU_OFFSET)))
         
-        if len(self.enemies) == 0 and self.textbox.enabled:
-            self.blit(self.textbox, (MENU_OFFSET, SCREEN_HEIGHT - self.textbox.yoffset))
+        if len(self.enemies) == 0 and self.text:
+            self.blit(self.textbox, self.textbox.get_rect(bottomleft = (MENU_OFFSET, SCREEN_HEIGHT - MENU_OFFSET + self.textbox.yoffset)))
         
         return self
 
@@ -452,6 +451,17 @@ class Game(Display):
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
+                if self.text:
+                    if self.textbox.writing:
+                        self.textbox.fast_forward()
+                    elif len(self.texts) == 1:
+                        self.textbox.toggle(False)
+                        self.ui.set_next_wave_btn(True)
+                    else:
+                        self.texts = self.texts[1:]
+                        self.textbox.set_text(self.texts[0])
+                    return -1
+
                 if self.ui.rect.collidepoint(event.pos):
                     self.ui.set_active(not self.ui.active)
                     return -1
