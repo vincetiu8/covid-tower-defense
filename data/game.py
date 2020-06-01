@@ -36,9 +36,7 @@ class Game(Display):
         self.clock = clock
         
         self.paused = False
-        self.in_a_wave = False
-        
-        self.starts = []
+
         self.game_done_event = pg.event.Event(pg.USEREVENT)
         
         self.ui_pos = None
@@ -72,12 +70,15 @@ class Game(Display):
         self.projectiles = pg.sprite.Group()
         self.goals = pg.sprite.Group()
         self.explosions = pg.sprite.Group()
+        self.starts = []
 
         self.current_tower = None
         self.protein = SAVE_DATA["game_attrs"]["starting_protein"]["value"]
         self.lives = SAVE_DATA["game_attrs"]["lives"]["value"]
 
         self.wave = -1  # only updated at the start of prepare_next_wave()
+        self.in_a_wave = False
+
         self.cause_of_death = "IB"
         self.start_data = []
         self.map.clear_map()
@@ -207,7 +208,7 @@ class Game(Display):
 
         elif isinstance(self.level_data["waves"][self.wave][0], str):
             self.text = True
-            self.texts = [text for text in self.level_data["waves"][self.wave]]
+            self.texts = self.level_data["waves"][self.wave].copy()
             self.ui.set_next_wave_btn(False)
             self.textbox.set_text(self.texts[0])
             self.textbox.finish_text()
@@ -215,6 +216,7 @@ class Game(Display):
             self.textbox.toggle(True)
 
         else:
+            print(self.wave)
             self.text = False
             self.textbox.enabled = False
             self.in_a_wave = False
