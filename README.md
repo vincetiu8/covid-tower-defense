@@ -263,7 +263,26 @@ buttons in the window. Once you are happy with how the tower functions, click
 `save settings` at the bottom of the window. Once you have saved these settings,
 you can exit the game and push your changes to Github for others to review.
 
-### Making a Map
+### Making a Level
+Unlike making an enemy or a tower, making a level doesn't require you to make any new files.
+You only need to use existing assets!
+
+Firstly, tun `sergeant_t_cell.py` in the base folder. This will launch the game. In the 
+Level Select Menu, click on the `Level Edit` button. This will open up the level preview
+screen. In the window on the top-right, there will be a text called `level`, with - and + 
+buttons to the right of it. Use these buttons to change the level number until it reaches 
+the number of your level.
+
+Once the right level number has been reached, the attributes and wave data of the level
+can be edited by using the buttons in the window. Note that changing the `Body Part` attribute
+will not reload the map. You must exit the Level Edit menu and go back in. To avoid crash errors,
+make sure that you selected the correct body part before exiting and re-entering the Level Edit menu.
+
+Once you are happy with the level, click `save settings` at the bottom of the window. 
+This will create a new level file and save your settings to it. Once you have saved these 
+settings, you can exit the game and push your changes to Github for others to review.
+
+## Making a Map
 To make a map, the first thing you need to do is download Tiled, which is an editor that
 lets you easily create tile maps. You can download it from here: https://thorbjorn.itch.io/tiled
 Once you've downloaded it, the next thing to do is to decide on what part of the body the map 
@@ -322,34 +341,23 @@ Despite these guidelines, the best way to learn how to make a map is to simply e
 and try it out for yourself. If you're unsure about anything, ask us or check out the other maps to
 see how they work.
 
-### Making a Level
-Unlike making a map, enemy, or tower, making a level doesn't require you to make any new files.
-You only need to use existing assets!
-
-Firstly, tun `sergeant_t_cell.py` in the base folder. This will launch the game. In the 
-Level Select Menu, click on the `Level Edit` button. This will open up the level preview
-screen. In the window on the top-right, there will be a text called `level`, with - and + 
-buttons to the right of it. Use these buttons to change the level number until it reaches 
-the number of your level.
-
-Once the right level number has been reached, the attributes and wave data of the level
-can be edited by using the buttons in the window. Note that changing the `Body Part` attribute
-will not reload the map. You must exit the Level Edit menu and go back in. To avoid crash errors,
-make sure that you selected the correct body part before exiting and re-entering the Level Edit menu.
-
-Once you are happy with the level, click `save settings` at the bottom of the window. 
-This will create a new level file and save your settings to it. Once you have saved these 
-settings, you can exit the game and push your changes to Github for others to review.
-
 ## Building the Game
 For coders, in order to make a production-ready version of the game, we need to
 'build' it. The process is different for different platforms:
 
 How to create the .exe for Windows:
 1. Install pyinstaller
-2. Navigate to the download folder with `sergeant_t_cell.py`
+2. Open the terminal and navigate to the download folder with `sergeant_t_cell.py`
 3. Run the command:
 `pyinstaller --onefile -w --add-data 'data;data' sergeant_t_cell.py`
 4. This will create a folder called `dist` among other folders.  
 Open this folder to get the exe.
+5. Enjoy the game!
+
+How to create the binary file for Linux:
+1. Install pyinstaller
+2. Open the terminal and navigate to the download folder with  `sergeant_t_cell.py`
+3. Run the command:
+`pyinstaller sergeant_t_cell.py --onefile --hidden-import 'packaging.requirements' --hidden-import 'pkg_resources.py2_warn' -w --add-data 'data:data'`
+4. This will create a folder called `dist` among other folders. In the terminal, navigate inside this folder and run `./sergeant_t_cell`.
 5. Enjoy the game!
