@@ -36,9 +36,7 @@ class Game(Display):
         self.clock = clock
         
         self.paused = False
-        self.in_a_wave = False
-        
-        self.starts = []
+
         self.game_done_event = pg.event.Event(pg.USEREVENT)
         
         self.ui_pos = None
@@ -72,12 +70,15 @@ class Game(Display):
         self.projectiles = pg.sprite.Group()
         self.goals = pg.sprite.Group()
         self.explosions = pg.sprite.Group()
+        self.starts = []
 
         self.current_tower = None
         self.protein = SAVE_DATA["game_attrs"]["starting_protein"]["value"]
         self.lives = SAVE_DATA["game_attrs"]["lives"]["value"]
 
         self.wave = -1  # only updated at the start of prepare_next_wave()
+        self.in_a_wave = False
+
         self.cause_of_death = "IB"
         self.start_data = []
         self.map.clear_map()
@@ -148,6 +149,7 @@ class Game(Display):
         self.node_is_in_path = [[]]
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
+        self.textbox = Textbox(self)
         self.prepare_next_wave()
         self.draw_tower_bases_wrapper()
         self.make_stripped_path_wrapper()
@@ -161,20 +163,7 @@ class Game(Display):
         self.projectiles.update()
         self.ui.update()
         self.explosions.update()
-        
-        if self.lives <= 0:
-            pg.event.post(self.game_done_event)
-            
-        if not self.in_a_wave and self.wave > 0:
-            self.time_passed += self.clock.get_time()
-            if self.time_passed >= WAVE_DELAY * 1000:
-                self.start_next_wave()
-
-        if self.current_wave_done() and self.in_a_wave:
-            if self.wave < self.max_wave - 1:
-                self.prepare_next_wave()                
-            elif len(self.enemies) == 0:
-                pg.event.post(self.game_done_event)
+        self.textbox.update()
 
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
@@ -189,6 +178,23 @@ class Game(Display):
         elif keys[pg.K_DOWN]:
             self.camera.move(0, -25)
 
+        if self.lives <= 0:
+            pg.event.post(self.game_done_event)
+
+        if self.text:
+            return
+
+        if not self.in_a_wave and self.wave > 0:
+            self.time_passed += self.clock.get_time()
+            if self.time_passed >= WAVE_DELAY * 1000:
+                self.start_next_wave()
+
+        if self.current_wave_done() and self.in_a_wave:
+            if self.wave < self.max_wave - 1:
+                self.prepare_next_wave()                
+            elif len(self.enemies) == 0:
+                pg.event.post(self.game_done_event)
+
     def current_wave_done(self):
         for start in self.starts:
             if not start.is_done_spawning():
@@ -197,17 +203,33 @@ class Game(Display):
     
     def prepare_next_wave(self):
         self.wave += 1
-        self.in_a_wave = False
-        self.ui.set_next_wave_btn(True)
-        self.time_passed = 0
-        
-        self.starts.clear()
-        for i in self.level_data["waves"][self.wave]:
-            self.starts.append(
-                Start(self, i["start"], i["enemy_type"], i["enemy_count"],
-                      i["spawn_delay"], i["spawn_rate"]))
+        if self.wave >= len(self.level_data["waves"]):
+            return
 
-        self.make_stripped_path_wrapper()
+        elif isinstance(self.level_data["waves"][self.wave][0], str):
+            self.text = True
+            self.texts = self.level_data["waves"][self.wave].copy()
+            self.ui.set_next_wave_btn(False)
+            self.textbox.set_text(self.texts[0])
+            self.textbox.finish_text()
+            self.textbox.yoffset = self.textbox.rect.height
+            self.textbox.toggle(True)
+
+        else:
+            print(self.wave)
+            self.text = False
+            self.textbox.enabled = False
+            self.in_a_wave = False
+            self.ui.set_next_wave_btn(True)
+            self.time_passed = 0
+
+            self.starts.clear()
+            for i in self.level_data["waves"][self.wave]:
+                self.starts.append(
+                    Start(self, i["start"], i["enemy_type"], i["enemy_count"],
+                          i["spawn_delay"], i["spawn_rate"]))
+
+            self.make_stripped_path_wrapper()
 
     def start_next_wave(self):
         self.in_a_wave = True
@@ -274,6 +296,9 @@ class Game(Display):
             self.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright = ui_rect.topleft))
         else:
             self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = (SCREEN_WIDTH - MENU_OFFSET, MENU_OFFSET)))
+        
+        if len(self.enemies) == 0 and self.text:
+            self.blit(self.textbox, self.textbox.get_rect(bottomleft = (MENU_OFFSET, SCREEN_HEIGHT - MENU_OFFSET + self.textbox.yoffset)))
         
         return self
 
@@ -428,6 +453,17 @@ class Game(Display):
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
+                if self.text:
+                    if self.textbox.writing:
+                        self.textbox.fast_forward()
+                    elif len(self.texts) == 1:
+                        self.textbox.toggle(False)
+                        self.ui.set_next_wave_btn(True)
+                    else:
+                        self.texts = self.texts[1:]
+                        self.textbox.set_text(self.texts[0])
+                    return -1
+
                 if self.ui.rect.collidepoint(event.pos):
                     self.ui.set_active(not self.ui.active)
                     return -1

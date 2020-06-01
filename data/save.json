@@ -1,11 +1,12 @@
 {
-    "level": 0,
+    "level": 1,
     "music_vol": 0.0,
     "sfx_vol": 0.0,
     "fullscreen": false,
-    "max_dna": 0,
+    "max_dna": 52,
     "used_dna": 0,
     "highscores": [
+        52,
         0
     ],
     "owned_towers": [

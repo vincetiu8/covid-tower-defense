@@ -5,6 +5,13 @@
     "body_part": 0,
     "waves": [
         [
+            "Hello there newbie! Nice to have you on board!",
+            "You'll be in charge of our defensive tactics now, since the old commander left.",
+            "It looks like some enemies will be attacking! Place a tower down to defend the body!",
+            "Hint: You can place a tower down by clicking on its icon and clicking again where you want to place it.",
+            "Hint: When you're ready, press the \"Start Wave\" button to let the viruses in."
+        ],
+        [
             {
                 "start": 0,
                 "enemy_type": "common_cold",
@@ -15,6 +22,10 @@
                 "tower_name": 0,
                 "tower_stage": 0
             }
+        ],
+        [
+            "Good stuff! With you in charge, these viruses will be shredded to smithereens in no time!",
+            "Uh oh. More of them incoming. Place more towers down!"
         ],
         [
             {
@@ -47,6 +58,9 @@
                 "spawn_delay": 4,
                 "spawn_rate": 0.2
             }
+        ],
+        [
+            "Looks like that was the last of them for now. A brilliant outcome for your first mission!"
         ]
     ]
 }

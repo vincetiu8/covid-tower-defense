@@ -156,6 +156,8 @@ for file in level_list:
         enemies = []
         for wave in level["waves"]:
             for sub_wave in wave:
+                if isinstance(sub_wave, str):
+                    continue
                 enemy = sub_wave["enemy_type"]
                 if enemy not in enemies:
                     enemies.append(enemy)
