@@ -181,7 +181,7 @@ First, you need to add these assets into the correct folders. They should be add
 
 Once you've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
 base folder. This will launch the game. In the Level Select Menu, click on the
-`Enemy Preview` button. This will open up the enemy preview screen. In the window on
+`Enemy Edit` button. This will open up the enemy preview screen. In the window on
 the top-right, there will be a text box with the text `enemy name...`. Enter the enemy name
 into this box. For the 'virus', simply enter `virus` and press the `create enemy` button.
 This will load the enemy into the game.
@@ -253,7 +253,7 @@ First, you need to add these assets into the correct folders. They should be add
 
 Once you've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
 base folder. This will launch the game. In the Level Select Menu, click on the
-`Tower Preview` button. This will open up the tower preview screen. In the window on the
+`Tower Edit` button. This will open up the tower preview screen. In the window on the
 top-right, there will be a text box with the text `tower name...`. Enter the tower name
 into this box. For the 'phagocyte', simply enter `phagocyte` and press the `create tower`
 button. This will load the tower into the game.
@@ -264,12 +264,51 @@ buttons in the window. Once you are happy with how the tower functions, click
 you can exit the game and push your changes to Github for others to review.
 
 ### Making a Level
-To make a level, the first thing you need to do is create a map for your level. You can
-either make a new map using Tiled, or simply re-use an existing map. Either way, the map
-for your level should be named in the format `map(level).tmx`, where _level_ is the
-number of your level. For instance, if you're making level 5, name your map file `map5.tmx`.
+Unlike making an enemy or a tower, making a level doesn't require you to make any new files.
+You only need to use existing assets!
 
-After making the map, it has to be added into the correct folder. It should be added in:
+Firstly, tun `sergeant_t_cell.py` in the base folder. This will launch the game. In the 
+Level Select Menu, click on the `Level Edit` button. This will open up the level preview
+screen. In the window on the top-right, there will be a text called `level`, with - and + 
+buttons to the right of it. Use these buttons to change the level number until it reaches 
+the number of your level.
+
+Once the right level number has been reached, the attributes and wave data of the level
+can be edited by using the buttons in the window. Note that changing the `Body Part` attribute
+will not reload the map. You must exit the Level Edit menu and go back in. To avoid crash errors,
+make sure that you selected the correct body part before exiting and re-entering the Level Edit menu.
+
+Once you are happy with the level, click `save settings` at the bottom of the window. 
+This will create a new level file and save your settings to it. Once you have saved these 
+settings, you can exit the game and push your changes to Github for others to review.
+
+## Making a Map
+To make a map, the first thing you need to do is download Tiled, which is an editor that
+lets you easily create tile maps. You can download it from here: https://thorbjorn.itch.io/tiled
+Once you've downloaded it, the next thing to do is to decide on what part of the body the map 
+will be based on. The following are the body parts the game currently recognizes:
+
+1. Mouth
+2. Esophagus
+3. Trachea
+4. Lung
+5. Heart
+6. Small Intestine
+7. Large Intestine
+8. Anus
+9. Brain
+
+Some of these body parts already have maps created for them. It's highly recommended you make
+maps for body parts which don't have a map yet. If you want to make updates to an existing map,
+please let us know first!
+
+After choosing a body part, you can now make a new map. Open up Tiled and on the menu bar, select
+`File > New > New Map`. A New Map window should pop up showing various settings. You can safely ignore
+the three settings under `Map`. For `Map Size`, select `Fixed`, then input the width and the height
+of your map in terms of tiles. For the tile size, set both the width and height to 42 px. After all
+the settings have been set, click `Save As`. For the game to load it, the map has to be placed
+in the correct folder. Thus, starting from where you save the game files, the new map should be
+saved in:
 ```
 .
 ├── data
@@ -277,17 +316,30 @@ After making the map, it has to be added into the correct folder. It should be a
         (add your map file here)
 ```
 
-Once you've moved the assets to the correct folders, run `sergeant_t_cell.py` in the
-base folder. This will launch the game. In the Level Select Menu, click on the
-`Level Preview` button. This will open up the level preview screen. In the window on the
-top-right, there will be a text called `level`, with - and + buttons to the right of it.
-Use these buttons to change the level number until it reaches the number of your level.
+The filename of the map should be `(body part).tmx`, where _body part_ is the name of the body 
+part the map is based on. For instance, if you're making a map for the mouth, name your map
+`mouth.tmx`.
 
-Once the right level number has been reached, the attributes and wave data of the level
-can be edited by using the buttons in the window. Once you are happy with the level
-click `save settings` at the bottom of the window. This will create a new level file
-and save your settings to it. Once you have saved these settings, you can exit the game
-and push your changes to Github for others to review.
+After saving the map, you're now ready to start making your own map! First, you need to import a
+tileset. You can create a new tileset or use one of the existing ones. Once you have a tileset, you
+can import it by selecting `File > Open` and then selecting your tileset. 
+
+There are many ways to go about designing your map, but here are some important guidelines to
+follow to make sure they work properly in-game:
+
+- When you make a new map, you should see a layer in the `Layers` section called `Tile Layer 1`. Rename this to `background`.
+- Suppose you want to place another layer of tiles on top of the `background` layer. Click the `New Layer` button to add a new layer, then rename the layer to `foreground`. Place this layer above the `background` layer.
+- To create game objects such as walls, starts, goals, etc., you have to make an object layer. Right click on an empty part of the `Layers` section and select `New > Object Layer`. Name the layer `obstacles` and place it above all other layers. To add objects into this layer, select the layer and then hit the `R` key. By dragging your cursor over the tile map, you can create a new rectangle object. Change the x, y, width, and height attributes of the object to what you want it to be. Once you're satisfied with it, give the object a name depending on what that object represents:
+    - `start(number)` - For objects representing starting tiles, with _number_ is the number of the start objects, starting from 0. For instance, if you have two start objects, one of them should be named `start0` and the other should be named `start1`.
+    - `goal` - For objects representing goal tiles.
+    - `wall` - For objects representing tiles that the enemies can't pass through and player can't place their towers on. Note that the entrances of all arteries and veins should have a wall object.
+    - `artery` - For objects representing tiles with arteries on them, not including the artery entrances.
+    - `artery_entrance` - For objects representing tiles which the enemies use to enter the arteries. This includes both the artery entrance tile and the tile from which the enemy will enter the artery.
+    - `vein` and `vein_entrance` - For objects with the same function as `artery` and `artery_entrance`, respectively, but for veins.
+
+Despite these guidelines, the best way to learn how to make a map is to simply experiment
+and try it out for yourself. If you're unsure about anything, ask us or check out the other maps to
+see how they work.
 
 ## Building the Game
 For coders, in order to make a production-ready version of the game, we need to
@@ -295,9 +347,17 @@ For coders, in order to make a production-ready version of the game, we need to
 
 How to create the .exe for Windows:
 1. Install pyinstaller
-2. Navigate to the download folder with `sergeant_t_cell.py`
+2. Open the terminal and navigate to the download folder with `sergeant_t_cell.py`
 3. Run the command:
 `pyinstaller --onefile -w --add-data 'data;data' sergeant_t_cell.py`
 4. This will create a folder called `dist` among other folders.  
 Open this folder to get the exe.
+5. Enjoy the game!
+
+How to create the binary file for Linux:
+1. Install pyinstaller
+2. Open the terminal and navigate to the download folder with  `sergeant_t_cell.py`
+3. Run the command:
+`pyinstaller sergeant_t_cell.py --onefile --hidden-import 'packaging.requirements' --hidden-import 'pkg_resources.py2_warn' -w --add-data 'data:data'`
+4. This will create a folder called `dist` among other folders. In the terminal, navigate inside this folder and run `./sergeant_t_cell`.
 5. Enjoy the game!
