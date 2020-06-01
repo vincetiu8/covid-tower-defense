@@ -265,11 +265,9 @@ you can exit the game and push your changes to Github for others to review.
 
 ### Making a Map
 To make a map, the first thing you need to do is download Tiled, which is an editor that
-lets you easily create tile maps. Once you've downloaded it, the next thing you need is
-a tileset. You can make a new one based on an image file, or just use an existing tileset.
-
-The next thing to do is to decide on what part of the body the map will be based on. The
-following are the body parts the game currently recognizes:
+lets you easily create tile maps. You can download it from here: https://thorbjorn.itch.io/tiled
+Once you've downloaded it, the next thing to do is to decide on what part of the body the map 
+will be based on. The following are the body parts the game currently recognizes:
 
 1. Mouth
 2. Esophagus
@@ -281,19 +279,48 @@ following are the body parts the game currently recognizes:
 8. Anus
 9. Brain
 
-Note that some of these 
+Some of these body parts already have maps created for them. It's highly recommended you make
+maps for body parts which don't have a map yet. If you want to make updates to an existing map,
+please let us know first!
 
-When you're done with your map, save it with the filename `(body part).tmx`, where _body part_
-is the name of the body part the map is based on. For instance, if you're making a map for
-the mouth, name your map `mouth.tmx`.
-
-After making the map, it has to be added into the correct folder. It should be added in:
+After choosing a body part, you can now make a new map. Open up Tiled and on the menu bar, select
+`File > New > New Map`. A New Map window should pop up showing various settings. You can safely ignore
+the three settings under `Map`. For `Map Size`, select `Fixed`, then input the width and the height
+of your map in terms of tiles. For the tile size, set both the width and height to 42 px. After all
+the settings have been set, click `Save As`. For the game to load it, the map has to be placed
+in the correct folder. Thus, starting from where you save the game files, the new map should be
+saved in:
 ```
 .
 ├── data
     ├── maps
         (add your map file here)
 ```
+
+The filename of the map should be `(body part).tmx`, where _body part_ is the name of the body 
+part the map is based on. For instance, if you're making a map for the mouth, name your map
+`mouth.tmx`.
+
+After saving the map, you're now ready to start making your own map! First, you need to import a
+tileset. You can create a new tileset or use one of the existing ones. Once you have a tileset, you
+can import it by selecting `File > Open` and then selecting your tileset. 
+
+There are many ways to go about designing your map, but here are some important guidelines to
+follow to make sure they work properly in-game:
+
+- When you make a new map, you should see a layer in the `Layers` section called `Tile Layer 1`. Rename this to `background`.
+- Suppose you want to place another layer of tiles on top of the `background` layer. Click the `New Layer` button to add a new layer, then rename the layer to `foreground`. Place this layer above the `background` layer.
+- To create game objects such as walls, starts, goals, etc., you have to make an object layer. Right click on an empty part of the `Layers` section and select `New > Object Layer`. Name the layer `obstacles` and place it above all other layers. To add objects into this layer, select the layer and then hit the `R` key. By dragging your cursor over the tile map, you can create a new rectangle object. Change the x, y, width, and height attributes of the object to what you want it to be. Once you're satisfied with it, give the object a name depending on what that object represents:
+    - `start(number)` - For objects representing starting tiles, with _number_ is the number of the start objects, starting from 0. For instance, if you have two start objects, one of them should be named `start0` and the other should be named `start1`.
+    - `goal` - For objects representing goal tiles.
+    - `wall` - For objects representing tiles that the enemies can't pass through and player can't place their towers on. Note that the entrances of all arteries and veins should have a wall object.
+    - `artery` - For objects representing tiles with arteries on them, not including the artery entrances.
+    - `artery_entrance` - For objects representing tiles which the enemies use to enter the arteries. This includes both the artery entrance tile and the tile from which the enemy will enter the artery.
+    - `vein` and `vein_entrance` - For objects with the same function as `artery` and `artery_entrance`, respectively, but for veins.
+
+Despite these guidelines, the best way to learn how to make a map is to simply experiment
+and try it out for yourself. If you're unsure about anything, ask us or check out the other maps to
+see how they work.
 
 ### Making a Level
 Unlike making a map, enemy, or tower, making a level doesn't require you to make any new files.
