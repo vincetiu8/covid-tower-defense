@@ -2,6 +2,7 @@
     "title": "Testing Ground",
     "description": "A place to test out the game. Relax and code on!",
     "difficulty": 0,
+    "body_part": 0,
     "waves": [
         [
             {
@@ -9,7 +10,10 @@
                 "enemy_type": "common_cold",
                 "enemy_count": 21,
                 "spawn_delay": 3,
-                "spawn_rate": 0.2
+                "spawn_rate": 0.2,
+                "scroll_position": 1,
+                "tower_name": 0,
+                "tower_stage": 0
             }
         ],
         [

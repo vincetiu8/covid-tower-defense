@@ -22,10 +22,19 @@ class StartMenu(Display):
 class Menu(Display):
     def __init__(self):
         super().__init__()
-        self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.camera = Camera(SCREEN_WIDTH * 0.8, SCREEN_HEIGHT * 0.8, SCREEN_WIDTH, SCREEN_HEIGHT)
+        
+        self.base_zoom = self.camera.get_zoom()
+        self.zoom_step = -1
+        self.body_images = []
+        self.body_image = self.camera.apply_image(BODY_IMG)
+        
+        self.body_coords = (-250, 150)
         
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
-        self.level_buttons = [pg.Rect((-80 + 140 * i, 400), self.level_button_rect.size) for i in range(len(LEVEL_DATA))]
+        self.level_button_rect_2 = LEVEL_BUTTON_IMG_2.get_rect()
+        self.level_buttons = []
+        self.init_levels()
 
         self.tower_preview_button = pg.Rect((800, 200), self.level_button_rect.size)
         self.enemy_preview_button = pg.Rect((800, 600), self.level_button_rect.size)
@@ -35,14 +44,16 @@ class Menu(Display):
         self.level_edit_button = pg.Rect((1200, 1000), self.level_button_rect.size)
         self.options_button = pg.Rect((850, -100), OPTIONS_IMGS[0].get_size())
         
-        self.base_zoom = self.camera.get_zoom()
-        self.zoom_step = -1
-        self.body_images = []
-        self.body_image = self.camera.apply_image(BODY_IMG)
-        
         self.init_body_1()
 
         self.over_level = -1
+        
+    def init_levels(self):
+        for i, level in enumerate(LEVEL_DATA):
+            temp_coords = BODY_PARTS[list(BODY_PARTS)[level["body_part"]]]
+            true_coords = (temp_coords[0] + self.body_coords[0] - self.level_button_rect_2.w // 2,
+                           temp_coords[1] + self.body_coords[1] - self.level_button_rect_2.h // 2)
+            self.level_buttons.append(pg.Rect(true_coords, self.level_button_rect_2.size))
         
     def init_body_1(self): #inits half the body_images on game startup
         for i in range(5):
@@ -75,7 +86,7 @@ class Menu(Display):
     def draw(self):
         self.fill((0, 0, 0))
         
-        self.blit(self.body_image, self.camera.apply_tuple((-775, 150)))
+        self.blit(self.body_image, self.camera.apply_tuple(self.body_coords))
 
         big_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w * 4)
         lives_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w)
@@ -87,14 +98,14 @@ class Menu(Display):
 
         for i, button in enumerate(self.level_buttons):
             if SAVE_DATA["level"] >= i:
-                self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(button))
-                lives_text = lives_font.render(str(i + 1), 1, WHITE)
-                self.blit(self.camera.apply_image(lives_text), self.camera.apply_rect(lives_text.get_rect(center=button.center)))
+                self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG_2), self.camera.apply_rect(button))
+                #lives_text = lives_font.render(str(i + 1), 1, WHITE)
+                #self.blit(self.camera.apply_image(lives_text), self.camera.apply_rect(lives_text.get_rect(center=button.center)))
             else:
-                grey_image = LEVEL_BUTTON_IMG.copy()
+                grey_image = LEVEL_BUTTON_IMG_2.copy()
                 grey_image.fill(DARK_GREY, special_flags=pg.BLEND_RGB_MIN)
                 self.blit(self.camera.apply_image(grey_image), self.camera.apply_rect(button))
-                self.blit(self.camera.apply_image(LOCK_IMG), self.camera.apply_rect(LOCK_IMG.get_rect(center=button.center)))
+                #self.blit(self.camera.apply_image(LOCK_IMG), self.camera.apply_rect(LOCK_IMG.get_rect(center=button.center)))
 
         self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.tower_preview_button))
         lives_text = lives_font.render("Tower", 1, WHITE)
@@ -267,7 +278,7 @@ class TowerSelectMenu(TowerMenu):
     def new(self, args):
         # args[0] = level
         self.level_data = LEVEL_DATA[args[0]]
-        map = TiledMap(path.join(MAP_FOLDER, "map{}.tmx".format(args[0])))
+        map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(list(BODY_PARTS)[LEVEL_DATA[args[0]]["body_part"]])))
         self.map_img = None
         self.draw_map(map)
         
@@ -545,9 +556,9 @@ class LevelInfo(HoverInfo):
         self.level = level
         if self.unlocked:
             self.level_data = LEVEL_DATA[level]
-            super().__init__(self.level_data["title"], self.level_data["description"])
+            super().__init__("{}. {}".format(self.level + 1, self.level_data["title"]), self.level_data["description"])
         else:
-            super().__init__("???", "An unknown level. Complete the previous levels to unlock this one!")
+            super().__init__("{}. ???".format(self.level + 1), "An unknown level. Complete the previous levels to unlock this one!")
         
     def make_other_info(self):
         if self.unlocked:

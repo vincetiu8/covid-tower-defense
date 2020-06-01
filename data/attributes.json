@@ -270,6 +270,11 @@
             "increment": 1,
             "dp": 0,
             "default": 2
+        },
+        "body_part": {
+            "type": "select",
+            "values": ["mouth", "esophagus", "trachea", "lung", "heart", "small_intestine", "large_intestine", "anus", "brain"],
+            "default": 0
         }
     },
     "sub_wave": {

@@ -2,6 +2,7 @@
     "title": "Testing Ground 2",
     "description": "Another place to try out things. Maybe it will be different on this map!",
     "difficulty": 2,
+    "body_part": 1,
     "waves": [
         [
             {
@@ -9,7 +10,10 @@
                 "enemy_type": "common_cold",
                 "enemy_count": 50,
                 "spawn_delay": 3,
-                "spawn_rate": 0.05
+                "spawn_rate": 0.05,
+                "scroll_position": 1,
+                "tower_name": 0,
+                "tower_stage": 0
             }
         ],
         [
