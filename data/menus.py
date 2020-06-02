@@ -395,11 +395,11 @@ class TowerSelectMenu(TowerMenu):
         # Draws stuff at the bottom
 
         if self.difficulty == 0:
-            difficulty = "Easy"
+            difficulty = "Mild"
         elif self.difficulty == 1:
-            difficulty = "Medium"
+            difficulty = "Acute"
         else:
-            difficulty = "Hard"
+            difficulty = "Severe"
         difficulty_text = text_font.render("Difficulty: {}".format(difficulty), 1, WHITE)
         self.blit(difficulty_text, ((SCREEN_WIDTH - difficulty_text.get_width()) / 2, BTN_Y))
 
@@ -652,6 +652,21 @@ class LevelInfo(HoverInfo):
             
             high_score_text = self.info_font.render("High Score: {}".format(SAVE_DATA["highscores"][self.level]), 1, WHITE)
             self.add_text(high_score_text)
+
+            max_diff = 0
+            while SAVE_DATA["levels"][self.level][max_diff]:
+                max_diff += 1
+            max_diff -= 1
+
+            if max_diff == 0:
+                max_diff_text = "Mild"
+            elif max_diff == 1:
+                max_diff_text = "Acute"
+            else:
+                max_diff_text = "Severe"
+
+            text = self.info_font.render("Maximum Difficulty Unlocked: {}".format(max_diff_text), 1, WHITE)
+            self.add_text(text)
         
 class TowerInfo(HoverInfo):
     def __init__(self, tower):
