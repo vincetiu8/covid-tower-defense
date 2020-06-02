@@ -2,17 +2,17 @@
     "levels": [
         [
             true,
-            false,
+            true,
             false
         ]
     ],
     "music_vol": 0.0,
     "sfx_vol": 0.0,
     "fullscreen": false,
-    "max_dna": 52,
+    "max_dna": 10,
     "used_dna": 0,
     "highscores": [
-        0
+        10
     ],
     "owned_towers": [
         "t_cell"
