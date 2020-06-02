@@ -251,6 +251,8 @@ class Game(Display):
         self.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
         self.blit(self.camera.apply_image(self.path_surf), self.camera.apply_tuple((0, 0)))
+        
+        self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
 
         self.blit(self.camera.apply_image(self.tower_bases_surf),
                      self.camera.apply_rect(self.tower_bases_surf.get_rect()))
@@ -276,8 +278,6 @@ class Game(Display):
 
         for explosion in self.explosions:
             self.blit(self.camera.apply_image(explosion.get_surf()), self.camera.apply_tuple((explosion.x, explosion.y)))
-
-        self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
 
         if self.current_tower != None:
             self.draw_tower_preview()
@@ -606,8 +606,8 @@ class Start():
         if (self.time_passed >= self.next_spawn and (self.infinity or self.enemy_count > 0)):
             self.game.enemies.add(Enemy(
                 game = self.game,
-                x = self.rect.x + random.randrange(1, self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width()),
-                y = self.rect.y + random.randrange(1, self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height()),
+                x = self.rect.x + self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width(),
+                y = self.rect.y + self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height(),
                 name = self.enemy_type))
             self.next_spawn = self.spawn_rate * 1000
             self.time_passed = 0
