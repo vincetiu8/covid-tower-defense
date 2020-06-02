@@ -7,10 +7,13 @@ class UI:
         self.width = width
         self.offset = offset
         self.wave = 1
+        self.first_wave = -1
         self.dialogues = []
         for i, wave in enumerate(self.game.level_data["waves"][self.game.difficulty]):
             if isinstance(wave[0], str):
                 self.dialogues.append(i)
+            elif self.first_wave == -1:
+                self.first_wave = i
         self.max_wave = game.max_wave - len(self.dialogues)
         self.lives = game.lives
         self.protein = game.protein
@@ -52,7 +55,7 @@ class UI:
             self.protein = self.game.protein
             self.ui = self.get_ui()
             
-        if not self.game.in_a_wave and self.wave > 0:
+        if not self.game.in_a_wave and self.wave > self.first_wave:
             self.update_timer()
 
     def select_tower(self, x, y):
