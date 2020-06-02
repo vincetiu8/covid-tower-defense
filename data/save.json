@@ -3,16 +3,16 @@
         [
             true,
             true,
-            false
+            true
         ]
     ],
     "music_vol": 0.0,
     "sfx_vol": 0.0,
     "fullscreen": false,
-    "max_dna": 10,
+    "max_dna": 134,
     "used_dna": 0,
     "highscores": [
-        10
+        134
     ],
     "owned_towers": [
         "t_cell"

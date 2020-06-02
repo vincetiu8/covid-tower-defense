@@ -6,7 +6,7 @@
             {
                 "area_of_effect": false,
                 "at": 2,
-                "attack_speed": 0.25,
+                "attack_speed": 0.05,
                 "bullet_lifetime": 0.3,
                 "bullet_speed": 1000,
                 "damage": 2,

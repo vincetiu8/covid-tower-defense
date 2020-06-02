@@ -654,7 +654,7 @@ class LevelInfo(HoverInfo):
             self.add_text(high_score_text)
 
             max_diff = 0
-            while SAVE_DATA["levels"][self.level][max_diff]:
+            while max_diff < len(SAVE_DATA["levels"][self.level]) and SAVE_DATA["levels"][self.level][max_diff]:
                 max_diff += 1
             max_diff -= 1
 

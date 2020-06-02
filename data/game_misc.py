@@ -56,6 +56,7 @@ class UI:
             self.ui = self.get_ui()
             
         if not self.game.in_a_wave and self.wave > self.first_wave:
+            print("updating")
             self.update_timer()
 
     def select_tower(self, x, y):
