@@ -1,18 +1,17 @@
 {
     "level": 2,
     "music_vol": 0.0,
-    "sfx_vol": 0.404,
+    "sfx_vol": 0.0,
     "fullscreen": false,
-    "max_dna": 133,
+    "max_dna": 153,
     "used_dna": 0,
     "highscores": [
-        116,
+        136,
         17,
         0
     ],
     "owned_towers": [
-        "t_cell",
-        "neutrophil"
+        "t_cell"
     ],
     "game_attrs": {
         "lives": {
@@ -23,7 +22,7 @@
             "description": "The number of lives you start with on each level."
         },
         "starting_protein": {
-            "value": 50,
+            "value": 30,
             "increment": 5,
             "upgrade_cost": 75,
             "cost_increment": 10,
