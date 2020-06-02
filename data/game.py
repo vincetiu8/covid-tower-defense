@@ -608,10 +608,11 @@ class Start():
             self.time_passed += self.clock.get_time()
             
         if (self.time_passed >= self.next_spawn and (self.infinity or self.enemy_count > 0)):
+            tilesize = self.game.map.tilesize
             self.game.enemies.add(Enemy(
                 game = self.game,
-                x = self.rect.x + self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width(),
-                y = self.rect.y + self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height(),
+                x = self.rect.x + ENEMY_DATA[self.enemy_type]["image"].get_width() + tilesize * random.randint(0, self.rect.w // tilesize - 1),
+                y = self.rect.y + ENEMY_DATA[self.enemy_type]["image"].get_height() + tilesize * random.randint(0, self.rect.h // tilesize - 1),
                 name = self.enemy_type))
             self.next_spawn = self.spawn_rate * 1000
             self.time_passed = 0
