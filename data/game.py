@@ -188,11 +188,11 @@ class Game(Display):
             self.time_passed += self.clock.get_time()
             if self.time_passed >= WAVE_DELAY * 1000:
                 self.start_next_wave()
-
+                
         if self.current_wave_done() and self.in_a_wave:
             if self.wave < self.max_wave:
                 self.prepare_next_text()
-            if len(self.enemies) == 0:
+            elif len(self.enemies) == 0:
                 pg.event.post(self.game_done_event)
 
     def current_wave_done(self):
@@ -202,16 +202,20 @@ class Game(Display):
         return True
     
     def prepare_next_text(self):
-        self.wave += 1
-        if len(self.level_data["texts"][self.wave]) > 0:
-            self.text = True
-            self.texts = self.level_data["texts"][self.wave].copy()
-            self.ui.set_next_wave_btn(False)
-            self.textbox.set_text(self.texts[0])
-            self.textbox.finish_text()
-            self.textbox.yoffset = self.textbox.rect.height
-            self.textbox.toggle(True)
+        # Wave has text --> text (and the next wave) don't appear until previous wave is all dead
+        # Wave has no text --> next wave starts counting down immediately after previous wave is done spawning
+        if len(self.level_data["texts"][self.wave + 1]) > 0:  
+            if len(self.enemies) == 0:
+                self.wave += 1
+                self.text = True
+                self.texts = self.level_data["texts"][self.wave].copy()
+                self.ui.set_next_wave_btn(False)
+                self.textbox.set_text(self.texts[0])
+                self.textbox.finish_text()
+                self.textbox.yoffset = self.textbox.rect.height
+                self.textbox.toggle(True)
         else:
+            self.wave += 1
             self.text = False
             self.textbox.enabled = False
             self.prepare_next_wave()
