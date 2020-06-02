@@ -90,7 +90,7 @@ class Main:
                 if result != -1:
                     args = []
                     if result == "game" or result == "resume":
-                        args.extend([self.menu.get_over_level(), result == "resume", self.tower_select.get_selected_towers()])
+                        args.extend([(self.menu.get_over_level(), self.tower_select.get_difficulty()), result == "resume", self.tower_select.get_selected_towers()])
                     elif result == "tower_select":
                         args.append(self.menu.get_over_level())
                     elif result == "options":

@@ -8,7 +8,7 @@ class UI:
         self.offset = offset
         self.wave = 1
         self.dialogues = []
-        for i, wave in enumerate(self.game.level_data["waves"]):
+        for i, wave in enumerate(self.game.level_data["waves"][self.game.difficulty]):
             if isinstance(wave[0], str):
                 self.dialogues.append(i)
         self.max_wave = game.max_wave - len(self.dialogues)

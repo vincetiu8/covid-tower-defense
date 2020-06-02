@@ -48,10 +48,10 @@ class Game(Display):
 
     def load_level_data(self):
         self.level_data = LEVEL_DATA[self.level]
-        self.max_wave = len(self.level_data["waves"])
+        self.max_wave = len(self.level_data["waves"][self.difficulty])
         
     def new(self, args):
-        self.level = args[0]
+        self.level, self.difficulty = args[0]
         to_resume = args[1]
         self.available_towers = args[2]
         
@@ -203,12 +203,12 @@ class Game(Display):
     
     def prepare_next_wave(self):
         self.wave += 1
-        if self.wave >= len(self.level_data["waves"]):
+        if self.wave >= len(self.level_data["waves"][self.difficulty]):
             return
 
-        elif isinstance(self.level_data["waves"][self.wave][0], str):
+        elif isinstance(self.level_data["waves"][self.difficulty][self.wave][0], str):
             self.text = True
-            self.texts = self.level_data["waves"][self.wave].copy()
+            self.texts = self.level_data["waves"][self.difficulty][self.wave].copy()
             self.ui.set_next_wave_btn(False)
             self.textbox.set_text(self.texts[0])
             self.textbox.finish_text()
@@ -216,7 +216,6 @@ class Game(Display):
             self.textbox.toggle(True)
 
         else:
-            print(self.wave)
             self.text = False
             self.textbox.enabled = False
             self.in_a_wave = False
@@ -224,7 +223,7 @@ class Game(Display):
             self.time_passed = 0
 
             self.starts.clear()
-            for i in self.level_data["waves"][self.wave]:
+            for i in self.level_data["waves"][self.difficulty][self.wave]:
                 self.starts.append(
                     Start(self, i["start"], i["enemy_type"], i["enemy_count"],
                           i["spawn_delay"], i["spawn_rate"]))

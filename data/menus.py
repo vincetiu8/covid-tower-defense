@@ -281,35 +281,17 @@ class TowerSelectMenu(TowerMenu):
         map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(list(BODY_PARTS)[LEVEL_DATA[args[0]]["body_part"]])))
         self.map_img = None
         self.draw_map(map)
-        
-        self.max_wave = len(self.level_data["waves"])
-        
+
+        self.difficulty = 0
         self.towers = []
         self.tower_rects = []
         self.tower_selected = []
-        
-        self.over_tower = [-1, -1]
-        self.texts = []
-        self.num_texts = 0
-        self.curr_wave = -1
-        for i, wave in enumerate(self.level_data["waves"]):
-            if isinstance(wave[0], str):
-                self.texts.append(True)
-                self.num_texts += 1
-            elif self.curr_wave == -1:
-                self.texts.append(False)
-                self.curr_wave = i
-        self.min_wave = self.curr_wave
 
+        self.over_tower = [-1, -1]
         self.num_selected = 0
-        
-        self.wave_info = None
-        
-        self.over_enemy = None
-        self.wave_data = {}
-        
+
         tower_names = SAVE_DATA["owned_towers"]
-        
+
         row = -1
         for i in range(len(tower_names)):
             if i % GRID_ROW_SIZE == 0:
@@ -317,13 +299,36 @@ class TowerSelectMenu(TowerMenu):
                 self.towers.append([])
                 self.tower_rects.append([])
                 self.tower_selected.append([])
-            
+
             self.towers[row].append(tower_names[i])
             self.tower_rects[row].append(pg.Rect(self.get_locs(row, i % GRID_ROW_SIZE), self.get_dims()))
             self.tower_selected[row].append(False)
-            
+
         self.tower_infos = [None for i in range(len(tower_names))]
         self.enemy_infos = {}
+
+        self.load_level_data()
+
+    def load_level_data(self):
+        self.max_wave = len(self.level_data["waves"][self.difficulty])
+
+        self.texts = []
+        self.num_texts = 0
+        self.curr_wave = -1
+        for i, wave in enumerate(self.level_data["waves"][self.difficulty]):
+            if isinstance(wave[0], str):
+                self.texts.append(True)
+                self.num_texts += 1
+                continue
+            elif self.curr_wave == -1:
+                self.curr_wave = i
+            self.texts.append(False)
+        self.min_wave = self.curr_wave
+
+        self.wave_info = None
+        
+        self.over_enemy = None
+        self.wave_data = {}
         
     def draw(self):
         self.fill(BLACK)
@@ -341,7 +346,7 @@ class TowerSelectMenu(TowerMenu):
         # Draws upper right text + buttons
 
         seen_texts = 0
-        for text in self.texts[:self.curr_wave + 1]:
+        for text in self.texts[:self.curr_wave]:
             if text:
                 seen_texts += 1
         title_2 = title_font.render("Wave {}/{}".format(self.curr_wave + 1 - seen_texts, self.max_wave - self.num_texts), 1, WHITE)
@@ -384,9 +389,28 @@ class TowerSelectMenu(TowerMenu):
         self.blit(self.map_img, (SCREEN_WIDTH * 3 / 4 - self.map_img.get_width() / 2, SCREEN_HEIGHT / 2 - 80))
                 
         # Draws stuff at the bottom
-        level_text = text_font.render("Level: {}".format(self.level_data["title"]), 1, WHITE)
-        self.blit(level_text, ((SCREEN_WIDTH - level_text.get_width()) / 2, BTN_Y))
-                
+
+        if self.difficulty == 0:
+            difficulty = "Easy"
+        elif self.difficulty == 1:
+            difficulty = "Medium"
+        else:
+            difficulty = "Hard"
+        difficulty_text = text_font.render("Difficulty: {}".format(difficulty), 1, WHITE)
+        self.blit(difficulty_text, ((SCREEN_WIDTH - difficulty_text.get_width()) / 2, BTN_Y))
+
+        if self.difficulty > 0:
+            minus_btn = self.make_btn("<")
+            minus_x = SCREEN_WIDTH / 2 - difficulty_text.get_width() / 2 - minus_btn.get_width() - 20
+            self.blit(minus_btn, (minus_x, BTN_Y))
+            self.minus_btn_rect = minus_btn.get_rect(x=minus_x, y=BTN_Y)
+
+        if self.difficulty < 2:
+            plus_btn = self.make_btn(">")
+            plus_x = SCREEN_WIDTH / 2 + difficulty_text.get_width() / 2 + 20
+            self.blit(plus_btn, (plus_x, BTN_Y))
+            self.plus_btn_rect = plus_btn.get_rect(x=plus_x, y=BTN_Y)
+
         start_btn = self.start_btn
         if self.num_selected == 0:
             start_btn = self.start_btn_disabled
@@ -413,10 +437,13 @@ class TowerSelectMenu(TowerMenu):
                 self.enemy_infos[self.over_enemy] = new_enemy_info.draw()
             
             self.blit(self.enemy_infos[self.over_enemy],
-                      self.enemy_infos[self.over_enemy].get_rect(topright = self.wave_data[self.over_enemy ]["rect"].topleft))
+                      self.enemy_infos[self.over_enemy].get_rect(topright = self.wave_data[self.over_enemy]["rect"].topleft))
                 
         return self
-    
+
+    def get_difficulty(self):
+        return self.difficulty
+
     def draw_map(self, map):
         img = map.make_map()
         img.blit(map.make_objects(), (0, 0))
@@ -430,7 +457,7 @@ class TowerSelectMenu(TowerMenu):
         enemy_surfs = []
         self.wave_data = {}
         
-        for sub_wave in self.level_data["waves"][self.curr_wave]:
+        for sub_wave in self.level_data["waves"][self.difficulty][self.curr_wave]:
             if self.wave_data.get(sub_wave["enemy_type"]):
                 self.wave_data[sub_wave["enemy_type"]]["count"] += sub_wave["enemy_count"]
             else:
@@ -485,7 +512,7 @@ class TowerSelectMenu(TowerMenu):
                 elif self.left_btn_rect.collidepoint(mouse_pos):
                     og_wave = self.curr_wave
                     self.curr_wave = max(self.curr_wave - 1, self.min_wave)
-                    while isinstance(self.level_data["waves"][self.curr_wave][0], str):
+                    while isinstance(self.level_data["waves"][self.difficulty][self.curr_wave][0], str):
                         if self.curr_wave == self.min_wave:
                             self.curr_wave = og_wave
                             break
@@ -493,11 +520,17 @@ class TowerSelectMenu(TowerMenu):
                 elif self.right_btn_rect.collidepoint(mouse_pos):
                     og_wave = self.curr_wave
                     self.curr_wave = min(self.curr_wave + 1, self.max_wave - 1)
-                    while isinstance(self.level_data["waves"][self.curr_wave][0], str):
+                    while isinstance(self.level_data["waves"][self.difficulty][self.curr_wave][0], str):
                         if self.curr_wave == self.max_wave - 1:
                             self.curr_wave = og_wave
                             break
                         self.curr_wave += 1
+                elif self.difficulty > 0 and self.minus_btn_rect.collidepoint(mouse_pos):
+                    self.difficulty -= 1
+                    self.load_level_data()
+                elif self.difficulty < 2 and self.plus_btn_rect.collidepoint(mouse_pos):
+                    self.difficulty += 1
+                    self.load_level_data()
                 elif self.over_tower[0] != -1:
                     row, col = self.over_tower
                     if self.tower_selected[row][col]:
