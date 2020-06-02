@@ -236,13 +236,17 @@ class GameOver(GameStop):
 
         highscore_beaten = False
         if not self.lost:
-            if args[4] == SAVE_DATA["level"]:
-                SAVE_DATA["level"] += 1
-                while len(SAVE_DATA["highscores"]) < SAVE_DATA["level"] + 1:
-                    SAVE_DATA["highscores"].append(0)
-            if SAVE_DATA["highscores"][args[4]] <= args[5]:
-                SAVE_DATA["max_dna"] += args[5] - SAVE_DATA["highscores"][args[4]]
-                SAVE_DATA["highscores"][args[4]] = args[5]
+            level, difficulty, protein = args[4]
+            if level == len(SAVE_DATA["levels"]):
+                SAVE_DATA["levels"].append([True, False, False])
+                SAVE_DATA["highscores"].append(0)
+
+            if difficulty < 2 and not SAVE_DATA["levels"][level][difficulty + 1]:
+                SAVE_DATA["levels"][level][difficulty + 1] = True
+
+            if SAVE_DATA["highscores"][level] <= protein:
+                SAVE_DATA["max_dna"] += protein - SAVE_DATA["highscores"][args[4]]
+                SAVE_DATA["highscores"][level] = protein
                 highscore_beaten = True
 
         if self.lost:

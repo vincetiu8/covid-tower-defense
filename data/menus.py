@@ -97,7 +97,7 @@ class Menu(Display):
         self.blit(self.camera.apply_image(OPTIONS_IMGS[hover_options]), self.camera.apply_rect(self.options_button))
 
         for i, button in enumerate(self.level_buttons):
-            if SAVE_DATA["level"] >= i:
+            if len(SAVE_DATA["levels"]) - 1 >= i:
                 self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG_2), self.camera.apply_rect(button))
                 #lives_text = lives_font.render(str(i + 1), 1, WHITE)
                 #self.blit(self.camera.apply_image(lives_text), self.camera.apply_rect(lives_text.get_rect(center=button.center)))
@@ -224,7 +224,7 @@ class Menu(Display):
                 elif self.options_button.collidepoint(mouse_pos):
                     return "options"
                 
-                if self.over_level != -1 and self.over_level <= SAVE_DATA["level"]:
+                if self.over_level != -1 and self.over_level <= len(SAVE_DATA["levels"]) - 1:
                     return "tower_select"
 
             elif event.button == 4:
@@ -283,6 +283,10 @@ class TowerSelectMenu(TowerMenu):
         self.draw_map(map)
 
         self.difficulty = 0
+        self.max_difficulty = 0
+        while SAVE_DATA["levels"][args[0]][self.max_difficulty]:
+            self.max_difficulty += 1
+        self.max_difficulty -= 1
         self.towers = []
         self.tower_rects = []
         self.tower_selected = []
@@ -405,7 +409,7 @@ class TowerSelectMenu(TowerMenu):
             self.blit(minus_btn, (minus_x, BTN_Y))
             self.minus_btn_rect = minus_btn.get_rect(x=minus_x, y=BTN_Y)
 
-        if self.difficulty < 2:
+        if self.difficulty < self.max_difficulty:
             plus_btn = self.make_btn(">")
             plus_x = SCREEN_WIDTH / 2 + difficulty_text.get_width() / 2 + 20
             self.blit(plus_btn, (plus_x, BTN_Y))
@@ -528,7 +532,7 @@ class TowerSelectMenu(TowerMenu):
                 elif self.difficulty > 0 and self.minus_btn_rect.collidepoint(mouse_pos):
                     self.difficulty -= 1
                     self.load_level_data()
-                elif self.difficulty < 2 and self.plus_btn_rect.collidepoint(mouse_pos):
+                elif self.difficulty < self.max_difficulty and self.plus_btn_rect.collidepoint(mouse_pos):
                     self.difficulty += 1
                     self.load_level_data()
                 elif self.over_tower[0] != -1:
@@ -613,7 +617,7 @@ class HoverInfo(pg.Surface):
     
 class LevelInfo(HoverInfo):
     def __init__(self, level):
-        self.unlocked = level <= SAVE_DATA["level"]
+        self.unlocked = level <= len(SAVE_DATA["levels"]) - 1
         self.level = level
         if self.unlocked:
             self.level_data = LEVEL_DATA[level]
