@@ -1,211 +1,88 @@
 {
-    "description": "A place to test out the game. Relax and code on!",
+    "title": "The First Invasion",
+    "description": "A tutorial to help ease you into the mechanics of the game.",
     "difficulty": 0,
     "body_part": 0,
+    "texts": [
+        [
+            "Hello there newbie! Nice to have you on board!",
+            "You'll be in charge of our defensive tactics now, since the old commander left.",
+            "It looks like some enemies will be attacking! Place towers down to defend the body!",
+            "You can place a tower down by clicking on its icon then clicking on the tile where you want to place it.",
+            "When you're ready, press the \"Start Wave\" button to let the viruses in.",
+            "Hint: You can hinder enemies by placing towers on their path, forcing them to take a longer one to the goal."
+        ],
+        [
+            "Good stuff! With you in charge, these viruses will be shredded to smithereens in no time!",
+            "Uh oh. More of them incoming. Place more towers down!"
+        ],
+        [
+            "That should keep them out for a brief moement!",
+            "Use this downtime now to add more towers or upgrade existing ones.",
+            "To upgrade a tower, select it and click Upgrade. Make sure you have enough protein!"
+        ],
+        [
+            "Looks like you've got the hang of things! Only one more wave to go!",
+            "Hint: If you're unhappy with your current tower setup, click on a tower and click sell to remove it from the map.",
+            "You'll even earn back half the protein you spent on it!"
+        ],
+        [
+            "Looks like that was the last of them for now. A brilliant outcome for your first mission!"
+        ]
+    ],
     "waves": [
         [
-            [
-                "Hello there newbie! Nice to have you on board!",
-                "You'll be in charge of our defensive tactics now, since the old commander left.",
-                "It looks like some enemies will be attacking! Place a tower down to defend the body!",
-                "Hint: You can place a tower down by clicking on its icon and clicking again where you want to place it.",
-                "Hint: When you're ready, press the \"Start Wave\" button to let the viruses in."
-            ],
-            [
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 10,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.5
-                }
-            ],
-            [
-                "Good stuff! With you in charge, these viruses will be shredded to smithereens in no time!",
-                "Uh oh. More of them incoming. Place more towers down!"
-            ],
-            [
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 20,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.3
-                }
-            ],
-            [
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 40,
-                    "spawn_delay": 2,
-                    "spawn_rate": 0.1
-                }
-            ],
-            [
-                "Looks like that was the last of them for now. A brilliant outcome for your first mission!"
-            ]
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 20,
+                "spawn_delay": 3,
+                "spawn_rate": 0.4,
+                "scroll_position": 1,
+                "tower_name": 0,
+                "tower_stage": 0
+            }
         ],
         [
-            [
-                "Back for more, eh?",
-                "Lucky for you, another horde of viruses are inbound on our position.",
-                "Go get 'em!"
-            ],
-            [
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 20,
-                    "spawn_delay": 2,
-                    "spawn_rate": 0.25
-                }
-            ],
-            [
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 50,
-                    "spawn_delay": 2,
-                    "spawn_rate": 0.1
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 50,
-                    "spawn_delay": 2.5,
-                    "spawn_rate": 0.1
-                }
-            ],
-            [
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 70,
-                    "spawn_delay": 2,
-                    "spawn_rate": 0.05
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 20,
-                    "spawn_delay": 4,
-                    "spawn_rate": 0.2
-                }
-            ]
+            {
+                "start": 0,
+                "enemy_type": "hepatitis_a",
+                "enemy_count": 8,
+                "spawn_delay": 3,
+                "spawn_rate": 0.8
+            },
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 20,
+                "spawn_delay": 3,
+                "spawn_rate": 0.4
+            }
         ],
         [
-            [
-                "Wow, you must be looking for a serious challenge.",
-                "Well, looks like one's coming right up!"
-            ],
-            [
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 40,
-                    "spawn_delay": 2,
-                    "spawn_rate": 0.2
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 30,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.2
-                }
-            ],
-            [
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 30,
-                    "spawn_delay": 2,
-                    "spawn_rate": 0.1
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 20,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.2
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 30,
-                    "spawn_delay": 4,
-                    "spawn_rate": 0.1
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 20,
-                    "spawn_delay": 5,
-                    "spawn_rate": 0.2
-                }
-            ],
-            [
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 30,
-                    "spawn_delay": 2,
-                    "spawn_rate": 0.05
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 20,
-                    "spawn_delay": 2.25,
-                    "spawn_rate": 0.075
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 30,
-                    "spawn_delay": 2.5,
-                    "spawn_rate": 0.05
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 20,
-                    "spawn_delay": 2.75,
-                    "spawn_rate": 0.075
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 50,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.025
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 30,
-                    "spawn_delay": 3.25,
-                    "spawn_rate": 0.05
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 50,
-                    "spawn_delay": 3.5,
-                    "spawn_rate": 0.025
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 30,
-                    "spawn_delay": 4,
-                    "spawn_rate": 0.05
-                }
-            ],
-            [
-                "Hot damn!"
-            ]
+            {
+                "start": 0,
+                "enemy_type": "hepatitis_a",
+                "enemy_count": 15,
+                "spawn_delay": 3,
+                "spawn_rate": 0.7
+            },
+            {
+                "start": 0,
+                "enemy_type": "common_cold",
+                "enemy_count": 30,
+                "spawn_delay": 4,
+                "spawn_rate": 0.3
+            }
+        ],
+        [
+            {
+                "start": 0,
+                "enemy_type": "hepatitis_a",
+                "enemy_count": 40,
+                "spawn_delay": 4,
+                "spawn_rate": 0.3
+            }
         ]
     ]
 }

@@ -2,6 +2,12 @@
     "description": "Extreme testing ground! Prepare to die!",
     "difficulty": 4,
     "body_part": 3,
+    "texts": [
+        [],
+        [],
+        [],
+        []
+    ],
     "waves": [
         [
             {

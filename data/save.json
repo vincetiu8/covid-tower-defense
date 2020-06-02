@@ -12,7 +12,7 @@
     "max_dna": 134,
     "used_dna": 0,
     "highscores": [
-        134
+        0
     ],
     "owned_towers": [
         "t_cell"
@@ -26,7 +26,7 @@
             "description": "The number of lives you start with on each level."
         },
         "starting_protein": {
-            "value": 50,
+            "value": 30,
             "increment": 5,
             "upgrade_cost": 75,
             "cost_increment": 10,

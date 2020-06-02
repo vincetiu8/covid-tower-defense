@@ -131,12 +131,12 @@
                 "slow_duration": 3,
                 "slow_speed": 0.5,
                 "tracking": true,
-                "upgrade_cost": 20,
+                "upgrade_cost": 10,
                 "explode_on_impact": false
             },
             {
                 "area_of_effect": false,
-                "attack_speed": 0.7,
+                "attack_speed": 0.6,
                 "bullet_lifetime": 0.5,
                 "bullet_speed": 1250,
                 "damage": 0,
@@ -145,10 +145,10 @@
                 "range": 150,
                 "rotating": true,
                 "rotation_speed": 360,
-                "slow_duration": 3,
+                "slow_duration": 4.0,
                 "slow_speed": 0.5,
                 "tracking": true,
-                "upgrade_cost": 20,
+                "upgrade_cost": 10,
                 "explode_on_impact": false
             },
             {

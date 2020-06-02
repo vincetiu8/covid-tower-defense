@@ -150,7 +150,7 @@ class Game(Display):
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
         self.textbox = Textbox(self)
-        self.prepare_next_wave()
+        self.prepare_next_text()
         self.draw_tower_bases_wrapper()
         self.make_stripped_path_wrapper()
 
@@ -190,9 +190,9 @@ class Game(Display):
                 self.start_next_wave()
 
         if self.current_wave_done() and self.in_a_wave:
-            if self.wave < self.max_wave - 1:
-                self.prepare_next_wave()                
-            elif len(self.enemies) == 0:
+            if self.wave < self.max_wave:
+                self.prepare_next_text()
+            if len(self.enemies) == 0:
                 pg.event.post(self.game_done_event)
 
     def current_wave_done(self):
@@ -201,13 +201,11 @@ class Game(Display):
                 return False
         return True
     
-    def prepare_next_wave(self):
+    def prepare_next_text(self):
         self.wave += 1
-        if self.wave >= len(self.level_data["waves"][self.difficulty]):
-            return
-
-        elif isinstance(self.level_data["waves"][self.difficulty][self.wave][0], str):
+        if len(self.level_data["texts"][self.wave]) > 0:
             self.text = True
+            self.texts = self.level_data["texts"][self.wave].copy()
             self.texts = self.level_data["waves"][self.difficulty][self.wave].copy()
             self.ui.set_next_wave_btn(False)
             self.textbox.set_text(self.texts[0])
@@ -218,6 +216,21 @@ class Game(Display):
         else:
             self.text = False
             self.textbox.enabled = False
+            self.prepare_next_wave()
+
+    def prepare_next_wave(self):
+        if self.wave == self.max_wave:
+            return
+
+        self.in_a_wave = False
+        self.ui.set_next_wave_btn(True)
+        self.time_passed = 0
+
+        self.starts.clear()
+        for i in self.level_data["waves"][self.wave]:
+            self.starts.append(
+                Start(self, i["start"], i["enemy_type"], i["enemy_count"],
+                        i["spawn_delay"], i["spawn_rate"]))
             self.in_a_wave = False
             self.ui.set_next_wave_btn(True)
             self.time_passed = 0
