@@ -2,7 +2,7 @@
     "common_cold": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 5,
+        "hp": 8,
         "protein": 1,
         "shield": false,
         "mutate": false,
@@ -22,7 +22,7 @@
     "hepatitis_a": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 15,
+        "hp": 20,
         "protein": 2,
         "shield": false,
         "mutate": false,
@@ -32,7 +32,7 @@
     "hepatitis_b": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 20,
+        "hp": 25,
         "protein": 3,
         "shield": true,
         "shield_hp": 5,
