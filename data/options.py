@@ -4,11 +4,12 @@ from data.display import *
 class Options(Display):
     def __init__(self):
         super().__init__()
-        self.fullscreen = TickBoxOption("Fullscreen")
+        self.fullscreen = TickBoxOption("Fullscreen", SAVE_DATA["fullscreen"])
         self.music_vol = SliderOption("Music Vol", min_val = 0, max_val = 1,
                                       slider_pos = (SLIDER_BAR_WIDTH - SLIDER_WIDTH) * SAVE_DATA["music_vol"])
         self.sfx_vol = SliderOption("SFX Vol", min_val = 0, max_val = 1,
                                     slider_pos = (SLIDER_BAR_WIDTH - SLIDER_WIDTH) * SAVE_DATA["sfx_vol"])
+        self.skip_text = TickBoxOption("Skip Text", SAVE_DATA["skip_text"])
         
         self.back_rect = pg.Rect((20, 20), OPTIONS_BACK_IMGS[0].get_size())
         
@@ -18,7 +19,8 @@ class Options(Display):
         self.fullscreen_surf = self.fullscreen.draw()
         self.music_vol_surf = self.music_vol.draw()
         self.sfx_vol_surf = self.sfx_vol.draw()
-        self.surfs = [self.fullscreen_surf, self.music_vol_surf, self.sfx_vol_surf]
+        self.skip_text_surf = self.skip_text.draw()
+        self.surfs = [self.fullscreen_surf, self.music_vol_surf, self.sfx_vol_surf, self.skip_text_surf]
         
         self.prev_display = None
         
@@ -67,6 +69,10 @@ class Options(Display):
                     self.fullscreen_surf = self.fullscreen.draw()
                     SAVE_DATA["fullscreen"] = self.fullscreen.is_ticked()
                     toggle_fullscreen()
+                if self.skip_text.event(event) != -1:
+                    self.skip_text_surf = self.skip_text.draw()
+                    SAVE_DATA["skip_text"] = self.skip_text.is_ticked()
+                    
         return -1
     
 class Option(pg.Surface):
@@ -151,9 +157,9 @@ class SliderOption(Option):
         return -1
         
 class TickBoxOption(Option):
-    def __init__(self, label):
+    def __init__(self, label, ticked):
         super().__init__(label)
-        self.ticked = False
+        self.ticked = ticked
         
         self.tick_box_rect = pg.Rect(self.label_text.get_width() + 20, 5, TICK_BOX_SIZE, TICK_BOX_SIZE) # Needs some buffer on the top
         self.tick_box_true_rect = None # used for event handling
