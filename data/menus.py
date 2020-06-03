@@ -284,8 +284,9 @@ class TowerSelectMenu(TowerMenu):
 
         self.difficulty = 0
         self.max_difficulty = 0
-        while SAVE_DATA["levels"][args[0]][self.max_difficulty]:
+        while self.max_difficulty < 3 and SAVE_DATA["levels"][args[0]][self.max_difficulty]:
             self.max_difficulty += 1
+
         self.max_difficulty -= 1
         self.towers = []
         self.tower_rects = []
@@ -315,22 +316,8 @@ class TowerSelectMenu(TowerMenu):
 
     def load_level_data(self):
         self.max_wave = len(self.level_data["waves"][self.difficulty])
-
-        self.texts = []
-        self.num_texts = 0
-        self.curr_wave = -1
-        for i, wave in enumerate(self.level_data["waves"][self.difficulty]):
-            if isinstance(wave[0], str):
-                self.texts.append(True)
-                self.num_texts += 1
-                continue
-            elif self.curr_wave == -1:
-                self.curr_wave = i
-            self.texts.append(False)
-        self.min_wave = self.curr_wave
-
+        self.curr_wave = 0
         self.wave_info = None
-        
         self.over_enemy = None
         self.wave_data = {}
         
@@ -348,12 +335,7 @@ class TowerSelectMenu(TowerMenu):
         self.blit(selected_text, (SCREEN_WIDTH / 4 - selected_text.get_width() / 2, title_1.get_height() - 20))
         
         # Draws upper right text + buttons
-
-        seen_texts = 0
-        for text in self.texts[:self.curr_wave]:
-            if text:
-                seen_texts += 1
-        title_2 = title_font.render("Wave {}/{}".format(self.curr_wave + 1 - seen_texts, self.max_wave - self.num_texts), 1, WHITE)
+        title_2 = title_font.render("Wave {}/{}".format(self.curr_wave + 1, self.max_wave), 1, WHITE)
         left_btn = self.make_btn("<")
         right_btn = self.make_btn(">")
         

@@ -3,79 +3,108 @@
     "difficulty": 2,
     "body_part": 1,
     "texts": [
-        [],
-        [],
-        [],
-        [],
-        []
+        [
+            [],
+            [],
+            [],
+            [],
+            []
+        ],
+        [
+            []
+        ],
+        [
+            []
+        ]
     ],
     "waves": [
         [
-            {
-                "start": 0,
-                "enemy_type": "common_cold",
-                "enemy_count": 50,
-                "spawn_delay": 3,
-                "spawn_rate": 0.05,
-                "scroll_position": 1,
-                "tower_name": 0,
-                "tower_stage": 0
-            }
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 50,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.05
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 50,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 25,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 100,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.05
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 25,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 150,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.05
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 50,
+                    "spawn_delay": 6,
+                    "spawn_rate": 0.01
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "polio",
+                    "enemy_count": 25,
+                    "spawn_delay": 9,
+                    "spawn_rate": 0.075
+                }
+            ]
         ],
         [
-            {
-                "start": 0,
-                "enemy_type": "polio",
-                "enemy_count": 50,
-                "spawn_delay": 3,
-                "spawn_rate": 0.1
-            },
-            {
-                "start": 0,
-                "enemy_type": "common_cold",
-                "enemy_count": 25,
-                "spawn_delay": 5,
-                "spawn_rate": 0.2
-            }
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 50,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.05
+                }
+            ]
         ],
-        [
-            {
-                "start": 0,
-                "enemy_type": "common_cold",
-                "enemy_count": 100,
-                "spawn_delay": 3,
-                "spawn_rate": 0.05
-            },
-            {
-                "start": 0,
-                "enemy_type": "hepatitis_a",
-                "enemy_count": 25,
-                "spawn_delay": 5,
-                "spawn_rate": 0.2
-            }
-        ],
-        [
-            {
-                "start": 0,
-                "enemy_type": "common_cold",
-                "enemy_count": 150,
-                "spawn_delay": 3,
-                "spawn_rate": 0.05
-            },
-            {
-                "start": 0,
-                "enemy_type": "hepatitis_a",
-                "enemy_count": 50,
-                "spawn_delay": 6,
-                "spawn_rate": 0.01
-            },
-            {
-                "start": 1,
-                "enemy_type": "polio",
-                "enemy_count": 25,
-                "spawn_delay": 9,
-                "spawn_rate": 0.075
-            }
+                [
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 50,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.05
+                }
+            ]
         ]
     ]
 }

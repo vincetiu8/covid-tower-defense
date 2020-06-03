@@ -247,7 +247,7 @@ class GameOver(GameStop):
         adj_protein = round(protein * multiplier)
         
         if not self.lost:
-            if level == len(SAVE_DATA["levels"]):
+            if level == len(SAVE_DATA["levels"]) - 1:
                 SAVE_DATA["levels"].append([True, False, False])
                 SAVE_DATA["highscores"].append(0)
 

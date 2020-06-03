@@ -203,10 +203,9 @@ class Game(Display):
     
     def prepare_next_text(self):
         self.wave += 1
-        if len(self.level_data["texts"][self.wave]) > 0:
+        if len(self.level_data["texts"][self.difficulty][self.wave]) > 0:
             self.text = True
-            self.texts = self.level_data["texts"][self.wave].copy()
-            self.texts = self.level_data["waves"][self.difficulty][self.wave].copy()
+            self.texts = self.level_data["texts"][self.difficulty][self.wave].copy()
             self.ui.set_next_wave_btn(False)
             self.textbox.set_text(self.texts[0])
             self.textbox.finish_text()
@@ -227,21 +226,12 @@ class Game(Display):
         self.time_passed = 0
 
         self.starts.clear()
-        for i in self.level_data["waves"][self.wave]:
+        for i in self.level_data["waves"][self.difficulty][self.wave]:
             self.starts.append(
                 Start(self, i["start"], i["enemy_type"], i["enemy_count"],
                         i["spawn_delay"], i["spawn_rate"]))
-            self.in_a_wave = False
-            self.ui.set_next_wave_btn(True)
-            self.time_passed = 0
 
-            self.starts.clear()
-            for i in self.level_data["waves"][self.difficulty][self.wave]:
-                self.starts.append(
-                    Start(self, i["start"], i["enemy_type"], i["enemy_count"],
-                          i["spawn_delay"], i["spawn_rate"]))
-
-            self.make_stripped_path_wrapper()
+        self.make_stripped_path_wrapper()
 
     def start_next_wave(self):
         self.in_a_wave = True
