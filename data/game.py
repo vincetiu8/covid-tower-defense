@@ -208,7 +208,7 @@ class Game(Display):
             if len(self.enemies) == 0:
                 self.wave += 1
                 self.text = True
-                self.texts = self.level_data["texts"][self.wave].copy()
+                self.texts = self.level_data["texts"][self.difficulty][self.wave].copy()
                 self.ui.set_next_wave_btn(False)
                 self.textbox.set_text(self.texts[0])
                 self.textbox.finish_text()
