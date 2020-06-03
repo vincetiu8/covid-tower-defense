@@ -4,14 +4,27 @@
             true,
             true,
             false
+        ],
+        [
+            true,
+            true,
+            false
+        ],
+        [
+            true,
+            false,
+            false
         ]
     ],
     "music_vol": 0.0,
     "sfx_vol": 0.0,
     "fullscreen": false,
-    "max_dna": 192,
+    "skip_text": true,
+    "max_dna": 479,
     "used_dna": 0,
     "highscores": [
+        48,
+        239,
         0
     ],
     "owned_towers": [
