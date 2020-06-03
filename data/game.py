@@ -188,11 +188,11 @@ class Game(Display):
             self.time_passed += self.clock.get_time()
             if self.time_passed >= WAVE_DELAY * 1000:
                 self.start_next_wave()
-
+                
         if self.current_wave_done() and self.in_a_wave:
             if self.wave < self.max_wave:
                 self.prepare_next_text()
-            if len(self.enemies) == 0:
+            elif len(self.enemies) == 0:
                 pg.event.post(self.game_done_event)
 
     def current_wave_done(self):
@@ -202,17 +202,20 @@ class Game(Display):
         return True
     
     def prepare_next_text(self):
-        self.wave += 1
-        if len(self.level_data["texts"][self.difficulty][self.wave]) > 0:
-            self.text = True
-            self.texts = self.level_data["texts"][self.difficulty][self.wave].copy()
-            self.ui.set_next_wave_btn(False)
-            self.textbox.set_text(self.texts[0])
-            self.textbox.finish_text()
-            self.textbox.yoffset = self.textbox.rect.height
-            self.textbox.toggle(True)
-
+        # Wave has text --> text (and the next wave) don't appear until previous wave is all dead
+        # Wave has no text --> next wave starts counting down immediately after previous wave is done spawning
+        if len(self.level_data["texts"][self.difficulty][self.wave + 1]) > 0:  
+            if len(self.enemies) == 0:
+                self.wave += 1
+                self.text = True
+                self.texts = self.level_data["texts"][self.wave].copy()
+                self.ui.set_next_wave_btn(False)
+                self.textbox.set_text(self.texts[0])
+                self.textbox.finish_text()
+                self.textbox.yoffset = self.textbox.rect.height
+                self.textbox.toggle(True)
         else:
+            self.wave += 1
             self.text = False
             self.textbox.enabled = False
             self.prepare_next_wave()
@@ -252,6 +255,8 @@ class Game(Display):
         self.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
         self.blit(self.camera.apply_image(self.path_surf), self.camera.apply_tuple((0, 0)))
+        
+        self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
 
         self.blit(self.camera.apply_image(self.tower_bases_surf),
                      self.camera.apply_rect(self.tower_bases_surf.get_rect()))
@@ -277,8 +282,6 @@ class Game(Display):
 
         for explosion in self.explosions:
             self.blit(self.camera.apply_image(explosion.get_surf()), self.camera.apply_tuple((explosion.x, explosion.y)))
-
-        self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
 
         if self.current_tower != None:
             self.draw_tower_preview()
@@ -605,10 +608,11 @@ class Start():
             self.time_passed += self.clock.get_time()
             
         if (self.time_passed >= self.next_spawn and (self.infinity or self.enemy_count > 0)):
+            tilesize = self.game.map.tilesize
             self.game.enemies.add(Enemy(
                 game = self.game,
-                x = self.rect.x + random.randrange(1, self.rect.w - ENEMY_DATA[self.enemy_type]["image"].get_width()),
-                y = self.rect.y + random.randrange(1, self.rect.h - ENEMY_DATA[self.enemy_type]["image"].get_height()),
+                x = self.rect.x + ENEMY_DATA[self.enemy_type]["image"].get_width() + tilesize * random.randint(0, self.rect.w // tilesize - 1),
+                y = self.rect.y + ENEMY_DATA[self.enemy_type]["image"].get_height() + tilesize * random.randint(0, self.rect.h // tilesize - 1),
                 name = self.enemy_type))
             self.next_spawn = self.spawn_rate * 1000
             self.time_passed = 0

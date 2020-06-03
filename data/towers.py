@@ -262,7 +262,8 @@ class Tower(Obstacle):
                         if self.slow_speed != 1:
                             hits[0].slow(self.slow_speed, self.slow_duration)
                     TOWER_DATA[self.name]["stages"][self.stage]["shoot_sound"].play()
-                    self.next_spawn = pg.time.get_ticks() + self.attack_speed * 1000
+                    self.next_spawn = self.attack_speed * 1000
+                    self.time_passed = 0
 
             elif self.current_enemy != None:
                 enemy_center = self.current_enemy.rect.center
