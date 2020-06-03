@@ -3,16 +3,15 @@
     "music_vol": 0.0,
     "sfx_vol": 0.0,
     "fullscreen": false,
-    "max_dna": 123,
+    "max_dna": 153,
     "used_dna": 0,
     "highscores": [
-        106,
+        136,
         17,
         0
     ],
     "owned_towers": [
-        "t_cell",
-        "monocyte"
+        "t_cell"
     ],
     "game_attrs": {
         "lives": {
