@@ -97,7 +97,7 @@ class Menu(Display):
         self.blit(self.camera.apply_image(OPTIONS_IMGS[hover_options]), self.camera.apply_rect(self.options_button))
 
         for i, button in enumerate(self.level_buttons):
-            if SAVE_DATA["level"] >= i:
+            if len(SAVE_DATA["levels"]) - 1 >= i:
                 self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG_2), self.camera.apply_rect(button))
                 #lives_text = lives_font.render(str(i + 1), 1, WHITE)
                 #self.blit(self.camera.apply_image(lives_text), self.camera.apply_rect(lives_text.get_rect(center=button.center)))
@@ -224,7 +224,7 @@ class Menu(Display):
                 elif self.options_button.collidepoint(mouse_pos):
                     return "options"
                 
-                if self.over_level != -1 and self.over_level <= SAVE_DATA["level"]:
+                if self.over_level != -1 and self.over_level <= len(SAVE_DATA["levels"]) - 1:
                     return "tower_select"
 
             elif event.button == 4:
@@ -281,35 +281,22 @@ class TowerSelectMenu(TowerMenu):
         map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(list(BODY_PARTS)[LEVEL_DATA[args[0]]["body_part"]])))
         self.map_img = None
         self.draw_map(map)
-        
-        self.max_wave = len(self.level_data["waves"])
-        
+
+        self.difficulty = 0
+        self.max_difficulty = 0
+        while self.max_difficulty < 3 and SAVE_DATA["levels"][args[0]][self.max_difficulty]:
+            self.max_difficulty += 1
+
+        self.max_difficulty -= 1
         self.towers = []
         self.tower_rects = []
         self.tower_selected = []
-        
-        self.over_tower = [-1, -1]
-        self.texts = []
-        self.num_texts = 0
-        self.curr_wave = -1
-        for i, wave in enumerate(self.level_data["waves"]):
-            if isinstance(wave[0], str):
-                self.texts.append(True)
-                self.num_texts += 1
-            elif self.curr_wave == -1:
-                self.texts.append(False)
-                self.curr_wave = i
-        self.min_wave = self.curr_wave
 
+        self.over_tower = [-1, -1]
         self.num_selected = 0
-        
-        self.wave_info = None
-        
-        self.over_enemy = None
-        self.wave_data = {}
-        
+
         tower_names = SAVE_DATA["owned_towers"]
-        
+
         row = -1
         for i in range(len(tower_names)):
             if i % GRID_ROW_SIZE == 0:
@@ -317,13 +304,22 @@ class TowerSelectMenu(TowerMenu):
                 self.towers.append([])
                 self.tower_rects.append([])
                 self.tower_selected.append([])
-            
+
             self.towers[row].append(tower_names[i])
             self.tower_rects[row].append(pg.Rect(self.get_locs(row, i % GRID_ROW_SIZE), self.get_dims()))
             self.tower_selected[row].append(False)
-            
+
         self.tower_infos = [None for i in range(len(tower_names))]
         self.enemy_infos = {}
+
+        self.load_level_data()
+
+    def load_level_data(self):
+        self.max_wave = len(self.level_data["waves"][self.difficulty])
+        self.curr_wave = 0
+        self.wave_info = None
+        self.over_enemy = None
+        self.wave_data = {}
         
     def draw(self):
         self.fill(BLACK)
@@ -339,12 +335,7 @@ class TowerSelectMenu(TowerMenu):
         self.blit(selected_text, (SCREEN_WIDTH / 4 - selected_text.get_width() / 2, title_1.get_height() - 20))
         
         # Draws upper right text + buttons
-
-        seen_texts = 0
-        for text in self.texts[:self.curr_wave + 1]:
-            if text:
-                seen_texts += 1
-        title_2 = title_font.render("Wave {}/{}".format(self.curr_wave + 1 - seen_texts, self.max_wave - self.num_texts), 1, WHITE)
+        title_2 = title_font.render("Wave {}/{}".format(self.curr_wave + 1, self.max_wave), 1, WHITE)
         left_btn = self.make_btn("<")
         right_btn = self.make_btn(">")
         
@@ -384,9 +375,28 @@ class TowerSelectMenu(TowerMenu):
         self.blit(self.map_img, (SCREEN_WIDTH * 3 / 4 - self.map_img.get_width() / 2, SCREEN_HEIGHT / 2 - 80))
                 
         # Draws stuff at the bottom
-        level_text = text_font.render("Level: {}".format(self.level_data["title"]), 1, WHITE)
-        self.blit(level_text, ((SCREEN_WIDTH - level_text.get_width()) / 2, BTN_Y))
-                
+
+        if self.difficulty == 0:
+            difficulty = "Mild"
+        elif self.difficulty == 1:
+            difficulty = "Acute"
+        else:
+            difficulty = "Severe"
+        difficulty_text = text_font.render("Difficulty: {}".format(difficulty), 1, WHITE)
+        self.blit(difficulty_text, ((SCREEN_WIDTH - difficulty_text.get_width()) / 2, BTN_Y))
+
+        if self.difficulty > 0:
+            minus_btn = self.make_btn("<")
+            minus_x = SCREEN_WIDTH / 2 - difficulty_text.get_width() / 2 - minus_btn.get_width() - 20
+            self.blit(minus_btn, (minus_x, BTN_Y))
+            self.minus_btn_rect = minus_btn.get_rect(x=minus_x, y=BTN_Y)
+
+        if self.difficulty < self.max_difficulty:
+            plus_btn = self.make_btn(">")
+            plus_x = SCREEN_WIDTH / 2 + difficulty_text.get_width() / 2 + 20
+            self.blit(plus_btn, (plus_x, BTN_Y))
+            self.plus_btn_rect = plus_btn.get_rect(x=plus_x, y=BTN_Y)
+
         start_btn = self.start_btn
         if self.num_selected == 0:
             start_btn = self.start_btn_disabled
@@ -413,10 +423,13 @@ class TowerSelectMenu(TowerMenu):
                 self.enemy_infos[self.over_enemy] = new_enemy_info.draw()
             
             self.blit(self.enemy_infos[self.over_enemy],
-                      self.enemy_infos[self.over_enemy].get_rect(topright = self.wave_data[self.over_enemy ]["rect"].topleft))
+                      self.enemy_infos[self.over_enemy].get_rect(topright = self.wave_data[self.over_enemy]["rect"].topleft))
                 
         return self
-    
+
+    def get_difficulty(self):
+        return self.difficulty
+
     def draw_map(self, map):
         img = map.make_map()
         img.blit(map.make_objects(), (0, 0))
@@ -430,7 +443,7 @@ class TowerSelectMenu(TowerMenu):
         enemy_surfs = []
         self.wave_data = {}
         
-        for sub_wave in self.level_data["waves"][self.curr_wave]:
+        for sub_wave in self.level_data["waves"][self.difficulty][self.curr_wave]:
             if self.wave_data.get(sub_wave["enemy_type"]):
                 self.wave_data[sub_wave["enemy_type"]]["count"] += sub_wave["enemy_count"]
             else:
@@ -484,8 +497,8 @@ class TowerSelectMenu(TowerMenu):
                     return "game"
                 elif self.left_btn_rect.collidepoint(mouse_pos):
                     og_wave = self.curr_wave
-                    self.curr_wave = max(self.curr_wave - 1, self.min_wave)
-                    while isinstance(self.level_data["waves"][self.curr_wave][0], str):
+                    self.curr_wave = max(self.curr_wave - 1, 0)
+                    while isinstance(self.level_data["waves"][self.difficulty][self.curr_wave][0], str):
                         if self.curr_wave == self.min_wave:
                             self.curr_wave = og_wave
                             break
@@ -493,11 +506,17 @@ class TowerSelectMenu(TowerMenu):
                 elif self.right_btn_rect.collidepoint(mouse_pos):
                     og_wave = self.curr_wave
                     self.curr_wave = min(self.curr_wave + 1, self.max_wave - 1)
-                    while isinstance(self.level_data["waves"][self.curr_wave][0], str):
+                    while isinstance(self.level_data["waves"][self.difficulty][self.curr_wave][0], str):
                         if self.curr_wave == self.max_wave - 1:
                             self.curr_wave = og_wave
                             break
                         self.curr_wave += 1
+                elif self.difficulty > 0 and self.minus_btn_rect.collidepoint(mouse_pos):
+                    self.difficulty -= 1
+                    self.load_level_data()
+                elif self.difficulty < self.max_difficulty and self.plus_btn_rect.collidepoint(mouse_pos):
+                    self.difficulty += 1
+                    self.load_level_data()
                 elif self.over_tower[0] != -1:
                     row, col = self.over_tower
                     if self.tower_selected[row][col]:
@@ -580,11 +599,11 @@ class HoverInfo(pg.Surface):
     
 class LevelInfo(HoverInfo):
     def __init__(self, level):
-        self.unlocked = level <= SAVE_DATA["level"]
+        self.unlocked = level <= len(SAVE_DATA["levels"]) - 1
         self.level = level
         if self.unlocked:
             self.level_data = LEVEL_DATA[level]
-            super().__init__("{}. {}".format(self.level + 1, self.level_data["title"]), self.level_data["description"])
+            super().__init__(list(BODY_PARTS)[self.level_data["body_part"]].capitalize(), self.level_data["description"])
         else:
             super().__init__("{}. ???".format(self.level + 1), "An unknown level. Complete the previous levels to unlock this one!")
         
@@ -615,6 +634,21 @@ class LevelInfo(HoverInfo):
             
             high_score_text = self.info_font.render("High Score: {}".format(SAVE_DATA["highscores"][self.level]), 1, WHITE)
             self.add_text(high_score_text)
+
+            max_diff = 0
+            while max_diff < len(SAVE_DATA["levels"][self.level]) and SAVE_DATA["levels"][self.level][max_diff]:
+                max_diff += 1
+            max_diff -= 1
+
+            if max_diff == 0:
+                max_diff_text = "Mild"
+            elif max_diff == 1:
+                max_diff_text = "Acute"
+            else:
+                max_diff_text = "Severe"
+
+            text = self.info_font.render("Maximum Difficulty Unlocked: {}".format(max_diff_text), 1, WHITE)
+            self.add_text(text)
         
 class TowerInfo(HoverInfo):
     def __init__(self, tower):
