@@ -497,7 +497,7 @@ class TowerSelectMenu(TowerMenu):
                     return "game"
                 elif self.left_btn_rect.collidepoint(mouse_pos):
                     og_wave = self.curr_wave
-                    self.curr_wave = max(self.curr_wave - 1, self.min_wave)
+                    self.curr_wave = max(self.curr_wave - 1, 0)
                     while isinstance(self.level_data["waves"][self.difficulty][self.curr_wave][0], str):
                         if self.curr_wave == self.min_wave:
                             self.curr_wave = og_wave
