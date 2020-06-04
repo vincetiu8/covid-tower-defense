@@ -829,6 +829,8 @@ class UpgradesMenu(TowerMenu):
                             self.confirm_menu_rect = self.confirm_menu_surf.get_rect(
                                 center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
                             self.confirming = True
+                        elif not self.is_tower_buyable(self.towers[row][col]):
+                            WRONG_SELECTION_SFX.play()
                     else:
                         if self.over_upgrade != -1:
                             if self.is_upgrade_buyable(self.over_upgrade):
@@ -838,6 +840,8 @@ class UpgradesMenu(TowerMenu):
                                     center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
                                 self.over_upgrade = self.over_upgrade
                                 self.confirming = True
+                            else:
+                                WRONG_SELECTION_SFX.play()
 
         if event.type == pg.MOUSEMOTION and not self.confirming:
             mouse_pos = pg.mouse.get_pos()

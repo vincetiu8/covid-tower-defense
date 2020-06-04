@@ -17,10 +17,10 @@
         ]
     ],
     "music_vol": 0.0,
-    "sfx_vol": 1.0,
+    "sfx_vol": 0.372,
     "fullscreen": false,
-    "skip_text": true,
-    "max_dna": 479,
+    "skip_text": false,
+    "max_dna": 9,
     "used_dna": 0,
     "highscores": [
         48,
