@@ -21,3 +21,7 @@ Sounds:
 - http://soundbible.com/2204-Poker-Chips.html
 
 - http://soundbible.com/2156-Text-Message-Alert-3.html
+
+- https://freesound.org/people/xtrgamr/sounds/257796/
+
+- https://freesound.org/people/Raclure/sounds/483598/

@@ -346,8 +346,10 @@ class TowerSelectMenu(TowerMenu):
         right_x = title_2_x + title_2.get_width() + 20
         
         self.blit(title_2, (title_2_x, 0))
-        self.blit(left_btn, (left_x, left_right_y))
-        self.blit(right_btn, (right_x, left_right_y))
+        if self.curr_wave > 0:
+            self.blit(left_btn, (left_x, left_right_y))
+        if self.curr_wave < self.max_wave - 1:
+            self.blit(right_btn, (right_x, left_right_y))
         
         self.left_btn_rect = left_btn.get_rect(x = left_x, y = left_right_y)
         self.right_btn_rect = right_btn.get_rect(x = right_x, y = left_right_y)
@@ -493,30 +495,24 @@ class TowerSelectMenu(TowerMenu):
                 
                 if self.back_btn_rect.collidepoint(mouse_pos):
                     return "menu"
-                elif self.start_btn_rect.collidepoint(mouse_pos) and self.num_selected > 0:
-                    return "game"
-                elif self.left_btn_rect.collidepoint(mouse_pos):
-                    og_wave = self.curr_wave
-                    self.curr_wave = max(self.curr_wave - 1, 0)
-                    while isinstance(self.level_data["waves"][self.difficulty][self.curr_wave][0], str):
-                        if self.curr_wave == self.min_wave:
-                            self.curr_wave = og_wave
-                            break
-                        self.curr_wave -= 1
-                elif self.right_btn_rect.collidepoint(mouse_pos):
-                    og_wave = self.curr_wave
-                    self.curr_wave = min(self.curr_wave + 1, self.max_wave - 1)
-                    while isinstance(self.level_data["waves"][self.difficulty][self.curr_wave][0], str):
-                        if self.curr_wave == self.max_wave - 1:
-                            self.curr_wave = og_wave
-                            break
-                        self.curr_wave += 1
+                elif self.start_btn_rect.collidepoint(mouse_pos):
+                    if self.num_selected > 0:
+                        return "game"
+                    else:
+                        WRONG_SELECTION_SFX.play()
+                        
+                elif self.left_btn_rect.collidepoint(mouse_pos) and self.curr_wave > 0:
+                    self.curr_wave -= 1
+                elif self.right_btn_rect.collidepoint(mouse_pos) and self.curr_wave < self.max_wave - 1:
+                    self.curr_wave += 1
+                    
                 elif self.difficulty > 0 and self.minus_btn_rect.collidepoint(mouse_pos):
                     self.difficulty -= 1
                     self.load_level_data()
                 elif self.difficulty < self.max_difficulty and self.plus_btn_rect.collidepoint(mouse_pos):
                     self.difficulty += 1
                     self.load_level_data()
+                    
                 elif self.over_tower[0] != -1:
                     row, col = self.over_tower
                     if self.tower_selected[row][col]:
@@ -525,6 +521,8 @@ class TowerSelectMenu(TowerMenu):
                     elif self.num_selected < SAVE_DATA["game_attrs"]["max_towers"]["value"]:
                         self.num_selected += 1
                         self.tower_selected[row][col] = True
+                    else:
+                        WRONG_SELECTION_SFX.play()
                             
         if event.type == pg.MOUSEMOTION:
             mouse_pos = pg.mouse.get_pos()

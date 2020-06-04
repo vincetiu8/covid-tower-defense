@@ -7,7 +7,7 @@
         ]
     ],
     "music_vol": 0.0,
-    "sfx_vol": 0.0,
+    "sfx_vol": 1.0,
     "fullscreen": false,
     "max_dna": 192,
     "used_dna": 0,
@@ -15,7 +15,8 @@
         0
     ],
     "owned_towers": [
-        "t_cell"
+        "t_cell",
+        "monocyte"
     ],
     "game_attrs": {
         "lives": {
@@ -33,7 +34,7 @@
             "description": "The amount of protein you start with on each level."
         },
         "max_towers": {
-            "value": 2,
+            "value": 1,
             "increment": 1,
             "upgrade_cost": 100,
             "cost_increment": 100,

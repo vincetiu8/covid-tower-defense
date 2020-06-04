@@ -18,8 +18,9 @@ def clean_title(string): # Removes underscores, capitalizes it properly
     return " ".join(string.split("_")).title()
 
 # init pygame here lol
-pg.init()
+pg.mixer.pre_init(buffer = 1024) # initialize mixer first to reduce delays
 pg.mixer.init()
+pg.init()
 
 # game settings
 FPS = 60
@@ -148,6 +149,7 @@ RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_IMG_FOLDER, "le
 HEART_BEEP_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "heart_beep.wav"))
 FLATLINE_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "flatline.wav"))
 BUY_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "buy_sound.wav"))
+WRONG_SELECTION_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "wrong_selection.wav"))
 
 # init level data
 LEVEL_DATA = []
@@ -211,6 +213,7 @@ def update_sfx_vol():
     HEART_BEEP_SFX.set_volume(vol * 0.75)
     FLATLINE_SFX.set_volume(vol * 0.75)
     BUY_SFX.set_volume(vol)
+    WRONG_SELECTION_SFX.set_volume(vol)
     
     for tower in TOWER_DATA:
         for stage in range(3):

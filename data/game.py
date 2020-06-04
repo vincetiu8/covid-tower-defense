@@ -506,11 +506,14 @@ class Game(Display):
                                 self.draw_tower_bases(self)
                                 BUY_SFX.play()
                                 self.ui.get_ui()
+                            else:
+                                WRONG_SELECTION_SFX.play()
                         return -1
 
                     elif result > -1:
                         if self.protein < TOWER_DATA[self.available_towers[result]]["stages"][0]["upgrade_cost"]:
                             self.current_tower = None
+                            WRONG_SELECTION_SFX.play()
                         else:
                             self.current_tower = self.available_towers[result]
                         return -1
@@ -533,6 +536,7 @@ class Game(Display):
 
                 if self.map.is_valid_tower_tile(x_coord, y_coord) == 0 or \
                         self.map.change_node(x_coord, y_coord, 1) == False:
+                    WRONG_SELECTION_SFX.play()
                     self.current_tower = None
                     return -1
 
