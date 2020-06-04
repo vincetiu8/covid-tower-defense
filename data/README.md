@@ -1,5 +1,7 @@
 Assets used:
 
+**SPRITES**
+
 Game Over Font: https://www.1001fonts.com/mini-pixel-7-font.html  
 
 Restart Button Art: https://pixcrafts.com/pixel-art/arrow/1638190-recycling
@@ -12,7 +14,7 @@ HIV, Hepatitis B, and Hepatitis D image Art: https://www.freepik.com/free-vector
 
 Body image art: https://depositphotos.com/51450531/stock-illustration-human-body-anatomy-brain-lungs.html
 
-Sounds:
+**SFX**:
 
 - http://soundbible.com/1997-Cha-Ching-Register.html
 
@@ -27,3 +29,11 @@ Sounds:
 - https://freesound.org/people/Raclure/sounds/483598/
 
 - https://freesound.org/people/EVRetro/sounds/494925/
+
+- https://freesound.org/people/MusicLegends/sounds/344298/
+
+- https://freesound.org/people/akelley6/sounds/453027/
+
+**MUSIC**
+
+- PuffballsUnited - Dig It! https://www.newgrounds.com/audio/listen/603041 (Music for Mild levels)

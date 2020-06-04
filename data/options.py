@@ -55,6 +55,7 @@ class Options(Display):
         if self.music_vol.event(event) != -1:
             self.music_vol_surf = self.music_vol_surf.draw()
             SAVE_DATA["music_vol"] = self.music_vol.get_val()
+            update_music_vol() #settings.py function
             
         if self.sfx_vol.event(event) != -1:
             self.sfx_vol_surf = self.sfx_vol_surf.draw()
@@ -64,11 +65,14 @@ class Options(Display):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.back_rect.collidepoint(event.pos):
+                    BTN_SFX.play()
                     return self.prev_display
+                
                 if self.fullscreen.event(event) != -1:
                     self.fullscreen_surf = self.fullscreen.draw()
                     SAVE_DATA["fullscreen"] = self.fullscreen.is_ticked()
-                    toggle_fullscreen()
+                    toggle_fullscreen() # settings.py function
+                    
                 if self.skip_text.event(event) != -1:
                     self.skip_text_surf = self.skip_text.draw()
                     SAVE_DATA["skip_text"] = self.skip_text.is_ticked()
@@ -108,8 +112,9 @@ class SliderOption(Option):
         self.max_val = max_val
         self.slider_pos = slider_pos # Slider's x pos ranges from 0 to (SLIDER_BAR_WIDTH - SLIDER_WIDTH)
         self.held_down = False
-
-        self.slider_bar_rect = pg.Rect(self.label_text.get_width() + 20, 15, SLIDER_BAR_WIDTH, SLIDER_BAR_HEIGHT)
+        
+        # slider bar x is fixed so that all the slider bars are lined up
+        self.slider_bar_rect = pg.Rect(250, 15, SLIDER_BAR_WIDTH, SLIDER_BAR_HEIGHT)
         
         self.slider_rect = None
         self.slider_true_rect = None # used for event handling
@@ -125,7 +130,7 @@ class SliderOption(Option):
         self.slider_true_rect = pg.Rect(self.slider_rect.x + self.x, self.y, SLIDER_WIDTH, SLIDER_HEIGHT)
         
     def update_slider_rect(self): # Has to be updated every time the slider is moved
-        self.slider_rect = pg.Rect(self.label_text.get_width() + 20 + self.slider_pos, 0, SLIDER_WIDTH, SLIDER_HEIGHT)
+        self.slider_rect = pg.Rect(self.slider_bar_rect.x + self.slider_pos, 0, SLIDER_WIDTH, SLIDER_HEIGHT)
         self.slider_true_rect = pg.Rect(self.slider_rect.x + self.x, self.y, SLIDER_WIDTH, SLIDER_HEIGHT)
         
     def draw(self):

@@ -210,22 +210,33 @@ class Menu(Display):
             if event.button == 1:
                 mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
                 if self.tower_preview_button.collidepoint(mouse_pos):
+                    BTN_SFX.play()
                     return "tower_preview"
                 elif self.enemy_preview_button.collidepoint(mouse_pos):
+                    BTN_SFX.play()
                     return "enemy_preview"
                 elif self.upgrades_menu_button.collidepoint((mouse_pos)):
+                    BTN_SFX.play()
                     return "upgrades_menu"
                 elif self.tower_edit_button.collidepoint(mouse_pos):
+                    BTN_SFX.play()
                     return "tower_edit"
                 elif self.enemy_edit_button.collidepoint(mouse_pos):
+                    BTN_SFX.play()
                     return "enemy_edit"
                 elif self.level_edit_button.collidepoint(mouse_pos):
+                    BTN_SFX.play()
                     return "level_edit"
                 elif self.options_button.collidepoint(mouse_pos):
+                    BTN_SFX.play()
                     return "options"
                 
-                if self.over_level != -1 and self.over_level <= len(SAVE_DATA["levels"]) - 1:
-                    return "tower_select"
+                if self.over_level != -1:
+                    if self.over_level <= len(SAVE_DATA["levels"]) - 1:
+                        BTN_SFX.play()
+                        return "tower_select"
+                    else:
+                        WRONG_SELECTION_SFX.play()
 
             elif event.button == 4:
                 if self.camera.zoom(ZOOM_AMT_MENU) != False:
@@ -494,31 +505,39 @@ class TowerSelectMenu(TowerMenu):
                 mouse_pos = pg.mouse.get_pos()
                 
                 if self.back_btn_rect.collidepoint(mouse_pos):
+                    BTN_SFX.play()
                     return "menu"
                 elif self.start_btn_rect.collidepoint(mouse_pos):
                     if self.num_selected > 0:
+                        BTN_SFX.play()
                         return "game"
                     else:
                         WRONG_SELECTION_SFX.play()
                         
                 elif self.left_btn_rect.collidepoint(mouse_pos) and self.curr_wave > 0:
+                    BTN_2_SFX.play()
                     self.curr_wave -= 1
                 elif self.right_btn_rect.collidepoint(mouse_pos) and self.curr_wave < self.max_wave - 1:
+                    BTN_2_SFX.play()
                     self.curr_wave += 1
                     
                 elif self.difficulty > 0 and self.minus_btn_rect.collidepoint(mouse_pos):
+                    BTN_2_SFX.play()
                     self.difficulty -= 1
                     self.load_level_data()
                 elif self.difficulty < self.max_difficulty and self.plus_btn_rect.collidepoint(mouse_pos):
+                    BTN_2_SFX.play()
                     self.difficulty += 1
                     self.load_level_data()
                     
                 elif self.over_tower[0] != -1:
                     row, col = self.over_tower
                     if self.tower_selected[row][col]:
+                        BTN_2_SFX.play()
                         self.num_selected -= 1
                         self.tower_selected[row][col] = False
                     elif self.num_selected < SAVE_DATA["game_attrs"]["max_towers"]["value"]:
+                        BTN_2_SFX.play()
                         self.num_selected += 1
                         self.tower_selected[row][col] = True
                     else:
@@ -793,6 +812,8 @@ class UpgradesMenu(TowerMenu):
                     if self.confirm_menu_rect.collidepoint(mouse_pos):
                         result = self.confirm_menu.event((mouse_pos[0] - self.confirm_menu_rect.x, mouse_pos[1] - self.confirm_menu_rect.y))
                         if result == 1:
+                            BUY_SFX.play()
+                            
                             if self.over_tower[0] != -1:
                                 row, col = self.over_tower
                                 SAVE_DATA["owned_towers"].append(self.towers[row][col])
@@ -810,30 +831,39 @@ class UpgradesMenu(TowerMenu):
                                 rect.topright = self.upgrade_rects[self.over_upgrade].topright
                                 self.upgrade_button_rects[self.over_upgrade] = rect
                                 self.upgrade_infos = [None for i in self.upgrade_names]
+                                
                             font = pg.font.Font(FONT, 70)
                             self.dna_text = font.render("DNA: " + str(SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"]), 1,
                                                         WHITE)
                         elif result == -1:
                             return -1
+                        
+                        else:
+                            BTN_2_SFX.play()
+                            
                     self.confirming = False
                     self.over_tower = [-1, -1]
 
                 else:
                     if self.done_btn_rect.collidepoint(mouse_pos):
+                        BTN_SFX.play()
                         return "menu"
                     elif self.over_tower[0] != -1:
                         row, col = self.over_tower
-                        if not self.tower_owned[row][col] and self.is_tower_buyable(self.towers[row][col]):
-                            self.confirm_menu = self.confirm_tower_menu
-                            self.confirm_menu_surf = self.confirm_menu.draw()
-                            self.confirm_menu_rect = self.confirm_menu_surf.get_rect(
-                                center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
-                            self.confirming = True
-                        elif not self.is_tower_buyable(self.towers[row][col]):
-                            WRONG_SELECTION_SFX.play()
+                        if not self.tower_owned[row][col]:
+                            if self.is_tower_buyable(self.towers[row][col]):
+                                BTN_2_SFX.play()
+                                self.confirm_menu = self.confirm_tower_menu
+                                self.confirm_menu_surf = self.confirm_menu.draw()
+                                self.confirm_menu_rect = self.confirm_menu_surf.get_rect(
+                                    center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+                                self.confirming = True
+                            elif not self.is_tower_buyable(self.towers[row][col]):
+                                WRONG_SELECTION_SFX.play()
                     else:
                         if self.over_upgrade != -1:
                             if self.is_upgrade_buyable(self.over_upgrade):
+                                BTN_2_SFX.play()
                                 self.confirm_menu = self.confirm_upgrade_menu
                                 self.confirm_menu_surf = self.confirm_menu.draw()
                                 self.confirm_menu_rect = self.confirm_menu_surf.get_rect(

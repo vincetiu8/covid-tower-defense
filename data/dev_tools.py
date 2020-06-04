@@ -918,6 +918,7 @@ class DevUI():
             if event.button == 1:
                 offset = (event.pos[0] - w, event.pos[1] - MENU_OFFSET)
                 if self.save and self.save_button_rect.collidepoint(offset):
+                    BTN_2_SFX.play()
                     for i, level in enumerate(LEVEL_DATA):
                         if "enemies" in level:
                             level.pop("enemies")
@@ -1009,19 +1010,24 @@ class DevUI():
                     return_val = -2
 
                 elif self.done_button_rect.collidepoint(offset):
+                    BTN_SFX.play()
                     return_val = "menu"
 
                 elif self.reload_tower_button_rect.collidepoint(offset):
+                    BTN_2_SFX.play()
                     return_val = "reload_towers"
 
                 elif self.reload_enemy_button_rect.collidepoint(offset):
+                    BTN_2_SFX.play()
                     return_val = "reload_enemies"
 
                 else:
                     if self.attributes[0].minus_button_rect.collidepoint(offset):
+                        BTN_2_SFX.play()
                         if self.attributes[0].change_val(self.attributes[0].current_value - 1):
                             return_val = "scroll_position"
                     elif self.attributes[0].plus_button_rect.collidepoint(offset):
+                        BTN_2_SFX.play()
                         if self.attributes[0].change_val(self.attributes[0].current_value + 1):
                             return_val = "scroll_position"
 
@@ -1031,24 +1037,29 @@ class DevUI():
                                 continue
                             if attr.type == "float":
                                 if attr.minus_button_rect.collidepoint(offset):
+                                    BTN_2_SFX.play()
                                     if attr.change_val(round(attr.current_value - attr.increment, attr.dp)):
                                         return_val = attr
                                     break
                                 elif attr.plus_button_rect.collidepoint(offset):
+                                    BTN_2_SFX.play()
                                     if attr.change_val(round(attr.current_value + attr.increment, attr.dp)):
                                         return_val = attr
                                     break
                             elif attr.type == "bool":
                                 if attr.x_button_rect.collidepoint(offset):
+                                    BTN_2_SFX.play()
                                     if attr.change_val(not attr.current_value):
                                         return_val = attr
                                     break
                             elif attr.type == "select":
                                 if attr.back_button_rect.collidepoint(offset):
+                                    BTN_2_SFX.play()
                                     if attr.change_val(attr.current_value - 1):
                                         return_val = attr
                                     break
                                 elif attr.next_button_rect.collidepoint(offset):
+                                    BTN_2_SFX.play()
                                     if attr.change_val(attr.current_value + 1):
                                         return_val = attr
                                     break
@@ -1059,6 +1070,7 @@ class DevUI():
                                         return_val = attr
                                     break
                                 elif attr.enter_button_rect.collidepoint(offset):
+                                    BTN_2_SFX.play()
                                     attr.over = False
                                     return_val = attr.name
                                     break

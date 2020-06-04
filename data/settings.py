@@ -77,6 +77,7 @@ MENU_IMG_FOLDER = path.join(IMG_FOLDER, "menu")
 ENEMIES_AUD_FOLDER = path.join(AUDIO_FOLDER, "enemies")
 TOWERS_AUD_FOLDER = path.join(AUDIO_FOLDER, "towers")
 GAME_STOP_AUD_FOLDER = path.join(AUDIO_FOLDER, "game_stop")
+MUSIC_FOLDER = path.join(AUDIO_FOLDER, "music")
 
 # init save data
 with open(path.join(GAME_FOLDER, "save.json"), "r") as data_file:
@@ -145,12 +146,17 @@ LEFT_ARROW_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "left.png"))
 RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_IMG_FOLDER, "left.png")).copy(), 180)
 
 # Initializing the mixer in the settings file lol but rn i don't see a better way.
-# Audio
+# SFX
 HEART_BEEP_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "heart_beep.wav"))
 FLATLINE_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "flatline.wav"))
 BUY_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "buy_sound.wav"))
 WRONG_SELECTION_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "wrong_selection.wav"))
 TEXT_SCROLL_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "text_scroll.wav"))
+BTN_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "btn.wav"))
+BTN_2_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "btn2.wav"))
+
+# Music
+MILD_LEVEL_MUSIC = path.join(MUSIC_FOLDER, "mild_level.mp3")
 
 # init level data
 LEVEL_DATA = []
@@ -216,6 +222,8 @@ def update_sfx_vol():
     BUY_SFX.set_volume(vol)
     WRONG_SELECTION_SFX.set_volume(vol)
     TEXT_SCROLL_SFX.set_volume(vol * 0.9)
+    BTN_SFX.set_volume(vol)
+    BTN_2_SFX.set_volume(vol * 0.5)
     
     for tower in TOWER_DATA:
         for stage in range(3):
@@ -224,8 +232,13 @@ def update_sfx_vol():
             
     for enemy in ENEMY_DATA:
         ENEMY_DATA[enemy]["death_sound"].set_volume(vol)
-        
+
+def update_music_vol():
+    vol = SAVE_DATA["music_vol"]
+    pg.mixer.music.set_volume(vol)
+
 update_sfx_vol()
+update_music_vol()
 
 # load path images
 PATH_VERTICAL_IMG = pg.image.load(path.join(PATH_IMG_FOLDER, "vertical.png"))
