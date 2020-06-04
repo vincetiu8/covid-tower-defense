@@ -157,6 +157,8 @@ BTN_2_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "btn2.wav"))
 
 # Music
 MILD_LEVEL_MUSIC = path.join(MUSIC_FOLDER, "mild_level.mp3")
+ACUTE_LEVEL_MUSIC = path.join(MUSIC_FOLDER, "acute_level.mp3")
+SEVERE_LEVEL_MUSIC = ACUTE_LEVEL_MUSIC
 
 # init level data
 LEVEL_DATA = []

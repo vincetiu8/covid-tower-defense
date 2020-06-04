@@ -3,7 +3,7 @@
         [
             true,
             true,
-            false
+            true
         ],
         [
             true,
@@ -16,15 +16,15 @@
             false
         ]
     ],
-    "music_vol": 0.0,
+    "music_vol": 0.492,
     "sfx_vol": 0.372,
     "fullscreen": false,
-    "skip_text": false,
-    "max_dna": 9,
+    "skip_text": true,
+    "max_dna": 0,
     "used_dna": 0,
     "highscores": [
-        48,
-        239,
+        0,
+        0,
         0
     ],
     "owned_towers": [
@@ -42,12 +42,12 @@
         "starting_protein": {
             "value": 30,
             "increment": 5,
-            "upgrade_cost": 75,
+            "upgrade_cost": 85,
             "cost_increment": 10,
             "description": "The amount of protein you start with on each level."
         },
         "max_towers": {
-            "value": 1,
+            "value": 2,
             "increment": 1,
             "upgrade_cost": 100,
             "cost_increment": 100,

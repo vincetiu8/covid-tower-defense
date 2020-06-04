@@ -148,9 +148,9 @@ class Game(Display):
             vein_entrances = vein_entrances,
             base_map = self.map.get_map())
         
-        songs = [MILD_LEVEL_MUSIC]
+        songs = [MILD_LEVEL_MUSIC, ACUTE_LEVEL_MUSIC, SEVERE_LEVEL_MUSIC]
         pg.mixer.music.stop()
-        pg.mixer.music.load(songs[0])
+        pg.mixer.music.load(songs[self.difficulty])
         pg.mixer.music.play(-1)
         
         self.node_is_in_path = [[]]
