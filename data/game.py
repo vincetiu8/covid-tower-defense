@@ -161,6 +161,9 @@ class Game(Display):
         self.draw_tower_bases_wrapper()
         self.make_stripped_path_wrapper()
 
+        self.new_enemy_box = NewEnemyBox()
+        self.new_enemy_box.show_new_enemy("hiv")
+
     def update(self):
         # update portion of the game loop
         for start in self.starts:
@@ -311,7 +314,10 @@ class Game(Display):
         
         if len(self.enemies) == 0 and self.text:
             self.blit(self.textbox, self.textbox.get_rect(bottomleft = (MENU_OFFSET, SCREEN_HEIGHT - MENU_OFFSET + self.textbox.yoffset)))
-        
+
+        if self.new_enemy_box.enabled:
+            self.blit(self.new_enemy_box, self.new_enemy_box.get_rect(center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)))
+
         return self
 
     def make_stripped_path_wrapper(self):
