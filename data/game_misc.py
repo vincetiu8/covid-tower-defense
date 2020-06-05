@@ -288,9 +288,16 @@ class Explosion(pg.sprite.Sprite):
 class NewEnemyBox(pg.Surface):
     def __init__(self):
         self.enabled = False
+        self.show = False
         self.enemy = None
+        self.opacity = 0
         self.rect = pg.Rect(MENU_OFFSET * 9, MENU_OFFSET * 9, SCREEN_WIDTH - MENU_OFFSET * 18, SCREEN_HEIGHT - MENU_OFFSET * 18)
         super().__init__(self.rect.size)
+
+    def get_surf(self):
+        self.convert_alpha()
+        self.set_alpha(self.opacity)
+        return self
 
     def draw(self):
         enemy_dat = ENEMY_DATA[self.enemy]
@@ -304,7 +311,7 @@ class NewEnemyBox(pg.Surface):
         self.blit(enemy_image, enemy_image.get_rect(bottomleft = (MENU_OFFSET * 2, self.rect.height - MENU_OFFSET * 6)))
 
         texts = []
-        texts.append([("Name: " + self.enemy, WHITE)])
+        texts.append([("Name: " + self.enemy.replace("_", " ").title(), WHITE)])
         if "shield_hp" in enemy_dat:
             texts.append([("HP: ", WHITE), (str(enemy_dat["hp"]), GREEN), (" +" + str(enemy_dat["shield_hp"]), CYAN)])
         else:
@@ -312,14 +319,14 @@ class NewEnemyBox(pg.Surface):
         texts.append([("Speed: " + str(enemy_dat["speed"]), WHITE)])
         abilities = [("Abilities: ", WHITE)]
         if enemy_dat["flying"]:
-            abilities.append(("fly, ", GREEN))
+            abilities.append(("Fly, ", GREEN))
         if enemy_dat["mutate"]:
-            abilities.append(("mutate, ", DARK_GREEN))
+            abilities.append(("Mutate, ", DARK_GREEN))
         if enemy_dat["explode_on_death"]:
-            abilities.append(("explode, ", YELLOW))
+            abilities.append(("Explode, ", YELLOW))
 
         if len(abilities) == 1:
-            abilities.append(("none", WHITE))
+            abilities.append(("None", WHITE))
 
         else:
             abilities[-1] = (abilities[-1][0][:-2], abilities[-1][1])
@@ -338,5 +345,13 @@ class NewEnemyBox(pg.Surface):
 
     def show_new_enemy(self, enemy):
         self.enemy = enemy
+        self.show = True
         self.enabled = True
         self.draw()
+
+    def update(self):
+        if self.enabled and self.opacity < 255:
+            self.opacity += 51
+
+        elif not self.enabled and self.opacity > 0:
+            self.opacity -= 51
