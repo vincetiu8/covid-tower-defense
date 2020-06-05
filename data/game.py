@@ -57,6 +57,8 @@ class Game(Display):
         
         if not to_resume:
             self.new_game()
+        else:
+            pg.mixer.music.unpause()
     
     def new_game(self):
         self.map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(list(BODY_PARTS)[LEVEL_DATA[self.level]["body_part"]])))
@@ -145,6 +147,11 @@ class Game(Display):
             veins = veins,
             vein_entrances = vein_entrances,
             base_map = self.map.get_map())
+        
+        songs = [MILD_LEVEL_MUSIC, ACUTE_LEVEL_MUSIC, SEVERE_LEVEL_MUSIC]
+        pg.mixer.music.stop()
+        pg.mixer.music.load(songs[self.difficulty])
+        pg.mixer.music.play(-1)
         
         self.node_is_in_path = [[]]
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
@@ -477,6 +484,7 @@ class Game(Display):
                     result = self.ui.event((event.pos[0] - self.ui_pos[0], event.pos[1] - self.ui_pos[1]))
                     if isinstance(result, str):
                         if result == "start_wave":
+                            BTN_2_SFX.play()
                             self.start_next_wave()
                             return -1
 
@@ -506,12 +514,16 @@ class Game(Display):
                                 self.draw_tower_bases(self)
                                 BUY_SFX.play()
                                 self.ui.get_ui()
+                            else:
+                                WRONG_SELECTION_SFX.play()
                         return -1
 
                     elif result > -1:
                         if self.protein < TOWER_DATA[self.available_towers[result]]["stages"][0]["upgrade_cost"]:
+                            WRONG_SELECTION_SFX.play()
                             self.current_tower = None
                         else:
+                            BTN_2_SFX.play()
                             self.current_tower = self.available_towers[result]
                         return -1
 
@@ -533,6 +545,7 @@ class Game(Display):
 
                 if self.map.is_valid_tower_tile(x_coord, y_coord) == 0 or \
                         self.map.change_node(x_coord, y_coord, 1) == False:
+                    WRONG_SELECTION_SFX.play()
                     self.current_tower = None
                     return -1
 
@@ -574,9 +587,11 @@ class Game(Display):
                 self.camera.zoom(-ZOOM_AMT_GAME)
 
         elif (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+            pg.mixer.music.pause()
             return "pause"
         
         elif event == self.game_done_event:
+            pg.mixer.music.stop()
             return "game_over"
         
         return -1

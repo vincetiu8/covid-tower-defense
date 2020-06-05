@@ -204,6 +204,9 @@ class Textbox(pg.Surface):
         elif self.position < len(self.text):
             self.position += 2
             self.current_text = self.text[:self.position]
+            
+            if (self.position - 1) % 6 == 0: # Plays text scroll sfx every 3 updates
+                TEXT_SCROLL_SFX.play()
             self.draw()
 
         elif self.writing:

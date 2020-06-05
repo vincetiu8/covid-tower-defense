@@ -147,8 +147,10 @@ class GameStop(Display):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.restart_rect.collidepoint(event.pos):
+                    BTN_SFX.play()
                     return "game"
                 elif self.back_rect.collidepoint(event.pos):
+                    BTN_SFX.play()
                     return "menu"
                 
         return -1
@@ -197,8 +199,10 @@ class Pause(GameStop):
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if self.resume_rect.collidepoint(event.pos):
+                        BTN_SFX.play()
                         return "resume"
                     elif self.options_rect.collidepoint(event.pos):
+                        BTN_SFX.play()
                         return "options"
             elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                 return "resume"
