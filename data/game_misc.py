@@ -284,3 +284,77 @@ class Explosion(pg.sprite.Sprite):
 
     def get_surf(self):
         return self.surf
+
+class NewEnemyBox(pg.Surface):
+    def __init__(self):
+        self.enabled = False
+        self.show = False
+        self.enemy = None
+        self.opacity = 0
+        self.rect = pg.Rect(MENU_OFFSET * 9, MENU_OFFSET * 9, SCREEN_WIDTH - MENU_OFFSET * 18, SCREEN_HEIGHT - MENU_OFFSET * 18)
+        super().__init__(self.rect.size)
+
+    def get_surf(self):
+        self.convert_alpha()
+        self.set_alpha(self.opacity)
+        return self
+
+    def draw(self):
+        enemy_dat = ENEMY_DATA[self.enemy]
+        self.blit(pg.transform.scale(LEVEL_BUTTON_IMG, self.rect.size), (0, 0))
+
+        big_font = pg.font.Font(FONT, MENU_TEXT_SIZE * 4)
+        title = big_font.render("A NEW ENEMY APPEARS!", 1, WHITE)
+        self.blit(title, title.get_rect(center = (self.rect.width / 2, MENU_OFFSET * 7)))
+
+        enemy_image = pg.transform.scale(enemy_dat["image"], (300, 300))
+        self.blit(enemy_image, enemy_image.get_rect(bottomleft = (MENU_OFFSET * 2, self.rect.height - MENU_OFFSET * 6)))
+
+        texts = []
+        texts.append([("Name: " + self.enemy.replace("_", " ").title(), WHITE)])
+        if "shield_hp" in enemy_dat:
+            texts.append([("HP: ", WHITE), (str(enemy_dat["hp"]), GREEN), (" +" + str(enemy_dat["shield_hp"]), CYAN)])
+        else:
+            texts.append([("HP: ", WHITE), (str(enemy_dat["hp"]), GREEN)])
+        texts.append([("Speed: " + str(enemy_dat["speed"]), WHITE)])
+        abilities = [("Abilities: ", WHITE)]
+        if enemy_dat["flying"]:
+            abilities.append(("Fly, ", GREEN))
+        if enemy_dat["mutate"]:
+            abilities.append(("Mutate, ", DARK_GREEN))
+        if enemy_dat["explode_on_death"]:
+            abilities.append(("Explode, ", YELLOW))
+
+        if len(abilities) == 1:
+            abilities.append(("None", WHITE))
+
+        else:
+            abilities[-1] = (abilities[-1][0][:-2], abilities[-1][1])
+
+        texts.append(abilities)
+
+        font = pg.font.Font(FONT, MENU_TEXT_SIZE * 3)
+        height = title.get_height()
+        for line in texts:
+            width = enemy_image.get_width() + MENU_OFFSET * 4
+            for text, color in line:
+                text_img = font.render(text, 1, color)
+                self.blit(text_img, text_img.get_rect(topleft = (width, height)))
+                width += text_img.get_width()
+            height += text_img.get_height() + MENU_OFFSET
+
+    def show_new_enemy(self, enemy):
+        self.enemy = enemy
+        self.show = True
+        self.enabled = True
+        self.draw()
+
+    def update(self):
+        if self.enabled and self.opacity < 255:
+            self.opacity += 51
+
+        elif not self.enabled:
+            if self.opacity > 0:
+                self.opacity -= 51
+            else:
+                self.show = False

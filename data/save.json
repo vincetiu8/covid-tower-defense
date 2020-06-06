@@ -31,6 +31,9 @@
         "t_cell",
         "monocyte"
     ],
+    "seen_enemies": [
+        "common_cold"
+    ],
     "game_attrs": {
         "lives": {
             "value": 5,

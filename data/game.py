@@ -34,8 +34,6 @@ class Game(Display):
     def __init__(self, clock):
         super().__init__()
         self.clock = clock
-        
-        self.paused = False
 
         self.game_done_event = pg.event.Event(pg.USEREVENT)
         
@@ -66,6 +64,7 @@ class Game(Display):
         self.load_level_data()
         
         # initialize all variables and do all the setup for a new game
+        self.new_enemy_box = NewEnemyBox()
         self.obstacles = pg.sprite.Group()
         self.towers = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
@@ -162,45 +161,49 @@ class Game(Display):
         self.make_stripped_path_wrapper()
 
     def update(self):
-        # update portion of the game loop
-        for start in self.starts:
-            start.update()
-        self.enemies.update()
-        self.towers.update()
-        self.projectiles.update()
-        self.ui.update()
-        self.explosions.update()
-        self.textbox.update()
+        if self.new_enemy_box.show:
+            self.new_enemy_box.update()
 
-        keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT]:
-            self.camera.move(25, 0)
+        else:
+            # update portion of the game loop
+            for start in self.starts:
+                start.update()
+            self.enemies.update()
+            self.towers.update()
+            self.projectiles.update()
+            self.ui.update()
+            self.explosions.update()
+            self.textbox.update()
 
-        elif keys[pg.K_RIGHT]:
-            self.camera.move(-25, 0)
+            keys = pg.key.get_pressed()
+            if keys[pg.K_LEFT]:
+                self.camera.move(25, 0)
 
-        elif keys[pg.K_UP]:
-            self.camera.move(0, 25)
+            elif keys[pg.K_RIGHT]:
+                self.camera.move(-25, 0)
 
-        elif keys[pg.K_DOWN]:
-            self.camera.move(0, -25)
+            elif keys[pg.K_UP]:
+                self.camera.move(0, 25)
 
-        if self.lives <= 0:
-            pg.event.post(self.game_done_event)
+            elif keys[pg.K_DOWN]:
+                self.camera.move(0, -25)
 
-        if self.text:
-            return
-
-        if not self.in_a_wave and self.wave > 0:
-            self.time_passed += self.clock.get_time()
-            if self.time_passed >= WAVE_DELAY * 1000:
-                self.start_next_wave()
-                
-        if self.current_wave_done() and self.in_a_wave:
-            if self.wave < self.max_wave:
-                self.prepare_next_text()
-            elif len(self.enemies) == 0:
+            if self.lives <= 0:
                 pg.event.post(self.game_done_event)
+
+            if self.text:
+                return
+
+            if not self.in_a_wave and self.wave > 0:
+                self.time_passed += self.clock.get_time()
+                if self.time_passed >= WAVE_DELAY * 1000:
+                    self.start_next_wave()
+
+            if self.current_wave_done() and self.in_a_wave:
+                if self.wave < self.max_wave:
+                    self.prepare_next_text()
+                elif len(self.enemies) == 0:
+                    pg.event.post(self.game_done_event)
 
     def current_wave_done(self):
         for start in self.starts:
@@ -249,6 +252,9 @@ class Game(Display):
 
         for start in self.starts:
             start.enable_spawning()
+            if start.enemy_type not in SAVE_DATA["seen_enemies"]:
+                SAVE_DATA["seen_enemies"].append(start.enemy_type)
+                self.new_enemy_box.show_new_enemy(start.enemy_type)
 
     #     def draw_grid(self):
     #         for x in range(0, self.map.width, self.map.tilesize):
@@ -311,7 +317,10 @@ class Game(Display):
         
         if len(self.enemies) == 0 and self.text:
             self.blit(self.textbox, self.textbox.get_rect(bottomleft = (MENU_OFFSET, SCREEN_HEIGHT - MENU_OFFSET + self.textbox.yoffset)))
-        
+
+        if self.new_enemy_box.show:
+            self.blit(self.new_enemy_box.get_surf(), self.new_enemy_box.get_rect(center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)))
+
         return self
 
     def make_stripped_path_wrapper(self):
@@ -465,6 +474,10 @@ class Game(Display):
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
+                if self.new_enemy_box.enabled:
+                    self.new_enemy_box.enabled = False
+                    self.paused = False
+
                 if self.text:
                     if self.textbox.writing:
                         self.textbox.fast_forward()
