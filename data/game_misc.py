@@ -353,5 +353,8 @@ class NewEnemyBox(pg.Surface):
         if self.enabled and self.opacity < 255:
             self.opacity += 51
 
-        elif not self.enabled and self.opacity > 0:
-            self.opacity -= 51
+        elif not self.enabled:
+            if self.opacity > 0:
+                self.opacity -= 51
+            else:
+                self.show = False
