@@ -5,6 +5,11 @@ import sys
 import json
 import pygame as pg
 
+### PLACE USEREVENT USAGE HERE ###
+# USEREVENT --> game over event in Game()
+# USEREVENT + 1 --> timer event in DevUI()
+# USEREVENT + 2 --> fade out done event in Pause()
+
 def resource_path(relative_path):
     try:
     # PyInstaller creates a temp folder and stores path in _MEIPASS

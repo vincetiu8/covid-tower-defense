@@ -20,8 +20,6 @@ class GameStop(Display):
         self.font_1 = pg.font.Font(FONT, 200)
         self.font_2 = pg.font.Font(FONT, 60)
         
-        self.alpha_speed = 0
-        
     def new(self, args):
         self.game_surf = args[0]
         self.no_fade_in = args[1]
@@ -31,8 +29,6 @@ class GameStop(Display):
             self.alpha = 255
     
     def draw(self):
-        self.alpha = min(255, self.alpha + self.alpha_speed)
-        
         self.draw_grid()
         self.draw_btns()
         self.draw_text()
@@ -90,8 +86,8 @@ class GameStop(Display):
     def is_done_fading(self):
         return self.alpha == 255
     
-    def can_register_clicks(self):
-        return self.alpha >= 80
+    def can_click(self):
+        return self.alpha > 125 or self.alpha == 0
     
     def center_text_x(self, offset, width, text):
         return offset + (width - text.get_rect().w) / 2
@@ -158,19 +154,29 @@ class GameStop(Display):
 class Pause(GameStop):
     def __init__(self):
         super().__init__()
+        self.fade_out_done_event = pg.event.Event(pg.USEREVENT + 2)
         
         self.resume_rect = pg.Rect((500, 300), RESUME_BTN_IMGS[0].get_size())
         self.options_rect = pg.Rect((1100, 20), OPTIONS_IMGS[0].get_size())
         self.resume_text = None
         
         self.lost = False
+        self.fading_out = False
         
-        self.alpha_speed = 12
+        self.alpha_speed = 20
         
         self.init_text("GAME PAUSED", "")
         
     def draw(self):
         self.game_stop_surf.fill(BLACK)
+        if self.fading_out:
+            self.alpha = max(0, self.alpha - self.alpha_speed)
+            if self.alpha == 0:
+                pg.event.post(self.fade_out_done_event)
+                self.fading_out = False
+        else:
+            self.alpha = min(255, self.alpha + self.alpha_speed)
+        
         super().draw()
         return self
         
@@ -193,6 +199,9 @@ class Pause(GameStop):
         self.game_stop_surf.blit(OPTIONS_IMGS[hover_options], self.options_rect)
         
     def event(self, event):
+        if not self.can_click():
+            return -1
+        
         result = super().event(event)
         
         if result == -1:
@@ -200,11 +209,13 @@ class Pause(GameStop):
                 if event.button == 1:
                     if self.resume_rect.collidepoint(event.pos):
                         BTN_SFX.play()
-                        return "resume"
+                        self.fading_out = True
                     elif self.options_rect.collidepoint(event.pos):
                         BTN_SFX.play()
                         return "options"
             elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                self.fading_out = True
+            elif event.type == pg.USEREVENT + 2:
                 return "resume"
         
         return result
@@ -272,6 +283,7 @@ class GameOver(GameStop):
         
     def draw(self):
         self.game_stop_surf.fill(BLACK)
+        self.alpha = min(255, self.alpha + self.alpha_speed)
         self.heartbeat_x = min(1280, self.heartbeat_x + 4)
         self.draw_heartbeat()
         
@@ -290,6 +302,9 @@ class GameOver(GameStop):
         pg.draw.rect(self.game_stop_surf, BLACK, (int(self.heartbeat_x), 0, SCREEN_WIDTH - int(self.heartbeat_x), SCREEN_HEIGHT))
         
     def event(self, event):
+        if not self.can_click():
+            return -1
+        
         result = super().event(event)
         
         if result != -1:
