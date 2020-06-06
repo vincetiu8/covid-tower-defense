@@ -138,7 +138,7 @@ class Main:
                     elif self.result == "pause":
                         self.args.extend([self.game.draw(), self.current_display == self.options])
                     
-                    # don't do fade out for the folling transitions:
+                    # don't do fade out for the following transitions:
                     # transitioning from game --> pause/game_over
                     # transitioning from pause --> game (resuming, not restarting)
                     if (self.current_display == self.game and (self.result == "pause" or self.result == "game_over")) or (self.current_display == self.pause and self.result == "resume"):
