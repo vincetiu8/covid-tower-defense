@@ -57,6 +57,16 @@ class Main:
         }
         
         self.current_display = self.start_menu
+        self.args = []
+        self.result = None
+        
+        self.fading_out = False
+        self.fading_in = False
+        self.black_alpha = 0
+        self.black_alpha_surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.fade_out_speed = [10, 40]
+        self.fade_in_speed = [30, 50]
+        self.fade_ind = 0
         
     def run(self):
         self.main_clock.tick(FPS)
@@ -75,33 +85,70 @@ class Main:
         SCREEN.fill((0, 0, 0))
         surf = self.current_display.draw()
         SCREEN.blit(surf, (0, 0))
+        
+        if self.fading_out:
+            if self.black_alpha == 255:
+                self.fading_out = False
+                self.fading_in = True
+                self.set_display(self.display_keys[self.result], self.args)
+            else:
+                self.black_alpha = min(255, self.black_alpha + self.fade_out_speed[self.fade_ind])
+                
+            self.black_alpha_surf.fill((0, 0, 0))
+            self.black_alpha_surf.set_alpha(self.black_alpha)
+            SCREEN.blit(self.black_alpha_surf, (0, 0))
+            
+        elif self.fading_in:
+            if self.black_alpha == 0:
+                self.fading_in = False
+            else:
+                self.black_alpha = max(0, self.black_alpha - self.fade_in_speed[self.fade_ind])
+                
+            self.black_alpha_surf.fill((0, 0, 0))
+            self.black_alpha_surf.set_alpha(self.black_alpha)
+            SCREEN.blit(self.black_alpha_surf, (0, 0))
             
         pg.display.flip()
 
     def events(self):
+        if self.fading_in or self.fading_out:
+            return
+        
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
                 break
 
             else:
-                result = self.current_display.event(event)
+                temp_result = self.current_display.event(event)
                 
-                if result != -1:
-                    args = []
-                    if result == "game" or result == "resume":
-                        args.extend([(self.menu.get_over_level(), self.tower_select.get_difficulty()), result == "resume", self.tower_select.get_selected_towers()])
-                    elif result == "tower_select":
-                        args.append(self.menu.get_over_level())
-                    elif result == "options":
-                        args.append(self.display_keys_reverse[self.current_display])
-                    elif result == "game_over":
-                        args.extend([self.game.draw(), self.current_display == self.options,
+                if temp_result != -1:
+                    self.result = temp_result
+                    self.args = []
+                    
+                    if self.result == "game" or self.result == "resume":
+                        self.args.extend([(self.menu.get_over_level(), self.tower_select.get_difficulty()), self.result == "resume", self.tower_select.get_selected_towers()])
+                    elif self.result == "tower_select":
+                        self.args.append(self.menu.get_over_level())
+                    elif self.result == "options":
+                        self.args.append(self.display_keys_reverse[self.current_display])
+                    elif self.result == "game_over":
+                        self.args.extend([self.game.draw(), self.current_display == self.options,
                                      self.game.get_lives() == 0, self.game.get_cause_of_death(), (self.game.level, self.game.difficulty, self.game.protein)])
-                    elif result == "pause":
-                        args.extend([self.game.draw(), self.current_display == self.options])
-                        
-                    self.set_display(self.display_keys[result], args)
+                    elif self.result == "pause":
+                        self.args.extend([self.game.draw(), self.current_display == self.options])
+                    
+                    # don't do fade out for the following transitions:
+                    # transitioning from game --> pause/game_over
+                    # transitioning from pause --> game (resuming, not restarting)
+                    if (self.current_display == self.game and (self.result == "pause" or self.result == "game_over")) or (self.current_display == self.pause and self.result == "resume"):
+                        self.set_display(self.display_keys[self.result], self.args)
+                    else:
+                        self.fade_ind = 1
+                        if self.current_display == self.game_over: # transitioning from game_over has a slower fade speed
+                            self.fade_ind = 0
+                            
+                        self.fading_out = True
                     
     def set_display(self, display, args):
         display.new(args)
