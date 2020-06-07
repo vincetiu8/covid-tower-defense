@@ -18,9 +18,7 @@
     "owned_towers": [
         "t_cell"
     ],
-    "seen_enemies": [
-
-    ],
+    "seen_enemies": [],
     "game_attrs": {
         "lives": {
             "value": 5,

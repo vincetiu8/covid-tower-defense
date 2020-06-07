@@ -435,9 +435,13 @@ class TowerSelectMenu(TowerMenu):
         # Draws enemy infos
         if self.over_enemy != None:
             if self.enemy_infos.get(self.over_enemy) == None:
-                enemy_name = clean_title(self.over_enemy)
-                new_enemy_info = HoverInfo(enemy_name, ENEMY_DATA[self.over_enemy]["description"])
-                self.enemy_infos[self.over_enemy] = new_enemy_info.draw()
+                if self.over_enemy in SAVE_DATA["seen_enemies"]:
+                    enemy_name = clean_title(self.over_enemy)
+                    new_enemy_info = HoverInfo(enemy_name, ENEMY_DATA[self.over_enemy]["description"])
+                    self.enemy_infos[self.over_enemy] = new_enemy_info.draw()
+                else:
+                    new_enemy_info = HoverInfo("Unknown Enemy", "???")
+                    self.enemy_infos[self.over_enemy] = new_enemy_info.draw()
             
             self.blit(self.enemy_infos[self.over_enemy],
                       self.enemy_infos[self.over_enemy].get_rect(topright = self.wave_data[self.over_enemy]["rect"].topleft))
@@ -470,7 +474,12 @@ class TowerSelectMenu(TowerMenu):
         
         for enemy_type in wave_data_keys:
             text = wave_font.render("{}x".format(self.wave_data[enemy_type]["count"]), 1, WHITE)
-            enemy_img = pg.transform.scale(ENEMY_DATA[enemy_type]["image"], (GRID_2_CELL_SIZE, GRID_2_CELL_SIZE))
+            enemy_img = pg.transform.scale(ENEMY_DATA[enemy_type]["image"], (GRID_2_CELL_SIZE, GRID_2_CELL_SIZE)).convert_alpha()
+            if enemy_type not in SAVE_DATA["seen_enemies"]:
+                enemy_img.fill(DARK_GREY, special_flags=pg.BLEND_RGBA_MULT)
+                font = pg.font.Font(FONT, MENU_TEXT_SIZE)
+                question_mark = font.render("?", 1, WHITE)
+                enemy_img.blit(question_mark, question_mark.get_rect(center = enemy_img.get_rect().center))
             enemy_surf = pg.Surface((text.get_width() + enemy_img.get_width(), max(text.get_height(), enemy_img.get_height())))
             
             enemy_surf.blit(text, (0, 0))
@@ -648,7 +657,12 @@ class LevelInfo(HoverInfo):
             enemy_surf = pg.Surface((self.texts[0][0].get_width() + MENU_OFFSET * 2, MENU_TEXT_SIZE))
             enemy_surf.fill(DARK_GREY)
             for i, enemy in enumerate(self.level_data["enemies"]):
-                enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE))
+                enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE)).convert_alpha()
+                if enemy not in SAVE_DATA["seen_enemies"]:
+                    enemy_image.fill(DARK_GREY, special_flags=pg.BLEND_RGBA_MULT)
+                    font = pg.font.Font(FONT, MENU_TEXT_SIZE)
+                    question_mark = font.render("?", 1, WHITE)
+                    enemy_image.blit(question_mark, question_mark.get_rect(center=enemy_image.get_rect().center))
                 enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + MENU_OFFSET), 0))
 
             self.add_text(enemy_surf)
