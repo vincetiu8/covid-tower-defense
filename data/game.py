@@ -409,7 +409,7 @@ class Game(Display):
                 self.aoe_surf.blit(s, tower.aoe_sprite.rect, special_flags=pg.BLEND_RGBA_MAX)
 
     def draw_tower_preview(self):
-        mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
+        mouse_pos = self.camera.correct_mouse((round(pg.mouse.get_pos()[0] * CONVERSION_FACTOR), round(pg.mouse.get_pos()[1] * CONVERSION_FACTOR)))
         towerxy = (
             round_to_tilesize(mouse_pos[0], self.map.tilesize), round_to_tilesize(mouse_pos[1], self.map.tilesize))
         tower_tile = (

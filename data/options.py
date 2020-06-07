@@ -9,6 +9,7 @@ class Options(Display):
                                       slider_pos = (SLIDER_BAR_WIDTH - SLIDER_WIDTH) * SAVE_DATA["music_vol"])
         self.sfx_vol = SliderOption("SFX Vol", min_val = 0, max_val = 1,
                                     slider_pos = (SLIDER_BAR_WIDTH - SLIDER_WIDTH) * SAVE_DATA["sfx_vol"])
+        self.screen_width = SnapSliderOption("Display Size", slider_pos = (SCREEN_SIZES.index(SAVE_DATA["width"])) / (len(SCREEN_SIZES) - 1) * (SLIDER_BAR_WIDTH - SLIDER_WIDTH), snap_values = SCREEN_SIZES)
         self.skip_text = TickBoxOption("Skip Text", SAVE_DATA["skip_text"])
         
         self.back_rect = pg.Rect((20, 20), OPTIONS_BACK_IMGS[0].get_size())
@@ -159,6 +160,64 @@ class SliderOption(Option):
                 self.update_slider_rect()
                 return True
         
+        return -1
+
+class SnapSliderOption(Option):
+    def __init__(self, label, slider_pos, snap_values):
+        super().__init__(label)
+
+        self.slider_pos = slider_pos  # Slider's x pos ranges from 0 to (SLIDER_BAR_WIDTH - SLIDER_WIDTH)
+        self.held_down = False
+
+        # slider bar x is fixed so that all the slider bars are lined up
+        self.slider_bar_rect = pg.Rect(250, 15, SLIDER_BAR_WIDTH, SLIDER_BAR_HEIGHT)
+
+        self.slider_rect = None
+        self.slider_true_rect = None  # used for event handling
+        self.update_slider_rect()
+        self.snap_values = snap_values
+
+        super().init_surf(self.slider_bar_rect.x + SLIDER_BAR_WIDTH + 5, SLIDER_HEIGHT + 5)
+
+    def get_val(self):
+        return self.snap_values[round(len(self.snap_values) * self.slider_pos / (SLIDER_BAR_WIDTH - SLIDER_WIDTH))]
+
+    def set_coords(self, x, y):
+        super().set_coords(x, y)
+        self.slider_true_rect = pg.Rect(self.slider_rect.x + self.x, self.y, SLIDER_WIDTH, SLIDER_HEIGHT)
+
+    def update_slider_rect(self):  # Has to be updated every time the slider is moved
+        self.slider_rect = pg.Rect(self.slider_bar_rect.x + self.slider_pos, 0, SLIDER_WIDTH, SLIDER_HEIGHT)
+        self.slider_true_rect = pg.Rect(self.slider_rect.x + self.x, self.y, SLIDER_WIDTH, SLIDER_HEIGHT)
+
+    def draw(self):
+        self.fill((0, 0, 0, 0))  # fill with transparency
+
+        self.blit(self.label_text, (0, -15))
+        pg.draw.rect(self, WHITE, self.slider_bar_rect, 5)
+        pg.draw.rect(self, WHITE, self.slider_rect, 0)
+
+        return self
+
+    # Events should always be passed to SliderOption regardless of type
+    def event(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.slider_true_rect.collidepoint(event.pos):
+                    self.held_down = True
+
+        elif event.type == pg.MOUSEBUTTONUP:
+            self.held_down = False
+
+        elif event.type == pg.MOUSEMOTION:
+            if self.held_down:
+                mouse_pos_x = event.pos[
+                                  0] - self.x - self.slider_bar_rect.x  # Corrects mouse_pos_x to the same reference as the slider_bar
+                self.slider_pos = len(self.snap_values) * round(mouse_pos_x / (SLIDER_WIDTH - SLIDER_BAR_WIDTH) / len(self.snap_values))
+
+                self.update_slider_rect()
+                return True
+
         return -1
         
 class TickBoxOption(Option):

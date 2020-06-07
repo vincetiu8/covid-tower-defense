@@ -18,6 +18,7 @@
     ],
     "music_vol": 0.492,
     "sfx_vol": 0.372,
+    "width": 960,
     "fullscreen": false,
     "skip_text": true,
     "max_dna": 0,

@@ -83,7 +83,7 @@ class Main:
         pg.display.set_caption("FPS: {:.2f}".format(self.main_clock.get_fps()))
         
         SCREEN.fill((0, 0, 0))
-        surf = self.current_display.draw()
+        surf = pg.transform.scale(self.current_display.draw(), (SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16))
         SCREEN.blit(surf, (0, 0))
         
         if self.fading_out:
@@ -120,8 +120,11 @@ class Main:
                 break
 
             else:
+                if event.type == pg.MOUSEBUTTONDOWN or event.type == pg.MOUSEBUTTONUP or event.type == pg.MOUSEMOTION:
+                    print(CONVERSION_FACTOR)
+                    event.pos = (round(event.pos[0] * CONVERSION_FACTOR), round(event.pos[1] * CONVERSION_FACTOR))
                 temp_result = self.current_display.event(event)
-                
+
                 if temp_result != -1:
                     self.result = temp_result
                     self.args = []

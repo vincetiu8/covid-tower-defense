@@ -77,8 +77,8 @@ class GameStop(Display):
                                     self.center_text_y(self.back_rect.y + self.back_text_1.get_rect().h / 3, self.back_rect.h, self.back_text_2)))
         
     def draw_btns(self):
-        hover_restart = self.restart_rect.collidepoint(pg.mouse.get_pos())
-        hover_back = self.back_rect.collidepoint(pg.mouse.get_pos())
+        hover_restart = self.restart_rect.collidepoint((round(pg.mouse.get_pos()[0] * CONVERSION_FACTOR), round(pg.mouse.get_pos()[1] * CONVERSION_FACTOR)))
+        hover_back = self.back_rect.collidepoint((round(pg.mouse.get_pos()[0] * CONVERSION_FACTOR), round(pg.mouse.get_pos()[1] * CONVERSION_FACTOR)))
         
         self.game_stop_surf.blit(RESTART_BTN_IMGS[self.lost][hover_restart], self.restart_rect)
         self.game_stop_surf.blit(BACK_BTN_IMGS[self.lost][hover_back], self.back_rect)
@@ -192,10 +192,10 @@ class Pause(GameStop):
     def draw_btns(self):
         super().draw_btns()
         
-        hover_resume = self.resume_rect.collidepoint(pg.mouse.get_pos())
+        hover_resume = self.resume_rect.collidepoint((round(pg.mouse.get_pos()[0] * CONVERSION_FACTOR), round(pg.mouse.get_pos()[1] * CONVERSION_FACTOR)))
         self.game_stop_surf.blit(RESUME_BTN_IMGS[hover_resume], self.resume_rect)
         
-        hover_options = self.options_rect.collidepoint(pg.mouse.get_pos())
+        hover_options = self.options_rect.collidepoint((round(pg.mouse.get_pos()[0] * CONVERSION_FACTOR), round(pg.mouse.get_pos()[1] * CONVERSION_FACTOR)))
         self.game_stop_surf.blit(OPTIONS_IMGS[hover_options], self.options_rect)
         
     def event(self, event):

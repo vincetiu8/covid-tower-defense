@@ -93,7 +93,7 @@ class Menu(Display):
         level_text = big_font.render("Levels", 1, WHITE)
         self.blit(self.camera.apply_image(level_text), self.camera.apply_tuple((START_SCREEN_IMG.get_rect().w / 2 - level_text.get_rect().center[0], -50 - level_text.get_rect().center[1])))
         
-        hover_options = self.options_button.collidepoint(self.camera.correct_mouse(pg.mouse.get_pos()))
+        hover_options = self.options_button.collidepoint(self.camera.correct_mouse((round(pg.mouse.get_pos()[0] * CONVERSION_FACTOR), round(pg.mouse.get_pos()[1] * CONVERSION_FACTOR))))
         self.blit(self.camera.apply_image(OPTIONS_IMGS[hover_options]), self.camera.apply_rect(self.options_button))
 
         for i, button in enumerate(self.level_buttons):
@@ -188,7 +188,7 @@ class Menu(Display):
         return self
 
     def update_level(self):
-        mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
+        mouse_pos = self.camera.correct_mouse((round(pg.mouse.get_pos()[0] * CONVERSION_FACTOR), round(pg.mouse.get_pos()[1] * CONVERSION_FACTOR)))
         for i, button in enumerate(self.level_buttons):
             if button.collidepoint(mouse_pos):
                 self.over_level = i
@@ -208,7 +208,7 @@ class Menu(Display):
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
-                mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
+                mouse_pos = self.camera.correct_mouse(event.pos)
                 if self.tower_preview_button.collidepoint(mouse_pos):
                     BTN_SFX.play()
                     return "tower_preview"
@@ -502,7 +502,7 @@ class TowerSelectMenu(TowerMenu):
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
-                mouse_pos = pg.mouse.get_pos()
+                mouse_pos = event.pos
                 
                 if self.back_btn_rect.collidepoint(mouse_pos):
                     BTN_SFX.play()
@@ -544,7 +544,7 @@ class TowerSelectMenu(TowerMenu):
                         WRONG_SELECTION_SFX.play()
                             
         if event.type == pg.MOUSEMOTION:
-            mouse_pos = pg.mouse.get_pos()
+            mouse_pos = event.pos
             for row, grid_row in enumerate(self.tower_rects):
                 for col, rect in enumerate(grid_row):
                     if rect.collidepoint(mouse_pos):
@@ -807,7 +807,7 @@ class UpgradesMenu(TowerMenu):
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
-                mouse_pos = pg.mouse.get_pos()
+                mouse_pos = event.pos
                 if self.confirming:
                     if self.confirm_menu_rect.collidepoint(mouse_pos):
                         result = self.confirm_menu.event((mouse_pos[0] - self.confirm_menu_rect.x, mouse_pos[1] - self.confirm_menu_rect.y))
@@ -874,7 +874,7 @@ class UpgradesMenu(TowerMenu):
                                 WRONG_SELECTION_SFX.play()
 
         if event.type == pg.MOUSEMOTION and not self.confirming:
-            mouse_pos = pg.mouse.get_pos()
+            mouse_pos = event.pos
             for row, grid_row in enumerate(self.tower_rects):
                 for col, rect in enumerate(grid_row):
                     if rect.collidepoint(mouse_pos):
