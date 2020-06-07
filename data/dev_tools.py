@@ -15,7 +15,7 @@ class DevClass(Game):
     def __init__(self, clock):
         self.clock = clock
         self.tower_names = SAVE_DATA["owned_towers"]
-        self.enemy_names = list(ENEMY_DATA.keys())
+        self.enemy_names = SAVE_DATA["seen_enemies"]
 
     def reload_level(self, map):
         self.map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(map)))
@@ -326,7 +326,7 @@ class TowerPreviewMenu(DevClass):
 class TowerEditMenu(TowerPreviewMenu):
     def new(self, args):
         self.tower_names = list(TOWER_DATA.keys())
-        # initialize all variables and do all the setup for a new game
+        self.enemy_names = list(ENEMY_DATA.keys())
         super().new(args)
 
     def load_ui(self):
@@ -516,6 +516,7 @@ class EnemyPreviewMenu(DevClass):
 class EnemyEditMenu(EnemyPreviewMenu):
     def new(self, args):
         self.tower_names = list(TOWER_DATA.keys())
+        self.enemy_names = list(ENEMY_DATA.keys())
         super().new(args)
 
     def load_ui(self):
