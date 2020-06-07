@@ -16,11 +16,11 @@ class Main:
         pg.key.set_repeat(500, 100)
         self.main_clock = pg.time.Clock()
         self.clock = pg.time.Clock()
-        #self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.playing = False
         self.started_game = False
         self.game_surf = None # only used to draw static game screen when fading into game_stop screens
-        
+        self.get_conversion_factor()
+
         self.start_menu = StartMenu()
         self.menu = Menu()
         self.game = Game(self.clock)
@@ -67,7 +67,10 @@ class Main:
         self.fade_out_speed = [10, 40]
         self.fade_in_speed = [30, 50]
         self.fade_ind = 0
-        
+
+    def get_conversion_factor(self):
+        self.conversion_factor = SCREEN_WIDTH / SAVE_DATA["width"]
+
     def run(self):
         self.main_clock.tick(FPS)
         self.clock.tick()
@@ -121,8 +124,7 @@ class Main:
 
             else:
                 if event.type == pg.MOUSEBUTTONDOWN or event.type == pg.MOUSEBUTTONUP or event.type == pg.MOUSEMOTION:
-                    print(CONVERSION_FACTOR)
-                    event.pos = (round(event.pos[0] * CONVERSION_FACTOR), round(event.pos[1] * CONVERSION_FACTOR))
+                    event.pos = (round(event.pos[0] * self.conversion_factor), round(event.pos[1] * self.conversion_factor))
                 temp_result = self.current_display.event(event)
 
                 if temp_result != -1:
@@ -134,7 +136,7 @@ class Main:
                     elif self.result == "tower_select":
                         self.args.append(self.menu.get_over_level())
                     elif self.result == "options":
-                        self.args.append(self.display_keys_reverse[self.current_display])
+                        self.args.extend([self.display_keys_reverse[self.current_display], self])
                     elif self.result == "game_over":
                         self.args.extend([self.game.draw(), self.current_display == self.options,
                                      self.game.get_lives() == 0, self.game.get_cause_of_death(), (self.game.level, self.game.difficulty, self.game.protein)])

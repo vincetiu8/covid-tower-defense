@@ -17,14 +17,14 @@
         ]
     ],
     "music_vol": 0.492,
-    "sfx_vol": 0.372,
-    "width": 960,
+    "sfx_vol": 0.0,
+    "width": 1440,
     "fullscreen": false,
     "skip_text": true,
-    "max_dna": 0,
+    "max_dna": 34,
     "used_dna": 0,
     "highscores": [
-        0,
+        34,
         0,
         0
     ],
@@ -33,7 +33,8 @@
         "monocyte"
     ],
     "seen_enemies": [
-        "common_cold"
+        "common_cold",
+        "hepatitis_a"
     ],
     "game_attrs": {
         "lives": {

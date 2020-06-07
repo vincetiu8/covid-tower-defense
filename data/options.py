@@ -9,7 +9,7 @@ class Options(Display):
                                       slider_pos = (SLIDER_BAR_WIDTH - SLIDER_WIDTH) * SAVE_DATA["music_vol"])
         self.sfx_vol = SliderOption("SFX Vol", min_val = 0, max_val = 1,
                                     slider_pos = (SLIDER_BAR_WIDTH - SLIDER_WIDTH) * SAVE_DATA["sfx_vol"])
-        self.screen_width = SnapSliderOption("Display Size", slider_pos = (SCREEN_SIZES.index(SAVE_DATA["width"])) / (len(SCREEN_SIZES) - 1) * (SLIDER_BAR_WIDTH - SLIDER_WIDTH), snap_values = SCREEN_SIZES)
+        self.screen_width = SnapSliderOption("Resolution", slider_pos = (SCREEN_SIZES.index(SAVE_DATA["width"])) / (len(SCREEN_SIZES) - 1) * (SLIDER_BAR_WIDTH - SLIDER_WIDTH), snap_values=SCREEN_SIZES)
         self.skip_text = TickBoxOption("Skip Text", SAVE_DATA["skip_text"])
         
         self.back_rect = pg.Rect((20, 20), OPTIONS_BACK_IMGS[0].get_size())
@@ -20,13 +20,21 @@ class Options(Display):
         self.fullscreen_surf = self.fullscreen.draw()
         self.music_vol_surf = self.music_vol.draw()
         self.sfx_vol_surf = self.sfx_vol.draw()
+        self.screen_width_surf = self.screen_width.draw()
         self.skip_text_surf = self.skip_text.draw()
-        self.surfs = [self.fullscreen_surf, self.music_vol_surf, self.sfx_vol_surf, self.skip_text_surf]
-        
+        self.surfs = [self.fullscreen_surf, self.music_vol_surf, self.sfx_vol_surf, self.screen_width_surf, self.skip_text_surf]
+
+        label_font = pg.font.Font(FONT, 80)
+        apply_text = label_font.render("Apply", 1, WHITE)
+        self.apply_button = pg.transform.scale(LEVEL_BUTTON_IMG, (apply_text.get_width() + MENU_OFFSET * 2, apply_text.get_height() + MENU_OFFSET * 2))
+        self.apply_button_rect = self.apply_button.get_rect()
+        self.apply_button.blit(apply_text, apply_text.get_rect(center = self.apply_button_rect.center))
+
         self.prev_display = None
         
     def new(self, args):
         self.prev_display = args[0]
+        self.main = args[1]
         
     def draw(self):
         self.fill(BLACK)
@@ -49,22 +57,33 @@ class Options(Display):
                 
             self.blit(surf, (x, y))
             y += surf.get_height() + OPTIONS_SEPARATION
-        
+
+        self.apply_button_rect.topleft = (x, y)
+        self.blit(self.apply_button, self.apply_button_rect)
+
         return self
     
     def event(self, event):
         if self.music_vol.event(event) != -1:
             self.music_vol_surf = self.music_vol_surf.draw()
-            SAVE_DATA["music_vol"] = self.music_vol.get_val()
-            update_music_vol() #settings.py function
             
         if self.sfx_vol.event(event) != -1:
             self.sfx_vol_surf = self.sfx_vol_surf.draw()
-            SAVE_DATA["sfx_vol"] = self.sfx_vol.get_val()
-            update_sfx_vol() # settings.py function
-                    
+
+        if self.screen_width.event(event) != -1:
+            self.screen_width_surf = self.screen_width.draw()
+
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
+                if self.apply_button_rect.collidepoint(event.pos):
+                    SAVE_DATA["music_vol"] = self.music_vol.get_val()
+                    SAVE_DATA["sfx_vol"] = self.sfx_vol.get_val()
+                    SAVE_DATA["width"] = self.screen_width.get_val()
+                    update_music_vol()  # settings.py function
+                    update_sfx_vol()  # settings.py function
+                    toggle_fullscreen()
+                    self.main.get_conversion_factor()
+
                 if self.back_rect.collidepoint(event.pos):
                     BTN_SFX.play()
                     return self.prev_display
@@ -166,6 +185,7 @@ class SnapSliderOption(Option):
     def __init__(self, label, slider_pos, snap_values):
         super().__init__(label)
 
+        self.snap_values = snap_values
         self.slider_pos = slider_pos  # Slider's x pos ranges from 0 to (SLIDER_BAR_WIDTH - SLIDER_WIDTH)
         self.held_down = False
 
@@ -175,12 +195,11 @@ class SnapSliderOption(Option):
         self.slider_rect = None
         self.slider_true_rect = None  # used for event handling
         self.update_slider_rect()
-        self.snap_values = snap_values
 
         super().init_surf(self.slider_bar_rect.x + SLIDER_BAR_WIDTH + 5, SLIDER_HEIGHT + 5)
 
     def get_val(self):
-        return self.snap_values[round(len(self.snap_values) * self.slider_pos / (SLIDER_BAR_WIDTH - SLIDER_WIDTH))]
+        return self.snap_values[round(self.slider_pos / (SLIDER_BAR_WIDTH - SLIDER_WIDTH) * (len(self.snap_values) - 1))]
 
     def set_coords(self, x, y):
         super().set_coords(x, y)
@@ -213,8 +232,7 @@ class SnapSliderOption(Option):
             if self.held_down:
                 mouse_pos_x = event.pos[
                                   0] - self.x - self.slider_bar_rect.x  # Corrects mouse_pos_x to the same reference as the slider_bar
-                self.slider_pos = len(self.snap_values) * round(mouse_pos_x / (SLIDER_WIDTH - SLIDER_BAR_WIDTH) / len(self.snap_values))
-
+                self.slider_pos = min(SLIDER_BAR_WIDTH - SLIDER_WIDTH, max(0, round(round(mouse_pos_x / (SLIDER_BAR_WIDTH - SLIDER_WIDTH) * len(self.snap_values) - 1) / (len(self.snap_values) - 1) * (SLIDER_BAR_WIDTH - SLIDER_WIDTH))))
                 self.update_slider_rect()
                 return True
 
