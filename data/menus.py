@@ -119,7 +119,10 @@ class Menu(Display):
              self.tower_preview_button.center[1] - lives_text.get_rect().center[
                  1] + lives_text.get_rect().height - MENU_OFFSET)))
 
-        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.enemy_preview_button))
+        if len(SAVE_DATA["seen_enemies"]) == 0:
+            self.blit(self.camera.apply_image(DARK_LEVEL_BUTTON_IMG), self.camera.apply_rect(self.enemy_preview_button))
+        else:
+            self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.enemy_preview_button))
         lives_text = lives_font.render("Enemy", 1, WHITE)
         self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
             (self.enemy_preview_button.center[0] - lives_text.get_rect().center[0],
@@ -213,8 +216,9 @@ class Menu(Display):
                     BTN_SFX.play()
                     return "tower_preview"
                 elif self.enemy_preview_button.collidepoint(mouse_pos):
-                    BTN_SFX.play()
-                    return "enemy_preview"
+                    if len(SAVE_DATA["seen_enemies"]) > 0:
+                        BTN_SFX.play()
+                        return "enemy_preview"
                 elif self.upgrades_menu_button.collidepoint((mouse_pos)):
                     BTN_SFX.play()
                     return "upgrades_menu"
