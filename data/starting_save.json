@@ -6,11 +6,10 @@
             false
         ]
     ],
-    "music_vol": 0.492,
-    "sfx_vol": 0.0,
-    "width": 1366,
+    "music_vol": 0,
+    "sfx_vol": 0,
     "fullscreen": false,
-    "skip_text": true,
+    "skip_text": false,
     "max_dna": 0,
     "used_dna": 0,
     "highscores": [
@@ -21,7 +20,6 @@
     ],
     "seen_enemies": [
     ],
-    "seen_enemies": [],
     "game_attrs": {
         "lives": {
             "value": 5,
