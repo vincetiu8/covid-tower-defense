@@ -107,7 +107,10 @@ class Menu(Display):
                 self.blit(self.camera.apply_image(grey_image), self.camera.apply_rect(button))
                 #self.blit(self.camera.apply_image(LOCK_IMG), self.camera.apply_rect(LOCK_IMG.get_rect(center=button.center)))
 
-        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.tower_preview_button))
+        if len(SAVE_DATA["seen_enemies"]) == 0:
+            self.blit(self.camera.apply_image(DARK_LEVEL_BUTTON_IMG), self.camera.apply_rect(self.tower_preview_button))
+        else:
+            self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.tower_preview_button))
         lives_text = lives_font.render("Tower", 1, WHITE)
         self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
             (self.tower_preview_button.center[0] - lives_text.get_rect().center[0],
@@ -213,8 +216,9 @@ class Menu(Display):
             if event.button == 1:
                 mouse_pos = self.camera.correct_mouse(pg.mouse.get_pos())
                 if self.tower_preview_button.collidepoint(mouse_pos):
-                    BTN_SFX.play()
-                    return "tower_preview"
+                    if len(SAVE_DATA["seen_enemies"]) > 0:
+                        BTN_SFX.play()
+                        return "tower_preview"
                 elif self.enemy_preview_button.collidepoint(mouse_pos):
                     if len(SAVE_DATA["seen_enemies"]) > 0:
                         BTN_SFX.play()
