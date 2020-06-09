@@ -292,7 +292,8 @@
                 "rotation_speed": 10,
                 "tracking": true,
                 "explode_on_impact": true,
-                "explosion_radius": 50
+                "explosion_radius": 50,
+                "explosion_color": 2
             },
             {
                 "damage": 7,
@@ -310,7 +311,8 @@
                 "rotation_speed": 10,
                 "tracking": true,
                 "explode_on_impact": true,
-                "explosion_radius": 75
+                "explosion_radius": 75,
+                "explosion_color": 2
             },
             {
                 "damage": 10,
@@ -328,7 +330,8 @@
                 "rotation_speed": 10,
                 "tracking": true,
                 "explode_on_impact": true,
-                "explosion_radius": 100
+                "explosion_radius": 100,
+                "explosion_color": 2
             }
         ]
     },

@@ -265,13 +265,14 @@ class Textbox(pg.Surface):
         self.finish_text()
 
 class Explosion(pg.sprite.Sprite):
-    def __init__(self, game, x, y, rad):
+    def __init__(self, game, x, y, rad, color = 0):
         super().__init__(game.explosions)
         self.clock = game.clock
         self.x = x - rad / 2
         self.y = y - rad / 2
         self.rad = rad
         self.state = 0
+        self.color = AURA_COLORS[color]
         self.surf = pg.Surface((rad, rad)).convert_alpha()
 
     def update(self):
@@ -280,7 +281,7 @@ class Explosion(pg.sprite.Sprite):
         if self.state >= 1:
             self.kill()
         else:
-            self.surf.fill((255, 0, 0, 127 * self.state))
+            self.surf.fill(pg.Color(self.color.r, self.color.g, self.color.b, round(127 * self.state)))
 
     def get_surf(self):
         return self.surf
