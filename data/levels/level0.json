@@ -32,16 +32,26 @@
             ]
         ],
         [
+            [
+                "Back for more, eh?",
+                "Lucky for you, we have some more viruses coming right up!",
+                "They should be a bit tougher this time!"
+            ],
             [],
             [],
-            [],
-            []
+            [
+                "Nice one! But an even more difficult challenge awaits!"
+            ]
         ],
         [
+            [
+                "Ok, the viruses have really turned it up this time! Sure you can still handle them?"
+            ],
             [],
             [],
-            [],
-            []
+            [
+                "Damn!"
+            ]
         ]
     ],
     "waves": [

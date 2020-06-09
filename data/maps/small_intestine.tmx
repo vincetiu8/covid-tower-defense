@@ -135,7 +135,6 @@
   <object id="90" name="vein_entrance" x="210" y="378" width="84" height="42"/>
   <object id="91" name="vein" x="0" y="378" width="42" height="378"/>
   <object id="92" name="vein" x="42" y="714" width="378" height="42"/>
-  <object id="93" x="420" y="714" width="42"/>
   <object id="95" name="vein_entrance" x="378" y="714" width="84" height="42"/>
  </objectgroup>
 </map>
