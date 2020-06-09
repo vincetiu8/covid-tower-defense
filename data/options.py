@@ -25,11 +25,12 @@ class Options(Display):
         self.surfs = [self.fullscreen_surf, self.screen_width_surf, self.music_vol_surf, self.sfx_vol_surf, self.skip_text_surf]
 
         label_font = pg.font.Font(FONT, 80)
-        apply_text = label_font.render("Apply", 1, WHITE)
+        apply_text = label_font.render("Apply Graphical Changes", 1, WHITE)
         self.apply_button = pg.transform.scale(LEVEL_BUTTON_IMG, (apply_text.get_width() + MENU_OFFSET * 2, apply_text.get_height() + MENU_OFFSET * 2))
         self.apply_button_rect = self.apply_button.get_rect()
         self.apply_button.blit(apply_text, apply_text.get_rect(center = self.apply_button_rect.center))
 
+        self.back_hover = False
         self.prev_display = None
         
     def new(self, args):
@@ -44,9 +45,8 @@ class Options(Display):
         
         self.blit(self.brain_img, ((SCREEN_WIDTH - self.brain_img.get_width()) / 2, (SCREEN_HEIGHT - self.brain_img.get_height()) / 2))
         self.blit(title_text, ((SCREEN_WIDTH - title_text.get_width()) / 2, 0))
-        
-        back_hover = self.back_rect.collidepoint(pg.mouse.get_pos())
-        self.blit(OPTIONS_BACK_IMGS[back_hover], self.back_rect)
+
+        self.blit(OPTIONS_BACK_IMGS[self.back_hover], self.back_rect)
         
         x = 100
         y = 150
@@ -66,9 +66,13 @@ class Options(Display):
     def event(self, event):
         if self.music_vol.event(event) != -1:
             self.music_vol_surf = self.music_vol_surf.draw()
-            
+            SAVE_DATA["music_vol"] = self.music_vol.get_val()
+            update_music_vol()  # settings.py function
+
         if self.sfx_vol.event(event) != -1:
             self.sfx_vol_surf = self.sfx_vol_surf.draw()
+            SAVE_DATA["sfx_vol"] = self.sfx_vol.get_val()
+            update_sfx_vol()  # settings.py function
 
         if self.screen_width.event(event) != -1:
             self.screen_width_surf = self.screen_width.draw()
@@ -87,12 +91,7 @@ class Options(Display):
 
                     self.main.get_conversion_factor()
 
-                    SAVE_DATA["music_vol"] = self.music_vol.get_val()
-                    SAVE_DATA["sfx_vol"] = self.sfx_vol.get_val()
-                    update_music_vol()  # settings.py function
-                    update_sfx_vol()  # settings.py function
-
-                if self.back_rect.collidepoint(event.pos):
+                if self.back_hover:
                     BTN_SFX.play()
                     return self.prev_display
                 
@@ -106,7 +105,10 @@ class Options(Display):
                 if self.skip_text.event(event) != -1:
                     self.skip_text_surf = self.skip_text.draw()
                     SAVE_DATA["skip_text"] = self.skip_text.is_ticked()
-                    
+
+        elif event.type == pg.MOUSEMOTION:
+            self.back_hover = self.back_rect.collidepoint(event.pos)
+
         return -1
     
 class Option(pg.Surface):

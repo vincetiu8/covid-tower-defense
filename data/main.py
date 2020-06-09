@@ -63,13 +63,13 @@ class Main:
         self.fading_out = False
         self.fading_in = False
         self.black_alpha = 0
-        self.black_alpha_surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.fade_out_speed = [10, 40]
         self.fade_in_speed = [30, 50]
         self.fade_ind = 0
 
     def get_conversion_factor(self):
         self.conversion_factor = SCREEN_WIDTH / SAVE_DATA["width"]
+        self.black_alpha_surf = pg.Surface((SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16))
 
     def run(self):
         self.main_clock.tick(FPS)
