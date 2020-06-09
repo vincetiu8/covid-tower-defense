@@ -130,7 +130,8 @@ class TrackingProjectile(Projectile):
 class ExplodingProjectile(Projectile):
     def __init__(self, args):
         Projectile.__init__(self, args[:-1])
-        self.explosion_radius = args[-1]
+        self.explosion_radius = args[-2]
+        self.explosion_color = args[-1]
 
     def check_for_impact(self):
         hits = pg.sprite.spritecollide(self, self.game.enemies, False)
@@ -139,7 +140,7 @@ class ExplodingProjectile(Projectile):
             self.rect.width = self.rect.height = self.explosion_radius
             self.rect.center = center
             hits = pg.sprite.spritecollide(self, self.game.enemies, False)
-            Explosion(self.game, self.rect.center[0], self.rect.center[1], self.explosion_radius)
+            Explosion(self.game, self.rect.center[0], self.rect.center[1], self.explosion_radius, self.explosion_color)
             for hit in hits:
                 self.tower.hits += 1
                 if hit.damage(self.damage, self.shield_damage):
@@ -150,8 +151,9 @@ class ExplodingProjectile(Projectile):
 
 class TrackingExplodingProjectile(TrackingProjectile, ExplodingProjectile):
     def __init__(self, args):
-        TrackingProjectile.__init__(self, args[:-1])
-        self.explosion_radius = args[-1]
+        TrackingProjectile.__init__(self, args[:-2])
+        self.explosion_radius = args[-2]
+        self.explosion_color = args[-1]
 
 class Tower(Obstacle):
     def __init__(self, game, x, y, name):
@@ -212,6 +214,7 @@ class Tower(Obstacle):
             self.explode_on_impact = data["explode_on_impact"]
             if self.explode_on_impact:
                 self.explosion_radius = data["explosion_radius"]
+                self.explosion_color = data["explosion_color"]
                 
         if load_attack_attrs:
             self.slow_speed = data["slow_speed"]
@@ -293,7 +296,7 @@ class Tower(Obstacle):
                         if self.tracking:
                             if self.explode_on_impact:
                                 TrackingExplodingProjectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
-                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.rotation_speed, self.true_range, self.current_enemy, self.explosion_radius])
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.rotation_speed, self.true_range, self.current_enemy, self.explosion_radius, self.explosion_color])
                             else:
                                 TrackingProjectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
                                        self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.rotation_speed, self.true_range, self.current_enemy])
@@ -301,7 +304,7 @@ class Tower(Obstacle):
                         else:
                             if self.explode_on_impact:
                                 ExplodingProjectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
-                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.rotation_speed, self.true_range, self.current_enemy, self.explosion_radius])
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.rotation_speed, self.true_range, self.current_enemy, self.explosion_radius, self.explosion_color])
                             else:
                                 Projectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage])
 

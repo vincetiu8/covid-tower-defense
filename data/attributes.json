@@ -243,7 +243,7 @@
         "explode_on_impact": {
             "type": "bool",
             "default": false,
-            "ignore_if_false": ["explosion_radius"]
+            "ignore_if_false": ["explosion_radius", "explosion_color"]
         },
         "explosion_radius": {
             "type": "float",
@@ -252,6 +252,11 @@
             "increment": 25,
             "dp": -1,
             "default": 250
+        },
+        "explosion_color": {
+            "type": "select",
+            "values": ["red","orange","yellow","green","cyan","blue","purple","pink"],
+            "default": 2
         }
     },
     "level": {

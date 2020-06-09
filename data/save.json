@@ -17,11 +17,11 @@
         0
     ],
     "owned_towers": [
-        "t_cell"
+        "m_cell"
     ],
     "seen_enemies": [
+        "common_cold"
     ],
-    "seen_enemies": [],
     "game_attrs": {
         "lives": {
             "value": 5,
