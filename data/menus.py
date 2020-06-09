@@ -221,11 +221,9 @@ class Menu(Display):
                     if len(SAVE_DATA["seen_enemies"]) > 0:
                         BTN_SFX.play()
                         return "tower_preview"
-<<<<<<< HEAD
                     else:
                         WRONG_SELECTION_SFX.play()
-=======
->>>>>>> 1246ff0467d455f4f4c2d6adae53a0b61da46df3
+                        
                 elif self.enemy_preview_button.collidepoint(mouse_pos):
                     if len(SAVE_DATA["seen_enemies"]) > 0:
                         BTN_SFX.play()
