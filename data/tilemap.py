@@ -27,6 +27,7 @@ class TiledMap:
         self.height = tm.height * tm.tileheight
         self.tilesize = tm.tilewidth
         self.tmxdata = tm
+        self.start = [[False for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
         self.clear_map()
 
     def render(self, surface, layers):
@@ -109,6 +110,17 @@ class TiledMap:
     
     def set_valid_tower_tile(self, x, y, state):
         self.valid_tower_tiles[x][y] = state
+
+    def set_start_tile(self, x, y):
+        if (x < 0 or x >= len(self.start) or y < 0 or y >= len(self.start[0])):
+            return False
+        self.start[x][y] = True
+        self.change_node(x, y, 0)
+
+    def is_start_tile(self, x, y):
+        if (x < 0 or x >= len(self.start) or y < 0 or y >= len(self.start[0])):
+            return False
+        return self.start[x][y]
 
     def clear_map(self):
         self.map = [[0 for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]

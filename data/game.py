@@ -99,9 +99,8 @@ class Game(Display):
                                        pg.Rect(tile_object.x, tile_object.y, tile_object.width, tile_object.height))
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
-                        self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
-                                            tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
-                                            0)  # make start tile a wall so you can't place a tower on it
+                        self.map.set_start_tile(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
+                                            tile_from_xcoords(tile_object.y, self.map.tilesize) + j)  # make start tile a wall so you can't place a tower on it
                                                 # this does not affect the path finding algo
             elif tile_object.name == "goal":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
@@ -324,7 +323,7 @@ class Game(Display):
         return self
 
     def make_stripped_path_wrapper(self):
-        self.make_stripped_path(self)
+        self.make_stripped_path(self.map_img)
 
     def make_stripped_path(self, surface):
         self.node_is_in_path = [[False for i in range(len(self.map.get_map()[0]))] for j in range(len(self.map.get_map()))]
@@ -342,8 +341,14 @@ class Game(Display):
                 for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
                     flying = ENEMY_DATA[start.enemy_type]["flying"]
                     path = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, flying)
+
                     self.stripped_path = []
+                    index = 0
                     for i, node in enumerate(path):
+                        if self.map.is_start_tile(node[0][0], node[0][1]):
+                            index = i
+                            continue
+
                         if node[1] == 0: # not artery or vein
                             self.node_is_in_path[node[0][0]][node[0][1]] = True
                             
@@ -353,6 +358,9 @@ class Game(Display):
                             if (diff_x_after == 0 and diff_y_after == 0):
                                 continue
                         self.stripped_path.append(node[0])
+
+                    self.stripped_path.insert(0, path[index][0])
+
                     for i, node in enumerate(self.stripped_path):
                         if (i > 0 and i < len(self.stripped_path) - 1):
                             image = None
@@ -388,11 +396,14 @@ class Game(Display):
                             self.path_surf.blit(new_image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize,
                                                                self.map.tilesize, self.map.tilesize))
 
+        # Dev
+        pg.image.save(self.path_surf, "path.jpg")
+
     def draw_tower_bases_wrapper(self):
         self.draw_tower_bases(self)
 
     def draw_tower_bases(self, surface):
-        self.tower_bases_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
+        self.tower_bases_surf = pg.Surface((self.map_img.get_width(), self.map_img.get_height()), pg.SRCALPHA)
         self.tower_bases_surf.fill((0, 0, 0, 0))
         for tower in self.towers:
             self.tower_bases_surf.blit(tower.base_image, tower.rect)

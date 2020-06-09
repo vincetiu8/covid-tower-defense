@@ -2,8 +2,63 @@
     "levels": [
         [
             true,
-            false,
-            false
+            true,
+            true
+        ],
+        [
+            true,
+            true,
+            true
+        ],
+        [
+            true,
+            true,
+            true
+        ],
+        [
+            true,
+            true,
+            true
+        ],
+        [
+            true,
+            true,
+            true
+        ],
+        [
+            true,
+            true,
+            true
+        ],
+        [
+            true,
+            true,
+            true
+        ],
+        [
+            true,
+            true,
+            true
+        ],
+        [
+            true,
+            true,
+            true
+        ],
+        [
+            true,
+            true,
+            true
+        ],
+        [
+            true,
+            true,
+            true
+        ],
+        [
+            true,
+            true,
+            true
         ]
     ],
     "music_vol": 0,
@@ -13,13 +68,28 @@
     "max_dna": 0,
     "used_dna": 0,
     "highscores": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0
     ],
     "owned_towers": [
+        "t_cell",
+        "goblet_cell",
+        "b_cell",
         "m_cell"
     ],
     "seen_enemies": [
-        "common_cold"
+        "common_cold",
+        "hepatitis_a"
     ],
     "game_attrs": {
         "lives": {
@@ -30,7 +100,7 @@
             "description": "The number of lives you start with on each level."
         },
         "starting_protein": {
-            "value": 30,
+            "value": 1000,
             "increment": 5,
             "upgrade_cost": 85,
             "cost_increment": 10,
