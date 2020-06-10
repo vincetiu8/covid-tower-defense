@@ -48,11 +48,6 @@ class TiledMap:
         self.render(temp_surface, ["background", "corners", "arteries", "veins"])
         return temp_surface
 
-    def make_objects(self):
-        temp_surface = pg.Surface((self.width, self.height), pg.SRCALPHA, 32).convert_alpha()
-        self.render(temp_surface, ["foreground"])
-        return temp_surface
-
     def change_node(self, x, y, state):
         if (x < 0 or x >= len(self.map) or y < 0 or y >= len(self.map[0])):
             return False

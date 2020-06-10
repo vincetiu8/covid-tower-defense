@@ -41,7 +41,6 @@ class Game(Display):
 
     def load_data(self):
         self.map_img = self.map.make_map()
-        self.map_objects = self.map.make_objects()
         self.map_rect = self.map_img.get_rect()
 
     def load_level_data(self):
@@ -267,8 +266,6 @@ class Game(Display):
         self.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
         self.blit(self.camera.apply_image(self.path_surf), self.camera.apply_tuple((0, 0)))
-        
-        self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
 
         self.blit(self.camera.apply_image(self.tower_bases_surf),
                      self.camera.apply_rect(self.tower_bases_surf.get_rect()))
@@ -281,7 +278,8 @@ class Game(Display):
             self.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
 
         for enemy in self.enemies:
-            self.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
+            if enemy.image_size > 0:
+                self.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
             hp_surf = enemy.get_hp_surf()
             if hp_surf != None:
                 self.blit(self.camera.apply_image(hp_surf), self.camera.apply_rect(hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - 15))))
@@ -395,9 +393,6 @@ class Game(Display):
                                 new_image = image
                             self.path_surf.blit(new_image, pg.Rect(node[0] * self.map.tilesize, node[1] * self.map.tilesize,
                                                                self.map.tilesize, self.map.tilesize))
-
-        # Dev
-        pg.image.save(self.path_surf, "path.jpg")
 
     def draw_tower_bases_wrapper(self):
         self.draw_tower_bases(self)
