@@ -1,53 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="42" tileheight="42" infinite="0" nextlayerid="4" nextobjectid="16">
+<map version="1.2" tiledversion="1.3.5" orientation="orthogonal" renderorder="right-down" width="18" height="12" tilewidth="42" tileheight="42" infinite="0" nextlayerid="4" nextobjectid="18">
  <tileset firstgid="1" source="body_tiles.tsx"/>
  <tileset firstgid="49" source="start_and_goal.tsx"/>
- <layer id="1" name="background" width="16" height="12">
+ <layer id="1" name="background" width="18" height="12">
   <data encoding="csv">
-13,13,13,13,13,13,38,42,42,42,42,42,42,42,42,2,
-13,13,13,13,38,42,45,1,1,1,1,1,1,1,1,6,
-13,13,38,42,45,1,1,1,1,1,1,1,1,1,1,6,
-38,42,45,1,1,1,1,1,1,1,1,1,1,1,1,6,
-45,1,1,1,1,1,1,1,1,1,1,1,1,1,1,9,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-33,1,1,1,1,1,1,1,1,1,1,1,1,1,1,21,
-26,18,33,1,1,1,1,1,1,1,1,1,1,1,1,6,
-13,13,26,18,33,1,1,1,1,1,1,1,1,1,1,6,
-13,13,13,13,26,18,33,1,1,1,1,1,1,1,1,6,
-13,13,13,13,13,13,26,18,18,18,18,18,18,18,18,14
+0,13,13,13,13,13,13,38,42,42,42,42,42,42,42,42,2,0,
+0,13,13,13,13,38,42,45,1,1,1,1,1,1,1,1,6,0,
+0,13,13,38,42,45,1,1,1,1,1,1,1,1,1,1,6,0,
+0,38,42,45,1,1,1,1,1,1,1,1,1,1,1,1,6,0,
+0,45,1,1,1,1,1,1,1,1,1,1,1,1,1,1,9,0,
+0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+0,33,1,1,1,1,1,1,1,1,1,1,1,1,1,1,21,0,
+0,26,18,33,1,1,1,1,1,1,1,1,1,1,1,1,6,0,
+0,13,13,26,18,33,1,1,1,1,1,1,1,1,1,1,6,0,
+0,13,13,13,13,26,18,33,1,1,1,1,1,1,1,1,6,0,
+0,13,13,13,13,13,13,26,18,18,18,18,18,18,18,18,14,0
 </data>
  </layer>
- <layer id="2" name="foreground" width="16" height="12">
+ <layer id="2" name="arteries" width="18" height="12">
   <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,56,
-58,0,0,0,0,0,0,0,0,0,0,0,0,0,0,56,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,
+13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,
+13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,
+13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,
+38,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,
+30,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,56,6,
+30,58,0,0,0,0,0,0,0,0,0,0,0,0,0,0,56,6,
+26,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,
+13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,
+13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,
+13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,
+13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13
 </data>
  </layer>
  <objectgroup id="3" name="obstacles">
-  <object id="1" name="wall" x="0" y="0" width="672" height="42"/>
-  <object id="2" name="wall" x="0" y="42" width="294" height="42"/>
-  <object id="3" name="wall" x="0" y="84" width="210" height="42"/>
-  <object id="4" name="wall" x="0" y="126" width="126" height="42"/>
-  <object id="5" name="wall" x="0" y="168" width="42" height="42"/>
-  <object id="6" name="wall" x="0" y="294" width="42" height="42"/>
-  <object id="7" name="wall" x="0" y="336" width="126" height="42"/>
-  <object id="8" name="wall" x="0" y="378" width="210" height="42"/>
-  <object id="9" name="wall" x="0" y="420" width="294" height="42"/>
-  <object id="10" name="wall" x="0" y="462" width="672" height="42"/>
-  <object id="11" name="wall" x="630" y="294" width="42" height="168"/>
-  <object id="12" name="wall" x="630" y="42" width="42" height="168"/>
-  <object id="14" name="start0" x="0" y="210" width="42" height="84"/>
-  <object id="15" name="goal" x="630" y="210" width="42" height="84"/>
+  <object id="1" name="wall" x="42" y="0" width="672" height="42"/>
+  <object id="2" name="wall" x="42" y="42" width="294" height="42"/>
+  <object id="3" name="wall" x="42" y="84" width="210" height="42"/>
+  <object id="4" name="wall" x="42" y="126" width="126" height="42"/>
+  <object id="5" name="wall" x="42" y="168" width="42" height="42"/>
+  <object id="6" name="wall" x="42" y="294" width="42" height="42"/>
+  <object id="7" name="wall" x="42" y="336" width="126" height="42"/>
+  <object id="8" name="wall" x="42" y="378" width="210" height="42"/>
+  <object id="9" name="wall" x="42" y="420" width="294" height="42"/>
+  <object id="10" name="wall" x="42" y="462" width="672" height="42"/>
+  <object id="11" name="wall" x="672" y="294" width="42" height="168"/>
+  <object id="12" name="wall" x="672" y="42" width="42" height="168"/>
+  <object id="14" name="start0" x="42" y="210" width="42" height="84"/>
+  <object id="15" name="goal" x="672" y="210" width="42" height="84"/>
+  <object id="16" name="wall" x="714" y="0" width="42" height="504"/>
+  <object id="17" name="wall" x="0" y="0" width="42" height="504"/>
  </objectgroup>
 </map>
