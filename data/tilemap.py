@@ -45,7 +45,7 @@ class TiledMap:
 
     def make_map(self):
         temp_surface = pg.Surface((self.width, self.height), pg.SRCALPHA, 32).convert_alpha()
-        self.render(temp_surface, ["background", "corners", "arteries", "veins"])
+        self.render(temp_surface, ["background", "corners", "veins", "arteries"])
         return temp_surface
 
     def change_node(self, x, y, state):
