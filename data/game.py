@@ -116,7 +116,7 @@ class Game(Display):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         arteries[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
-                        if artery_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 1:
+                        if artery_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 0:
                             self.map.set_valid_tower_tile(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
                                                 tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
                                                 0)
@@ -125,7 +125,7 @@ class Game(Display):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         veins[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
-                        if vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 1:
+                        if vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 0:
                             self.map.set_valid_tower_tile(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
                                                 tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
                                                 0)
@@ -134,7 +134,7 @@ class Game(Display):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         artery_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
-                        if arteries[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 1:
+                        if arteries[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 0:
                             self.map.set_valid_tower_tile(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
                                                 tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
                                                 0)
@@ -143,7 +143,7 @@ class Game(Display):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
-                        if veins[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 1:
+                        if veins[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 0:
                             self.map.set_valid_tower_tile(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
                                                 tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
                                                 0)

@@ -2,6 +2,66 @@
     "levels": [
         [
             true,
+            true,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
             false,
             false
         ]
@@ -10,9 +70,21 @@
     "sfx_vol": 0,
     "fullscreen": false,
     "skip_text": true,
-    "max_dna": 0,
+    "max_dna": 22,
     "used_dna": 0,
     "highscores": [
+        22,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0
     ],
     "owned_towers": [
