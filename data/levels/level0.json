@@ -77,13 +77,6 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 15,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.7
-                },
-                {
-                    "start": 0,
                     "enemy_type": "common_cold",
                     "enemy_count": 30,
                     "spawn_delay": 4,
