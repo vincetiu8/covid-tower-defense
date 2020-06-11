@@ -66,14 +66,15 @@
             false
         ]
     ],
-    "music_vol": 0,
-    "sfx_vol": 0,
+    "music_vol": 0.492,
+    "sfx_vol": 0.0,
+    "width": 1366,
     "fullscreen": false,
     "skip_text": true,
-    "max_dna": 22,
+    "max_dna": 0,
     "used_dna": 0,
     "highscores": [
-        22,
+        0,
         0,
         0,
         0,

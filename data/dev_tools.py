@@ -930,11 +930,12 @@ class DevUI():
                             json.dump(level, out_file, indent=4)
                     for level in LEVEL_DATA:
                         enemies = []
-                        for wave in level["waves"]:
-                            for sub_wave in wave:
-                                enemy = sub_wave["enemy_type"]
-                                if enemy not in enemies:
-                                    enemies.append(enemy)
+                        for difficulty in level["waves"]:
+                            for wave in difficulty:
+                                for sub_wave in wave:
+                                    enemy = sub_wave["enemy_type"]
+                                    if enemy not in enemies:
+                                        enemies.append(enemy)
                         level["enemies"] = enemies
                     for enemy in ENEMY_DATA:
                         if "image" in ENEMY_DATA[enemy]:

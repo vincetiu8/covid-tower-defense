@@ -16,11 +16,11 @@ class Main:
         pg.key.set_repeat(500, 100)
         self.main_clock = pg.time.Clock()
         self.clock = pg.time.Clock()
-        #self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.playing = False
         self.started_game = False
         self.game_surf = None # only used to draw static game screen when fading into game_stop screens
-        
+        self.get_conversion_factor()
+
         self.start_menu = StartMenu()
         self.menu = Menu()
         self.game = Game(self.clock)
@@ -63,11 +63,14 @@ class Main:
         self.fading_out = False
         self.fading_in = False
         self.black_alpha = 0
-        self.black_alpha_surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.fade_out_speed = [10, 40]
         self.fade_in_speed = [30, 50]
         self.fade_ind = 0
-        
+
+    def get_conversion_factor(self):
+        self.conversion_factor = SCREEN_WIDTH / SAVE_DATA["width"]
+        self.black_alpha_surf = pg.Surface((SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16))
+
     def run(self):
         self.main_clock.tick(FPS)
         self.clock.tick()
@@ -83,7 +86,7 @@ class Main:
         pg.display.set_caption("FPS: {:.2f}".format(self.main_clock.get_fps()))
         
         SCREEN.fill((0, 0, 0))
-        surf = self.current_display.draw()
+        surf = pg.transform.scale(self.current_display.draw(), (SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16))
         SCREEN.blit(surf, (0, 0))
         
         if self.fading_out:
@@ -120,8 +123,10 @@ class Main:
                 break
 
             else:
+                if event.type == pg.MOUSEBUTTONDOWN or event.type == pg.MOUSEBUTTONUP or event.type == pg.MOUSEMOTION:
+                    event.pos = (round(event.pos[0] * self.conversion_factor), round(event.pos[1] * self.conversion_factor))
                 temp_result = self.current_display.event(event)
-                
+
                 if temp_result != -1:
                     self.result = temp_result
                     self.args = []
@@ -131,7 +136,7 @@ class Main:
                     elif self.result == "tower_select":
                         self.args.append(self.menu.get_over_level())
                     elif self.result == "options":
-                        self.args.append(self.display_keys_reverse[self.current_display])
+                        self.args.extend([self.display_keys_reverse[self.current_display], self])
                     elif self.result == "game_over":
                         self.args.extend([self.game.draw(), self.current_display == self.options,
                                      self.game.get_lives() == 0, self.game.get_cause_of_death(), (self.game.level, self.game.difficulty, self.game.protein)])
