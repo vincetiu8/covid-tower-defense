@@ -17,7 +17,8 @@
         0
     ],
     "owned_towers": [
-        "m_cell"
+        "m_cell",
+        "mast_cell"
     ],
     "seen_enemies": [
         "common_cold"
