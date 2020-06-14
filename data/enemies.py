@@ -85,12 +85,14 @@ class Enemy(pg.sprite.Sprite):
                 self.name = list(ENEMY_DATA)[self.mutation_type]
                 self.load_attributes(self.rect.x, self.rect.y)
 
-        if (self.maximising != 0 and self.image.get_size()[0] + self.maximising > 0 and self.image.get_size()[0] + self.maximising <= self.rect.w):
-            self.image_size += self.maximising
-            self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
-
-        if self.image_size + self.maximising == 0 or self.image_size + self.maximising == self.rect.w:
-            self.maximising = 0
+        if (self.maximising < 0 and self.image.get_width() > 0 or self.maximising > 0 and self.image.get_width() < self.rect.w):
+            self.image_size = max(0, min(self.image_size + self.maximising, self.rect.w))
+            if self.image_size > 0:
+                if self.image_size == self.rect.w:
+                    self.maximising = 0
+                self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
+            else:
+                self.maximising = 0
 
         if (self.rect.left <= self.new_node_rect.left):
             self.direction[0] = abs(self.direction[0])
@@ -184,10 +186,10 @@ class Enemy(pg.sprite.Sprite):
         self.new_node = self.path.pop(0)
         
         if abs(prevlayer) == 1 and abs(self.new_node[1]) == 2:
-            self.maximising = -1
+            self.maximising = -4
             self.damagable = False
         elif abs(prevlayer) == 2 and abs(self.new_node[1]) == 1:
-            self.maximising = 1
+            self.maximising = 4
             self.damagable = False
         elif prevlayer == 0:
             self.damagable = True

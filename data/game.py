@@ -41,7 +41,6 @@ class Game(Display):
 
     def load_data(self):
         self.map_img = self.map.make_map()
-        self.map_objects = self.map.make_objects()
         self.map_rect = self.map_img.get_rect()
 
     def load_level_data(self):
@@ -99,9 +98,8 @@ class Game(Display):
                                        pg.Rect(tile_object.x, tile_object.y, tile_object.width, tile_object.height))
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
-                        self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
-                                            tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
-                                            0)  # make start tile a wall so you can't place a tower on it
+                        self.map.set_start_tile(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
+                                            tile_from_xcoords(tile_object.y, self.map.tilesize) + j)  # make start tile a wall so you can't place a tower on it
                                                 # this does not affect the path finding algo
             elif tile_object.name == "goal":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
@@ -118,21 +116,37 @@ class Game(Display):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         arteries[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+                        if artery_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 0:
+                            self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
+                                                tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
+                                                1)
             elif tile_object.name == "vein":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         veins[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+                        if vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 0:
+                            self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
+                                                tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
+                                                1)
             elif tile_object.name == "artery_entrance":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         artery_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+                        if arteries[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 0:
+                            self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
+                                                tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
+                                                1)
             elif tile_object.name == "vein_entrance":
                 for i in range(tile_from_xcoords(tile_object.width, self.map.tilesize)):
                     for j in range(tile_from_xcoords(tile_object.height, self.map.tilesize)):
                         vein_entrances[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][
                             tile_from_xcoords(tile_object.y, self.map.tilesize) + j] = 0
+                        if veins[tile_from_xcoords(tile_object.x, self.map.tilesize) + i][tile_from_xcoords(tile_object.y, self.map.tilesize) + j] == 0:
+                            self.map.change_node(tile_from_xcoords(tile_object.x, self.map.tilesize) + i,
+                                                tile_from_xcoords(tile_object.y, self.map.tilesize) + j,
+                                                1)
 
         for start in self.start_data:
             for x in range(tile_from_xcoords(start.width, self.map.tilesize)):
@@ -269,8 +283,6 @@ class Game(Display):
         self.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
 
         self.blit(self.camera.apply_image(self.path_surf), self.camera.apply_tuple((0, 0)))
-        
-        self.blit(self.camera.apply_image(self.map_objects), self.camera.apply_rect(self.map_rect))
 
         self.blit(self.camera.apply_image(self.tower_bases_surf),
                      self.camera.apply_rect(self.tower_bases_surf.get_rect()))
@@ -283,7 +295,8 @@ class Game(Display):
             self.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
 
         for enemy in self.enemies:
-            self.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
+            if enemy.image_size > 0:
+                self.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
             hp_surf = enemy.get_hp_surf()
             if hp_surf != None:
                 self.blit(self.camera.apply_image(hp_surf), self.camera.apply_rect(hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - 15))))
@@ -325,7 +338,7 @@ class Game(Display):
         return self
 
     def make_stripped_path_wrapper(self):
-        self.make_stripped_path(self)
+        self.make_stripped_path(self.map_img)
 
     def make_stripped_path(self, surface):
         self.node_is_in_path = [[False for i in range(len(self.map.get_map()[0]))] for j in range(len(self.map.get_map()))]
@@ -343,8 +356,14 @@ class Game(Display):
                 for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
                     flying = ENEMY_DATA[start.enemy_type]["flying"]
                     path = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, flying)
+
                     self.stripped_path = []
+                    index = 0
                     for i, node in enumerate(path):
+                        if self.map.is_start_tile(node[0][0], node[0][1]):
+                            index = i
+                            continue
+
                         if node[1] == 0: # not artery or vein
                             self.node_is_in_path[node[0][0]][node[0][1]] = True
                             
@@ -354,6 +373,9 @@ class Game(Display):
                             if (diff_x_after == 0 and diff_y_after == 0):
                                 continue
                         self.stripped_path.append(node[0])
+
+                    self.stripped_path.insert(0, path[index][0])
+
                     for i, node in enumerate(self.stripped_path):
                         if (i > 0 and i < len(self.stripped_path) - 1):
                             image = None
@@ -393,7 +415,7 @@ class Game(Display):
         self.draw_tower_bases(self)
 
     def draw_tower_bases(self, surface):
-        self.tower_bases_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
+        self.tower_bases_surf = pg.Surface((self.map_img.get_width(), self.map_img.get_height()), pg.SRCALPHA)
         self.tower_bases_surf.fill((0, 0, 0, 0))
         for tower in self.towers:
             self.tower_bases_surf.blit(tower.base_image, tower.rect)

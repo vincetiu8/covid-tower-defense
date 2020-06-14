@@ -105,14 +105,15 @@ BODY_PARTS = { # All of these are relative to the body
     "esophagus":        (470, 502),
     "trachea":          (472, 643),
     "lung":             (346, 862),
-    "heart":            (497, 857),
+    "stomach":          (597, 1134),
+    "liver":            (455, 1095),
+    "gall_bladder":     (334, 1186),
+    "pancreas":         (400, 1202),
     "small_intestine":  (494, 1451),
     "large_intestine":  (323, 1611),
     "anus":             (477, 1721),
     "brain":            (488, 106),
-    "pancreas":         (455, 1095),
-    "stomach":          (597, 1134),
-    "gall_bladder":     (334, 1186)
+    "heart":            (497, 857),
 }
 
 # UI Constants
@@ -167,7 +168,7 @@ SEVERE_LEVEL_MUSIC = ACUTE_LEVEL_MUSIC
 
 # init level data
 LEVEL_DATA = []
-level_list = sorted(listdir(LEVELS_FOLDER))
+level_list = listdir(LEVELS_FOLDER)
 
 for file in level_list:
     with open(path.join(LEVELS_FOLDER, file)) as data_file:

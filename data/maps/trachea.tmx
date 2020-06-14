@@ -1,92 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="42" tileheight="42" infinite="0" nextlayerid="10" nextobjectid="27">
- <tileset firstgid="1" source="body_tiles_2.tsx"/>
- <tileset firstgid="29" source="artery_and_vein.tsx"/>
- <tileset firstgid="69" source="start_and_goal.tsx"/>
- <layer id="1" name="background" width="16" height="12">
+<map version="1.2" tiledversion="1.3.5" orientation="orthogonal" renderorder="right-down" width="10" height="20" tilewidth="42" tileheight="42" infinite="0" nextlayerid="11" nextobjectid="124">
+ <tileset firstgid="1" source="body_tiles.tsx"/>
+ <tileset firstgid="49" source="artery_and_vein.tsx"/>
+ <tileset firstgid="89" source="start_and_goal.tsx"/>
+ <layer id="1" name="background" width="10" height="20">
   <data encoding="csv">
-12,1,2,2,2,2,2,2,2,2,2,2,2,3,12,12,
-12,8,9,9,9,9,9,9,9,9,9,9,9,10,12,12,
-12,8,9,9,16,16,16,16,16,16,16,9,9,10,12,12,
-12,8,9,10,12,12,12,12,12,12,12,8,9,10,12,12,
-12,8,9,10,12,1,2,2,2,2,5,8,9,10,5,6,
-2,9,9,10,12,8,9,9,9,10,12,8,9,10,12,18,
-9,9,9,10,12,8,16,16,16,17,12,8,9,10,12,12,
-16,16,16,17,12,11,12,12,12,12,12,8,9,10,12,12,
-12,12,12,12,12,11,12,1,2,2,2,9,9,10,12,12,
-12,1,2,2,2,10,12,8,9,9,9,9,9,10,12,12,
-19,9,9,9,9,10,12,8,9,9,16,16,16,17,12,12,
-12,15,16,16,16,17,12,8,9,10,12,12,12,12,12,12
+38,42,42,3,42,42,3,42,42,2,
+30,1,1,29,1,1,29,1,1,6,
+39,41,41,46,1,1,10,41,41,15,
+30,1,1,1,1,1,1,1,1,6,
+30,1,1,1,1,1,1,1,1,6,
+30,1,1,1,1,1,1,1,1,6,
+30,1,1,1,1,1,1,1,1,6,
+30,1,1,1,1,1,1,1,1,6,
+30,1,1,1,1,1,1,1,1,6,
+39,48,1,1,1,1,1,1,24,15,
+30,1,1,1,1,1,1,1,1,6,
+39,48,1,1,1,1,1,1,24,15,
+30,1,1,1,1,1,1,1,1,6,
+39,41,48,1,1,1,1,24,41,15,
+30,1,1,1,1,1,1,1,1,6,
+39,41,48,1,1,1,1,24,41,15,
+30,1,1,1,1,1,1,1,1,6,
+39,41,41,48,1,1,24,41,41,15,
+30,1,1,1,1,1,1,1,1,6,
+26,18,18,18,18,18,18,18,18,14
 </data>
  </layer>
- <layer id="4" name="arteries" width="16" height="12">
+ <layer id="8" name="veins" width="10" height="20">
   <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,58,30,32,32,32,50,68,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,68,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="5" name="corners" width="16" height="12">
+ <layer id="7" name="arteries" width="10" height="20">
   <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,25,0,0,0,0,0,0,0,24,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,25,0,0,0,0,0,0,
-0,22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,25,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,22,0,0,0,0,
-0,0,0,0,0,22,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,25,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,89,91,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,100,0,0,0,0,0,0,96,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,100,0,0,0,0,0,0,96,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,100,0,0,0,0,0,0,96,0,
+0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="9" name="foreground" width="16" height="12">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-72,0,0,0,0,0,0,0,0,0,0,0,0,0,0,74,
-75,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-78,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,77,77,77,0,0,0,0,0,0
-</data>
- </layer>
- <objectgroup id="6" name="obstacles">
-  <object id="1" name="wall" x="0" y="0" width="42" height="210"/>
-  <object id="2" name="wall" x="588" y="0" width="84" height="168"/>
-  <object id="3" name="wall" x="588" y="254" width="84" height="208"/>
-  <object id="4" name="wall" x="420" y="464" width="252" height="42"/>
-  <object id="8" name="wall" x="252" y="296" width="210" height="42"/>
-  <object id="9" name="wall" x="252" y="338" width="42" height="168"/>
-  <object id="10" name="wall" x="420" y="170" width="42" height="126"/>
-  <object id="11" name="wall" x="168" y="128" width="42" height="252"/>
-  <object id="12" name="wall" x="210" y="128" width="252" height="42"/>
-  <object id="13" name="wall" x="0" y="338" width="168" height="42"/>
-  <object id="16" name="wall" x="0" y="380" width="42" height="42"/>
-  <object id="17" name="wall" x="0" y="464" width="42" height="42"/>
-  <object id="19" name="wall" x="588" y="170" width="42" height="84"/>
-  <object id="20" name="artery_entrance" x="588" y="170" width="84" height="42"/>
-  <object id="21" name="artery_entrance" x="378" y="170" width="84" height="42"/>
-  <object id="22" name="goal" x="0" y="422" width="42" height="42"/>
-  <object id="23" name="goal" x="294" y="464" width="126" height="42"/>
-  <object id="24" name="start1" x="630" y="212" width="42" height="42"/>
-  <object id="25" name="start0" x="0" y="212" width="42" height="126"/>
-  <object id="26" name="artery" x="420" y="170" width="210" height="42"/>
+ <objectgroup id="4" name="obstacles">
+  <object id="96" name="start0" x="168" y="42" width="84" height="42"/>
+  <object id="97" name="wall" x="0" y="0" width="420" height="42"/>
+  <object id="100" name="wall" x="378" y="42" width="42" height="798"/>
+  <object id="101" name="wall" x="42" y="798" width="336" height="42"/>
+  <object id="102" name="wall" x="0" y="42" width="42" height="798"/>
+  <object id="103" name="wall" x="42" y="84" width="126" height="42"/>
+  <object id="104" name="wall" x="252" y="84" width="126" height="42"/>
+  <object id="105" name="wall" x="126" y="42" width="42" height="42"/>
+  <object id="106" name="wall" x="252" y="42" width="42" height="42"/>
+  <object id="107" name="wall" x="42" y="378" width="42" height="42"/>
+  <object id="108" name="wall" x="42" y="462" width="42" height="42"/>
+  <object id="109" name="wall" x="42" y="546" width="84" height="42"/>
+  <object id="110" name="wall" x="42" y="630" width="84" height="42"/>
+  <object id="111" name="wall" x="42" y="714" width="126" height="42"/>
+  <object id="112" name="wall" x="336" y="378" width="42" height="42"/>
+  <object id="113" name="wall" x="336" y="462" width="42" height="42"/>
+  <object id="114" name="wall" x="294" y="546" width="84" height="42"/>
+  <object id="115" name="wall" x="294" y="630" width="84" height="42"/>
+  <object id="116" name="wall" x="252" y="714" width="126" height="42"/>
+  <object id="117" name="goal" x="42" y="420" width="42" height="42"/>
+  <object id="118" name="goal" x="42" y="588" width="42" height="42"/>
+  <object id="119" name="goal" x="42" y="756" width="42" height="42"/>
+  <object id="121" name="goal" x="336" y="420" width="42" height="42"/>
+  <object id="122" name="goal" x="336" y="588" width="42" height="42"/>
+  <object id="123" name="goal" x="336" y="756" width="42" height="42"/>
  </objectgroup>
 </map>

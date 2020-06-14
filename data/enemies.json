@@ -22,7 +22,7 @@
     "hepatitis_a": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 20,
+        "hp": 50,
         "protein": 2,
         "shield": false,
         "mutate": false,

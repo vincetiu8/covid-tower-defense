@@ -113,7 +113,11 @@ class Pathfinder():
                         # array bound x walls
                         continue
 
-                    tentative_g_score = gscore[current] + 1
+                    if k != 0:
+                        tentative_g_score = gscore[current] + 1
+                    else:
+                        tentative_g_score = gscore[current]
+
                     tentative_f_score = heuristic(start[0], neighbor[0]) + tentative_g_score
 
                     if neighbor in close_set and tentative_f_score >= fscore.get(neighbor):

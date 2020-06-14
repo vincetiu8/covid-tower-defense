@@ -470,8 +470,7 @@ class TowerSelectMenu(TowerMenu):
 
     def draw_map(self, map):
         img = map.make_map()
-        img.blit(map.make_objects(), (0, 0))
-        
+
         # scales map down so that it is no bigger than a rectangle with dimensions (SCREEN_WIDTH / 2, SCREEN_WIDTH / 4)
         scale_factor = min((SCREEN_WIDTH / 2 - GRID_MARGIN_X) / img.get_width(), (SCREEN_HEIGHT / 2 - 40) / img.get_height())
         self.map_img = pg.transform.scale(img, (int(img.get_width() * scale_factor), int(img.get_height() * scale_factor)))
@@ -650,9 +649,9 @@ class LevelInfo(HoverInfo):
         self.level = level
         if self.unlocked:
             self.level_data = LEVEL_DATA[level]
-            super().__init__(list(BODY_PARTS)[self.level_data["body_part"]].capitalize(), self.level_data["description"])
+            super().__init__(list(BODY_PARTS)[self.level_data["body_part"]].replace('_', ' ').title(), self.level_data["description"])
         else:
-            super().__init__("{}. ???".format(self.level + 1), "An unknown level. Complete the previous levels to unlock this one!")
+            super().__init__("???", "An unknown level. Complete the previous levels to unlock this one!")
         
     def make_other_info(self):
         if self.unlocked:

@@ -32,16 +32,26 @@
             ]
         ],
         [
+            [
+                "Back for more, eh?",
+                "Lucky for you, we have some more viruses coming right up!",
+                "They should be a bit tougher this time!"
+            ],
             [],
             [],
-            [],
-            []
+            [
+                "Nice one! But an even more difficult challenge awaits!"
+            ]
         ],
         [
+            [
+                "Ok, the viruses have really turned it up this time! Sure you can still handle them?"
+            ],
             [],
             [],
-            [],
-            []
+            [
+                "Damn!"
+            ]
         ]
     ],
     "waves": [
@@ -58,42 +68,35 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 8,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.8
-                },
-                {
-                    "start": 0,
                     "enemy_type": "common_cold",
                     "enemy_count": 20,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.4
+                    "spawn_rate": 0.2
                 }
             ],
             [
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 15,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.7
-                },
                 {
                     "start": 0,
                     "enemy_type": "common_cold",
                     "enemy_count": 30,
                     "spawn_delay": 4,
                     "spawn_rate": 0.3
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 5,
+                    "spawn_delay": 5,
+                    "spawn_rate": 1.5
                 }
             ],
             [
                 {
                     "start": 0,
                     "enemy_type": "hepatitis_a",
-                    "enemy_count": 40,
+                    "enemy_count": 20,
                     "spawn_delay": 4,
-                    "spawn_rate": 0.3
+                    "spawn_rate": 0.7
                 }
             ]
         ],
