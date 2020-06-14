@@ -164,7 +164,6 @@ class DevClass(Game):
         surface.fill((0, 0, 0))
         
         surface.blit(self.map_img, self.map_rect)
-        surface.blit(self.map_objects, self.map_rect)
 
         surface.blit(self.path_surf, self.path_surf.get_rect())
         surface.blit(self.tower_bases_surf,
