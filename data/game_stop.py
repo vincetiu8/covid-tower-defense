@@ -7,8 +7,6 @@ class GameStop(Display):
         
         self.restart_rect = pg.Rect(200, 400, RESTART_BTN_IMGS[0][0].get_width(), RESTART_BTN_IMGS[0][0].get_height())
         self.back_rect = pg.Rect(750, 400, BACK_BTN_IMGS[0][0].get_width(), BACK_BTN_IMGS[0][0].get_height())
-        self.hover_back = False
-        self.hover_restart = False
         self.game_stop_surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         
         self.circle_cache = {}
@@ -25,6 +23,9 @@ class GameStop(Display):
     def new(self, args):
         self.game_surf = args[0]
         self.no_fade_in = args[1]
+        
+        self.hover_back = False
+        self.hover_restart = False
         
         self.alpha = 0
         if self.no_fade_in:
@@ -160,8 +161,6 @@ class Pause(GameStop):
         
         self.resume_rect = pg.Rect((500, 300), RESUME_BTN_IMGS[0].get_size())
         self.options_rect = pg.Rect((1100, 20), OPTIONS_IMGS[0].get_size())
-        self.hover_options = False
-        self.hover_resume = False
         self.resume_text = None
         
         self.lost = False
@@ -170,6 +169,11 @@ class Pause(GameStop):
         self.alpha_speed = 20
         
         self.init_text("GAME PAUSED", "")
+        
+    def new(self, args):
+        super().new(args)
+        self.hover_options = False
+        self.hover_resume = False
         
     def draw(self):
         self.game_stop_surf.fill(BLACK)

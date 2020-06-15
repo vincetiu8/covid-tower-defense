@@ -45,9 +45,6 @@ class Menu(Display):
         self.options_button = pg.Rect((850, -100), OPTIONS_IMGS[0].get_size())
         
         self.init_body_1()
-
-        self.over_level = -1
-        self.hover_options = False
         
     def init_levels(self):
         for i, level in enumerate(LEVEL_DATA):
@@ -61,8 +58,11 @@ class Menu(Display):
             self.camera.zoom(ZOOM_AMT_MENU)
             self.body_images.append(self.camera.apply_image(BODY_IMG))
         
-    def new(self, args): #inits the other half
+    def new(self, args): #inits the other half of the body images
         self.level_infos = [None for i in range(len(LEVEL_DATA))]
+        self.over_level = -1
+        self.hover_options = False
+        
         if len(self.body_images) < 6: # so this will only run when first switching to menu
             while self.camera.zoom(ZOOM_AMT_MENU) != False:
                 self.body_images.append(self.camera.apply_image(BODY_IMG))
