@@ -368,5 +368,7 @@ class Tower(Obstacle):
 
     def search_for_enemy(self):
         for enemy in self.game.enemies:
-            if (manhattan((enemy.rect.center[0], enemy.rect.center[1]), (self.rect.center[0], self.rect.center[1])) <= self.true_range and (self.current_enemy == None or enemy.end_dist < self.current_enemy.end_dist)):
+            if (manhattan((enemy.rect.center[0], enemy.rect.center[1]), (self.rect.center[0], self.rect.center[1])) <= self.true_range
+            and (self.current_enemy == None or enemy.end_dist < self.current_enemy.end_dist)
+            and enemy.damagable):
                 self.current_enemy = enemy
