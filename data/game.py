@@ -174,6 +174,8 @@ class Game(Display):
         self.draw_tower_bases_wrapper()
         self.make_stripped_path_wrapper()
         self.mouse_pos = (0, 0)
+        
+        self.update_path()
 
     def update(self):
         if self.new_enemy_box.show:
@@ -341,7 +343,6 @@ class Game(Display):
         self.make_stripped_path(self.map_img)
 
     def make_stripped_path(self, surface):
-        self.node_is_in_path = [[False for i in range(len(self.map.get_map()[0]))] for j in range(len(self.map.get_map()))]
         self.path_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
         self.path_surf.fill((0, 0, 0, 0))
 
@@ -363,9 +364,6 @@ class Game(Display):
                         if self.map.is_start_tile(node[0][0], node[0][1]):
                             index = i
                             continue
-
-                        if node[1] == 0: # not artery or vein
-                            self.node_is_in_path[node[0][0]][node[0][1]] = True
                             
                         if (i < len(path) - 1):
                             diff_x_after = path[i + 1][0][0] - node[0][0]
@@ -456,7 +454,7 @@ class Game(Display):
                 tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
             elif validity == -1:
                 result = True
-
+                
                 if self.node_is_in_path[tower_tile[0]][tower_tile[1]]:
                     self.map.change_node(tower_tile[0], tower_tile[1], 1)
                     self.pathfinder.clear_nodes(self.map.get_map())
@@ -493,6 +491,30 @@ class Game(Display):
     def get_cause_of_death(self):
         return self.cause_of_death
 
+    def update_path(self):
+        paths = []
+        valid_path = True
+        
+        for start in self.start_data:
+            path = self.pathfinder.astar(((tile_from_xcoords(start.x, self.map.tilesize),
+                                        tile_from_xcoords(start.y, self.map.tilesize)), 0),
+                                        self.goals, False)
+            if path == False:
+                valid_path = False
+                break
+            else:
+                paths.append(path)
+        
+        # update which nodes in a path
+        if valid_path:
+            self.node_is_in_path = [[False for i in range(len(self.map.get_map()[0]))] for j in range(len(self.map.get_map()))]
+            for path in paths:
+                for node in path:
+                    if node[1] == 0: # not artery or vein
+                        self.node_is_in_path[node[0][0]][node[0][1]] = True
+        
+        return valid_path
+    
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -586,14 +608,10 @@ class Game(Display):
 
                 self.pathfinder.clear_nodes(self.map.get_map())
 
-                for start in self.start_data:
-                    path = self.pathfinder.astar(((tile_from_xcoords(start.x, self.map.tilesize),
-                                                   tile_from_xcoords(start.y, self.map.tilesize)), 0),
-                                                 self.goals, False)
-                    if path == False:
-                        self.map.change_node(x_coord, y_coord, 0)
-                        self.pathfinder.clear_nodes(self.map.get_map())
-                        return -1
+                if not self.update_path():
+                    self.map.change_node(x_coord, y_coord, 0)
+                    self.pathfinder.clear_nodes(self.map.get_map())
+                    return -1
 
                 new_tower = Tower(
                     game=self,
