@@ -175,7 +175,7 @@ class Game(Display):
         self.make_stripped_path_wrapper()
         self.mouse_pos = (0, 0)
         
-        self.update_path()
+        self.calculate_path()
 
     def update(self):
         if self.new_enemy_box.show:
@@ -342,7 +342,7 @@ class Game(Display):
     def make_stripped_path_wrapper(self):
         self.make_stripped_path(self.map_img)
 
-    def make_stripped_path(self, surface):
+    def make_stripped_path(self, surface): # used to draw the path for the enemies in the current wave
         self.path_surf = pg.Surface((surface.get_width(), surface.get_height()), pg.SRCALPHA)
         self.path_surf.fill((0, 0, 0, 0))
 
@@ -491,19 +491,26 @@ class Game(Display):
     def get_cause_of_death(self):
         return self.cause_of_death
 
-    def update_path(self):
+    def calculate_path(self): 
         paths = []
         valid_path = True
         
         for start in self.start_data:
-            path = self.pathfinder.astar(((tile_from_xcoords(start.x, self.map.tilesize),
-                                        tile_from_xcoords(start.y, self.map.tilesize)), 0),
-                                        self.goals, False)
-            if path == False:
-                valid_path = False
+            xpos = tile_from_xcoords(start.x, self.map.tilesize)
+            ypos = tile_from_xcoords(start.y, self.map.tilesize)
+            for x in range(tile_from_xcoords(start.w, self.map.tilesize)):
+                for y in range(tile_from_xcoords(start.h, self.map.tilesize)):
+                    path = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, False)
+                    if path == False:
+                        valid_path = False
+                        break
+                    else:
+                        paths.append(path)
+                        
+                if not valid_path:
+                    break
+            if not valid_path:
                 break
-            else:
-                paths.append(path)
         
         # update which nodes in a path
         if valid_path:
@@ -608,7 +615,7 @@ class Game(Display):
 
                 self.pathfinder.clear_nodes(self.map.get_map())
 
-                if not self.update_path():
+                if not self.calculate_path():
                     self.map.change_node(x_coord, y_coord, 0)
                     self.pathfinder.clear_nodes(self.map.get_map())
                     return -1
