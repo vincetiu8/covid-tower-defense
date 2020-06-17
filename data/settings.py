@@ -162,9 +162,10 @@ BTN_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "btn.wav"))
 BTN_2_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "btn2.wav"))
 
 # Music
-MILD_LEVEL_MUSIC = path.join(MUSIC_FOLDER, "mild_level.mp3")
-ACUTE_LEVEL_MUSIC = path.join(MUSIC_FOLDER, "acute_level.mp3")
-SEVERE_LEVEL_MUSIC = ACUTE_LEVEL_MUSIC
+MENU_MUSIC = path.join(MUSIC_FOLDER, "643418_Beatem-up-Level-8-bit.mp3")
+MILD_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "603041_Dig-It.mp3"), path.join(MUSIC_FOLDER, "923539_Adventure-Battle.mp3")]
+ACUTE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "643430_Fast-Level-8-bit.mp3"), path.join(MUSIC_FOLDER, "336068_8_bit_Challenge.mp3")]
+SEVERE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "525911_Chaos.mp3"), path.join(MUSIC_FOLDER, "367084_8_bit_Boss_Battle_4.mp3")]
 
 # init level data
 LEVEL_DATA = []

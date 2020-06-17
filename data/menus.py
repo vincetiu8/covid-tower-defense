@@ -67,6 +67,10 @@ class Menu(Display):
             while self.camera.zoom(ZOOM_AMT_MENU) != False:
                 self.body_images.append(self.camera.apply_image(BODY_IMG))
             self.camera.zoom(self.base_zoom - self.camera.get_zoom())
+            
+        pg.mixer.music.stop()
+        pg.mixer.music.load(MENU_MUSIC)
+        pg.mixer.music.play(-1)
 
     def update(self):
         keys = pg.key.get_pressed()

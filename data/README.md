@@ -36,6 +36,8 @@ Assets used:
 
 **MUSIC**
 
+- Wyver9 - Beat'em up Level (8-bit) https://www.newgrounds.com/audio/listen/643418 (Music for menu)
+
 - PuffballsUnited - Dig It! https://www.newgrounds.com/audio/listen/603041 (Music for Mild levels)
 
 - Pitfal - Chaos https://www.newgrounds.com/audio/listen/525911 (Music for Acute levels)
