@@ -335,6 +335,51 @@
             }
         ]
     },
+    "plasma_cell": {
+        "description": "Viruses (especially their shields) can't handle how cool this tower is!",
+        "unlock_cost": 50,
+        "stages": [
+            {
+                "area_of_effect": true,
+                "aoe_buff": false,
+                "attack_speed": 0.5,
+                "aura_color": 4,
+                "damage": 0,
+                "different_shield_damage": true,
+                "shield_damage": 1,
+                "range": 100,
+                "slow_duration": 0.5,
+                "slow_speed": 0.8,
+                "upgrade_cost": 30
+            },
+            {
+                "area_of_effect": true,
+                "aoe_buff": false,
+                "attack_speed": 0.45,
+                "aura_color": 4,
+                "damage": 0,
+                "different_shield_damage": true,
+                "shield_damage": 2,
+                "range": 125,
+                "slow_duration": 0.45,
+                "slow_speed": 0.85,
+                "upgrade_cost": 34
+            },
+            {
+                "area_of_effect": true,
+                "aoe_buff": false,
+                "attack_speed": 0.4,
+                "aura_color": 4,
+                "damage": 1,
+                "different_shield_damage": true,
+                "shield_damage": 3,
+                "range": 150,
+                "slow_duration": 0.4,
+                "slow_speed": 0.8,
+                "upgrade_cost": 43
+            }
+        ]
+    },
     "mitochondria": {
         "description": "The powerhouse of the cell. Increases the damage of all nearby attacking cells.",
         "unlock_cost": 25,
