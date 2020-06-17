@@ -23,7 +23,7 @@ def clean_title(string): # Removes underscores, capitalizes it properly
     return " ".join(string.split("_")).title()
 
 # init pygame here lol
-pg.mixer.pre_init(buffer = 1024) # initialize mixer first to reduce delays
+pg.mixer.pre_init(buffer = 2048) # initialize mixer first to reduce delays
 pg.mixer.init()
 pg.init()
 
@@ -162,10 +162,10 @@ BTN_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "btn.wav"))
 BTN_2_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "btn2.wav"))
 
 # Music
-MENU_MUSIC = path.join(MUSIC_FOLDER, "643418_Beatem-up-Level-8-bit.mp3")
-MILD_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "603041_Dig-It.mp3"), path.join(MUSIC_FOLDER, "923539_Adventure-Battle.mp3")]
-ACUTE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "643430_Fast-Level-8-bit.mp3"), path.join(MUSIC_FOLDER, "336068_8_bit_Challenge.mp3")]
-SEVERE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "525911_Chaos.mp3"), path.join(MUSIC_FOLDER, "367084_8_bit_Boss_Battle_4.mp3")]
+MENU_MUSIC = path.join(MUSIC_FOLDER, "643418_Beatem-up-Level-8-bit.ogg")
+MILD_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "603041_Dig-It.ogg"), path.join(MUSIC_FOLDER, "923539_Adventure-Battle.ogg")]
+ACUTE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "643430_Fast-Level-8-bit.ogg"), path.join(MUSIC_FOLDER, "336068_8_bit_Challenge.ogg")]
+SEVERE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "525911_Chaos.ogg"), path.join(MUSIC_FOLDER, "367084_8_bit_Boss_Battle_4.ogg")]
 
 # init level data
 LEVEL_DATA = []
@@ -229,7 +229,7 @@ def update_sfx_vol():
     HEART_BEEP_SFX.set_volume(vol * 0.75)
     FLATLINE_SFX.set_volume(vol * 0.75)
     BUY_SFX.set_volume(vol)
-    WRONG_SELECTION_SFX.set_volume(vol)
+    WRONG_SELECTION_SFX.set_volume(vol * 1.1)
     TEXT_SCROLL_SFX.set_volume(vol * 0.9)
     BTN_SFX.set_volume(vol)
     BTN_2_SFX.set_volume(vol * 0.5)
