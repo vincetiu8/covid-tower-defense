@@ -30,10 +30,10 @@ class Options(Display):
         self.apply_button_rect = self.apply_button.get_rect()
         self.apply_button.blit(apply_text, apply_text.get_rect(center = self.apply_button_rect.center))
 
-        self.back_hover = False
         self.prev_display = None
         
     def new(self, args):
+        self.hover_back = False
         self.prev_display = args[0]
         self.main = args[1]
         
@@ -46,7 +46,7 @@ class Options(Display):
         self.blit(self.brain_img, ((SCREEN_WIDTH - self.brain_img.get_width()) / 2, (SCREEN_HEIGHT - self.brain_img.get_height()) / 2))
         self.blit(title_text, ((SCREEN_WIDTH - title_text.get_width()) / 2, 0))
 
-        self.blit(OPTIONS_BACK_IMGS[self.back_hover], self.back_rect)
+        self.blit(OPTIONS_BACK_IMGS[self.hover_back], self.back_rect)
         
         x = 100
         y = 150
@@ -91,7 +91,7 @@ class Options(Display):
 
                     self.main.get_conversion_factor()
 
-                if self.back_hover:
+                if self.hover_back:
                     BTN_SFX.play()
                     return self.prev_display
                 
@@ -107,7 +107,7 @@ class Options(Display):
                     SAVE_DATA["skip_text"] = self.skip_text.is_ticked()
 
         elif event.type == pg.MOUSEMOTION:
-            self.back_hover = self.back_rect.collidepoint(event.pos)
+            self.hover_back = self.back_rect.collidepoint(event.pos)
 
         return -1
     

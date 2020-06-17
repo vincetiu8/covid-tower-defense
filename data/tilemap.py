@@ -27,6 +27,7 @@ class TiledMap:
         self.height = tm.height * tm.tileheight
         self.tilesize = tm.tilewidth
         self.tmxdata = tm
+        self.start = [[False for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
         self.clear_map()
 
     def render(self, surface, layers):
@@ -44,12 +45,7 @@ class TiledMap:
 
     def make_map(self):
         temp_surface = pg.Surface((self.width, self.height), pg.SRCALPHA, 32).convert_alpha()
-        self.render(temp_surface, ["background", "corners", "arteries", "veins"])
-        return temp_surface
-
-    def make_objects(self):
-        temp_surface = pg.Surface((self.width, self.height), pg.SRCALPHA, 32).convert_alpha()
-        self.render(temp_surface, ["foreground"])
+        self.render(temp_surface, ["background", "corners", "veins", "arteries"])
         return temp_surface
 
     def change_node(self, x, y, state):
@@ -109,6 +105,17 @@ class TiledMap:
     
     def set_valid_tower_tile(self, x, y, state):
         self.valid_tower_tiles[x][y] = state
+
+    def set_start_tile(self, x, y):
+        if (x < 0 or x >= len(self.start) or y < 0 or y >= len(self.start[0])):
+            return False
+        self.start[x][y] = True
+        self.change_node(x, y, 0)
+
+    def is_start_tile(self, x, y):
+        if (x < 0 or x >= len(self.start) or y < 0 or y >= len(self.start[0])):
+            return False
+        return self.start[x][y]
 
     def clear_map(self):
         self.map = [[0 for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]

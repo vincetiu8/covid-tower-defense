@@ -1,7 +1,7 @@
 import numpy
 from heapq import *
 
-def manhattan(a, b):
+def manhattan(a, b): # technically it's Euclidean distance
     return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
 
 def heuristic(a, b):
@@ -114,6 +114,7 @@ class Pathfinder():
                         continue
 
                     tentative_g_score = gscore[current] + 1
+
                     tentative_f_score = heuristic(start[0], neighbor[0]) + tentative_g_score
 
                     if neighbor in close_set and tentative_f_score >= fscore.get(neighbor):

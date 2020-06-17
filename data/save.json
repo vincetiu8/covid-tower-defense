@@ -2,6 +2,66 @@
     "levels": [
         [
             true,
+            true,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
             false,
             false
         ]
@@ -14,14 +74,26 @@
     "max_dna": 0,
     "used_dna": 0,
     "highscores": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0
     ],
     "owned_towers": [
-        "m_cell",
-        "mast_cell"
+        "t_cell"
     ],
     "seen_enemies": [
-        "common_cold"
+        "common_cold",
+        "hepatitis_a"
     ],
     "game_attrs": {
         "lives": {
