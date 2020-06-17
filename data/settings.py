@@ -104,7 +104,7 @@ BODY_PARTS = { # All of these are relative to the body
     "mouth":            (652, 369),
     "esophagus":        (470, 502),
     "trachea":          (472, 643),
-    "lung":             (346, 862),
+    "lungs":            (580, 712),
     "stomach":          (597, 1134),
     "liver":            (455, 1095),
     "gall_bladder":     (334, 1186),
@@ -112,8 +112,9 @@ BODY_PARTS = { # All of these are relative to the body
     "small_intestine":  (494, 1451),
     "large_intestine":  (323, 1611),
     "anus":             (477, 1721),
-    "brain":            (488, 106),
+    "bronchus":         (346, 862),
     "heart":            (497, 857),
+    "brain":            (488, 106),
 }
 
 # UI Constants
