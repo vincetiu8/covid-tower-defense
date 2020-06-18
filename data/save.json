@@ -1,77 +1,12 @@
 {
     "levels": [
         [
-            true,
-            true,
             true
-        ],
-        [
-            true,
-            false,
-            false
-        ],
-        [
-            true,
-            false,
-            false
-        ],
-        [
-            true,
-            false,
-            false
-        ],
-        [
-            true,
-            false,
-            false
-        ],
-        [
-            true,
-            false,
-            false
-        ],
-        [
-            true,
-            false,
-            false
-        ],
-        [
-            true,
-            false,
-            false
-        ],
-        [
-            true,
-            false,
-            false
-        ],
-        [
-            true,
-            false,
-            false
-        ],
-        [
-            true,
-            false,
-            false
-        ],
-        [
-            true,
-            false,
-            false
-        ],
-        [
-            true,
-            true,
-            true
-        ],
-        [
-            false,
             false,
             false
         ]
     ],
-    "music_vol": 0.34,
+    "music_vol": 0.3,
     "sfx_vol": 0.312,
     "width": 1366,
     "fullscreen": false,
@@ -79,30 +14,15 @@
     "max_dna": 0,
     "used_dna": 0,
     "highscores": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
         0
     ],
     "owned_towers": [
-        "t_cell",
-        "goblet_cell",
-        "neutrophil",
-        "mast_cell"
+        "m_cell",
+        "mast_cell",
+        "plasma_cell"
     ],
     "seen_enemies": [
-        "common_cold",
-        "hepatitis_a"
+        "common_cold"
     ],
     "game_attrs": {
         "lives": {
