@@ -176,7 +176,7 @@
         "stages": [
             {
                 "area_of_effect": false,
-                "attack_speed": 1,
+                "attack_speed": 0.5,
                 "bullet_lifetime": 0.5,
                 "bullet_speed": 750,
                 "damage": 1,
@@ -189,12 +189,12 @@
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": true,
-                "upgrade_cost": 15,
+                "upgrade_cost": 16,
                 "explode_on_impact": false
             },
             {
                 "area_of_effect": false,
-                "attack_speed": 0.75,
+                "attack_speed": 0.4,
                 "bullet_lifetime": 0.5,
                 "bullet_speed": 1000,
                 "damage": 2,
@@ -207,12 +207,12 @@
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": true,
-                "upgrade_cost": 15,
+                "upgrade_cost": 14,
                 "explode_on_impact": false
             },
             {
                 "area_of_effect": false,
-                "attack_speed": 0.7,
+                "attack_speed": 0.3,
                 "bullet_lifetime": 0.5,
                 "bullet_speed": 1250,
                 "damage": 3,
@@ -225,7 +225,7 @@
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": true,
-                "upgrade_cost": 24,
+                "upgrade_cost": 36,
                 "explode_on_impact": false
             }
         ]
