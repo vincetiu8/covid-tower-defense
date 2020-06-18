@@ -164,6 +164,8 @@ class Game(Display):
         songs = [MILD_LEVEL_MUSIC, ACUTE_LEVEL_MUSIC, SEVERE_LEVEL_MUSIC]
         pg.mixer.music.stop()
         pg.mixer.music.load(songs[self.difficulty][self.level // 11])
+        if self.difficulty == 2 and self.level // 11 == 1:
+            pg.mixer.music.play(-1, start = 3.0)
         pg.mixer.music.play(-1)
         
         self.node_is_in_path = [[]]
