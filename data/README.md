@@ -38,7 +38,13 @@ Assets used:
 
 - Wyver9 - Beat'em up Level (8-bit) https://www.newgrounds.com/audio/listen/643418 (Music for menu)
 
-- PuffballsUnited - Dig It! https://www.newgrounds.com/audio/listen/603041 (Music for Mild levels)
+- PuffballsUnited - Dig It! https://www.newgrounds.com/audio/listen/603041 (Music for early-mid mild levels)
 
-- Pitfal - Chaos https://www.newgrounds.com/audio/listen/525911 (Music for Acute levels)
+- Pitfall - Chaos https://www.newgrounds.com/audio/listen/525911 (Music for early-mid severe levels)
     - https://pitfall.bandcamp.com
+
+- Hikari - Adventure Battle https://www.newgrounds.com/audio/listen/923539 (Music for late early levels)
+
+- EliteFerrex - 8-Bit Challenge https://www.newgrounds.com/audio/listen/336068 (Music for late acute levels)
+
+- EliteFerrex - 8-Bit Boss Battle 4: The Rival https://www.newgrounds.com/audio/listen/367084 (Music for late severe levels)

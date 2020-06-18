@@ -171,6 +171,7 @@ SEVERE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "525911_Chaos.ogg"), path.join(MUS
 # init level data
 LEVEL_DATA = []
 level_list = listdir(LEVELS_FOLDER)
+level_list.sort()
 
 for file in level_list:
     with open(path.join(LEVELS_FOLDER, file)) as data_file:
