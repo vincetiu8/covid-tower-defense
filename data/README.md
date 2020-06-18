@@ -34,6 +34,8 @@ Assets used:
 
 - https://freesound.org/people/akelley6/sounds/453027/
 
+- http://soundbible.com/1669-Robot-Blip-2.html
+
 **MUSIC**
 
 - PuffballsUnited - Dig It! https://www.newgrounds.com/audio/listen/603041 (Music for Mild levels)
