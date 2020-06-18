@@ -249,6 +249,7 @@ class GameOver(GameStop):
     def stop_sfx(self):
         HEART_BEEP_SFX.stop()
         FLATLINE_SFX.stop()
+        LEVEL_CLEAR_SFX.stop()
         
     def new(self, args):
         super().new(args)
@@ -269,6 +270,7 @@ class GameOver(GameStop):
         adj_protein = round(protein * multiplier)
         
         if not self.lost:
+            LEVEL_CLEAR_SFX.play()
             if level == len(SAVE_DATA["levels"]) - 1:
                 SAVE_DATA["levels"].append([True, False, False])
                 SAVE_DATA["highscores"].append(0)

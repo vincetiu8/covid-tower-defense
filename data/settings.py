@@ -161,12 +161,14 @@ WRONG_SELECTION_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "wrong_selection.wa
 TEXT_SCROLL_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "text_scroll.wav"))
 BTN_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "btn.wav"))
 BTN_2_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "btn2.wav"))
+LEVEL_CLEAR_SFX = pg.mixer.Sound(path.join(AUDIO_FOLDER, "level_clear.wav"))
 
 # Music
 MENU_MUSIC = path.join(MUSIC_FOLDER, "643418_Beatem-up-Level-8-bit.ogg")
 MILD_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "603041_Dig-It.ogg"), path.join(MUSIC_FOLDER, "923539_Adventure-Battle.ogg")]
 ACUTE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "643430_Fast-Level-8-bit.ogg"), path.join(MUSIC_FOLDER, "336068_8_bit_Challenge.ogg")]
 SEVERE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "525911_Chaos.ogg"), path.join(MUSIC_FOLDER, "367084_8_bit_Boss_Battle_4.ogg")]
+LATE_SEVERE_MUSIC_LOOP = path.join(MUSIC_FOLDER, "367084_8_bit_Boss_Battle_4_loop.ogg")
 
 # init level data
 LEVEL_DATA = []
@@ -231,10 +233,11 @@ def update_sfx_vol():
     HEART_BEEP_SFX.set_volume(vol * 0.75)
     FLATLINE_SFX.set_volume(vol * 0.75)
     BUY_SFX.set_volume(vol)
-    WRONG_SELECTION_SFX.set_volume(vol * 1.1)
+    WRONG_SELECTION_SFX.set_volume(vol * 1.2)
     TEXT_SCROLL_SFX.set_volume(vol * 0.9)
     BTN_SFX.set_volume(vol)
     BTN_2_SFX.set_volume(vol * 0.5)
+    LEVEL_CLEAR_SFX.set_volume(vol)
     
     for tower in TOWER_DATA:
         for stage in range(3):
