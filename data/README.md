@@ -34,11 +34,15 @@ Assets used:
 
 - https://freesound.org/people/akelley6/sounds/453027/
 
+- https://freesound.org/people/Mrthenoronha/sounds/518305/
+
 **MUSIC**
 
 - Wyver9 - Beat'em up Level (8-bit) https://www.newgrounds.com/audio/listen/643418 (Music for menu)
 
 - PuffballsUnited - Dig It! https://www.newgrounds.com/audio/listen/603041 (Music for early-mid mild levels)
+
+- Wyver9 - Fast Level (8-bit) https://www.newgrounds.com/audio/listen/643430 (Music for early-mid acute levels)
 
 - Pitfall - Chaos https://www.newgrounds.com/audio/listen/525911 (Music for early-mid severe levels)
     - https://pitfall.bandcamp.com
