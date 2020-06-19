@@ -674,8 +674,11 @@ class LevelInfo(HoverInfo):
 
             waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"])), 1, WHITE)
             self.add_text(waves_text)
-
-            enemy_surf = pg.Surface((self.texts[0][0].get_width() + MENU_OFFSET * 2, MENU_TEXT_SIZE))
+            
+            enemy_surf = pg.Surface((
+                (MAX_ENEMIES_IN_ROW + 1) * (MENU_TEXT_SIZE + MENU_OFFSET),
+                (len(self.level_data["enemies"]) // MAX_ENEMIES_IN_ROW + 1) * (MENU_TEXT_SIZE + MENU_OFFSET)
+            ))
             enemy_surf.fill(DARK_GREY)
             for i, enemy in enumerate(self.level_data["enemies"]):
                 enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE)).convert_alpha()
@@ -684,7 +687,8 @@ class LevelInfo(HoverInfo):
                     font = pg.font.Font(FONT, MENU_TEXT_SIZE)
                     question_mark = font.render("?", 1, WHITE)
                     enemy_image.blit(question_mark, question_mark.get_rect(center=enemy_image.get_rect().center))
-                enemy_surf.blit(enemy_image, (i * (MENU_TEXT_SIZE + MENU_OFFSET), 0))
+                enemy_surf.blit(enemy_image, (i % MAX_ENEMIES_IN_ROW * (MENU_TEXT_SIZE + MENU_OFFSET),
+                                              i // MAX_ENEMIES_IN_ROW * (MENU_TEXT_SIZE + MENU_OFFSET)))
 
             self.add_text(enemy_surf)
             
