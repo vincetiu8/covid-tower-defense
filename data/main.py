@@ -52,8 +52,10 @@ class Main:
         }
         
         self.display_keys_reverse = {
-            self.menu:          "menu",
-            self.pause:         "pause"
+            self.menu:      "menu",
+            self.pause:     "pause",
+            self.game_over: "game_over",
+            self.start_menu:"start_menu"
         }
         
         self.current_display = self.start_menu
@@ -142,6 +144,8 @@ class Main:
                                      self.game.get_lives() == 0, self.game.get_cause_of_death(), (self.game.level, self.game.difficulty, self.game.protein)])
                     elif self.result == "pause":
                         self.args.extend([self.game.draw(), self.current_display == self.options])
+                    elif self.result == "menu":
+                        self.args.append(self.current_display in self.display_keys_reverse)
                     
                     # don't do fade out for the following transitions:
                     # transitioning from game --> pause/game_over

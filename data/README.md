@@ -34,11 +34,23 @@ Assets used:
 
 - https://freesound.org/people/akelley6/sounds/453027/
 
+- https://freesound.org/people/Mrthenoronha/sounds/518305/
+
 - http://soundbible.com/1669-Robot-Blip-2.html
 
 **MUSIC**
 
-- PuffballsUnited - Dig It! https://www.newgrounds.com/audio/listen/603041 (Music for Mild levels)
+- Wyver9 - Beat'em up Level (8-bit) https://www.newgrounds.com/audio/listen/643418 (Music for menu)
 
-- Pitfal - Chaos https://www.newgrounds.com/audio/listen/525911 (Music for Acute levels)
+- PuffballsUnited - Dig It! https://www.newgrounds.com/audio/listen/603041 (Music for early-mid mild levels)
+
+- Wyver9 - Fast Level (8-bit) https://www.newgrounds.com/audio/listen/643430 (Music for early-mid acute levels)
+
+- Pitfall - Chaos https://www.newgrounds.com/audio/listen/525911 (Music for early-mid severe levels)
     - https://pitfall.bandcamp.com
+
+- Hikari - Adventure Battle https://www.newgrounds.com/audio/listen/923539 (Music for late early levels)
+
+- EliteFerrex - 8-Bit Challenge https://www.newgrounds.com/audio/listen/336068 (Music for late acute levels)
+
+- EliteFerrex - 8-Bit Boss Battle 4: The Rival https://www.newgrounds.com/audio/listen/367084 (Music for late severe levels)

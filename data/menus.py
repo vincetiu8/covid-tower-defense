@@ -63,6 +63,11 @@ class Menu(Display):
         self.over_level = -1
         self.hover_options = False
         
+        if args[0]: # prev display is game, pause, or game_over
+            pg.mixer.music.stop()
+            pg.mixer.music.load(MENU_MUSIC)
+            pg.mixer.music.play(-1)
+        
         if len(self.body_images) < 6: # so this will only run when first switching to menu
             while self.camera.zoom(ZOOM_AMT_MENU) != False:
                 self.body_images.append(self.camera.apply_image(BODY_IMG))

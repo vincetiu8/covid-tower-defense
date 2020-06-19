@@ -6,8 +6,8 @@
             false
         ]
     ],
-    "music_vol": 0.0,
-    "sfx_vol": 0.0,
+    "music_vol": 0.3,
+    "sfx_vol": 0.312,
     "width": 1366,
     "fullscreen": false,
     "skip_text": true,

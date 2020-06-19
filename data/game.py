@@ -163,8 +163,12 @@ class Game(Display):
         
         songs = [MILD_LEVEL_MUSIC, ACUTE_LEVEL_MUSIC, SEVERE_LEVEL_MUSIC]
         pg.mixer.music.stop()
-        pg.mixer.music.load(songs[self.difficulty])
-        pg.mixer.music.play(-1)
+        pg.mixer.music.load(songs[self.difficulty][self.level // 11])
+        if self.difficulty == 2 and self.level // 11 == 1: # only for late severe levels
+            pg.mixer.music.play(0) # have to make the song play 0 times for some reason...
+            pg.mixer.music.set_endevent(pg.USEREVENT + 3)
+        else:
+            pg.mixer.music.play(-1)
         
         self.node_is_in_path = [[]]
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
@@ -656,6 +660,11 @@ class Game(Display):
         elif event == self.game_done_event:
             pg.mixer.music.stop()
             return "game_over"
+        
+        elif event.type == pg.USEREVENT + 3: # skip the intro part of the late severe song when looping
+            pg.mixer.music.load(LATE_SEVERE_MUSIC_LOOP)
+            pg.mixer.music.play(-1)
+            pg.mixer.music.set_endevent()
         
         return -1
     
