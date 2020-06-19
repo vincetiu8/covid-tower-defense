@@ -220,8 +220,8 @@ class Enemy(pg.sprite.Sprite):
 
 class EnemyExplosion(Explosion):
     def __init__(self, game, x, y, rad):
-        for tile_x in range(tile_from_coords(x, game.map.tilesize), tile_from_coords(x + rad, game.map.tilesize) + 1):
-            for tile_y in range(tile_from_coords(y, game.map.tilesize), tile_from_coords(y + rad, game.map.tilesize) + 1):
+        for tile_x in range(tile_from_coords(x - rad / 2, game.map.tilesize), tile_from_coords(x + rad / 2, game.map.tilesize) + 1):
+            for tile_y in range(tile_from_coords(y - rad / 2, game.map.tilesize), tile_from_coords(y + rad / 2, game.map.tilesize) + 1):
                 game.map.remove_tower(tile_x, tile_y)
 
         game.pathfinder.clear_nodes(game.map.get_map())
