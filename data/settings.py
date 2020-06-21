@@ -116,6 +116,7 @@ BODY_PARTS = { # All of these are relative to the body
     "heart":            (497, 857),
     "brain":            (488, 106),
 }
+MAX_ENEMIES_IN_ROW = 7
 
 # UI Constants
 MENU_OFFSET = 10
@@ -182,8 +183,6 @@ for file in level_list:
         for stage in level["waves"]:
             for wave in stage:
                 for sub_wave in wave:
-                    if isinstance(sub_wave, str):
-                        continue
                     enemy = sub_wave["enemy_type"]
                     if enemy not in enemies:
                         enemies.append(enemy)
