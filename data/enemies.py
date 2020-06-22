@@ -37,7 +37,9 @@ class Enemy(pg.sprite.Sprite):
             prev_scale = 1 # if it's a new enemy (not from mutation), leave image_size as is
             
         data = ENEMY_DATA[self.name]
-        self.hp = data["hp"]
+        difficulty = 1 + self.game.wave * 0.1
+        self.hp = round(data["hp"] * difficulty)
+        print(self.hp)
         self.speed = data["speed"]
         self.dropped_protein = data["protein"]
         self.original_image = data["image"]
@@ -45,8 +47,8 @@ class Enemy(pg.sprite.Sprite):
         self.flying = data["flying"]
         self.shield = data["shield"]
         if self.shield:
-            self.shield_max_hp = data["shield_hp"]
-            self.shield_hp = data["shield_hp"]
+            self.shield_max_hp = round(data["shield_hp"] * difficulty)
+            self.shield_hp = self.shield_max_hp
             self.shield_max_recharge_delay = data["shield_recharge_delay"]
             self.shield_recharge_rate = data["shield_recharge_rate"]
 
