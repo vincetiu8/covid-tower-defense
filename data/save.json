@@ -2,27 +2,32 @@
     "levels": [
         [
             true,
+            true,
+            false
+        ],
+        [
+            true,
             false,
             false
         ]
     ],
-    "music_vol": 0.3,
-    "sfx_vol": 0.312,
+    "music_vol": 0.0,
+    "sfx_vol": 0.0,
     "width": 1366,
     "fullscreen": false,
-    "skip_text": true,
-    "max_dna": 0,
+    "skip_text": false,
+    "max_dna": 1259,
     "used_dna": 0,
     "highscores": [
+        0,
         0
     ],
     "owned_towers": [
-        "m_cell",
-        "mast_cell",
-        "plasma_cell"
+        "t_cell"
     ],
     "seen_enemies": [
-        "common_cold"
+        "common_cold",
+        "hepatitis_a"
     ],
     "game_attrs": {
         "lives": {
@@ -40,7 +45,7 @@
             "description": "The amount of protein you start with on each level."
         },
         "max_towers": {
-            "value": 2,
+            "value": 3,
             "increment": 1,
             "upgrade_cost": 100,
             "cost_increment": 100,

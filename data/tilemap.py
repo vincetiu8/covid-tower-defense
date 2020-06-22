@@ -78,6 +78,7 @@ class TiledMap:
         tower_stage = tower.stage
         tower.on_remove()
         tower.kill()
+        self.tower_map[x][y] = None
         self.change_node(x, y, 0)
         self.reset_valid_tower_tiles()
         return (tower_name, tower_stage)
