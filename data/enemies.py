@@ -2,6 +2,7 @@ from data.settings import *
 import random
 from data.tilemap import tile_from_coords
 from data.game_misc import Explosion
+import math
 
 class Enemy(pg.sprite.Sprite):
     def __init__(self, game, x, y, name):
@@ -37,8 +38,9 @@ class Enemy(pg.sprite.Sprite):
             prev_scale = 1 # if it's a new enemy (not from mutation), leave image_size as is
             
         data = ENEMY_DATA[self.name]
-        difficulty = 1 + self.game.wave * 0.1
-        self.hp = round(data["hp"] * difficulty)
+        wave_difficulty = 1 + self.game.wave * 0.1
+        game_difficulty = self.game.difficulty * 0.5 + 0.5
+        self.hp = round(data["hp"] * wave_difficulty * game_difficulty)
         print(self.hp)
         self.speed = data["speed"]
         self.dropped_protein = data["protein"]
@@ -47,7 +49,7 @@ class Enemy(pg.sprite.Sprite):
         self.flying = data["flying"]
         self.shield = data["shield"]
         if self.shield:
-            self.shield_max_hp = round(data["shield_hp"] * difficulty)
+            self.shield_max_hp = round(data["shield_hp"] * wave_difficulty * game_difficulty)
             self.shield_hp = self.shield_max_hp
             self.shield_max_recharge_delay = data["shield_recharge_delay"]
             self.shield_recharge_rate = data["shield_recharge_rate"]
@@ -145,7 +147,7 @@ class Enemy(pg.sprite.Sprite):
         if self.hp < 0:
             return None
 
-        hp_surf = pg.Surface((self.hp * 2, 5))
+        hp_surf = pg.Surface((math.ceil(math.log10(self.hp) * 10), 5))
         if self.is_slowed():
             hp_surf.fill(RED)
         else:
@@ -154,9 +156,9 @@ class Enemy(pg.sprite.Sprite):
         if not self.shield:
             return hp_surf
 
-        shield_surf = pg.Surface((self.shield_hp * 2, 5))
+        shield_surf = pg.Surface((math.ceil(math.log10(self.shield_hp) * 10), 5))
         shield_surf.fill(CYAN)
-        combo_surf = pg.Surface((max(self.shield_hp, self.hp) * 2, 10)).convert_alpha()
+        combo_surf = pg.Surface((max(shield_surf.get_width(), hp_surf.get_width()), 10)).convert_alpha()
         combo_surf.fill((0, 0, 0, 0))
         combo_surf.blit(hp_surf, hp_surf.get_rect(center=(combo_surf.get_rect().center[0], 7)))
         combo_surf.blit(shield_surf, shield_surf.get_rect(center=(combo_surf.get_rect().center[0], 2)))

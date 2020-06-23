@@ -62,7 +62,7 @@
                     "enemy_type": "common_cold",
                     "enemy_count": 20,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.4
+                    "spawn_rate": 0.2
                 }
             ],
             [
@@ -80,7 +80,7 @@
                     "enemy_type": "common_cold",
                     "enemy_count": 30,
                     "spawn_delay": 4,
-                    "spawn_rate": 0.3
+                    "spawn_rate": 0.2
                 },
                 {
                     "start": 0,
@@ -105,50 +105,292 @@
                 {
                     "start": 0,
                     "enemy_type": "common_cold",
-                    "enemy_count": 20,
-                    "spawn_delay": 3,
+                    "enemy_count": 10,
+                    "spawn_delay": 0.1,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 0.1,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 0.1,
                     "spawn_rate": 0.3
                 }
             ],
             [
                 {
                     "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 0.1,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 5,
+                    "spawn_delay": 0.2,
+                    "spawn_rate": 0.5
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 0.1,
+                    "spawn_rate": 0.15
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 0.1,
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 1.8,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 0.1,
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 1.8,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 0.1,
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 1.8,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 1.5,
+                    "spawn_rate": 0.3
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 5,
+                    "spawn_delay": 0.2,
+                    "spawn_rate": 0.6
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 18,
+                    "spawn_delay": 1,
+                    "spawn_rate": 0.3
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 6,
+                    "spawn_delay": 0.2,
+                    "spawn_rate": 0.6
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 1.5,
+                    "spawn_rate": 0.3
+                },
+                {
+                    "start": 0,
                     "enemy_type": "hepatitis_a",
                     "enemy_count": 8,
-                    "spawn_delay": 3,
+                    "spawn_delay": 0.2,
+                    "spawn_rate": 0.6
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 10,
+                    "spawn_delay": 0.2,
                     "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 25,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 12,
+                    "spawn_delay": 0.2,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 10,
+                    "spawn_delay": 0.2,
+                    "spawn_rate": 0.4
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 10,
+                    "spawn_delay": 0.4,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 30,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 15,
+                    "spawn_delay": 0.2,
+                    "spawn_rate": 0.35
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 15,
+                    "spawn_delay": 0.2,
+                    "spawn_rate": 0.3
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 30,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 15,
+                    "spawn_delay": 0.2,
+                    "spawn_rate": 0.3
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 30,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 15,
+                    "spawn_delay": 0.2,
+                    "spawn_rate": 0.3
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 0.05,
+                    "spawn_rate": 0.05
                 },
                 {
                     "start": 0,
                     "enemy_type": "common_cold",
                     "enemy_count": 20,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.4
-                }
-            ],
-            [
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 15,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.5
+                    "spawn_delay": 0.05,
+                    "spawn_rate": 0.05
                 },
                 {
                     "start": 0,
                     "enemy_type": "common_cold",
-                    "enemy_count": 30,
-                    "spawn_delay": 4,
-                    "spawn_rate": 0.2
-                }
-            ],
-            [
+                    "enemy_count": 20,
+                    "spawn_delay": 0.05,
+                    "spawn_rate": 0.05
+                },
                 {
                     "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 40,
-                    "spawn_delay": 4,
-                    "spawn_rate": 0.2
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 0.05,
+                    "spawn_rate": 0.05
                 }
             ]
         ],
@@ -221,14 +463,14 @@
                     "enemy_type": "common_cold",
                     "enemy_count": 20,
                     "spawn_delay": 2.5,
-                    "spawn_rate": 0.1
+                    "spawn_rate": 0.2
                 },
                 {
                     "start": 0,
                     "enemy_type": "hepatitis_a",
                     "enemy_count": 20,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.1
+                    "spawn_rate": 0.2
                 },
                 {
                     "start": 0,

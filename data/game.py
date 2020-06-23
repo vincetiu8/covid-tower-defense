@@ -153,7 +153,7 @@ class Game(Display):
                 for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
                     self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x, tile_from_xcoords(start.y, self.map.tilesize) + y, 0)
 
-        self.ui = UI(self, 200, 10)
+        self.ui = UI(self, 10)
         self.pathfinder = Pathfinder(
             arteries = arteries,
             artery_entrances = artery_entrances,
@@ -572,12 +572,12 @@ class Game(Display):
                             for enemy in self.enemies:
                                 enemy.recreate_path()
                             for stage in range(tower_dat[1] + 1):
-                                self.protein += round(TOWER_DATA[tower_dat[0]]["stages"][stage]["upgrade_cost"] / 2)
+                                self.protein += round(TOWER_DATA[tower_dat[0]]["stages"][stage]["upgrade_cost"] * (1 + self.difficulty * 0.25) / 2)
                             BUY_SFX.play()
                             self.ui.deselect_tower()
 
                         elif result == "upgrade":
-                            if self.protein >= TOWER_DATA[self.ui.tower.name]["stages"][self.ui.tower.stage + 1]["upgrade_cost"]:
+                            if self.protein >= round(TOWER_DATA[self.ui.tower.name]["stages"][self.ui.tower.stage + 1]["upgrade_cost"] * (1 + self.difficulty * 0.25)):
                                 self.map.upgrade_tower(tower_coords[0], tower_coords[1])
                                 self.draw_tower_bases(self)
                                 BUY_SFX.play()
@@ -587,7 +587,7 @@ class Game(Display):
                         return -1
 
                     elif result > -1:
-                        if self.protein < TOWER_DATA[self.available_towers[result]]["stages"][0]["upgrade_cost"]:
+                        if self.protein < round(TOWER_DATA[self.available_towers[result]]["stages"][0]["upgrade_cost"] * (1 + self.difficulty * 0.25)):
                             WRONG_SELECTION_SFX.play()
                             self.current_tower = None
                         else:
@@ -608,7 +608,7 @@ class Game(Display):
                     self.ui.select_tower(x_coord, y_coord)
                     return -1
 
-                if self.protein < TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"]:
+                if self.protein < round(TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"] * (1 + 0.25 * self.difficulty)):
                     return -1
 
                 if self.map.is_valid_tower_tile(x_coord, y_coord) == 0 or \
@@ -635,7 +635,7 @@ class Game(Display):
                         for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
                             self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x,
                                                           tile_from_xcoords(start.y, self.map.tilesize) + y, 0)
-                self.protein -= TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"]
+                self.protein -= round(TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"] * (1 + self.difficulty * 0.25))
                 self.current_tower = None
 
                 BUY_SFX.play()
