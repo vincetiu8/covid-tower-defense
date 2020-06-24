@@ -136,7 +136,7 @@ class Main:
                     if self.result == "game" or self.result == "resume":
                         self.args.extend([(self.menu.get_over_level(), self.tower_select.get_difficulty()), self.result == "resume", self.tower_select.get_selected_towers()])
                     elif self.result == "tower_select":
-                        self.args.append(self.menu.get_over_level())
+                        self.args.extend([self.menu.get_over_level(), self.menu.get_difficulty()])
                     elif self.result == "options":
                         self.args.extend([self.display_keys_reverse[self.current_display], self])
                     elif self.result == "game_over":

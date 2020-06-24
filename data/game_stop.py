@@ -260,35 +260,27 @@ class GameOver(GameStop):
         highscore_beaten = False
         level, difficulty, protein = args[4]
         
-        if difficulty == 0:
-            multiplier = 0.5
-        elif difficulty == 1:
-            multiplier = 1
-        else:
-            multiplier = 1.5
-        
-        adj_protein = round(protein * multiplier)
-        
         if not self.lost:
             LEVEL_CLEAR_SFX.play()
-            if level == len(SAVE_DATA["levels"]) - 1:
-                SAVE_DATA["levels"].append([True, False, False])
-                SAVE_DATA["highscores"].append(0)
+            
+            if difficulty < 2:
+                SAVE_DATA["latest_level_unlocked"][difficulty + 1] = level
+                
+            if level > SAVE_DATA["latest_level_completed"][difficulty]:
+                SAVE_DATA["latest_level_completed"][difficulty] = level
+                SAVE_DATA["latest_level_unlocked"][difficulty] = level + 1
+                SAVE_DATA["max_dna"] += DNA_ON_COMPLETION[difficulty]
 
-            if difficulty < 2 and not SAVE_DATA["levels"][level][difficulty + 1]:
-                SAVE_DATA["levels"][level][difficulty + 1] = True
-
-            if SAVE_DATA["highscores"][level] <= adj_protein:
-                SAVE_DATA["max_dna"] += adj_protein - SAVE_DATA["highscores"][level]
-                SAVE_DATA["highscores"][level] = adj_protein
+            if SAVE_DATA["highscores"][difficulty][level] <= protein:
+                SAVE_DATA["highscores"][difficulty][level] = protein
                 highscore_beaten = True
 
         if self.lost:
-            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death, "High Score: " + str(SAVE_DATA["highscores"][level]))
+            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death, "High Score: " + str(SAVE_DATA["highscores"][difficulty][level]))
         elif highscore_beaten:
-            self.init_text("YOU SURVIVED", "But the infection still continues...", "Score: " + str(protein) + " x " + str(multiplier) + " = " + str(adj_protein), "New High Score: " + str(SAVE_DATA["highscores"][level]))
+            self.init_text("YOU SURVIVED", "But the infection still continues...", "Score: " + str(protein), "New High Score: " + str(SAVE_DATA["highscores"][difficulty][level]))
         else:
-            self.init_text("YOU SURVIVED", "But the infection still continues...", "Score: " + str(protein) + " x " + str(multiplier) + " = " + str(adj_protein), "High Score: " + str(SAVE_DATA["highscores"][level]))
+            self.init_text("YOU SURVIVED", "But the infection still continues...", "Score: " + str(protein), "High Score: " + str(SAVE_DATA["highscores"][difficulty][level]))
         
     def draw(self):
         self.game_stop_surf.fill(BLACK)

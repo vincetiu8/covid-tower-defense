@@ -31,15 +31,15 @@
         "starting_protein": {
             "value": 30,
             "increment": 5,
-            "upgrade_cost": 85,
-            "cost_increment": 10,
+            "upgrade_cost": 70,
+            "cost_increment": 20,
             "description": "The amount of protein you start with on each level."
         },
         "max_towers": {
             "value": 2,
             "increment": 1,
-            "upgrade_cost": 100,
-            "cost_increment": 100,
+            "upgrade_cost": 80,
+            "cost_increment": 120,
             "description": "The number of towers you can bring into each level."
         }
     }
