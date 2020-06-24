@@ -14,7 +14,7 @@
     "width": 1366,
     "fullscreen": false,
     "skip_text": false,
-    "max_dna": 15,
+    "max_dna": 0,
     "used_dna": 0,
     "highscores": [
         [
@@ -89,8 +89,7 @@
         ]
     ],
     "owned_towers": [
-        "t_cell",
-        "monocyte"
+        "t_cell"
     ],
     "seen_enemies": [
         "common_cold",
