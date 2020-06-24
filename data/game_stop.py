@@ -274,23 +274,23 @@ class GameOver(GameStop):
                 SAVE_DATA["max_dna"] += DNA_ON_COMPLETION[difficulty]
                 completed = True
                 
-            if (SAVE_DATA["highscores"][difficulty][level] < LEVEL_DATA[level]["protein_goal"][difficulty]
+            if (SAVE_DATA["highscores"][level][difficulty] < LEVEL_DATA[level]["protein_goal"][difficulty]
                 and protein >= LEVEL_DATA[level]["protein_goal"][difficulty]):
                 SAVE_DATA["max_dna"] += DNA_ON_PROTEIN_GOAL[difficulty]
                 protein_goal = True
                 
             self.init_dna_text(difficulty, completed, protein_goal)
 
-            if SAVE_DATA["highscores"][difficulty][level] <= protein:
-                SAVE_DATA["highscores"][difficulty][level] = protein
+            if SAVE_DATA["highscores"][level][difficulty] <= protein:
+                SAVE_DATA["highscores"][level][difficulty] = protein
                 highscore_beaten = True
 
         if self.lost:
-            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death, "Highest Protein Count: " + str(SAVE_DATA["highscores"][difficulty][level]))
+            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death, "Highest Protein Count: " + str(SAVE_DATA["highscores"][level][difficulty]))
         elif highscore_beaten:
-            self.init_text("YOU SURVIVED", "But the infection still continues...", "New Highest Protein Count: " + str(SAVE_DATA["highscores"][difficulty][level]))
+            self.init_text("YOU SURVIVED", "But the infection still continues...", "New Highest Protein Count: " + str(SAVE_DATA["highscores"][level][difficulty]))
         else:
-            self.init_text("YOU SURVIVED", "But the infection still continues...", "Protein Count: " + str(protein), "Highest Protein Count: " + str(SAVE_DATA["highscores"][difficulty][level]))
+            self.init_text("YOU SURVIVED", "But the infection still continues...", "Protein Count: " + str(protein), "Highest Protein Count: " + str(SAVE_DATA["highscores"][level][difficulty]))
         
     def draw(self):
         self.game_stop_surf.fill(BLACK)
