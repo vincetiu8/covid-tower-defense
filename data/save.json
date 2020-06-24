@@ -1,11 +1,11 @@
 {
     "latest_level_unlocked": [
-        1,
         0,
+        -1,
         -1
     ],
     "latest_level_completed": [
-        0,
+        -1,
         -1,
         -1
     ],
@@ -14,11 +14,11 @@
     "width": 1366,
     "fullscreen": false,
     "skip_text": false,
-    "max_dna": 50,
+    "max_dna": 15,
     "used_dna": 0,
     "highscores": [
         [
-            98,
+            0,
             0,
             0
         ],

@@ -105,7 +105,13 @@ class Menu(Display):
 
         for i, button in enumerate(self.level_buttons):
             if SAVE_DATA["latest_level_unlocked"][self.difficulty] >= i:
-                self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG_2), self.camera.apply_rect(button))
+                if SAVE_DATA["latest_level_completed"][self.difficulty] >= i:
+                    green_image = LEVEL_BUTTON_IMG_2.copy().convert_alpha()
+                    green_image.fill(BLACK, special_flags = pg.BLEND_RGB_MULT)
+                    green_image.fill(GREEN, special_flags = pg.BLEND_RGB_MAX)
+                    self.blit(self.camera.apply_image(green_image), self.camera.apply_rect(button))
+                else:
+                    self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG_2), self.camera.apply_rect(button))
             else:
                 grey_image = LEVEL_BUTTON_IMG_2.copy()
                 grey_image.fill(DARK_GREY, special_flags=pg.BLEND_RGB_MIN)
@@ -712,8 +718,11 @@ class LevelInfo(HoverInfo):
 
             self.add_text(enemy_surf)
             
-            high_score_text = self.info_font.render("High Score: {}".format(SAVE_DATA["highscores"][self.level][self.difficulty]), 1, WHITE)
+            high_score_text = self.info_font.render("Highest Protein Count: {}".format(SAVE_DATA["highscores"][self.level][self.difficulty]), 1, WHITE)
             self.add_text(high_score_text)
+            
+            protein_goal_text = self.info_font.render("Protein Count Goal: {}".format(LEVEL_DATA[self.level]["protein_goal"][self.difficulty]), 1, WHITE)
+            self.add_text(protein_goal_text)
         
 class TowerInfo(HoverInfo):
     def __init__(self, tower):

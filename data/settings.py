@@ -36,7 +36,7 @@ ZOOM_AMT_GAME = 0.05
 ZOOM_AMT_MENU = 0.1
 
 DNA_ON_COMPLETION = (50, 55, 60)
-DNA_ON_HIGHSCORE = (10, 15, 20)
+DNA_ON_PROTEIN_GOAL = (10, 15, 20)
 
 # define some colors (R, G, B)
 WHITE = pg.Color(255, 255, 255)
