@@ -182,13 +182,13 @@ level_list.sort()
 for file in level_list:
     with open(path.join(LEVELS_FOLDER, file)) as data_file:
         level = json.load(data_file)
-        enemies = []
-        for stage in level["waves"]:
+        enemies = [[] for i in range(3)]
+        for i, stage in enumerate(level["waves"]):
             for wave in stage:
                 for sub_wave in wave:
                     enemy = sub_wave["enemy_type"]
-                    if enemy not in enemies:
-                        enemies.append(enemy)
+                    if enemy not in enemies[i]:
+                        enemies[i].append(enemy)
         level["enemies"] = enemies
         LEVEL_DATA.append(level)
 

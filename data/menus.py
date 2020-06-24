@@ -698,15 +698,15 @@ class LevelInfo(HoverInfo):
                 difficulty_text = self.info_font.render("Extreme", 1, MAROON)
             self.add_text(difficulty_text)
 
-            waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"])), 1, WHITE)
+            waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"][self.difficulty])), 1, WHITE)
             self.add_text(waves_text)
             
             enemy_surf = pg.Surface((
                 (MAX_ENEMIES_IN_ROW + 1) * (MENU_TEXT_SIZE + MENU_OFFSET),
-                (len(self.level_data["enemies"]) // MAX_ENEMIES_IN_ROW + 1) * (MENU_TEXT_SIZE + MENU_OFFSET)
+                (len(self.level_data["enemies"][self.difficulty]) // MAX_ENEMIES_IN_ROW + 1) * (MENU_TEXT_SIZE + MENU_OFFSET)
             ))
             enemy_surf.fill(DARK_GREY)
-            for i, enemy in enumerate(self.level_data["enemies"]):
+            for i, enemy in enumerate(self.level_data["enemies"][self.difficulty]):
                 enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE)).convert_alpha()
                 if enemy not in SAVE_DATA["seen_enemies"]:
                     enemy_image.fill(DARK_GREY, special_flags=pg.BLEND_RGBA_MULT)
