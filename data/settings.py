@@ -35,6 +35,9 @@ SCREEN_HEIGHT = 720
 ZOOM_AMT_GAME = 0.05
 ZOOM_AMT_MENU = 0.1
 
+DNA_ON_COMPLETION = (50, 55, 60)
+DNA_ON_PROTEIN_GOAL = (10, 15, 20)
+
 # define some colors (R, G, B)
 WHITE = pg.Color(255, 255, 255)
 CYAN = pg.Color(0, 255, 255)
@@ -179,13 +182,13 @@ level_list.sort()
 for file in level_list:
     with open(path.join(LEVELS_FOLDER, file)) as data_file:
         level = json.load(data_file)
-        enemies = []
-        for stage in level["waves"]:
+        enemies = [[] for i in range(3)]
+        for i, stage in enumerate(level["waves"]):
             for wave in stage:
                 for sub_wave in wave:
                     enemy = sub_wave["enemy_type"]
-                    if enemy not in enemies:
-                        enemies.append(enemy)
+                    if enemy not in enemies[i]:
+                        enemies[i].append(enemy)
         level["enemies"] = enemies
         LEVEL_DATA.append(level)
 

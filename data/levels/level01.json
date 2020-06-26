@@ -2,6 +2,7 @@
     "description": "Another place to try out things. Maybe it will be different on this map!",
     "difficulty": 2,
     "body_part": 1,
+    "protein_goal": [100, 10, 10],
     "texts": [
         [
             [
@@ -382,9 +383,9 @@
                 {
                     "start": 0,
                     "enemy_type": "common_cold",
-                    "enemy_count": 50,
+                    "enemy_count": 10,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.05
+                    "spawn_rate": 0.2
                 }
             ]
         ],

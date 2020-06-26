@@ -2,6 +2,7 @@
     "description": "A tutorial to help ease you into the mechanics of the game.",
     "difficulty": 0,
     "body_part": 0,
+    "protein_goal": [100, 10, 10],
     "texts": [
         [
             [
