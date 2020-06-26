@@ -29,10 +29,12 @@ class Menu(Display):
         self.body_images = []
         self.body_image = self.camera.apply_image(BODY_IMG)
         
-        self.body_coords = (-250, 150)
+        self.body_coords = (-250, 300)
         
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
         self.level_button_rect_2 = LEVEL_BUTTON_IMG_2.get_rect()
+        self.small_level_button_size = (int(self.level_button_rect.size[0] * 0.7), int(self.level_button_rect.size[1] * 0.7))
+        self.small_level_button_img = pg.transform.scale(LEVEL_BUTTON_IMG, self.small_level_button_size)
         self.level_buttons = []
         self.init_levels()
 
@@ -43,8 +45,8 @@ class Menu(Display):
         self.enemy_edit_button = pg.Rect((1200, 600), self.level_button_rect.size)
         self.level_edit_button = pg.Rect((1200, 1000), self.level_button_rect.size)
         self.options_button = pg.Rect((850, -100), OPTIONS_IMGS[0].get_size())
-        self.plus_button = pg.Rect((500, 300), self.level_button_rect.size)
-        self.minus_button = pg.Rect((-120, 300), self.level_button_rect.size)
+        self.plus_button = pg.Rect((600, 150), self.small_level_button_size)
+        self.minus_button = pg.Rect((-130, 150), self.small_level_button_size)
         
         self.difficulty = 0
         
@@ -193,17 +195,28 @@ class Menu(Display):
              self.level_edit_button.center[1] - lives_text.get_rect().center[
                  1] + lives_text.get_rect().height - MENU_OFFSET)))
         
-        minus_plus_font = pg.font.Font(FONT, 170)
+        minus_plus_font = pg.font.Font(FONT, 130)
+        difficulty_font = pg.font.Font(FONT, 110)
+        
+        difficulties = ["Mild", "Acute", "Severe"]
+        difficulty_text = difficulty_font.render("Difficulty: {}".format(difficulties[self.difficulty]), 1, WHITE)
+        difficulty_x = (self.minus_button.topleft[0] + self.plus_button.topright[0] - difficulty_text.get_width()) // 2
+        self.blit(self.camera.apply_image(difficulty_text), self.camera.apply_tuple((difficulty_x, self.minus_button.y - 10)))
+        
         if self.difficulty > 0:
-            minus_btn = self.camera.apply_image(LEVEL_BUTTON_IMG)
+            minus_btn = self.camera.apply_image(self.small_level_button_img)
             minus_text = self.camera.apply_image(minus_plus_font.render("-", 1, WHITE))
             minus_btn.blit(minus_text, minus_text.get_rect(center = minus_btn.get_rect().center))
             self.blit(minus_btn, self.camera.apply_rect(self.minus_button))
 
         if self.difficulty < 2:
-            plus_btn = self.camera.apply_image(LEVEL_BUTTON_IMG)
+            plus_btn = self.camera.apply_image(self.small_level_button_img)
             plus_text = self.camera.apply_image(minus_plus_font.render("+", 1, WHITE))
             plus_btn.blit(plus_text, plus_text.get_rect(center = plus_btn.get_rect().center))
+            
+            if SAVE_DATA["latest_level_unlocked"][self.difficulty + 1] == -1:
+                plus_btn.fill(LIGHT_GREY, None, pg.BLEND_RGB_MULT)
+                
             self.blit(plus_btn, self.camera.apply_rect(self.plus_button))
 
         if self.over_level != -1:
@@ -239,6 +252,9 @@ class Menu(Display):
         else:
             self.body_image = self.camera.apply_image(BODY_IMG)
 
+    def scale_tuple(self, tuple, scale):
+        return (int(tuple[0] * scale), int(tuple[1] * scale))
+    
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -271,12 +287,15 @@ class Menu(Display):
                 elif self.options_button.collidepoint(mouse_pos):
                     BTN_SFX.play()
                     return "options"
-                elif self.difficulty > 0 and self.minus_button.collidepoint(mouse_pos):
+                if self.difficulty > 0 and self.minus_button.collidepoint(mouse_pos):
                     BTN_2_SFX.play()
                     self.difficulty -= 1
                 elif self.difficulty < 2 and self.plus_button.collidepoint(mouse_pos):
-                    BTN_2_SFX.play()
-                    self.difficulty += 1
+                    if SAVE_DATA["latest_level_unlocked"][self.difficulty + 1] > -1:
+                        BTN_2_SFX.play()
+                        self.difficulty += 1
+                    else:
+                        WRONG_SELECTION_SFX.play()
                 
                 if self.over_level != -1:
                     if self.over_level <= SAVE_DATA["latest_level_unlocked"][self.difficulty]:
