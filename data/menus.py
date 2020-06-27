@@ -29,10 +29,12 @@ class Menu(Display):
         self.body_images = []
         self.body_image = self.camera.apply_image(BODY_IMG)
         
-        self.body_coords = (-250, 150)
+        self.body_coords = (-250, 300)
         
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
         self.level_button_rect_2 = LEVEL_BUTTON_IMG_2.get_rect()
+        self.small_level_button_size = (int(self.level_button_rect.size[0] * 0.7), int(self.level_button_rect.size[1] * 0.7))
+        self.small_level_button_img = pg.transform.scale(LEVEL_BUTTON_IMG, self.small_level_button_size)
         self.level_buttons = []
         self.init_levels()
 
@@ -43,6 +45,10 @@ class Menu(Display):
         self.enemy_edit_button = pg.Rect((1200, 600), self.level_button_rect.size)
         self.level_edit_button = pg.Rect((1200, 1000), self.level_button_rect.size)
         self.options_button = pg.Rect((850, -100), OPTIONS_IMGS[0].get_size())
+        self.plus_button = pg.Rect((600, 150), self.small_level_button_size)
+        self.minus_button = pg.Rect((-130, 150), self.small_level_button_size)
+        
+        self.difficulty = 0
         
         self.init_body_1()
         
@@ -59,7 +65,7 @@ class Menu(Display):
             self.body_images.append(self.camera.apply_image(BODY_IMG))
         
     def new(self, args): #inits the other half of the body images
-        self.level_infos = [None for i in range(len(LEVEL_DATA))]
+        self.level_infos = [[None for j in range(3)] for i in range(len(LEVEL_DATA))]
         self.over_level = -1
         self.hover_options = False
         
@@ -100,15 +106,18 @@ class Menu(Display):
         self.blit(self.camera.apply_image(OPTIONS_IMGS[self.hover_options]), self.camera.apply_rect(self.options_button))
 
         for i, button in enumerate(self.level_buttons):
-            if len(SAVE_DATA["levels"]) - 1 >= i:
-                self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG_2), self.camera.apply_rect(button))
-                #lives_text = lives_font.render(str(i + 1), 1, WHITE)
-                #self.blit(self.camera.apply_image(lives_text), self.camera.apply_rect(lives_text.get_rect(center=button.center)))
+            if SAVE_DATA["latest_level_unlocked"][self.difficulty] >= i:
+                if SAVE_DATA["latest_level_completed"][self.difficulty] >= i:
+                    green_image = LEVEL_BUTTON_IMG_2.copy().convert_alpha()
+                    green_image.fill(BLACK, special_flags = pg.BLEND_RGB_MULT)
+                    green_image.fill(GREEN, special_flags = pg.BLEND_RGB_MAX)
+                    self.blit(self.camera.apply_image(green_image), self.camera.apply_rect(button))
+                else:
+                    self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG_2), self.camera.apply_rect(button))
             else:
                 grey_image = LEVEL_BUTTON_IMG_2.copy()
                 grey_image.fill(DARK_GREY, special_flags=pg.BLEND_RGB_MIN)
                 self.blit(self.camera.apply_image(grey_image), self.camera.apply_rect(button))
-                #self.blit(self.camera.apply_image(LOCK_IMG), self.camera.apply_rect(LOCK_IMG.get_rect(center=button.center)))
 
         if len(SAVE_DATA["seen_enemies"]) == 0:
             self.blit(self.camera.apply_image(DARK_LEVEL_BUTTON_IMG), self.camera.apply_rect(self.tower_preview_button))
@@ -185,16 +194,41 @@ class Menu(Display):
             (self.level_edit_button.center[0] - lives_text.get_rect().center[0],
              self.level_edit_button.center[1] - lives_text.get_rect().center[
                  1] + lives_text.get_rect().height - MENU_OFFSET)))
+        
+        minus_plus_font = pg.font.Font(FONT, 130)
+        difficulty_font = pg.font.Font(FONT, 110)
+        
+        difficulties = ["Mild", "Acute", "Severe"]
+        difficulty_text = difficulty_font.render("Difficulty: {}".format(difficulties[self.difficulty]), 1, WHITE)
+        difficulty_x = (self.minus_button.topleft[0] + self.plus_button.topright[0] - difficulty_text.get_width()) // 2
+        self.blit(self.camera.apply_image(difficulty_text), self.camera.apply_tuple((difficulty_x, self.minus_button.y - 10)))
+        
+        if self.difficulty > 0:
+            minus_btn = self.camera.apply_image(self.small_level_button_img)
+            minus_text = self.camera.apply_image(minus_plus_font.render("-", 1, WHITE))
+            minus_btn.blit(minus_text, minus_text.get_rect(center = minus_btn.get_rect().center))
+            self.blit(minus_btn, self.camera.apply_rect(self.minus_button))
+
+        if self.difficulty < 2:
+            plus_btn = self.camera.apply_image(self.small_level_button_img)
+            plus_text = self.camera.apply_image(minus_plus_font.render("+", 1, WHITE))
+            plus_btn.blit(plus_text, plus_text.get_rect(center = plus_btn.get_rect().center))
+            
+            if SAVE_DATA["latest_level_unlocked"][self.difficulty + 1] == -1:
+                plus_btn.fill(LIGHT_GREY, None, pg.BLEND_RGB_MULT)
+                
+            self.blit(plus_btn, self.camera.apply_rect(self.plus_button))
 
         if self.over_level != -1:
-            if self.level_infos[self.over_level] == None:
-                new_level_info = LevelInfo(self.over_level)
-                self.level_infos[self.over_level] = new_level_info.draw()
-
+            if self.level_infos[self.over_level][self.difficulty] == None:
+                new_level_info = LevelInfo(self.over_level, self.difficulty)
+                self.level_infos[self.over_level][self.difficulty] = new_level_info.draw()
+                
+            level_info = self.level_infos[self.over_level][self.difficulty]
             if self.level_buttons[self.over_level].centerx < self.get_width() / 2:
-                self.blit(self.camera.apply_image(self.level_infos[self.over_level]), self.camera.apply_tuple(self.level_buttons[self.over_level].topright))
+                self.blit(self.camera.apply_image(level_info), self.camera.apply_tuple(self.level_buttons[self.over_level].topright))
             else:
-                self.blit(self.camera.apply_image(self.level_infos[self.over_level]), self.camera.apply_rect(self.level_infos[self.over_level].get_rect(topright = self.level_buttons[self.over_level].topleft)))
+                self.blit(self.camera.apply_image(level_info), self.camera.apply_rect(level_info.get_rect(topright = self.level_buttons[self.over_level].topleft)))
                 
         return self
 
@@ -209,12 +243,18 @@ class Menu(Display):
     def get_over_level(self):
         return self.over_level
     
+    def get_difficulty(self):
+        return self.difficulty
+    
     def update_body_img(self):
         if self.zoom_step >= 0:
             self.body_image = self.body_images[self.zoom_step]
         else:
             self.body_image = self.camera.apply_image(BODY_IMG)
 
+    def scale_tuple(self, tuple, scale):
+        return (int(tuple[0] * scale), int(tuple[1] * scale))
+    
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -247,9 +287,18 @@ class Menu(Display):
                 elif self.options_button.collidepoint(mouse_pos):
                     BTN_SFX.play()
                     return "options"
+                if self.difficulty > 0 and self.minus_button.collidepoint(mouse_pos):
+                    BTN_2_SFX.play()
+                    self.difficulty -= 1
+                elif self.difficulty < 2 and self.plus_button.collidepoint(mouse_pos):
+                    if SAVE_DATA["latest_level_unlocked"][self.difficulty + 1] > -1:
+                        BTN_2_SFX.play()
+                        self.difficulty += 1
+                    else:
+                        WRONG_SELECTION_SFX.play()
                 
                 if self.over_level != -1:
-                    if self.over_level <= len(SAVE_DATA["levels"]) - 1:
+                    if self.over_level <= SAVE_DATA["latest_level_unlocked"][self.difficulty]:
                         BTN_SFX.play()
                         return "tower_select"
                     else:
@@ -319,12 +368,7 @@ class TowerSelectMenu(TowerMenu):
         self.map_img = None
         self.draw_map(map)
 
-        self.difficulty = 0
-        self.max_difficulty = 0
-        while self.max_difficulty < 3 and SAVE_DATA["levels"][args[0]][self.max_difficulty]:
-            self.max_difficulty += 1
-
-        self.max_difficulty -= 1
+        self.difficulty = args[1]
         self.towers = []
         self.tower_rects = []
         self.tower_selected = []
@@ -424,7 +468,7 @@ class TowerSelectMenu(TowerMenu):
         difficulty_text = text_font.render("Difficulty: {}".format(difficulty), 1, WHITE)
         self.blit(difficulty_text, ((SCREEN_WIDTH - difficulty_text.get_width()) / 2, BTN_Y))
 
-        if self.difficulty > 0:
+        """if self.difficulty > 0:
             minus_btn = self.make_btn("<")
             minus_x = SCREEN_WIDTH / 2 - difficulty_text.get_width() / 2 - minus_btn.get_width() - 20
             self.blit(minus_btn, (minus_x, BTN_Y))
@@ -434,7 +478,7 @@ class TowerSelectMenu(TowerMenu):
             plus_btn = self.make_btn(">")
             plus_x = SCREEN_WIDTH / 2 + difficulty_text.get_width() / 2 + 20
             self.blit(plus_btn, (plus_x, BTN_Y))
-            self.plus_btn_rect = plus_btn.get_rect(x=plus_x, y=BTN_Y)
+            self.plus_btn_rect = plus_btn.get_rect(x=plus_x, y=BTN_Y)"""
 
         start_btn = self.start_btn
         if self.num_selected == 0:
@@ -555,14 +599,14 @@ class TowerSelectMenu(TowerMenu):
                     BTN_2_SFX.play()
                     self.curr_wave += 1
                     
-                elif self.difficulty > 0 and self.minus_btn_rect.collidepoint(mouse_pos):
-                    BTN_2_SFX.play()
-                    self.difficulty -= 1
-                    self.load_level_data()
-                elif self.difficulty < self.max_difficulty and self.plus_btn_rect.collidepoint(mouse_pos):
-                    BTN_2_SFX.play()
-                    self.difficulty += 1
-                    self.load_level_data()
+                #elif self.difficulty > 0 and self.minus_btn_rect.collidepoint(mouse_pos):
+                #    BTN_2_SFX.play()
+                #    self.difficulty -= 1
+                #    self.load_level_data()
+                #elif self.difficulty < self.max_difficulty and self.plus_btn_rect.collidepoint(mouse_pos):
+                #    BTN_2_SFX.play()
+                #    self.difficulty += 1
+                #    self.load_level_data()
                     
                 elif self.over_tower[0] != -1:
                     row, col = self.over_tower
@@ -649,8 +693,9 @@ class HoverInfo(pg.Surface):
         return self
     
 class LevelInfo(HoverInfo):
-    def __init__(self, level):
-        self.unlocked = level <= len(SAVE_DATA["levels"]) - 1
+    def __init__(self, level, difficulty):
+        self.unlocked = level <= SAVE_DATA["latest_level_unlocked"][difficulty]
+        self.difficulty = difficulty
         self.level = level
         if self.unlocked:
             self.level_data = LEVEL_DATA[level]
@@ -672,15 +717,15 @@ class LevelInfo(HoverInfo):
                 difficulty_text = self.info_font.render("Extreme", 1, MAROON)
             self.add_text(difficulty_text)
 
-            waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"])), 1, WHITE)
+            waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"][self.difficulty])), 1, WHITE)
             self.add_text(waves_text)
             
             enemy_surf = pg.Surface((
                 (MAX_ENEMIES_IN_ROW + 1) * (MENU_TEXT_SIZE + MENU_OFFSET),
-                (len(self.level_data["enemies"]) // MAX_ENEMIES_IN_ROW + 1) * (MENU_TEXT_SIZE + MENU_OFFSET)
+                (len(self.level_data["enemies"][self.difficulty]) // MAX_ENEMIES_IN_ROW + 1) * (MENU_TEXT_SIZE + MENU_OFFSET)
             ))
             enemy_surf.fill(DARK_GREY)
-            for i, enemy in enumerate(self.level_data["enemies"]):
+            for i, enemy in enumerate(self.level_data["enemies"][self.difficulty]):
                 enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE)).convert_alpha()
                 if enemy not in SAVE_DATA["seen_enemies"]:
                     enemy_image.fill(DARK_GREY, special_flags=pg.BLEND_RGBA_MULT)
@@ -692,23 +737,11 @@ class LevelInfo(HoverInfo):
 
             self.add_text(enemy_surf)
             
-            high_score_text = self.info_font.render("High Score: {}".format(SAVE_DATA["highscores"][self.level]), 1, WHITE)
+            high_score_text = self.info_font.render("Highest Protein Count: {}".format(SAVE_DATA["highscores"][self.level][self.difficulty]), 1, WHITE)
             self.add_text(high_score_text)
-
-            max_diff = 0
-            while max_diff < len(SAVE_DATA["levels"][self.level]) and SAVE_DATA["levels"][self.level][max_diff]:
-                max_diff += 1
-            max_diff -= 1
-
-            if max_diff == 0:
-                max_diff_text = "Mild"
-            elif max_diff == 1:
-                max_diff_text = "Acute"
-            else:
-                max_diff_text = "Severe"
-
-            text = self.info_font.render("Maximum Difficulty Unlocked: {}".format(max_diff_text), 1, WHITE)
-            self.add_text(text)
+            
+            protein_goal_text = self.info_font.render("Protein Count Goal: {}".format(LEVEL_DATA[self.level]["protein_goal"][self.difficulty]), 1, WHITE)
+            self.add_text(protein_goal_text)
         
 class TowerInfo(HoverInfo):
     def __init__(self, tower):
@@ -763,12 +796,14 @@ class UpgradesMenu(TowerMenu):
         self.upgrades = []
         self.upgrade_rects = []
         self.upgrade_button_rects = []
+        self.is_maxed = []
         self.over_upgrade = -1
         height = GRID_MARGIN_Y
         for attr in SAVE_DATA["game_attrs"]:
-            surf, rect = self.make_upgrade(attr, SAVE_DATA["game_attrs"][attr]["value"])
+            surf, rect, maxed = self.make_upgrade(attr, SAVE_DATA["game_attrs"][attr]["value"])
             self.upgrades.append(surf)
             self.upgrade_rects.append(surf.get_rect(topright=(SCREEN_WIDTH - GRID_MARGIN_X, height)))
+            self.is_maxed.append(maxed)
             rect.topright = self.upgrade_rects[-1].topright
             self.upgrade_button_rects.append(rect)
             height += self.upgrade_button_rects[-1].height + MENU_OFFSET
@@ -820,7 +855,7 @@ class UpgradesMenu(TowerMenu):
                 self.blit(self.tower_infos[ind], self.tower_rects[row][col].topright)
             elif self.over_upgrade != -1:
                 if self.upgrade_infos[self.over_upgrade] == None:
-                    new_upgrade_info = UpgradeInfo(self.upgrade_names[self.over_upgrade], 1 if self.is_upgrade_buyable(self.over_upgrade) else 0)
+                    new_upgrade_info = UpgradeInfo(self.upgrade_names[self.over_upgrade], 1 if self.is_upgrade_buyable(self.over_upgrade) else 0, self.is_maxed[self.over_upgrade])
                     self.upgrade_infos[self.over_upgrade] = new_upgrade_info.draw()
                 self.blit(self.upgrade_infos[self.over_upgrade], self.upgrade_infos[self.over_upgrade].get_rect(top=self.upgrade_button_rects[self.over_upgrade].topleft[1], right = self.upgrade_button_rects[self.over_upgrade].topleft[0] - MENU_OFFSET))
 
@@ -833,19 +868,28 @@ class UpgradesMenu(TowerMenu):
         font = pg.font.Font(FONT, 70)
         text = font.render(clean_title(string) + ": " + str(value), 1, WHITE)
         plus_text = font.render("+", 1, WHITE)
+        
         btn = pg.transform.scale(LEVEL_BUTTON_IMG, (plus_text.get_height(), plus_text.get_height())).copy().convert_alpha()
         btn.blit(plus_text, plus_text.get_rect(center=btn.get_rect().center))
+        
+        maxed = value == SAVE_DATA["game_attrs"][string]["max_value"]
+        if maxed or not self.is_upgrade_buyable(string):
+            btn.fill(LIGHT_GREY, None, pg.BLEND_RGB_MULT)
+        
         btn_rect = btn.get_rect(topleft=(text.get_width() + MENU_OFFSET, 0))
+        
         surf = pg.Surface((text.get_width() + MENU_OFFSET + btn.get_width(), btn_rect.height))
         surf.blit(text, (0, 0))
         surf.blit(btn, btn_rect)
-        return surf, btn_rect
+        return surf, btn_rect, maxed
 
     def is_tower_buyable(self, tower):
         return SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"] >= TOWER_DATA[tower]["unlock_cost"]
 
-    def is_upgrade_buyable(self, upgrade):
-        return SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"] >= SAVE_DATA["game_attrs"][self.upgrade_names[upgrade]]["upgrade_cost"]
+    def is_upgrade_buyable(self, upgrade): # Argument can be the upgrade's name or its index
+        if isinstance(upgrade, int):
+            upgrade = self.upgrade_names[upgrade]
+        return SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"] >= SAVE_DATA["game_attrs"][upgrade]["upgrade_cost"]
 
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -868,9 +912,10 @@ class UpgradesMenu(TowerMenu):
                                 SAVE_DATA["game_attrs"][upgrade_name]["value"] += SAVE_DATA["game_attrs"][upgrade_name]["increment"]
                                 SAVE_DATA["used_dna"] += SAVE_DATA["game_attrs"][upgrade_name]["upgrade_cost"]
                                 SAVE_DATA["game_attrs"][upgrade_name]["upgrade_cost"] += SAVE_DATA["game_attrs"][upgrade_name]["cost_increment"]
-                                surf, rect = self.make_upgrade(upgrade_name, SAVE_DATA["game_attrs"][upgrade_name]["value"])
+                                surf, rect, maxed = self.make_upgrade(upgrade_name, SAVE_DATA["game_attrs"][upgrade_name]["value"])
                                 self.upgrades[self.over_upgrade] = surf
                                 self.upgrade_rects[self.over_upgrade] = surf.get_rect(topright=(SCREEN_WIDTH - GRID_MARGIN_X, self.upgrade_rects[self.over_upgrade].top))
+                                self.is_maxed[self.over_upgrade] = maxed
                                 rect.topright = self.upgrade_rects[self.over_upgrade].topright
                                 self.upgrade_button_rects[self.over_upgrade] = rect
                                 self.upgrade_infos = [None for i in self.upgrade_names]
@@ -905,7 +950,7 @@ class UpgradesMenu(TowerMenu):
                                 WRONG_SELECTION_SFX.play()
                     else:
                         if self.over_upgrade != -1:
-                            if self.is_upgrade_buyable(self.over_upgrade):
+                            if self.is_upgrade_buyable(self.over_upgrade) and not self.is_maxed[self.over_upgrade]:
                                 BTN_2_SFX.play()
                                 self.confirm_menu = self.confirm_upgrade_menu
                                 self.confirm_menu_surf = self.confirm_menu.draw()
@@ -956,28 +1001,34 @@ class BuyTowerInfo(TowerInfo):
         super().make_other_info()
 
 class UpgradeInfo(HoverInfo):
-    def __init__(self, upgrade, buyable):
+    def __init__(self, upgrade, buyable, maxed):
         self.buyable = buyable
+        self.maxed = maxed
         self.upgrade_data = SAVE_DATA["game_attrs"][upgrade]
         upgrade_name = (" ".join(upgrade.split("_"))).title()  # removes underscores, capitalizes it properly
         super().__init__(upgrade_name, self.upgrade_data["description"])
 
     def make_other_info(self):
-        if self.buyable == 0:
-            unlock_text = self.info_font.render("Upgrade Cost: " + str(self.upgrade_data["upgrade_cost"]), 1, RED)
-            self.add_text(unlock_text)
-            error_text = self.info_font.render("Insufficient DNA to buy this upgrade!", 1, RED)
-            self.add_text(error_text)
-        else:
-            unlock_text = self.info_font.render("Upgrade Cost: " + str(self.upgrade_data["upgrade_cost"]), 1, YELLOW)
-            self.add_text(unlock_text)
+        if not self.maxed:
+            if self.buyable == 0:
+                unlock_text = self.info_font.render("Upgrade Cost: " + str(self.upgrade_data["upgrade_cost"]), 1, RED)
+                self.add_text(unlock_text)
+                error_text = self.info_font.render("Insufficient DNA to buy this upgrade!", 1, RED)
+                self.add_text(error_text)
+            else:
+                unlock_text = self.info_font.render("Upgrade Cost: " + str(self.upgrade_data["upgrade_cost"]), 1, YELLOW)
+                self.add_text(unlock_text)
 
         new_value_text = self.info_font.render("Current Value: " + str(self.upgrade_data["value"]), 1, WHITE)
         self.add_text(new_value_text)
-
-        if self.buyable == 1:
-            new_value_text = self.info_font.render("Upgraded Value: " + str(self.upgrade_data["value"] + self.upgrade_data["increment"]), 1, GREEN)
-            self.add_text(new_value_text)
+        
+        if not self.maxed:
+            if self.buyable == 1:
+                new_value_text = self.info_font.render("Upgraded Value: " + str(self.upgrade_data["value"] + self.upgrade_data["increment"]), 1, GREEN)
+                self.add_text(new_value_text)
+        else:
+            maxed_text = self.info_font.render("This upgrade has been maxed out!", 1, GREEN)
+            self.add_text(maxed_text)
 
         super().make_other_info()
 

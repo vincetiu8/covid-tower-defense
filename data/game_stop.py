@@ -67,9 +67,9 @@ class GameStop(Display):
         self.back_text_2 = self.render_text("Level Select", self.font_2, color, BLACK)
         
     def draw_text(self):
-        self.game_stop_surf.blit(self.texts[0], (self.center_text_x(0, SCREEN_WIDTH, self.texts[0]), 70))
+        self.game_stop_surf.blit(self.texts[0], (self.center_text_x(0, SCREEN_WIDTH, self.texts[0]), 50))
         for i, text in enumerate(self.texts[1:]):
-            self.game_stop_surf.blit(text, (self.center_text_x(0, SCREEN_WIDTH, text), 260 + i * 50))
+            self.game_stop_surf.blit(text, (self.center_text_x(0, SCREEN_WIDTH, text), 230 + i * 50))
         
         self.game_stop_surf.blit(self.restart_text, (self.center_text_x(self.restart_rect.x, self.restart_rect.w, self.restart_text),
                                     self.center_text_y(self.restart_rect.y, self.restart_rect.h, self.restart_text)))
@@ -260,35 +260,37 @@ class GameOver(GameStop):
         highscore_beaten = False
         level, difficulty, protein = args[4]
         
-        if difficulty == 0:
-            multiplier = 0.5
-        elif difficulty == 1:
-            multiplier = 1
-        else:
-            multiplier = 1.5
-        
-        adj_protein = round(protein * multiplier)
-        
         if not self.lost:
             LEVEL_CLEAR_SFX.play()
-            if level == len(SAVE_DATA["levels"]) - 1:
-                SAVE_DATA["levels"].append([True, False, False])
-                SAVE_DATA["highscores"].append(0)
+            completed = False
+            protein_goal = False
+            
+            if difficulty < 2 and level == 10:
+                SAVE_DATA["latest_level_unlocked"][difficulty + 1] = 0
+                
+            if level > SAVE_DATA["latest_level_completed"][difficulty]:
+                SAVE_DATA["latest_level_completed"][difficulty] = level
+                SAVE_DATA["latest_level_unlocked"][difficulty] = level + 1
+                SAVE_DATA["max_dna"] += DNA_ON_COMPLETION[difficulty]
+                completed = True
+                
+            if (SAVE_DATA["highscores"][level][difficulty] < LEVEL_DATA[level]["protein_goal"][difficulty]
+                and protein >= LEVEL_DATA[level]["protein_goal"][difficulty]):
+                SAVE_DATA["max_dna"] += DNA_ON_PROTEIN_GOAL[difficulty]
+                protein_goal = True
+                
+            self.init_dna_text(difficulty, completed, protein_goal)
 
-            if difficulty < 2 and not SAVE_DATA["levels"][level][difficulty + 1]:
-                SAVE_DATA["levels"][level][difficulty + 1] = True
-
-            if SAVE_DATA["highscores"][level] <= adj_protein:
-                SAVE_DATA["max_dna"] += adj_protein - SAVE_DATA["highscores"][level]
-                SAVE_DATA["highscores"][level] = adj_protein
+            if SAVE_DATA["highscores"][level][difficulty] <= protein:
+                SAVE_DATA["highscores"][level][difficulty] = protein
                 highscore_beaten = True
 
         if self.lost:
-            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death, "High Score: " + str(SAVE_DATA["highscores"][level]))
+            self.init_text("YOU DIED", "Cause of death: " + self.cause_of_death, "Highest Protein Count: " + str(SAVE_DATA["highscores"][level][difficulty]))
         elif highscore_beaten:
-            self.init_text("YOU SURVIVED", "But the infection still continues...", "Score: " + str(protein) + " x " + str(multiplier) + " = " + str(adj_protein), "New High Score: " + str(SAVE_DATA["highscores"][level]))
+            self.init_text("YOU SURVIVED", "But the infection still continues...", "New Highest Protein Count: " + str(SAVE_DATA["highscores"][level][difficulty]))
         else:
-            self.init_text("YOU SURVIVED", "But the infection still continues...", "Score: " + str(protein) + " x " + str(multiplier) + " = " + str(adj_protein), "High Score: " + str(SAVE_DATA["highscores"][level]))
+            self.init_text("YOU SURVIVED", "But the infection still continues...", "Protein Count: " + str(protein), "Highest Protein Count: " + str(SAVE_DATA["highscores"][level][difficulty]))
         
     def draw(self):
         self.game_stop_surf.fill(BLACK)
@@ -301,6 +303,29 @@ class GameOver(GameStop):
         self.play_sfx()
         
         return self
+    
+    def init_dna_text(self, difficulty, completed, protein_goal):
+        font_3 = pg.font.Font(FONT, 30)
+        self.dna_texts = [None, None, None]
+        if completed or protein_goal:
+            self.dna_texts[0] = self.render_text("DNA Bonuses:", font_3, WHITE, BLACK)
+        
+        if completed:
+            self.dna_texts[1] = self.render_text("+{} - Body Part Cleared".format(DNA_ON_COMPLETION[difficulty]), font_3, WHITE, BLACK)
+            
+        if protein_goal:
+            self.dna_texts[2] = self.render_text("+{} - Protein Count Goal Reached".format(DNA_ON_PROTEIN_GOAL[difficulty]), font_3, WHITE, BLACK)
+    
+    def draw_text(self):
+        if not self.lost:
+            y = 10
+            
+            for dna_text in self.dna_texts:
+                if dna_text != None:
+                    self.game_stop_surf.blit(dna_text, (SCREEN_WIDTH - dna_text.get_width() - 10, y))
+                    y += dna_text.get_height()
+                
+        super().draw_text()
         
     def draw_heartbeat(self):
         image = HEART_MONITOR_NORMAL_IMG

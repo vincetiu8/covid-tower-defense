@@ -1,8 +1,8 @@
 {
-    "title": "The First Invasion",
     "description": "A tutorial to help ease you into the mechanics of the game.",
     "difficulty": 0,
     "body_part": 0,
+    "protein_goal": [100, 10, 10],
     "texts": [
         [
             [
@@ -27,6 +27,7 @@
                 "Hint: If you're unhappy with your current tower setup, click on a tower and click sell to remove it from the map.",
                 "You'll even earn back half the protein you spent on it!"
             ],
+            [],
             [
                 "Looks like that was the last of them for now. A brilliant outcome for your first mission!"
             ]
@@ -95,7 +96,23 @@
                     "start": 0,
                     "enemy_type": "hepatitis_a",
                     "enemy_count": 20,
-                    "spawn_delay": 4,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.6
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 40,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.3
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 20,
+                    "spawn_delay": 5,
                     "spawn_rate": 0.7
                 }
             ]

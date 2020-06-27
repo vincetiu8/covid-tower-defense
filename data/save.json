@@ -1,32 +1,95 @@
 {
-    "levels": [
-        [
-            true,
-            true,
-            true
-        ],
-        [
-            true,
-            false,
-            false
-        ]
+    "latest_level_unlocked": [
+        0,
+        -1,
+        -1
+    ],
+    "latest_level_completed": [
+        -1,
+        -1,
+        -1
     ],
     "music_vol": 0.0,
-    "sfx_vol": 0.0,
+    "sfx_vol": 0.156,
     "width": 1366,
     "fullscreen": false,
-    "skip_text": true,
-    "max_dna": 119,
+    "skip_text": false,
+    "max_dna": 0,
     "used_dna": 0,
     "highscores": [
-        119,
-        0
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ]
     ],
     "owned_towers": [
-        "t_cell",
-        "m_cell",
-        "mast_cell",
-        "plasma_cell"
+        "t_cell"
     ],
     "seen_enemies": [
         "common_cold",
@@ -37,21 +100,24 @@
             "value": 5,
             "increment": 1,
             "upgrade_cost": 100,
+            "max_value": 10,
             "cost_increment": 10,
             "description": "The number of lives you start with on each level."
         },
         "starting_protein": {
             "value": 50,
             "increment": 5,
-            "upgrade_cost": 85,
-            "cost_increment": 10,
+            "max_value": 70,
+            "upgrade_cost": 70,
+            "cost_increment": 20,
             "description": "The amount of protein you start with on each level."
         },
         "max_towers": {
             "value": 2,
             "increment": 1,
-            "upgrade_cost": 100,
-            "cost_increment": 100,
+            "max_value": 5,
+            "upgrade_cost": 80,
+            "cost_increment": 120,
             "description": "The number of towers you can bring into each level."
         }
     }

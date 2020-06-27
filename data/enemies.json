@@ -12,8 +12,8 @@
     "coronavirus": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 50,
-        "protein": 5,
+        "hp": 100,
+        "protein": 3,
         "shield": false,
         "mutate": false,
         "speed": 70,
@@ -61,8 +61,8 @@
     "polio": {
         "explode_on_death": false,
         "flying": true,
-        "hp": 8,
-        "protein": 2,
+        "hp": 15,
+        "protein": 1,
         "shield": false,
         "mutate": false,
         "speed": 100,
