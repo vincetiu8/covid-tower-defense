@@ -235,23 +235,23 @@ class Game(Display):
     def prepare_next_text(self):
         # Wave has text --> text (and the next wave) don't appear until previous wave is all dead
         # Wave has no text --> next wave starts counting down immediately after previous wave is done spawning
-        if not SAVE_DATA["skip_text"] and len(self.level_data["texts"][self.difficulty][self.wave + 1]) > 0:  
+        if not SAVE_DATA["skip_text"] and len(self.level_data["texts"][self.difficulty][self.wave + 1]) > 0:
             if len(self.enemies) == 0:
-                self.wave += 1
                 self.text = True
-                self.texts = self.level_data["texts"][self.difficulty][self.wave].copy()
+                self.texts = self.level_data["texts"][self.difficulty][self.wave + 1].copy()
                 self.ui.set_next_wave_btn(False)
                 self.textbox.set_text(self.texts[0])
                 self.textbox.finish_text()
                 self.textbox.yoffset = self.textbox.rect.height
                 self.textbox.toggle(True)
         else:
-            self.wave += 1
             self.text = False
             self.textbox.enabled = False
             self.prepare_next_wave()
 
     def prepare_next_wave(self):
+        self.wave += 1
+
         if self.wave == self.max_wave:
             return
 

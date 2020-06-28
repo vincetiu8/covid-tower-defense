@@ -82,7 +82,7 @@ class UI:
         font = pg.font.Font(FONT, size * 2)
         
         # Draws waves, lives, protein text
-        waves_text = font.render("Wave {}/{}".format(self.wave + 1, self.max_wave), 1, WHITE)
+        waves_text = font.render("Wave {}/{}".format(min(self.wave + 1, self.max_wave), self.max_wave), 1, WHITE)
 
         self.width = waves_text.get_width() + self.offset * 2
         ui = pg.Surface((waves_text.get_width() + self.offset * 2, self.game.get_size()[1] - 2 * self.offset))
