@@ -105,7 +105,7 @@
             "description": "The number of lives you start with on each level."
         },
         "starting_protein": {
-            "value": 30,
+            "value": 50,
             "increment": 5,
             "max_value": 70,
             "upgrade_cost": 70,

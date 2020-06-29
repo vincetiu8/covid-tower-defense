@@ -2,7 +2,7 @@
     "common_cold": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 8,
+        "hp": 10,
         "protein": 1,
         "shield": false,
         "mutate": false,
@@ -26,7 +26,7 @@
         "protein": 2,
         "shield": false,
         "mutate": false,
-        "speed": 110,
+        "speed": 125,
         "description": "A very average virus. Has medium health and moves at medium speed."
     },
     "hepatitis_b": {
