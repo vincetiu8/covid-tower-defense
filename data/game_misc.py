@@ -84,11 +84,11 @@ class UI:
         # Draws waves, lives, protein text
         waves_text = font.render("Wave {}/{}".format(min(self.wave + 1, self.max_wave), self.max_wave), 1, WHITE)
 
-        self.width = waves_text.get_width() + self.offset * 2
-        ui = pg.Surface((waves_text.get_width() + self.offset * 2, self.game.get_size()[1] - 2 * self.offset))
+        self.width = max(waves_text.get_width() + self.offset * 2, 225)
+        ui = pg.Surface((self.width, self.game.get_size()[1] - 2 * self.offset))
         ui.fill(DARK_GREY)
 
-        ui.blit(waves_text, (self.offset, self.offset))
+        ui.blit(waves_text, waves_text.get_rect(midtop=(self.width / 2, self.offset)))
         ui.blit(HEART_IMG, (self.offset, self.offset * 4 + size))
         lives_text = font.render(str(self.game.lives), 1, WHITE)
         lives_text = pg.transform.scale(lives_text,
@@ -125,13 +125,13 @@ class UI:
             ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height()))
 
             text = font.render("Speed: " + str(tower_dat["stages"][self.tower.stage]["attack_speed"]) + "s", 1, WHITE)
-            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + MENU_OFFSET + text.get_height()))
+            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height()))
 
             text = font.render("Hits: " + str(self.tower.hits), 1, WHITE)
-            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + MENU_OFFSET * 2 + text.get_height() * 2))
+            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height() * 2))
 
             text = font.render("Kills: " + str(self.tower.kills), 1, WHITE)
-            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + MENU_OFFSET * 3 + text.get_height() * 3))
+            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height() * 3))
 
             refund = 0
             for stage in range(self.tower.stage + 1):
@@ -145,6 +145,10 @@ class UI:
                 upgrade_button, self.upgrade_rect = self.make_button("Upgrade: " + str(upgrade_cost), self.game.protein >= upgrade_cost)
                 self.upgrade_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 5 - self.sell_rect.height * 2
                 ui.blit(upgrade_button, self.upgrade_rect)
+
+            target_button, self.target_rect = self.make_button("Target: " + TARGET_OPTIONS[self.tower.targeting_option], True)
+            self.target_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 6 - self.sell_rect.height * 3
+            ui.blit(target_button, self.target_rect)
         
         text = "Next Wave"
         if self.game.wave == 0:
@@ -193,6 +197,9 @@ class UI:
 
             elif self.tower.stage < 2 and self.upgrade_rect.collidepoint(pos):
                 return "upgrade"
+
+            elif self.target_rect.collidepoint(pos):
+                return "target"
 
         if self.next_wave_btn_enabled and self.next_wave_rect.collidepoint(pos):
             return "start_wave"

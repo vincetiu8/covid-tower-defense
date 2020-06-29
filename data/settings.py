@@ -304,3 +304,10 @@ FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
 WAVE_DELAY = 10
 EXPLOSION_TIME = 0.25
 REFUND_AMOUNT = 0.5
+
+TARGET_OPTIONS = {
+    0: "First",
+    1: "Last",
+    2: "Strong",
+    3: "Weak"
+}

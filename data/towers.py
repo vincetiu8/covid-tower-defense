@@ -167,12 +167,12 @@ class Tower(Obstacle):
 
         self.time_passed = 0
         self.next_spawn = 1
-        
+
         self.rotation = 0
         self.current_enemy = None
         self.hits = 0
         self.kills = 0
-        
+
         self.buffs = []
 
         self.search_for_enemy()
@@ -183,9 +183,9 @@ class Tower(Obstacle):
         self.true_range = self.range
         self.base_image = data["base_image"]
         self.area_of_effect = data["area_of_effect"]
-        
+
         self.aoe_buff = False # initialize so that we can keep track of whether a tower is an attacking or a buff one
-            
+
         load_attack_attrs = True # always load unless self.area_of_effect and self.aoe_buff
 
         if self.area_of_effect:
@@ -194,13 +194,19 @@ class Tower(Obstacle):
             self.update_aoe_sprite(self.range)
             self.aura_color = data["aura_color"]
             self.aoe_buff = data["aoe_buff"]
-            
+
             if self.aoe_buff:
                 aoe_buff_types = ["damage", "range"]
                 self.aoe_buff_type = aoe_buff_types[data["aoe_buff_type"]]
                 self.aoe_buff_amount = data["aoe_buff_amount"]
                 load_attack_attrs = False
         else:
+            # Targeting options:
+            # 0 - First
+            # 1 - Last
+            # 2 - Strong
+            # 3 - Weak
+            self.targeting_option = 1
             self.bullet_speed = data["bullet_speed"]
             self.bullet_lifetime = data["bullet_lifetime"]
             self.rotating = data["rotating"]
@@ -215,7 +221,7 @@ class Tower(Obstacle):
             if self.explode_on_impact:
                 self.explosion_radius = data["explosion_radius"]
                 self.explosion_color = data["explosion_color"]
-                
+
         if load_attack_attrs:
             self.slow_speed = data["slow_speed"]
             self.slow_duration = data["slow_duration"]
@@ -224,7 +230,7 @@ class Tower(Obstacle):
             self.different_shield_damage = data["different_shield_damage"]
             self.sound = data["shoot_sound"]
             self.attack_speed = data["attack_speed"]
-            
+
             if self.different_shield_damage:
                 self.shield_damage = data["shield_damage"]
             else:
@@ -263,14 +269,14 @@ class Tower(Obstacle):
                     for hit in hits:
                         hit.damage(self.true_damage, self.shield_damage)
                         if self.slow_speed != 1:
-                            hits[0].slow(self.slow_speed, self.slow_duration)
+                            hit.slow(self.slow_speed, self.slow_duration)
                     TOWER_DATA[self.name]["stages"][self.stage]["shoot_sound"].play()
                     self.next_spawn = self.attack_speed * 1000
                     self.time_passed = 0
 
-            elif self.current_enemy != None:
+            elif self.current_enemy is not None:
                 enemy_center = self.current_enemy.rect.center
-                if (not self.current_enemy.damagable or not self.current_enemy.alive() or manhattan((enemy_center[0], enemy_center[1]), (self.rect.x, self.rect.y)) > self.true_range):
+                if not self.current_enemy.damagable or not self.current_enemy.alive() or manhattan((enemy_center[0], enemy_center[1]), (self.rect.x, self.rect.y)) > self.true_range:
                     self.current_enemy = None
                 else:
                     if self.rotating:
@@ -314,16 +320,20 @@ class Tower(Obstacle):
                     self.next_spawn = self.attack_speed * 1000
                     self.time_passed = 0
 
-        if not self.area_of_effect and self.current_enemy == None:
+        if not self.area_of_effect and self.current_enemy == None or self.targeting_option != 0:
+            if self.current_enemy != None and ((self.different_shield_damage and self.current_enemy.shield_hp == 0) or \
+                    (self.slow_speed != 1 and self.current_enemy.slowed)):
+                self.current_enemy = None
+
             self.search_for_enemy()
-            
+
         self.time_passed += self.clock.get_time()
-            
+
     def update_aoe_sprite(self, true_range):
         self.aoe_sprite.rect.x = self.rect.x - (true_range - self.game.map.tilesize) / 2
         self.aoe_sprite.rect.y = self.rect.y - (true_range - self.game.map.tilesize) / 2
         self.aoe_sprite.rect.width = self.aoe_sprite.rect.height = true_range
-        
+
     def buff(self, buff_tower, buff_type, amount):
         self.buffs.append(buff_tower)
         if not self.aoe_buff:
@@ -368,7 +378,29 @@ class Tower(Obstacle):
 
     def search_for_enemy(self):
         for enemy in self.game.enemies:
-            if (manhattan((enemy.rect.center[0], enemy.rect.center[1]), (self.rect.center[0], self.rect.center[1])) <= self.true_range
-            and (self.current_enemy == None or enemy.end_dist < self.current_enemy.end_dist)
-            and enemy.damagable):
-                self.current_enemy = enemy
+            if manhattan((enemy.rect.center[0], enemy.rect.center[1]), (self.rect.center[0], self.rect.center[1])) <= self.true_range and enemy.damagable:
+                if self.current_enemy is None:
+                    self.current_enemy = enemy
+                    continue
+
+                if (self.different_shield_damage and enemy.shield == 0 and self.current_enemy.shield_hp > 0) or \
+                    (self.slow_speed != 1 and enemy.slowed and not self.current_enemy.slowed):
+                    continue
+
+                if self.targeting_option == 0:
+                    if enemy.end_dist < self.current_enemy.end_dist:
+                        self.current_enemy = enemy
+
+                elif self.targeting_option == 1:
+                    if enemy.end_dist > self.current_enemy.end_dist:
+                        self.current_enemy = enemy
+
+                elif self.targeting_option == 2:
+                    if (self.different_shield_damage and enemy.shield_max_hp > self.current_enemy.shield_max_hp) or \
+                            (not self.different_shield_damage and enemy.max_hp > self.current_enemy.max_hp):
+                        self.current_enemy = enemy
+
+                elif self.targeting_option == 3:
+                    if (self.different_shield_damage and enemy.shield_max_hp < self.current_enemy.shield_max_hp) or \
+                            (not self.different_shield_damage and enemy.max_hp < self.current_enemy.max_hp):
+                        self.current_enemy = enemy

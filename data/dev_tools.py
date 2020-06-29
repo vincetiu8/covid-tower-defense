@@ -23,6 +23,8 @@ class DevClass(Game):
         super().load_data()
 
     def new(self):
+        self.wave = 0
+        self.difficulty = 0
         self.current_tower = 0
         self.current_stage = 0
         self.current_enemy = 0
@@ -245,7 +247,7 @@ class TowerPreviewMenu(DevClass):
         super().reload_level("tower_test")
         super().load_data()
         super().new()
-        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 5) for start in
+        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 1) for start in
                        range(len(self.start_data))]
         self.make_stripped_path_wrapper()
         self.new_tower_name = ""
@@ -437,7 +439,7 @@ class EnemyPreviewMenu(DevClass):
         super().reload_level("enemy_test")
         super().load_data()
         super().new()
-        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 2) for start in range(len(self.start_data))]
+        self.starts = [Start(self, start, self.enemy_names[self.current_enemy], -1, 0, 1) for start in range(len(self.start_data))]
         self.make_stripped_path_wrapper()
         self.new_enemy_name = ""
         self.load_ui()

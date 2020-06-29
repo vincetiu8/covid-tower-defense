@@ -41,7 +41,7 @@ class Enemy(pg.sprite.Sprite):
         wave_difficulty = 1 + self.game.wave * 0.1
         game_difficulty = self.game.difficulty * 0.5 + 0.5
         self.hp = round(data["hp"] * wave_difficulty * game_difficulty)
-        print(self.hp)
+        self.max_hp = self.hp
         self.speed = data["speed"]
         self.dropped_protein = data["protein"]
         self.original_image = data["image"]
