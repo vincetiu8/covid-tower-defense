@@ -44,7 +44,7 @@ class Menu(Display):
         self.tower_edit_button = pg.Rect((1200, 200), self.level_button_rect.size)
         self.enemy_edit_button = pg.Rect((1200, 600), self.level_button_rect.size)
         self.level_edit_button = pg.Rect((1200, 1000), self.level_button_rect.size)
-        self.options_button = pg.Rect((850, -100), OPTIONS_IMGS[0].get_size())
+        self.options_button = pg.Rect((870, -100), OPTIONS_IMGS[0].get_size())
         self.plus_button = pg.Rect((600, 150), self.small_level_button_size)
         self.minus_button = pg.Rect((-130, 150), self.small_level_button_size)
         
@@ -699,23 +699,19 @@ class LevelInfo(HoverInfo):
         self.level = level
         if self.unlocked:
             self.level_data = LEVEL_DATA[level]
-            super().__init__(list(BODY_PARTS)[self.level_data["body_part"]].replace('_', ' ').title(), self.level_data["description"])
+            super().__init__(list(BODY_PARTS)[self.level_data["body_part"]].replace('_', ' ').title(),
+                             self.level_data["description"][self.difficulty])
         else:
             super().__init__("???", "An unknown level. Complete the previous levels to unlock this one!")
         
     def make_other_info(self):
         if self.unlocked:
-            if self.level_data["difficulty"] == 0:
-                difficulty_text = self.info_font.render("Easy", 1, GREEN)
-            elif self.level_data["difficulty"] == 1:
-                difficulty_text = self.info_font.render("Medium", 1, YELLOW)
-            elif self.level_data["difficulty"] == 2:
-                difficulty_text = self.info_font.render("Hard", 1, ORANGE)
-            elif self.level_data["difficulty"] == 3:
-                difficulty_text = self.info_font.render("Very Hard", 1, RED)
-            elif self.level_data["difficulty"] == 4:
-                difficulty_text = self.info_font.render("Extreme", 1, MAROON)
-            self.add_text(difficulty_text)
+            ratings = ["Easy", "Medium", "Hard", "Very Hard", "Extreme"]
+            colors = [GREEN, YELLOW, ORANGE, RED, MAROON]
+            
+            ratings_text = self.info_font.render(ratings[self.level_data["ratings"][self.difficulty]],
+                                                 1, colors[self.level_data["ratings"][self.difficulty]])
+            self.add_text(ratings_text)
 
             waves_text = self.info_font.render("{} Waves".format(len(self.level_data["waves"][self.difficulty])), 1, WHITE)
             self.add_text(waves_text)

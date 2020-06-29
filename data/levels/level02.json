@@ -1,6 +1,6 @@
 {
-    "description": "Manage two different paths this time with some scary enemies!",
-    "difficulty": 3,
+    "description": ["Manage two different paths this time with some scary enemies!", "", ""],
+    "ratings": [0, 1, 1],
     "body_part": 2,
     "protein_goal": [100, 10, 10],
     "texts": [

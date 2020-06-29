@@ -1,6 +1,6 @@
 {
-    "description": "",
-    "difficulty": 3,
+    "description": ["", "", ""],
+    "ratings": [0, 1, 1],
     "body_part": 11,
     "protein_goal": [100, 10, 10],
     "texts": [
