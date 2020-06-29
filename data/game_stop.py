@@ -232,6 +232,7 @@ class GameOver(GameStop):
         super().__init__()
         
         self.alpha_speed = 3
+        self.fading_out = None #indicates if game over surface is fading out
         
     def play_sfx(self):
         play_beep_x = [20, 332, 724, 1160]
@@ -254,6 +255,7 @@ class GameOver(GameStop):
     def new(self, args):
         super().new(args)
         
+        self.fading_out = False
         self.heartbeat_x = 0
         self.lost, self.cause_of_death = args[2], args[3]
 
@@ -300,7 +302,8 @@ class GameOver(GameStop):
         
         super().draw()
         
-        self.play_sfx()
+        if not self.fading_out:
+            self.play_sfx()
         
         return self
     
@@ -342,6 +345,7 @@ class GameOver(GameStop):
         result = super().event(event)
         
         if result != -1:
+            self.fading_out = True
             self.stop_sfx()
         
         return result
