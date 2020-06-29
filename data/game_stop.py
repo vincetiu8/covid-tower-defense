@@ -318,12 +318,12 @@ class GameOver(GameStop):
     
     def draw_text(self):
         if not self.lost:
-            y = 10
+            y = 5
             
             for dna_text in self.dna_texts:
                 if dna_text != None:
                     self.game_stop_surf.blit(dna_text, (SCREEN_WIDTH - dna_text.get_width() - 10, y))
-                    y += dna_text.get_height()
+                    y += dna_text.get_height() - 10
                 
         super().draw_text()
         
