@@ -153,7 +153,7 @@ class Enemy(pg.sprite.Sprite):
         else:
             hp_surf.fill(GREEN)
 
-        if not self.shield:
+        if not self.shield or self.shield_hp == 0:
             return hp_surf
 
         shield_surf = pg.Surface((math.ceil(math.log10(self.shield_hp) * 10), 5))

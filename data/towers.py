@@ -206,7 +206,7 @@ class Tower(Obstacle):
             # 1 - Last
             # 2 - Strong
             # 3 - Weak
-            self.targeting_option = 1
+            self.targeting_option = 0
             self.bullet_speed = data["bullet_speed"]
             self.bullet_lifetime = data["bullet_lifetime"]
             self.rotating = data["rotating"]
@@ -320,11 +320,9 @@ class Tower(Obstacle):
                     self.next_spawn = self.attack_speed * 1000
                     self.time_passed = 0
 
-        if not self.area_of_effect and self.current_enemy == None or self.targeting_option != 0:
-            if self.current_enemy != None and ((self.different_shield_damage and self.current_enemy.shield_hp == 0) or \
-                    (self.slow_speed != 1 and self.current_enemy.slowed)):
-                self.current_enemy = None
-
+        if not self.area_of_effect and (self.current_enemy == None or ((self.different_shield_damage and (not self.current_enemy.shield or self.current_enemy.shield_hp == 0)) or \
+                    (self.slow_speed != 1 and self.current_enemy.slowed))):
+            self.current_enemy = None
             self.search_for_enemy()
 
         self.time_passed += self.clock.get_time()
@@ -383,8 +381,13 @@ class Tower(Obstacle):
                     self.current_enemy = enemy
                     continue
 
-                if (self.different_shield_damage and enemy.shield == 0 and self.current_enemy.shield_hp > 0) or \
+                if (self.different_shield_damage and (self.current_enemy.shield and self.current_enemy.shield_hp > 0) and (not enemy.shield or enemy.shield_hp == 0)) or \
                     (self.slow_speed != 1 and enemy.slowed and not self.current_enemy.slowed):
+                    continue
+
+                elif (self.different_shield_damage and (not self.current_enemy.shield or self.current_enemy.shield_hp == 0) and (enemy.shield and enemy.shield_hp > 0)) or \
+                    (self.slow_speed != 1 and self.current_enemy.slowed and not enemy.slowed):
+                    self.current_enemy = enemy
                     continue
 
                 if self.targeting_option == 0:

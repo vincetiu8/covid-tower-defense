@@ -589,7 +589,7 @@ class Game(Display):
                             self.ui.tower.targeting_option += 1
                             if self.ui.tower.targeting_option == len(TARGET_OPTIONS):
                                 self.ui.tower.targeting_option = 0
-                            self.ui.get_ui()
+                            self.ui.ui = self.ui.get_ui()
                         return -1
 
                     elif result > -1:
