@@ -112,7 +112,7 @@ class UI:
                 temp_rect.x += self.tower_size + self.offset
                 ui.blit(PROTEIN_IMG, temp_rect)
                 cost_text = font.render(str(round(TOWER_DATA[tower]["stages"][0]["upgrade_cost"] * (1 + self.game.difficulty * 0.25))), 1, WHITE)
-                temp_rect.y += size + self.offset
+                temp_rect.y += size
                 ui.blit(cost_text, temp_rect)
 
         else:
