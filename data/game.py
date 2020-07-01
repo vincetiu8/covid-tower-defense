@@ -584,6 +584,12 @@ class Game(Display):
                                 self.ui.get_ui()
                             else:
                                 WRONG_SELECTION_SFX.play()
+
+                        elif result == "target":
+                            self.ui.tower.targeting_option += 1
+                            if self.ui.tower.targeting_option == len(TARGET_OPTIONS):
+                                self.ui.tower.targeting_option = 0
+                            self.ui.ui = self.ui.get_ui()
                         return -1
 
                     elif result > -1:

@@ -41,6 +41,7 @@ class Enemy(pg.sprite.Sprite):
         wave_difficulty = 1 + self.game.wave * 0.1
         game_difficulty = self.game.difficulty * 0.5 + 0.5
         self.hp = round(data["hp"] * wave_difficulty * game_difficulty)
+        self.max_hp = self.hp
         self.speed = data["speed"]
         self.dropped_protein = data["protein"]
         self.original_image = data["image"]
@@ -152,7 +153,7 @@ class Enemy(pg.sprite.Sprite):
         else:
             hp_surf.fill(GREEN)
 
-        if not self.shield:
+        if not self.shield or self.shield_hp == 0:
             return hp_surf
         
         if self.shield_hp == 0:
