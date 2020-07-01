@@ -1,10 +1,36 @@
 {
-    "description": ["Manage two different paths this time with some scary enemies!", "", ""],
+    "description": ["This map features multiple exit routes. Intelligence reports recommend deploying shieldbreaking cells as well.", "", ""],
     "ratings": [0, 1, 1],
     "body_part": 2,
-    "protein_goal": [100, 10, 10],
+    "protein_goal": [1000, 10, 10],
     "texts": [
         [
+            [
+                "Welcome to your third mission! Hopefully, you've gotten the hang of things by now.",
+                "This body part has multiple exits for the viruses. Blocking off most of them would be a good idea.",
+                "Good luck, commander!"
+            ],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [   
+                "Beware! This next wave has viruses with a shield.",
+                "Not only does this shield make it harder to destroy them, it even regenerates after a while!",
+                "If you have any shieldbreaking cells, now is the time to bring them out."
+            ],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
             [],
             [],
             []
@@ -23,54 +49,314 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 50,
-                    "spawn_delay": 1,
-                    "spawn_rate": 0.5
+                    "enemy_type": "common_cold",
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 40,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 40,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.3
                 },
                 {
                     "start": 0,
-                    "enemy_type": "smallpox",
-                    "enemy_count": 30,
-                    "spawn_delay": 10,
-                    "spawn_rate": 0.5
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.7
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 50,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
                 },
                 {
-                    "start": 1,
-                    "enemy_type": "hepatitis_b",
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
                     "enemy_count": 30,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.8
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.5
                 }
             ],
             [
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 80,
-                    "spawn_delay": 1,
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
                     "spawn_rate": 0.5
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 50,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
                 },
                 {
                     "start": 0,
-                    "enemy_type": "rabies",
-                    "enemy_count": 15,
-                    "spawn_delay": 5,
-                    "spawn_rate": 2
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.35
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 70,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 70,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 60,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "coronavirus",
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "coronavirus",
+                    "enemy_count": 60,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 80,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.15
                 },
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
                     "enemy_count": 40,
-                    "spawn_delay": 1,
-                    "spawn_rate": 1
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.4
                 },
                 {
-                    "start": 1,
-                    "enemy_type": "hiv",
-                    "enemy_count": 10,
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 40,
+                    "spawn_delay": 3.2,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 50,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 50,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 50,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.15
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 70,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 70,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 100,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.05
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 50,
                     "spawn_delay": 5,
-                    "spawn_rate": 4
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 50,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "coronavirus",
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.15
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 50,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 40,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 100,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 30,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 25,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 150,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.03
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 80,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 50,
+                    "spawn_delay": 4,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 40,
+                    "spawn_delay": 4,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 80,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 70,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "coronavirus",
+                    "enemy_count": 40,
+                    "spawn_delay": 4,
+                    "spawn_rate": 0.25
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "coronavirus",
+                    "enemy_count": 40,
+                    "spawn_delay": 17,
+                    "spawn_rate": 0.05
                 }
             ]
         ],
