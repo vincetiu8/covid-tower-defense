@@ -172,7 +172,7 @@
     },
     "mast_cell": {
         "description": "A shield-breaker! Deals minimal damage to normal enemies, but loads of damage to shields!",
-        "unlock_cost": 35,
+        "unlock_cost": 30,
         "stages": [
             {
                 "area_of_effect": false,
