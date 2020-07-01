@@ -1,7 +1,7 @@
 {
     "latest_level_unlocked": [
         0,
-        -1,
+        0,
         -1
     ],
     "latest_level_completed": [
@@ -13,7 +13,7 @@
     "sfx_vol": 0.156,
     "width": 1366,
     "fullscreen": false,
-    "skip_text": false,
+    "skip_text": true,
     "max_dna": 0,
     "used_dna": 0,
     "highscores": [
