@@ -1,29 +1,29 @@
 {
     "latest_level_unlocked": [
-        0,
+        2,
         -1,
         -1
     ],
     "latest_level_completed": [
-        -1,
+        1,
         -1,
         -1
     ],
-    "music_vol": 0.0,
-    "sfx_vol": 0.156,
+    "music_vol": 0.472,
+    "sfx_vol": 0.476,
     "width": 1366,
     "fullscreen": false,
     "skip_text": false,
-    "max_dna": 0,
+    "max_dna": 120,
     "used_dna": 0,
     "highscores": [
         [
-            0,
+            146,
             0,
             0
         ],
         [
-            0,
+            2250,
             0,
             0
         ],
@@ -93,7 +93,9 @@
     ],
     "seen_enemies": [
         "common_cold",
-        "hepatitis_a"
+        "hepatitis_a",
+        "polio",
+        "coronavirus"
     ],
     "game_attrs": {
         "lives": {
@@ -105,10 +107,10 @@
             "description": "The number of lives you start with on each level."
         },
         "starting_protein": {
-            "value": 50,
+            "value": 30,
             "increment": 5,
             "max_value": 70,
-            "upgrade_cost": 70,
+            "upgrade_cost": 90,
             "cost_increment": 20,
             "description": "The amount of protein you start with on each level."
         },
