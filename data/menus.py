@@ -41,9 +41,6 @@ class Menu(Display):
         self.tower_preview_button = pg.Rect((800, 200), self.level_button_rect.size)
         self.enemy_preview_button = pg.Rect((800, 600), self.level_button_rect.size)
         self.upgrades_menu_button = pg.Rect((800, 1000), self.level_button_rect.size)
-        self.tower_edit_button = pg.Rect((1200, 200), self.level_button_rect.size)
-        self.enemy_edit_button = pg.Rect((1200, 600), self.level_button_rect.size)
-        self.level_edit_button = pg.Rect((1200, 1000), self.level_button_rect.size)
         self.options_button = pg.Rect((870, -100), OPTIONS_IMGS[0].get_size())
         self.plus_button = pg.Rect((600, 150), self.small_level_button_size)
         self.minus_button = pg.Rect((-130, 150), self.small_level_button_size)
@@ -162,38 +159,6 @@ class Menu(Display):
             (self.upgrades_menu_button.center[0] - lives_text.get_rect().center[0],
              self.upgrades_menu_button.center[1] - lives_text.get_rect().center[
                  1] + lives_text.get_rect().height - MENU_OFFSET)))
-
-        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.tower_edit_button))
-        lives_text = lives_font.render("Tower", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.tower_edit_button.center[0] - lives_text.get_rect().center[0], self.tower_edit_button.center[1] - lives_text.get_rect().center[1] - lives_text.get_rect().height + MENU_OFFSET)))
-        lives_text = lives_font.render("Edit", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.tower_edit_button.center[0] - lives_text.get_rect().center[0], self.tower_edit_button.center[1] - lives_text.get_rect().center[1] + lives_text.get_rect().height - MENU_OFFSET)))
-
-        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.enemy_edit_button))
-        lives_text = lives_font.render("Enemy", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.enemy_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.enemy_edit_button.center[1] - lives_text.get_rect().center[
-                 1] - lives_text.get_rect().height + MENU_OFFSET)))
-        lives_text = lives_font.render("Edit", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.enemy_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.enemy_edit_button.center[1] - lives_text.get_rect().center[
-                 1] + lives_text.get_rect().height - MENU_OFFSET)))
-
-        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.level_edit_button))
-        lives_text = lives_font.render("Level", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.level_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.level_edit_button.center[1] - lives_text.get_rect().center[
-                 1] - lives_text.get_rect().height + MENU_OFFSET)))
-        lives_text = lives_font.render("Edit", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.level_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.level_edit_button.center[1] - lives_text.get_rect().center[
-                 1] + lives_text.get_rect().height - MENU_OFFSET)))
         
         minus_plus_font = pg.font.Font(FONT, 130)
         difficulty_font = pg.font.Font(FONT, 110)
@@ -275,15 +240,6 @@ class Menu(Display):
                 elif self.upgrades_menu_button.collidepoint((mouse_pos)):
                     BTN_SFX.play()
                     return "upgrades_menu"
-                elif self.tower_edit_button.collidepoint(mouse_pos):
-                    BTN_SFX.play()
-                    return "tower_edit"
-                elif self.enemy_edit_button.collidepoint(mouse_pos):
-                    BTN_SFX.play()
-                    return "enemy_edit"
-                elif self.level_edit_button.collidepoint(mouse_pos):
-                    BTN_SFX.play()
-                    return "level_edit"
                 elif self.options_button.collidepoint(mouse_pos):
                     BTN_SFX.play()
                     return "options"
