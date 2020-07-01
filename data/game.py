@@ -194,7 +194,6 @@ class Game(Display):
             self.projectiles.update()
             self.ui.update()
             self.explosions.update()
-            self.textbox.update()
 
             keys = pg.key.get_pressed()
             if keys[pg.K_LEFT]:
@@ -213,6 +212,12 @@ class Game(Display):
                 pg.event.post(self.game_done_event)
 
             if self.text:
+                if SAVE_DATA["skip_text"]:
+                    self.textbox.toggle(False)
+                    self.ui.set_next_wave_btn(True)
+                    TEXT_SCROLL_SFX.stop()
+                else:
+                    self.textbox.update()
                 return
 
             if not self.in_a_wave and self.wave > 0:
@@ -220,11 +225,12 @@ class Game(Display):
                 if self.time_passed >= WAVE_DELAY * 1000:
                     self.start_next_wave()
 
-            if self.current_wave_done() and self.in_a_wave:
-                if self.wave < self.max_wave:
-                    self.prepare_next_text()
-                elif len(self.enemies) == 0:
-                    pg.event.post(self.game_done_event)
+            if self.in_a_wave and self.current_wave_done():
+                    if self.wave < self.max_wave:
+                        self.prepare_next_text()
+                    elif len(self.enemies) == 0:
+                        pg.event.post(self.game_done_event)
+
 
     def current_wave_done(self):
         for start in self.starts:
