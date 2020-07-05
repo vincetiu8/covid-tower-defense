@@ -277,7 +277,7 @@ for i, to_concat in enumerate(["", "_hover"]):
 # load other images
 LEVEL_BUTTON_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "button.png"))
 DARK_LEVEL_BUTTON_IMG = LEVEL_BUTTON_IMG.copy()
-DARK_LEVEL_BUTTON_IMG.fill(DARK_GREY, special_flags=pg.BLEND_RGB_MULT)
+DARK_LEVEL_BUTTON_IMG.fill(LIGHT_GREY, special_flags=pg.BLEND_RGB_MULT)
 LEVEL_BUTTON_IMG_2 = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "level_button.png")), (64, 64))
 LOCK_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "lock.png"))
 BODY_IMG = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "body.png")), (965, 1800))
