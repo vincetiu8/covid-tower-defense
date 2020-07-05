@@ -1,24 +1,314 @@
-import textwrap
+import textwrap, math
 
 from data.display import *
 from data.tilemap import Camera, TiledMap
 from data.settings import *
-from data.dev_tools import TowerEditMenu, EnemyEditMenu
+from data.game_stop import GridDisplay
 
-class StartMenu(Display):        
+class StartMenu(GridDisplay):
+    def __init__(self, clock):
+        super().__init__()
+        self.clock = clock
+        self.fade_out_done_event = pg.event.Event(pg.USEREVENT + 2)
+        self.fading_out = False
+        self.alpha_speed = 25
+        self.text_alpha_speed = 10
+        self.fonts = [pg.font.Font(FONT, 100), pg.font.Font(FONT, 200)]
+        self.init_text([("In light of COVID-19", 0), ("Made by the BSM community", 0), ("With thanks to frontliners", 0)])
+
+        self.half_distances = [SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2]
+
+        # For enemy images
+        self.enemy_pos = [(300, 550), (400, 500), (200, 450)]
+        self.raw_enemies = [
+            pg.transform.scale(ENEMY_DATA[enemy]["image"], (
+                    ENEMY_DATA[enemy]["image"].get_width() * 10,
+                    ENEMY_DATA[enemy]["image"].get_height() * 10
+            ))
+            for enemy in ["common_cold", "hepatitis_b", "hiv"]]
+        self.processed_enemies = []
+        self.enemy_bob = 0
+
+        # For tower images
+        self.tower_pos = [(1000, 550), (900, 475), (1100, 400)]
+        self.raw_tower_bases = [
+            pg.transform.scale(TOWER_DATA[tower]["stages"][stage]["base_image"], (
+                    TOWER_DATA[tower]["stages"][stage]["base_image"].get_width() * 5,
+                    TOWER_DATA[tower]["stages"][stage]["base_image"].get_height() * 5
+            )) for stage, tower in enumerate(["t_cell", "m_cell", "b_cell"])]
+        self.raw_tower_guns = [
+            pg.transform.scale(TOWER_DATA[tower]["stages"][stage]["gun_image"], (
+                    TOWER_DATA[tower]["stages"][stage]["gun_image"].get_width() * 5,
+                    TOWER_DATA[tower]["stages"][stage]["gun_image"].get_height() * 5
+            )) for stage, tower in enumerate(["t_cell", "m_cell", "b_cell"])]
+        self.processed_tower_guns = [{}, {}, {}]
+        self.tower_rot = 0
+
+        self.vs_img_h = 475
+        self.vs_img_bob = 0
+
+        self.start_text = self.render_text("Press ANY KEY to start", self.fonts[0], WHITE, BLACK)
+        self.start_text_h = 650
+
+        self.stage = 0
+        self.text_stage = 1
+        self.text_alpha = 0
+
+    def new(self, args):
+        super().new(args)
+
+        pg.mixer.music.stop()
+        pg.mixer.music.load(SEVERE_LEVEL_MUSIC[1])
+        pg.mixer.music.play(0)  # have to make the song play 0 times for some reason...
+        pg.mixer.music.set_endevent(pg.USEREVENT + 3)
+
+    def init_text(self, texts):
+        self.raw_texts = []
+        for text, size in texts:
+            temp_text = self.render_text(text, self.fonts[size], WHITE, BLACK)
+            self.raw_texts.append(temp_text)
+
+    def draw_text(self):
+        if self.alpha > 255:
+            return
+
+        if self.stage == 0:
+            if self.text_alpha < 255:
+                self.text_alpha = min(255, self.text_alpha + self.text_alpha_speed)
+
+            elif self.text_stage < len(self.raw_texts):
+                self.text_stage += 1
+                self.text_alpha = 0
+
+            else:
+                self.stage += 1
+
+            for stage in range(self.text_stage):
+                text = self.raw_texts[stage]
+                if stage == self.text_stage - 1:
+                    text = text.copy()
+                    text.fill(pg.Color(255, 255, 255, self.text_alpha), special_flags = pg.BLEND_RGBA_MULT)
+                self.blit(text, ((SCREEN_WIDTH - text.get_width()) // 2, (SCREEN_HEIGHT - text.get_height()) * (stage + 1) // 4))
+
+        elif self.stage == 1:
+            if self.text_alpha > 0:
+                self.text_alpha = max(0, self.text_alpha - self.text_alpha_speed)
+
+            else:
+                self.init_text([("Sergeant T-Cell", 1), ("and the", 0), ("Abnormally Impressive", 0), ("Invasion of Illnesses", 0)])
+                self.final_pos = [
+                    self.half_distances[1] - self.raw_texts[0].get_height()
+                    - self.raw_texts[1].get_height() - MENU_OFFSET * 7,
+                    self.half_distances[0]
+                    - (self.raw_texts[1].get_width() + self.raw_texts[2].get_width() + MENU_OFFSET * 2) / 2,
+                    self.half_distances[0]
+                    - (self.raw_texts[2].get_width() - self.raw_texts[1].get_width() - MENU_OFFSET * 2) / 2,
+                    self.half_distances[1] + self.raw_texts[1].get_height() - MENU_OFFSET * 5
+                ]
+                self.text_stage = 0
+                self.text_alpha = 0
+                self.stage += 1
+
+            for stage, text in enumerate(self.raw_texts):
+                text = text.copy()
+                text.fill(pg.Color(255, 255, 255, self.text_alpha), special_flags=pg.BLEND_RGBA_MULT)
+                self.blit(text, ((SCREEN_WIDTH - text.get_width()) // 2, (SCREEN_HEIGHT - text.get_height()) * (stage + 1) // 4))
+
+        elif self.stage == 2:
+            if self.text_alpha < 100:
+                self.text_alpha = min(100, self.text_alpha + self.text_alpha_speed)
+
+            elif self.text_stage < len(self.raw_texts):
+                self.text_stage += 1
+                self.text_alpha = 0
+
+            else:
+                self.stage += 1
+                self.text_alpha = 0
+                self.text_stage = 0
+
+            for stage in range(self.text_stage):
+                text = self.raw_texts[stage]
+                multiplier = 1
+                if stage == self.text_stage - 1:
+                    multiplier = self.text_alpha / 100
+
+                if stage % 3 == 0:
+                    final_x = self.half_distances[0] - text.get_width() / 2
+                    if stage == 0:
+                        final_y = (text.get_height() + self.final_pos[stage] - MENU_OFFSET * stage * 12) * multiplier - text.get_height()
+                    else:
+                        final_y = (self.final_pos[stage] - MENU_OFFSET * stage * 6 - SCREEN_HEIGHT) * multiplier + SCREEN_HEIGHT
+
+                else:
+                    final_y = self.half_distances[1] - text.get_height() / 2 - MENU_OFFSET * 16
+                    if stage == 1:
+                        final_x = (self.final_pos[stage] + text.get_width()) * multiplier - text.get_width()
+                    else:
+                        final_x = (self.final_pos[stage] - SCREEN_WIDTH) * multiplier + SCREEN_WIDTH
+
+                self.blit(text, (final_x, final_y))
+
+        elif self.stage == 3:
+            if self.text_alpha < 100:
+                self.text_alpha = min(100, self.text_alpha + self.text_alpha_speed)
+
+            elif self.text_stage < len(self.raw_enemies):
+                self.text_stage += 1
+                self.text_alpha = 0
+
+            else:
+                self.stage += 1
+                self.text_alpha = 0
+                self.text_stage = 0
+            
+            for stage in range(self.text_stage - 1, -1, -1):
+                if stage == self.text_stage - 1:
+                    size = self.raw_enemies[stage].get_width() * self.text_alpha // 100
+                    temp_img = pg.transform.scale(self.raw_enemies[stage], (size, size))
+                    if self.text_alpha == 100:
+                        self.processed_enemies.append({size: temp_img})
+                    self.blit(temp_img, temp_img.get_rect(center = self.enemy_pos[stage]))
+
+                else:
+                    self.blit(self.raw_enemies[stage], self.raw_enemies[stage].get_rect(center = self.enemy_pos[stage]))
+
+            self.draw_title_text()
+
+        elif self.stage == 4:
+            self.tower_rot += 3
+
+            if self.text_alpha < 100:
+                self.text_alpha = min(100, self.text_alpha + self.text_alpha_speed)
+
+            elif self.text_stage < len(self.raw_tower_bases):
+                self.text_alpha = 0
+                self.text_stage += 1
+
+            else:
+                self.text_alpha = 10
+                self.stage += 1
+
+            for stage in range(self.text_stage - 1, -1, -1):
+                angle = self.tower_rot // (stage + 1) * (stage % 2 * 2 - 1)
+                if stage == self.text_stage - 1:
+                    size = self.raw_tower_bases[stage].get_width() * self.text_alpha // 100
+                    temp_img = pg.transform.scale(self.raw_tower_bases[stage], (size, size))
+                    self.blit(temp_img, temp_img.get_rect(center = self.tower_pos[stage]))
+                    temp_img = pg.transform.scale(pg.transform.rotate(self.raw_tower_guns[stage], angle), (
+                        self.raw_tower_guns[stage].get_width() * self.text_alpha // 100,
+                        self.raw_tower_guns[stage].get_height() * self.text_alpha // 100
+                    ))
+                    self.blit(temp_img, temp_img.get_rect(center=self.tower_pos[stage]))
+
+                else:
+                    self.blit(self.raw_tower_bases[stage], self.raw_tower_bases[stage].get_rect(center = self.tower_pos[stage]))
+                    if angle in self.processed_tower_guns[stage]:
+                        temp_img = self.processed_tower_guns[stage][angle]
+                    else:
+                        temp_img = pg.transform.rotate(self.raw_tower_guns[stage], angle)
+                        self.processed_tower_guns[stage][angle] = temp_img
+                    self.blit(temp_img, temp_img.get_rect(center = self.tower_pos[stage]))
+
+            self.draw_enemies()
+            self.draw_title_text()
+
+        elif self.stage == 5:
+            if self.text_alpha > 1:
+                self.text_alpha = max(1, self.text_alpha - 0.5)
+
+            else:
+                self.stage += 1
+                self.text_alpha = 0
+
+            temp_img = pg.transform.scale(VS_IMG, (round(VS_IMG.get_width() * self.text_alpha), round(VS_IMG.get_height() * self.text_alpha)))
+            self.blit(temp_img, temp_img.get_rect(center = (self.half_distances[0], self.vs_img_h)))
+
+            self.draw_towers()
+            self.draw_enemies()
+            self.draw_title_text()
+
+        elif self.stage == 6:
+            if self.text_alpha < 255:
+                self.text_alpha = min(255, self.text_alpha + self.text_alpha_speed // 4)
+
+            self.draw_vs()
+            self.draw_towers()
+            self.draw_enemies()
+            self.draw_title_text()
+
+            text = self.start_text.copy()
+            text.fill(pg.Color(255, 255, 255, self.text_alpha), special_flags = pg.BLEND_RGBA_MULT)
+            self.blit(text, text.get_rect(center = (self.half_distances[0], self.start_text_h)))
+
+    def draw_vs(self):
+        self.vs_img_bob += 1
+        self.blit(VS_IMG, VS_IMG.get_rect(center=(self.half_distances[0], self.vs_img_h + round(25 * math.sin(math.radians(self.vs_img_bob))))))
+
+    def draw_towers(self):
+        self.tower_rot += 3
+
+        for stage in range(len(self.raw_tower_bases) - 1, -1, -1):
+            angle = self.tower_rot // (stage + 1) * (stage % 2 * 2 - 1)
+            self.blit(self.raw_tower_bases[stage], self.raw_tower_bases[stage].get_rect(center=self.tower_pos[stage]))
+            if angle in self.processed_tower_guns[stage]:
+                temp_img = self.processed_tower_guns[stage][angle]
+            else:
+                temp_img = pg.transform.rotate(self.raw_tower_guns[stage], angle)
+                self.processed_tower_guns[stage][angle] = temp_img
+            self.blit(temp_img, temp_img.get_rect(center=self.tower_pos[stage]))
+
+    def draw_enemies(self):
+        self.enemy_bob += 1
+
+        for stage in range(len(self.raw_enemies) - 1, -1, -1):
+            size = round((math.sin(self.enemy_bob / (stage / 2 + 1) / 10 / math.pi) / 10 + 1) * self.raw_enemies[stage].get_width())
+            if size not in self.processed_enemies[stage]:
+                temp_img = pg.transform.scale(self.raw_enemies[stage], (size, size))
+                self.processed_enemies[stage][size] = temp_img
+                self.blit(temp_img, temp_img.get_rect(center = self.enemy_pos[stage]))
+
+            else:
+                self.blit(self.processed_enemies[stage][size], self.processed_enemies[stage][size].get_rect(center=self.enemy_pos[stage]))
+
+    def draw_title_text(self):
+        for stage, text in enumerate(self.raw_texts):
+            if stage % 3 == 0:
+                final_x = self.half_distances[0] - text.get_width() / 2
+                final_y = self.final_pos[stage] - MENU_OFFSET * stage * 6
+
+            else:
+                final_y = self.half_distances[1] - text.get_height() / 2 - MENU_OFFSET * 16
+                final_x = self.final_pos[stage]
+
+            self.blit(text, (final_x, final_y))
+
     def draw(self):
-        self.fill(BLACK)
-        self.blit(START_SCREEN_IMG, ((SCREEN_WIDTH - START_SCREEN_IMG.get_width()) / 2, 0))
-        
+        self.game_stop_surf.fill(BLACK)
+        if self.fading_out:
+            self.alpha = max(0, self.alpha - self.alpha_speed)
+            if self.alpha == 0:
+                pg.event.post(self.fade_out_done_event)
+                self.fading_out = False
+        else:
+            self.alpha = min(255, self.alpha + self.alpha_speed)
+
+        self.draw_grid()
+        super().draw()
+        self.draw_text()
         return self
-    
+
     def event(self, event):
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_SPACE:
-                return "menu"
-                
+            return "menu"
+
+        elif event.type == pg.USEREVENT + 3: # skip the intro part of the late severe song when looping
+            pg.mixer.music.load(LATE_SEVERE_MUSIC_LOOP)
+            pg.mixer.music.play(-1)
+            pg.mixer.music.set_endevent()
+
         return -1
-    
+
 class Menu(Display):
     def __init__(self):
         super().__init__()
@@ -101,7 +391,7 @@ class Menu(Display):
         big_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w * 4)
         lives_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w)
         level_text = big_font.render("Levels", 1, WHITE)
-        self.blit(self.camera.apply_image(level_text), self.camera.apply_tuple((START_SCREEN_IMG.get_rect().w / 2 - level_text.get_rect().center[0], -50 - level_text.get_rect().center[1])))
+        self.blit(self.camera.apply_image(level_text), self.camera.apply_tuple((640 / 2 - level_text.get_rect().center[0], -50 - level_text.get_rect().center[1])))
         
         self.blit(self.camera.apply_image(OPTIONS_IMGS[self.hover_options]), self.camera.apply_rect(self.options_button))
 
