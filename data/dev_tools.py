@@ -16,6 +16,8 @@ class DevClass(Game):
         self.clock = clock
         self.tower_names = SAVE_DATA["owned_towers"]
         self.enemy_names = SAVE_DATA["seen_enemies"]
+        self.wave = 0
+        self.difficulty = 1
 
     def reload_level(self, map):
         self.map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(map)))

@@ -23,7 +23,7 @@
                 "To upgrade a tower, select it and click Upgrade. Make sure you have enough protein!"
             ],
             [
-                "Looks like you've got the hang of things! Only one more wave to go!",
+                "Looks like you've got the hang of things! Only two more waves to go!",
                 "Hint: If you're unhappy with your current tower setup, click on a tower and click sell to remove it from the map.",
                 "You'll even earn back half the protein you spent on it!"
             ],
@@ -80,7 +80,7 @@
                     "enemy_type": "common_cold",
                     "enemy_count": 20,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.2
+                    "spawn_rate": 0.35
                 }
             ],
             [
@@ -89,7 +89,7 @@
                     "enemy_type": "common_cold",
                     "enemy_count": 20,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.2
+                    "spawn_rate": 0.25
                 }
             ],
             [
@@ -97,8 +97,8 @@
                     "start": 0,
                     "enemy_type": "common_cold",
                     "enemy_count": 30,
-                    "spawn_delay": 4,
-                    "spawn_rate": 0.2
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.25
                 },
                 {
                     "start": 0,
@@ -123,7 +123,7 @@
                     "enemy_type": "common_cold",
                     "enemy_count": 40,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.3
+                    "spawn_rate": 0.25
                 },
                 {
                     "start": 0,

@@ -84,7 +84,7 @@
         "explode_on_death": false,
         "flying": false,
         "hp": 10,
-        "protein": 3,
+        "protein": 1,
         "shield": true,
         "shield_hp": 10,
         "shield_recharge_delay": 1,
