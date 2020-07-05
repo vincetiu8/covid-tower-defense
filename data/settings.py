@@ -73,6 +73,7 @@ MAP_FOLDER = path.join(GAME_FOLDER, 'maps')
 LEVELS_FOLDER = path.join(GAME_FOLDER, "levels")
 FONTS_FOLDER = path.join(GAME_FOLDER, "fonts")
 AUDIO_FOLDER = path.join(GAME_FOLDER, "audio")
+MISC_FOlDER = path.join(GAME_FOLDER, "misc")
 
 PATH_IMG_FOLDER = path.join(IMG_FOLDER, "path")
 UI_IMG_FOLDER = path.join(IMG_FOLDER, "ui")
@@ -274,13 +275,13 @@ for i, to_concat in enumerate(["", "_hover"]):
     OPTIONS_BACK_IMGS[i] = pg.image.load(path.join(OPTIONS_IMG_FOLDER, "back_btn{}.png".format(to_concat)))
 
 # load other images
-START_SCREEN_IMG = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "start_screen.png")), (720, 720))
 LEVEL_BUTTON_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "button.png"))
 DARK_LEVEL_BUTTON_IMG = LEVEL_BUTTON_IMG.copy()
 DARK_LEVEL_BUTTON_IMG.fill(DARK_GREY, special_flags=pg.BLEND_RGB_MULT)
 LEVEL_BUTTON_IMG_2 = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "level_button.png")), (64, 64))
 LOCK_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "lock.png"))
 BODY_IMG = pg.transform.scale(pg.image.load(path.join(MENU_IMG_FOLDER, "body.png")), (965, 1800))
+VS_IMG = pg.image.load(path.join(MENU_IMG_FOLDER, "vs_sign.png"))
 
 # load game over images
 RESTART_BTN_IMGS = [[None, None], [None, None]]

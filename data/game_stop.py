@@ -1,15 +1,99 @@
 from data.settings import *
 from data.display import *
 
-class GameStop(Display):
+class GridDisplay(Display):
+    def __init__(self):
+        super().__init__()
+        self.circle_cache = {}
+        self.lost = False
+        self.game_stop_surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+    def new(self, args):
+        self.game_surf = args[0]
+        self.no_fade_in = args[1]
+
+        if self.no_fade_in:
+            self.alpha = 255
+        else:
+            self.alpha = 0
+
+    def draw(self):
+        self.game_stop_surf.set_alpha(self.alpha)
+        self.blit(self.game_surf, (0, 0))
+        self.blit(self.game_stop_surf, (0, 0))
+
+    def draw_grid(self):
+        color = DARK_GREEN
+        if self.lost:
+            color = DARK_RED
+
+        for x in range(0, SCREEN_WIDTH, 60):
+            pg.draw.line(self.game_stop_surf, color, (x, 0), (x, SCREEN_HEIGHT))
+        for y in range(0, SCREEN_HEIGHT, 40):
+            pg.draw.line(self.game_stop_surf, color, (0, y), (SCREEN_WIDTH, y))
+
+    def center_text_x(self, offset, width, text):
+        return offset + (width - text.get_rect().w) / 2
+
+    def center_text_y(self, offset, height, text):
+        return offset + (height - text.get_rect().h) / 2
+
+    # these next two functions are for drawing a border around the text
+    # idk how it works, i got it off stackoverflow
+    def circlepoints(self, r):
+        r = int(round(r))
+        if r in self.circle_cache:
+            return self.circle_cache[r]
+
+        x, y, e = r, 0, 1 - r
+        self.circle_cache[r] = points = []
+
+        while x >= y:
+            points.append((x, y))
+            y += 1
+            if e < 0:
+                e += 2 * y - 1
+            else:
+                x -= 1
+                e += 2 * (y - x) - 1
+
+        points += [(y, x) for x, y in points if x > y]
+        points += [(-x, y) for x, y in points if x]
+        points += [(x, -y) for x, y in points if y]
+        points.sort()
+
+        return points
+
+    def render_text(self, text, font, color, border_color, opx = 2):
+        text_surf = font.render(text, True, color).convert_alpha()
+        w = text_surf.get_width() + 2 * opx
+        h = font.get_height()
+
+        border_surf = pg.Surface((w, h + 2 * opx)).convert_alpha()
+        border_surf.fill((0, 0, 0, 0))
+
+        surf = border_surf.copy()
+
+        border_surf.blit(font.render(text, True, border_color).convert_alpha(), (0, 0))
+
+        for dx, dy in self.circlepoints(opx):
+            surf.blit(border_surf, (dx + opx, dy + opx))
+
+        surf.blit(text_surf, (opx, opx))
+        return surf
+
+    def is_done_fading(self):
+        return self.alpha == 255
+
+    def can_click(self):
+        return self.alpha > 125 or self.alpha == 0
+
+class GameStop(GridDisplay):
     def __init__(self):
         super().__init__()
         
         self.restart_rect = pg.Rect(200, 400, RESTART_BTN_IMGS[0][0].get_width(), RESTART_BTN_IMGS[0][0].get_height())
         self.back_rect = pg.Rect(750, 400, BACK_BTN_IMGS[0][0].get_width(), BACK_BTN_IMGS[0][0].get_height())
-        self.game_stop_surf = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-        
-        self.circle_cache = {}
         
         self.text_1 = None
         self.text_2 = None
@@ -21,36 +105,17 @@ class GameStop(Display):
         self.font_2 = pg.font.Font(FONT, 60)
         
     def new(self, args):
-        self.game_surf = args[0]
-        self.no_fade_in = args[1]
+        super().new(args)
         
         self.hover_back = False
         self.hover_restart = False
-        
-        self.alpha = 0
-        if self.no_fade_in:
-            self.alpha = 255
     
     def draw(self):
         self.draw_grid()
         self.draw_btns()
         self.draw_text()
-        
-        self.game_stop_surf.set_alpha(self.alpha)
-        
-        self.blit(self.game_surf, (0, 0))
-        self.blit(self.game_stop_surf, (0, 0))
-        
-    def draw_grid(self):
-        color = DARK_GREEN
-        if self.lost:
-            color = DARK_RED
-            
-        for x in range(0, SCREEN_WIDTH, 60):
-            pg.draw.line(self.game_stop_surf, color, (x, 0), (x, SCREEN_HEIGHT))
-        for y in range(0, SCREEN_HEIGHT, 40):
-            pg.draw.line(self.game_stop_surf, color, (0, y), (SCREEN_WIDTH, y))
-        
+        super().draw()
+
     def init_text(self, *args):
         color = WHITE
         if self.lost:
@@ -82,62 +147,6 @@ class GameStop(Display):
     def draw_btns(self):
         self.game_stop_surf.blit(RESTART_BTN_IMGS[self.lost][self.hover_restart], self.restart_rect)
         self.game_stop_surf.blit(BACK_BTN_IMGS[self.lost][self.hover_back], self.back_rect)
-        
-    def is_done_fading(self):
-        return self.alpha == 255
-    
-    def can_click(self):
-        return self.alpha > 125 or self.alpha == 0
-    
-    def center_text_x(self, offset, width, text):
-        return offset + (width - text.get_rect().w) / 2
-    
-    def center_text_y(self, offset, height, text):
-        return offset + (height - text.get_rect().h) / 2
-    
-    # these next two functions are for drawing a border around the text
-    # idk how it works, i got it off stackoverflow
-    def circlepoints(self, r):
-        r = int(round(r))
-        if r in self.circle_cache:
-            return self.circle_cache[r]
-        
-        x, y, e = r, 0, 1 - r
-        self.circle_cache[r] = points = []
-        
-        while x >= y:
-            points.append((x, y))
-            y += 1
-            if e < 0:
-                e += 2 * y - 1
-            else:
-                x -= 1
-                e += 2 * (y - x) - 1
-                
-        points += [(y, x) for x, y in points if x > y]
-        points += [(-x, y) for x, y in points if x]
-        points += [(x, -y) for x, y in points if y]
-        points.sort()
-        
-        return points
-
-    def render_text(self, text, font, color, border_color, opx = 2):
-        text_surf = font.render(text, True, color).convert_alpha()
-        w = text_surf.get_width() + 2 * opx
-        h = font.get_height()
-
-        border_surf = pg.Surface((w, h + 2 * opx)).convert_alpha()
-        border_surf.fill((0, 0, 0, 0))
-
-        surf = border_surf.copy()
-
-        border_surf.blit(font.render(text, True, border_color).convert_alpha(), (0, 0))
-
-        for dx, dy in self.circlepoints(opx):
-            surf.blit(border_surf, (dx + opx, dy + opx))
-
-        surf.blit(text_surf, (opx, opx))
-        return surf
     
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:

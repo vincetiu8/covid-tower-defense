@@ -21,7 +21,7 @@ class Main:
         self.game_surf = None # only used to draw static game screen when fading into game_stop screens
         self.get_conversion_factor()
 
-        self.start_menu = StartMenu()
+        self.start_menu = StartMenu(self.clock)
         self.menu = Menu()
         self.game = Game(self.clock)
         self.game_over = GameOver()
@@ -51,9 +51,9 @@ class Main:
             self.game_over: "game_over",
             self.start_menu:"start_menu"
         }
-        
-        self.current_display = self.start_menu
-        self.args = []
+
+        self.set_display(self.start_menu, [self.menu, False])
+
         self.result = None
         
         self.fading_out = False
@@ -126,7 +126,7 @@ class Main:
                 if temp_result != -1:
                     self.result = temp_result
                     self.args = []
-                    
+
                     if self.result == "game" or self.result == "resume":
                         self.args.extend([(self.menu.get_over_level(), self.tower_select.get_difficulty()), self.result == "resume", self.tower_select.get_selected_towers()])
                     elif self.result == "tower_select":
