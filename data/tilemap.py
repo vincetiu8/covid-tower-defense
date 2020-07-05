@@ -27,25 +27,25 @@ class TiledMap:
         self.height = tm.height * tm.tileheight
         self.tilesize = tm.tilewidth
         self.tmxdata = tm
+        self.start = [[False for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
         self.clear_map()
 
     def render(self, surface, layers):
         ti = self.tmxdata.get_tile_image_by_gid
         for layer in layers:
-            for x, y, gid in self.tmxdata.get_layer_by_name(layer):
-                tile = ti(gid)
-                if tile:
-                    surface.blit(pg.transform.rotate(tile, 0), (x * self.tmxdata.tilewidth,
-                                        y * self.tmxdata.tileheight))
+            try:
+                for x, y, gid in self.tmxdata.get_layer_by_name(layer):
+                    tile = ti(gid)
+                    if tile:
+                        surface.blit(pg.transform.rotate(tile, 0), (x * self.tmxdata.tilewidth,
+                                            y * self.tmxdata.tileheight))
+            except:
+                #print("No layer with name " + layer)
+                pass
 
     def make_map(self):
         temp_surface = pg.Surface((self.width, self.height), pg.SRCALPHA, 32).convert_alpha()
-        self.render(temp_surface, ["background", "arteries", "veins"])
-        return temp_surface
-
-    def make_objects(self):
-        temp_surface = pg.Surface((self.width, self.height), pg.SRCALPHA, 32).convert_alpha()
-        self.render(temp_surface, ["foreground"])
+        self.render(temp_surface, ["background", "corners", "veins", "arteries"])
         return temp_surface
 
     def change_node(self, x, y, state):
@@ -66,15 +66,22 @@ class TiledMap:
         elif self.tower_map[x][y] == None:
             return False
         self.tower_map[x][y].upgrade()
+        return True
 
     def remove_tower(self, x, y):
         if (x < 0 or x >= len(self.tower_map) or y < 0 or y >= len(self.tower_map[0])):
             return False
         elif self.tower_map[x][y] == None:
             return False
-        self.tower_map[x][y].kill()
+        tower = self.tower_map[x][y]
+        tower_name = tower.name
+        tower_stage = tower.stage
+        tower.on_remove()
+        tower.kill()
+        self.tower_map[x][y] = None
         self.change_node(x, y, 0)
         self.reset_valid_tower_tiles()
+        return (tower_name, tower_stage)
 
     def get_map(self):
         return self.map
@@ -100,6 +107,17 @@ class TiledMap:
     def set_valid_tower_tile(self, x, y, state):
         self.valid_tower_tiles[x][y] = state
 
+    def set_start_tile(self, x, y):
+        if (x < 0 or x >= len(self.start) or y < 0 or y >= len(self.start[0])):
+            return False
+        self.start[x][y] = True
+        self.change_node(x, y, 0)
+
+    def is_start_tile(self, x, y):
+        if (x < 0 or x >= len(self.start) or y < 0 or y >= len(self.start[0])):
+            return False
+        return self.start[x][y]
+
     def clear_map(self):
         self.map = [[0 for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
         self.tower_map = [[None for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
@@ -112,13 +130,11 @@ class Camera():
         self.map_width = map_width
         self.map_height = map_height
         self.current_zoom = min(width / map_width, height / map_height)
-        if (width / map_width > height / map_height):
-            self.short_width = True
-        else:
-            self.short_width = False
-        self.minzoom = self.current_zoom
-        self.critical_ratio = max(width / map_width, height / map_height) + 0.1
+        self.minzoom = self.current_zoom / 2
         self.camera = pg.Rect((self.width - self.map_width * (self.current_zoom + 0.05)) / 2, (self.height- self.map_height * self.current_zoom) / 2, width, height)
+
+    def apply_size(self, tuple):
+        return ([i * self.current_zoom for i in tuple])
 
     def apply_tuple(self, tuple):
         return ([x * self.current_zoom + self.camera.topleft[i] for i, x in enumerate(tuple)])
@@ -137,19 +153,16 @@ class Camera():
     def correct_mouse(self, pos):
         return ([round((x - self.camera.topleft[i]) / self.current_zoom) for i, x in enumerate(pos)])
 
-    def update(self, x, y, amount):
+    def zoom(self, amount):
+        if (amount > 0 and self.current_zoom >= self.minzoom * 4 or amount < 0 and self.current_zoom <= self.minzoom):
+            return False
+
+        center = self.correct_mouse((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        self.move(-amount * center[0], -amount * center[1])
         self.current_zoom += amount
 
-        newx = x - self.width / 2
-        newy = y - self.height / 2
-
-        self.camera = self.camera.move(amount * (self.map_width - self.width - newx) / 2,
-                                       amount * (self.map_height - self.height - newy))
-
-
-    def zoom(self, amount, pos):
-        if (amount > 0 and self.current_zoom >= self.minzoom + 1 or amount < 0 and self.current_zoom <= self.minzoom):
-            return
-
-
-        self.update(pos[0], pos[1], amount)
+    def move(self, x, y):
+        self.camera = self.camera.move(x, y)
+        
+    def get_zoom(self):
+        return self.current_zoom

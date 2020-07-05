@@ -1,0 +1,324 @@
+{
+    "enemy": {
+        "description": {
+            "type": "string",
+            "default": ""
+        },
+        "hp": {
+            "type": "float",
+            "min": 1,
+            "max": 10000,
+            "increment": 1,
+            "dp": 0,
+            "default": 5
+        },
+        "shield": {
+            "type": "bool",
+            "ignore_if_false": ["shield_hp", "shield_recharge_delay", "shield_recharge_rate"],
+            "default": false
+        },
+        "shield_hp": {
+            "type": "float",
+            "min": 1,
+            "max": 10000,
+            "increment": 1,
+            "dp": 0,
+            "default": 5
+        },
+        "shield_recharge_delay": {
+            "type": "float",
+            "min": 0.05,
+            "max": 10,
+            "increment": 0.05,
+            "dp": 2,
+            "default": 1
+        },
+        "shield_recharge_rate": {
+            "type": "float",
+            "min": 0.05,
+            "max": 10,
+            "increment": 0.05,
+            "dp": 2,
+            "default": 0.1
+        },
+        "explode_on_death": {
+            "type": "bool",
+            "ignore_if_false": ["explode_radius"],
+            "default": false
+        },
+        "explode_radius": {
+            "type": "float",
+            "min": 25,
+            "max": 2500,
+            "increment": 25,
+            "dp": 0,
+            "default": 100
+        },
+        "mutate": {
+            "type": "bool",
+            "ignore_if_false": ["mutation_type", "mutation_time"],
+            "default": false
+        },
+        "mutation_type": {
+            "type": "select",
+            "values": [],
+            "default": 0
+        },
+        "mutation_time": {
+            "type": "float",
+            "min": 1,
+            "max": 100,
+            "increment": 0.5,
+            "dp": 1,
+            "default": 1
+        },
+        "speed": {
+            "type": "float",
+            "min": 10,
+            "max": 500,
+            "increment": 10,
+            "dp": 0,
+            "default": 100
+        },
+        "protein": {
+            "type": "float",
+            "min": 1,
+            "max": 10000,
+            "increment": 1,
+            "dp": 0,
+            "default": 3
+        },
+        "flying": {
+            "type": "bool",
+            "default": false
+        }
+    },
+    "tower": {
+        "description": {
+            "type": "string",
+            "default": ""
+        },
+        "unlock_cost": {
+            "type": "float",
+            "min": 0,
+            "max": 250,
+            "increment": 10,
+            "dp": -1,
+            "default": 50
+        }
+    },
+    "stage": {
+        "area_of_effect": {
+            "type": "bool",
+            "ignore_if_true": ["bullet_speed", "bullet_lifetime", "rotating", "tracking", "bullet_image", "directions", "rotation_speed", "explode_on_impact", "explosion_radius"],
+            "ignore_if_false": ["aura_color", "aoe_buff", "aoe_buff_type", "aoe_buff_amount"],
+            "default": false
+        },
+        "aura_color": {
+            "type": "select",
+            "values": ["red","orange","yellow","green","cyan","blue","purple","pink"],
+            "default": 3
+        },
+        "aoe_buff": {
+            "type": "bool",
+            "ignore_if_true": ["attack_speed", "slow_speed", "slow_duration", "damage", "different_shield_damage", "shield_damage"],
+            "ignore_if_false": ["aoe_buff_type", "aoe_buff_amount"],
+            "default": false
+        },
+        "aoe_buff_type": {
+            "type": "select",
+            "values": ["damage", "range"],
+            "default": 0
+        },
+        "aoe_buff_amount": {
+            "type": "float",
+            "min": 0,
+            "max": 10000,
+            "increment": 1,
+            "dp": 0,
+            "default": 3
+        },
+        "damage": {
+            "type": "float",
+            "min": 0,
+            "max": 10000,
+            "increment": 1,
+            "dp": 0,
+            "default": 3
+        },
+        "different_shield_damage": {
+            "type": "bool",
+            "ignore_if_false": ["shield_damage"],
+            "default": false
+        },
+        "shield_damage": {
+            "type": "float",
+            "min": 0,
+            "max": 10000,
+            "increment": 1,
+            "dp": 0,
+            "default": 3
+        },
+        "attack_speed": {
+            "type": "float",
+            "min": 0.05,
+            "max": 10,
+            "increment": 0.05,
+            "dp": 2,
+            "default": 0.5
+        },
+        "bullet_speed": {
+            "type": "float",
+            "min": 100,
+            "max": 5000,
+            "increment": 100,
+            "dp": -2,
+            "default": 1000
+        },
+        "bullet_lifetime": {
+            "type": "float",
+            "min": 0.05,
+            "max": 5,
+            "increment": 0.05,
+            "dp": 2,
+            "default": 0.5
+        },
+        "slow_speed": {
+            "type": "float",
+            "min": 0,
+            "max": 1,
+            "increment": 0.05,
+            "dp": 2,
+            "default": 1
+        },
+        "slow_duration": {
+            "type": "float",
+            "min": 0,
+            "max": 10,
+            "increment": 0.1,
+            "dp": 1,
+            "default": 0
+        },
+        "range": {
+            "type": "float",
+            "min": 25,
+            "max": 2500,
+            "increment": 25,
+            "dp": 0,
+            "default": 400
+        },
+        "upgrade_cost": {
+            "type": "float",
+            "min": 0,
+            "max": 10000,
+            "increment": 1,
+            "dp": 0,
+            "default": 15
+        },
+        "directions": {
+            "type": "float",
+            "min": 1,
+            "max": 360,
+            "increment": 1,
+            "dp": 0,
+            "default": 1
+        },
+        "rotating": {
+            "type": "bool",
+            "default": true,
+            "ignore_if_false": ["rotation_speed"]
+        },
+        "rotation_speed": {
+            "type": "float",
+            "min": 1,
+            "max": 360,
+            "increment": 1,
+            "dp": 0,
+            "default": 180
+        },
+        "tracking": {
+            "type": "bool",
+            "default": true
+        },
+        "explode_on_impact": {
+            "type": "bool",
+            "default": false,
+            "ignore_if_false": ["explosion_radius", "explosion_color"]
+        },
+        "explosion_radius": {
+            "type": "float",
+            "min": 25,
+            "max": 10000,
+            "increment": 25,
+            "dp": -1,
+            "default": 250
+        },
+        "explosion_color": {
+            "type": "select",
+            "values": ["red","orange","yellow","green","cyan","blue","purple","pink"],
+            "default": 2
+        }
+    },
+    "level": {
+        "title": {
+            "type": "string",
+            "default": ""
+        },
+        "description": {
+            "type": "string",
+            "default": ""
+        },
+        "difficulty": {
+            "type": "float",
+            "min": 0,
+            "max": 4,
+            "increment": 1,
+            "dp": 0,
+            "default": 2
+        },
+        "body_part": {
+            "type": "select",
+            "values": ["mouth", "esophagus", "trachea", "lung", "heart", "small_intestine", "large_intestine", "anus", "brain"],
+            "default": 0
+        }
+    },
+    "sub_wave": {
+        "start": {
+            "type": "float",
+            "min": 0,
+            "max": 0,
+            "increment": 1,
+            "dp": 0,
+            "default": 0
+        },
+        "enemy_type": {
+            "type": "select",
+            "values": [],
+            "default": 0
+        },
+        "enemy_count": {
+            "type": "float",
+            "min": 1,
+            "max": 10000,
+            "increment": 1,
+            "dp": 0,
+            "default": 5
+        },
+        "spawn_delay": {
+            "type": "float",
+            "min": 0.1,
+            "max": 25,
+            "increment": 0.1,
+            "dp": 1,
+            "default": 1
+        },
+        "spawn_rate": {
+            "type": "float",
+            "min": 0.05,
+            "max": 10,
+            "increment": 0.05,
+            "dp": 2,
+            "default": 0.5
+        }
+    }
+}

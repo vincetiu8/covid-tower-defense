@@ -1,0 +1,59 @@
+{
+    "description": ["", "", ""],
+    "ratings": [0, 1, 1],
+    "body_part": 3,
+    "protein_goal": [100, 10, 10],
+    "texts": [
+        [
+            [
+                "Thank you for playing the demo version of Segeant T Cell and the Abnormally Impressive Invasion of Illnesses!",
+                "We hope you enjoyed the game so far.",
+                "If you have any feedback, please send them to steven.chua@britishschoolmanila.org or vince.tiu@britishschoolmanila.org",
+                "By the way, this level was intentionally made to be impossible as the demo ends at the Trachea level.",
+                "You can still try to beat it, though!"
+            ],
+            []
+        ],
+        [
+            []
+        ],
+        [
+            []
+        ]
+    ],
+    "waves": [
+        [
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "coronavirus",
+                    "enemy_count": 50,
+                    "spawn_delay": 1,
+                    "spawn_rate": 0.1
+                }
+            ]
+        ],
+        [
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 50,
+                    "spawn_delay": 1,
+                    "spawn_rate": 0.5
+                }
+            ]
+        ],
+        [
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 50,
+                    "spawn_delay": 1,
+                    "spawn_rate": 0.5
+                }
+            ]
+        ]
+    ]
+}

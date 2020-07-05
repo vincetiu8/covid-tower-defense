@@ -1,17 +1,110 @@
 {
-  "coronavirus": {
-    "hp": 50,
-    "speed": 70,
-    "protein": 10
-  },
-  "common_cold": {
-    "hp": 2,
-    "speed": 200,
-    "protein": 1
-  },
-  "hepatitis_a": {
-    "hp": 10,
-    "speed": 110,
-    "protein": 2
-  }
+    "common_cold": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 10,
+        "protein": 1,
+        "shield": false,
+        "mutate": false,
+        "speed": 200,
+        "description": "Although it's fast, the common cold doesn't pose much of a threat due to its low HP."
+    },
+    "coronavirus": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 100,
+        "protein": 3,
+        "shield": false,
+        "mutate": false,
+        "speed": 70,
+        "description": "This devil may be slow, but its high health makes it a force to be reckoned with."
+    },
+    "hepatitis_a": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 50,
+        "protein": 2,
+        "shield": false,
+        "mutate": false,
+        "speed": 125,
+        "description": "A very average virus. Has medium health and moves at medium speed."
+    },
+    "hepatitis_b": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 25,
+        "protein": 3,
+        "shield": true,
+        "shield_hp": 5,
+        "shield_recharge_delay": 1,
+        "shield_recharge_rate": 0.1,
+        "mutate": true,
+        "speed": 100,
+        "description": "Much bulkier than their purple cousin and has a shield, too. Don't leave them alive for too long...",
+        "mutation_type": 8,
+        "mutation_time": 5.0
+    },
+    "hiv": {
+        "explode_on_death": true,
+        "explode_radius": 100,
+        "flying": false,
+        "hp": 30,
+        "protein": 10,
+        "shield": true,
+        "shield_hp": 20,
+        "shield_recharge_delay": 1,
+        "shield_recharge_rate": 0.1,
+        "mutate": false,
+        "speed": 70,
+        "description": "HIV is not only difficult to kill, but it also destroys nearby towers on death. Stay sharp!"
+    },
+    "polio": {
+        "explode_on_death": false,
+        "flying": true,
+        "hp": 15,
+        "protein": 1,
+        "shield": false,
+        "mutate": false,
+        "speed": 100,
+        "description": "The polio virus is weak, but it can fly over cells and go straight to the goal."
+    },
+    "rabies": {
+        "explode_on_death": true,
+        "explode_radius": 100,
+        "flying": false,
+        "hp": 30,
+        "protein": 3,
+        "scroll_position": 1,
+        "shield": false,
+        "mutate": false,
+        "speed": 100,
+        "description": "Danger! This virus moves quickly and explodes when it dies, destroying any nearby towers!"
+    },
+    "smallpox": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 10,
+        "protein": 1,
+        "shield": true,
+        "shield_hp": 10,
+        "shield_recharge_delay": 1,
+        "shield_recharge_rate": 0.1,
+        "mutate": false,
+        "speed": 70,
+        "description": "This virus would be weak if not for its regenerating shield."
+    },
+    "hepatitis_d": {
+        "description": "This dangerous enemy only appears when a Hepatitis B virus survives long enough.",
+        "hp": 30,
+        "shield": true,
+        "shield_hp": 10,
+        "shield_recharge_delay": 1,
+        "shield_recharge_rate": 0.1,
+        "explode_on_death": false,
+        "explode_radius": 100,
+        "mutate": false,
+        "speed": 150,
+        "protein": 1,
+        "flying": false
+    }
 }
