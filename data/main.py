@@ -158,7 +158,7 @@ class Main:
         self.current_display = display
 
     def quit(self):
-        with open(SAVE_FILEPATH, 'w') as out_file:
+        with open(path.join(GAME_FOLDER, "save.json"), 'w') as out_file:
             json.dump(SAVE_DATA, out_file, indent=4)
         pg.quit()
         sys.exit()

@@ -1,4 +1,4 @@
-from os import path, listdir, mkdir
+from os import path, listdir
 
 import sys
 
@@ -89,23 +89,8 @@ GAME_STOP_AUD_FOLDER = path.join(AUDIO_FOLDER, "game_stop")
 MUSIC_FOLDER = path.join(AUDIO_FOLDER, "music")
 
 # init save data
-dir = path.join(path.expanduser("~"), ".sergeant_t_cell")
-SAVE_FILEPATH = path.join(dir, "save.json")
-SAVE_DATA = None
-try:
-    with open(SAVE_FILEPATH, "r") as data_file:
-        SAVE_DATA = json.load(data_file)
-except FileNotFoundError:
-    with open(path.join(GAME_FOLDER, "starting_save.json"), "r") as data_file:
-        SAVE_DATA = json.load(data_file)
-    
-    try:
-        with open(SAVE_FILEPATH, "w") as out_file:
-            json.dump(SAVE_DATA, out_file, indent=4)
-    except FileNotFoundError:
-        mkdir(dir)
-        with open(SAVE_FILEPATH, "w") as out_file:
-            json.dump(SAVE_DATA, out_file, indent=4)
+with open(path.join(GAME_FOLDER, "save.json"), "r") as data_file:
+    SAVE_DATA = json.load(data_file)
 
 SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16))
 SCREEN_SIZES = [640, 854, 960, 1280, 1366, 1536, 1600, 1920, 2560, 3200, 3840]
