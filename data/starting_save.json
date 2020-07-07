@@ -9,8 +9,8 @@
         -1,
         -1
     ],
-    "music_vol": 0,
-    "sfx_vol": 0,
+    "music_vol": 0.5,
+    "sfx_vol": 0.5,
     "width": 1280,
     "fullscreen": false,
     "skip_text": false,
