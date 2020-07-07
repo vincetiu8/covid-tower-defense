@@ -162,6 +162,7 @@ class Game(Display):
             base_map = self.map.get_map())
         
         songs = [MILD_LEVEL_MUSIC, ACUTE_LEVEL_MUSIC, SEVERE_LEVEL_MUSIC]
+        pg.mixer.music.set_endevent()
         pg.mixer.music.stop()
         pg.mixer.music.load(songs[self.difficulty][self.level // 11])
         if self.difficulty == 2 and self.level // 11 == 1: # only for late severe levels
