@@ -29,6 +29,7 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
+skip_to_wave = 24 ## dev purposes only
 
 class Game(Display):
     def __init__(self, clock):
@@ -259,6 +260,12 @@ class Game(Display):
     def prepare_next_wave(self):
         self.wave += 1
 
+        while self.wave < skip_to_wave:
+            for i in self.level_data["waves"][self.difficulty][self.wave]:
+                self.protein += i["enemy_count"] * ENEMY_DATA[i["enemy_type"]]["protein"]
+
+            self.wave += 1
+
         if self.wave == self.max_wave:
             return
 
@@ -283,12 +290,6 @@ class Game(Display):
             if start.enemy_type not in SAVE_DATA["seen_enemies"]:
                 SAVE_DATA["seen_enemies"].append(start.enemy_type)
                 self.new_enemy_box.show_new_enemy(start.enemy_type)
-
-    #     def draw_grid(self):
-    #         for x in range(0, self.map.width, self.map.tilesize):
-    #             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, self.map.height))
-    #         for y in range(0, self.map.height, self.map.tilesize):
-    #             pg.draw.line(self.screen, LIGHTGREY, (0, y), (self.map.width, y))
 
     def draw(self):
         self.fill((0, 0, 0))
