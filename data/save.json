@@ -1,29 +1,29 @@
 {
     "latest_level_unlocked": [
-        2,
+        3,
         0,
         -1
     ],
     "latest_level_completed": [
-        1,
+        2,
         -1,
         -1
     ],
-    "music_vol": 1,
-    "sfx_vol": 1,
+    "music_vol": 0.68,
+    "sfx_vol": 0.696,
     "width": 1366,
     "fullscreen": false,
     "skip_text": false,
-    "max_dna": 120,
+    "max_dna": 150,
     "used_dna": 0,
     "highscores": [
         [
-            146,
+            0,
             0,
             0
         ],
         [
-            2250,
+            0,
             0,
             0
         ],
@@ -95,7 +95,8 @@
         "common_cold",
         "hepatitis_a",
         "polio",
-        "coronavirus"
+        "coronavirus",
+        "smallpox"
     ],
     "game_attrs": {
         "lives": {
@@ -110,7 +111,7 @@
             "value": 30,
             "increment": 5,
             "max_value": 70,
-            "upgrade_cost": 90,
+            "upgrade_cost": 70,
             "cost_increment": 20,
             "description": "The amount of protein you start with on each level."
         },

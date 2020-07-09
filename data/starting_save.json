@@ -97,12 +97,14 @@
             "value": 5,
             "increment": 1,
             "upgrade_cost": 100,
+            "max_value": 10,
             "cost_increment": 10,
             "description": "The number of lives you start with on each level."
         },
         "starting_protein": {
             "value": 30,
             "increment": 5,
+            "max_value": 70,
             "upgrade_cost": 70,
             "cost_increment": 20,
             "description": "The amount of protein you start with on each level."
@@ -110,6 +112,7 @@
         "max_towers": {
             "value": 2,
             "increment": 1,
+            "max_value": 5,
             "upgrade_cost": 80,
             "cost_increment": 120,
             "description": "The number of towers you can bring into each level."

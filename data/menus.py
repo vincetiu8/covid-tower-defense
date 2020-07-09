@@ -1192,19 +1192,22 @@ class UpgradesMenu(TowerMenu):
                                 SAVE_DATA["owned_towers"].append(self.towers[row][col])
                                 SAVE_DATA["used_dna"] += TOWER_DATA[self.towers[row][col]]["unlock_cost"]
                                 self.tower_owned[row][col] = True
-                                self.tower_infos = [None for i in range(len(TOWER_DATA))] # Force a reload of all tower infos when buying a new tower
                             else:
                                 upgrade_name = self.upgrade_names[self.over_upgrade]
                                 SAVE_DATA["game_attrs"][upgrade_name]["value"] += SAVE_DATA["game_attrs"][upgrade_name]["increment"]
                                 SAVE_DATA["used_dna"] += SAVE_DATA["game_attrs"][upgrade_name]["upgrade_cost"]
                                 SAVE_DATA["game_attrs"][upgrade_name]["upgrade_cost"] += SAVE_DATA["game_attrs"][upgrade_name]["cost_increment"]
-                                surf, rect, maxed = self.make_upgrade(upgrade_name, SAVE_DATA["game_attrs"][upgrade_name]["value"])
-                                self.upgrades[self.over_upgrade] = surf
-                                self.upgrade_rects[self.over_upgrade] = surf.get_rect(topright=(SCREEN_WIDTH - GRID_MARGIN_X, self.upgrade_rects[self.over_upgrade].top))
-                                self.is_maxed[self.over_upgrade] = maxed
-                                rect.topright = self.upgrade_rects[self.over_upgrade].topright
-                                self.upgrade_button_rects[self.over_upgrade] = rect
-                                self.upgrade_infos = [None for i in self.upgrade_names]
+                            
+                            # Reload upgrades and upgrade btns whenever a tower/upgrade is bought
+                            for i in range(len(self.upgrade_names)):
+                                surf, rect, maxed = self.make_upgrade(self.upgrade_names[i], SAVE_DATA["game_attrs"][self.upgrade_names[i]]["value"])
+                                self.upgrades[i] = surf
+                                self.upgrade_rects[i] = surf.get_rect(topright=(SCREEN_WIDTH - GRID_MARGIN_X, self.upgrade_rects[i].top))
+                                self.is_maxed[i] = maxed
+                                rect.topright = self.upgrade_rects[i].topright
+                                self.upgrade_button_rects[i] = rect
+                                self.upgrade_infos[i] = None
+                            self.tower_infos = [None for i in range(len(TOWER_DATA))] # Force a reload of all tower infos when buying a new tower
                                 
                             font = pg.font.Font(FONT, 70)
                             self.dna_text = font.render("DNA: " + str(SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"]), 1,
