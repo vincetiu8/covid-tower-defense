@@ -176,6 +176,7 @@ class Tower(Obstacle):
         self.buffs = []
 
         if not self.area_of_effect:
+            self.targeting_option = 0
             self.search_for_enemy()
 
     def load_tower_data(self):
@@ -207,7 +208,6 @@ class Tower(Obstacle):
             # 1 - Last
             # 2 - Strong
             # 3 - Weak
-            self.targeting_option = 0
             self.bullet_speed = data["bullet_speed"]
             self.bullet_lifetime = data["bullet_lifetime"]
             self.rotating = data["rotating"]
