@@ -146,9 +146,10 @@ class UI:
                 self.upgrade_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 5 - self.sell_rect.height * 2
                 ui.blit(upgrade_button, self.upgrade_rect)
 
-            target_button, self.target_rect = self.make_button("Target: " + TARGET_OPTIONS[self.tower.targeting_option], True)
-            self.target_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 6 - self.sell_rect.height * 3
-            ui.blit(target_button, self.target_rect)
+            if not self.tower.area_of_effect:
+                target_button, self.target_rect = self.make_button("Target: " + TARGET_OPTIONS[self.tower.targeting_option], True)
+                self.target_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 6 - self.sell_rect.height * 3
+                ui.blit(target_button, self.target_rect)
         
         text = "Next Wave"
         if self.game.wave == 0:

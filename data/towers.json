@@ -237,11 +237,11 @@
             {
                 "area_of_effect": true,
                 "aoe_buff": false,
-                "attack_speed": 0.3,
+                "attack_speed": 0.4,
                 "aura_color": 2,
-                "damage": 2,
+                "damage": 1,
                 "different_shield_damage": false,
-                "range": 150,
+                "range": 100,
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "upgrade_cost": 40
@@ -249,26 +249,26 @@
             {
                 "area_of_effect": true,
                 "aoe_buff": false,
-                "attack_speed": 0.25,
+                "attack_speed": 0.35,
                 "aura_color": 2,
-                "damage": 3,
+                "damage": 2,
                 "different_shield_damage": false,
-                "range": 175,
+                "range": 125,
                 "slow_duration": 0,
                 "slow_speed": 1,
-                "upgrade_cost": 32
+                "upgrade_cost": 52
             },
             {
                 "area_of_effect": true,
                 "aoe_buff": false,
-                "attack_speed": 0.2,
+                "attack_speed": 0.3,
                 "aura_color": 2,
-                "damage": 4,
+                "damage": 3,
                 "different_shield_damage": false,
-                "range": 200,
+                "range": 150,
                 "slow_duration": 0,
                 "slow_speed": 1,
-                "upgrade_cost": 48
+                "upgrade_cost": 68
             }
         ]
     },

@@ -1,12 +1,12 @@
 {
     "latest_level_unlocked": [
         2,
-        0,
+        1,
         -1
     ],
     "latest_level_completed": [
         1,
-        -1,
+        0,
         -1
     ],
     "music_vol": 0.0,
@@ -14,12 +14,12 @@
     "width": 1366,
     "fullscreen": false,
     "skip_text": true,
-    "max_dna": 120,
+    "max_dna": 190,
     "used_dna": 0,
     "highscores": [
         [
             146,
-            0,
+            187,
             0
         ],
         [
@@ -89,13 +89,17 @@
         ]
     ],
     "owned_towers": [
-        "t_cell"
+        "t_cell",
+        "mast_cell",
+        "neutrophil",
+        "plasma_cell"
     ],
     "seen_enemies": [
         "common_cold",
         "hepatitis_a",
         "polio",
-        "coronavirus"
+        "coronavirus",
+        "hepatitis_b"
     ],
     "game_attrs": {
         "lives": {
@@ -115,7 +119,7 @@
             "description": "The amount of protein you start with on each level."
         },
         "max_towers": {
-            "value": 2,
+            "value": 5,
             "increment": 1,
             "max_value": 5,
             "upgrade_cost": 80,

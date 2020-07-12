@@ -29,7 +29,10 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
-skip_to_wave = 24 ## dev purposes only
+skip_to_wave = 39   # TODO: Remove this dev option
+                    # Change this to change which wave you start on. You'll get all the protein from the previous waves.
+                    # Indexing starts at 0 and the wave this is set to is inclusive.
+                    # i.e. if the value is set to 15, the game will start at wave 16 (when counting from 1).
 
 class Game(Display):
     def __init__(self, clock):
@@ -210,8 +213,8 @@ class Game(Display):
             elif keys[pg.K_DOWN]:
                 self.camera.move(0, -25)
 
-            if self.lives <= 0:
-                pg.event.post(self.game_done_event)
+            # if self.lives <= 0: TODO: Add this back
+            #     pg.event.post(self.game_done_event)
 
             if self.text:
                 if SAVE_DATA["skip_text"]:
@@ -260,7 +263,7 @@ class Game(Display):
     def prepare_next_wave(self):
         self.wave += 1
 
-        while self.wave < skip_to_wave:
+        while self.wave < skip_to_wave: # TODO: Remove this dev option
             for i in self.level_data["waves"][self.difficulty][self.wave]:
                 self.protein += i["enemy_count"] * ENEMY_DATA[i["enemy_type"]]["protein"]
 
@@ -533,7 +536,41 @@ class Game(Display):
                         self.node_is_in_path[node[0][0]][node[0][1]] = True
         
         return valid_path
-    
+
+    def sell_tower(self, tower, tower_coords):
+        self.map.remove_tower(tower_coords[0], tower_coords[1])
+        tower.on_remove()
+        tower.kill()
+        self.pathfinder.clear_nodes(self.map.get_map())
+        for start in self.start_data:
+            for x in range(tile_from_xcoords(start.width, self.map.tilesize)):
+                for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
+                    self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x,
+                                                  tile_from_xcoords(start.y, self.map.tilesize) + y,
+                                                  0)
+        self.make_stripped_path_wrapper()
+        self.draw_tower_bases_wrapper()
+        for enemy in self.enemies:
+            enemy.recreate_path()
+        for stage in range(tower.stage + 1):
+            self.protein += round(
+                TOWER_DATA[tower.name]["stages"][stage]["upgrade_cost"] * (1 + self.difficulty * 0.25) / 2)
+        BUY_SFX.play()
+        self.ui.deselect_tower()
+
+    def upgrade_tower(self, tower):
+        if tower.stage == 2:
+            return
+
+        if self.protein >= round(TOWER_DATA[tower.name]["stages"][tower.stage + 1]["upgrade_cost"] * (
+                1 + self.difficulty * 0.25)):
+            tower.upgrade()
+            self.draw_tower_bases(self)
+            BUY_SFX.play()
+            self.ui.get_ui()
+        else:
+            WRONG_SELECTION_SFX.play()
+
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -567,31 +604,10 @@ class Game(Display):
                         tower_coords = tile_from_xcoords(self.ui.tower.rect.x, self.map.tilesize), tile_from_xcoords(self.ui.tower.rect.y, self.map.tilesize)
 
                         if result == "sell":
-                            tower_dat = self.map.remove_tower(tower_coords[0], tower_coords[1])
-                            self.pathfinder.clear_nodes(self.map.get_map())
-                            for start in self.start_data:
-                                for x in range(tile_from_xcoords(start.width, self.map.tilesize)):
-                                    for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
-                                        self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x,
-                                                                      tile_from_xcoords(start.y, self.map.tilesize) + y,
-                                                                      0)
-                            self.make_stripped_path_wrapper()
-                            self.draw_tower_bases_wrapper()
-                            for enemy in self.enemies:
-                                enemy.recreate_path()
-                            for stage in range(tower_dat[1] + 1):
-                                self.protein += round(TOWER_DATA[tower_dat[0]]["stages"][stage]["upgrade_cost"] * (1 + self.difficulty * 0.25) / 2)
-                            BUY_SFX.play()
-                            self.ui.deselect_tower()
+                            self.sell_tower(self.ui.tower, tower_coords)
 
                         elif result == "upgrade":
-                            if self.protein >= round(TOWER_DATA[self.ui.tower.name]["stages"][self.ui.tower.stage + 1]["upgrade_cost"] * (1 + self.difficulty * 0.25)):
-                                self.map.upgrade_tower(tower_coords[0], tower_coords[1])
-                                self.draw_tower_bases(self)
-                                BUY_SFX.play()
-                                self.ui.get_ui()
-                            else:
-                                WRONG_SELECTION_SFX.play()
+                            self.upgrade_tower(self.ui.tower)
 
                         elif result == "target":
                             self.ui.tower.targeting_option += 1
@@ -649,14 +665,27 @@ class Game(Display):
                         for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
                             self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x,
                                                           tile_from_xcoords(start.y, self.map.tilesize) + y, 0)
-                self.protein -= round(TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"] * (1 + self.difficulty * 0.25))
-                self.current_tower = None
+                cost = round(TOWER_DATA[self.current_tower]["stages"][0]["upgrade_cost"] * (1 + self.difficulty * 0.25))
+                self.protein -= cost
+                if not pg.key.get_pressed()[pg.K_LSHIFT] or self.protein < cost:
+                    self.current_tower = None
 
                 BUY_SFX.play()
                 self.make_stripped_path_wrapper()
                 self.draw_tower_bases_wrapper()
                 for enemy in self.enemies:
                     enemy.recreate_path()
+
+            elif event.button == 2 or event.button == 3:
+                mouse_pos = self.camera.correct_mouse(event.pos)
+                tower_coords = tile_from_coords(mouse_pos[0], self.map.tilesize), tile_from_coords(
+                    mouse_pos[1], self.map.tilesize)
+                tower = self.map.get_tower(tower_coords[0], tower_coords[1])
+                if tower != None:
+                    if event.button == 2:
+                        self.sell_tower(tower, tower_coords)
+                    else:
+                        self.upgrade_tower(tower)
 
             elif event.button == 4:
                 self.camera.zoom(ZOOM_AMT_GAME)
