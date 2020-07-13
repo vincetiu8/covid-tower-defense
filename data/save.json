@@ -23,7 +23,7 @@
             0
         ],
         [
-            2250,
+            0,
             0,
             0
         ],
@@ -99,7 +99,8 @@
         "hepatitis_a",
         "polio",
         "coronavirus",
-        "hepatitis_b"
+        "hepatitis_b",
+        "smallpox"
     ],
     "game_attrs": {
         "lives": {
@@ -114,7 +115,7 @@
             "value": 50,
             "increment": 5,
             "max_value": 70,
-            "upgrade_cost": 90,
+            "upgrade_cost": 70,
             "cost_increment": 20,
             "description": "The amount of protein you start with on each level."
         },
