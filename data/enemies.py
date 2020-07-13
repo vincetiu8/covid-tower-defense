@@ -135,7 +135,7 @@ class Enemy(pg.sprite.Sprite):
             self.hp -= dam
 
         if (self.hp <= 0):
-            ENEMY_DATA[self.name]["death_sound"].play()
+            ENEMY_DEATH_SOUND.play()
             self.game.protein += self.dropped_protein
             if self.explode_on_death:
                 EnemyExplosion(self.game, self.rect.center[0], self.rect.center[1], self.explode_radius)
