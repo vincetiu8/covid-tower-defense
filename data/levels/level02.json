@@ -4,45 +4,20 @@
     "body_part": 2,
     "protein_goal": [1000, 10, 10],
     "texts": [
-        [
-            [
-                "Welcome to your third mission! Hopefully, you've gotten the hang of things by now.",
-                "This body part has multiple exits for the viruses. Blocking off most of them would be a good idea.",
-                "Good luck, commander!"
-            ],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [   
-                "Beware! This next wave has viruses with a shield.",
-                "Not only does this shield make it harder to destroy them, it even regenerates after a while!",
-                "If you have any shieldbreaking cells, now is the time to bring them out."
-            ],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            []
-        ],
-        [
-            [],
-            []
-        ],
-        [
-            [],
-            []
-        ]
+        {
+            "0":    [
+                        "Welcome to your third mission! Hopefully, you've gotten the hang of things by now.",
+                        "This body part has multiple exits for the viruses. Blocking off most of them would be a good idea.",
+                        "Good luck, commander!"
+                    ],
+            "10":   [   
+                        "Beware! This next wave has viruses with a shield.",
+                        "Not only does this shield make it harder to destroy them, it even regenerates after a while!",
+                        "If you have any shieldbreaking cells, now is the time to bring them out."
+                    ],
+        },
+        {},
+        {}
     ],
     "waves": [
         [
