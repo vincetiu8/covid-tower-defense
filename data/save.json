@@ -5,7 +5,7 @@
         -1
     ],
     "latest_level_completed": [
-        1,
+        4,
         0,
         -1
     ],
@@ -14,8 +14,8 @@
     "width": 1366,
     "fullscreen": false,
     "skip_text": false,
-    "max_dna": 150,
-    "used_dna": 30,
+    "max_dna": 250,
+    "used_dna": 0,
     "highscores": [
         [
             86,
@@ -43,7 +43,7 @@
             0
         ],
         [
-            0,
+            775,
             0,
             0
         ],
@@ -97,7 +97,8 @@
         "polio",
         "coronavirus",
         "hepatitis_b",
-        "smallpox"
+        "smallpox",
+        "rabies"
     ],
     "game_attrs": {
         "lives": {
@@ -117,7 +118,7 @@
             "description": "The amount of protein you start with on each level."
         },
         "max_towers": {
-            "value": 5,
+            "value": 2,
             "increment": 1,
             "max_value": 5,
             "upgrade_cost": 80,
