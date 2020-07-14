@@ -1,28 +1,29 @@
 {
     "description": ["", "", ""],
-    "ratings": [0, 1, 1],
+    "ratings": [1, 1, 1],
     "body_part": 5,
     "protein_goal": [100, 10, 10],
     "texts": [
-        [
-            []
-        ],
-        [
-            []
-        ],
-        [
-            []
-        ]
+        {},
+        {},
+        {}
     ],
     "waves": [
         [
             [
                 {
                     "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 50,
-                    "spawn_delay": 1,
-                    "spawn_rate": 0.5
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
                 }
             ]
         ],
