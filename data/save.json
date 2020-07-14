@@ -5,8 +5,8 @@
         -1
     ],
     "latest_level_completed": [
-        2,
-        -1,
+        1,
+        0,
         -1
     ],
     "music_vol": 0.0,
@@ -89,14 +89,14 @@
         ]
     ],
     "owned_towers": [
-        "t_cell",
-        "mast_cell"
+        "t_cell"
     ],
     "seen_enemies": [
         "common_cold",
         "hepatitis_a",
         "polio",
         "coronavirus",
+        "hepatitis_b",
         "smallpox"
     ],
     "game_attrs": {
@@ -109,15 +109,15 @@
             "description": "The number of lives you start with on each level."
         },
         "starting_protein": {
-            "value": 40,
+            "value": 30,
             "increment": 5,
             "max_value": 70,
-            "upgrade_cost": 110,
+            "upgrade_cost": 70,
             "cost_increment": 20,
             "description": "The amount of protein you start with on each level."
         },
         "max_towers": {
-            "value": 2,
+            "value": 5,
             "increment": 1,
             "max_value": 5,
             "upgrade_cost": 80,
