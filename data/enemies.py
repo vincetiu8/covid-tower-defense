@@ -181,6 +181,8 @@ class Enemy(pg.sprite.Sprite):
 
         if (len(self.path) == 0):
             self.game.lives = max(self.game.lives - 1, 0)
+            self.game.protein += self.dropped_protein   # TODO: Remove this dev feature
+                                                        # (enemies shouldn't drop protein if they reach the goal)
             
             if self.game.lives <= 0:
                 self.game.cause_of_death = " ".join(self.name.split("_")).title() # removes underscores, capitalizes it properly

@@ -175,7 +175,9 @@ class Tower(Obstacle):
 
         self.buffs = []
 
-        self.search_for_enemy()
+        if not self.area_of_effect:
+            self.targeting_option = 0
+            self.search_for_enemy()
 
     def load_tower_data(self):
         data = TOWER_DATA[self.name]["stages"][self.stage]
@@ -206,7 +208,6 @@ class Tower(Obstacle):
             # 1 - Last
             # 2 - Strong
             # 3 - Weak
-            self.targeting_option = 0
             self.bullet_speed = data["bullet_speed"]
             self.bullet_lifetime = data["bullet_lifetime"]
             self.rotating = data["rotating"]
@@ -320,8 +321,10 @@ class Tower(Obstacle):
                     self.next_spawn = self.attack_speed * 1000
                     self.time_passed = 0
 
-        if not self.area_of_effect and (self.current_enemy == None or ((self.different_shield_damage and (not self.current_enemy.shield or self.current_enemy.shield_hp == 0)) or \
-                    (self.slow_speed != 1 and self.current_enemy.slowed))):
+        if not self.area_of_effect and \
+                (self.current_enemy == None or
+                 ((self.different_shield_damage and (not self.current_enemy.shield or self.current_enemy.shield_hp == 0))
+                  or (self.slow_speed != 1 and self.current_enemy.slowed))):
             self.current_enemy = None
             self.search_for_enemy()
 
@@ -381,11 +384,11 @@ class Tower(Obstacle):
                     self.current_enemy = enemy
                     continue
 
-                if (self.different_shield_damage and (self.current_enemy.shield and self.current_enemy.shield_hp > 0) and (not enemy.shield or enemy.shield_hp == 0)) or \
+                if (self.different_shield_damage and self.current_enemy.shield and not enemy.shield) or \
                     (self.slow_speed != 1 and enemy.slowed and not self.current_enemy.slowed):
                     continue
 
-                elif (self.different_shield_damage and (not self.current_enemy.shield or self.current_enemy.shield_hp == 0) and (enemy.shield and enemy.shield_hp > 0)) or \
+                elif (self.different_shield_damage and not self.current_enemy.shield and enemy.shield) or \
                     (self.slow_speed != 1 and self.current_enemy.slowed and not enemy.slowed):
                     self.current_enemy = enemy
                     continue
@@ -399,11 +402,11 @@ class Tower(Obstacle):
                         self.current_enemy = enemy
 
                 elif self.targeting_option == 2:
-                    if (self.different_shield_damage and enemy.shield_max_hp > self.current_enemy.shield_max_hp) or \
-                            (not self.different_shield_damage and enemy.max_hp > self.current_enemy.max_hp):
+                    if (self.different_shield_damage and enemy.shield and enemy.shield_max_hp > self.current_enemy.shield_max_hp) or \
+                            ((not self.different_shield_damage or not enemy.shield) and enemy.max_hp > self.current_enemy.max_hp):
                         self.current_enemy = enemy
 
                 elif self.targeting_option == 3:
-                    if (self.different_shield_damage and enemy.shield_max_hp < self.current_enemy.shield_max_hp) or \
-                            (not self.different_shield_damage and enemy.max_hp < self.current_enemy.max_hp):
+                    if (self.different_shield_damage and enemy.shield and enemy.shield_max_hp < self.current_enemy.shield_max_hp) or \
+                            ((not self.different_shield_damage or not enemy.shield) and enemy.max_hp < self.current_enemy.max_hp):
                         self.current_enemy = enemy

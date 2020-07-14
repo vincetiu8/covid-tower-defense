@@ -59,7 +59,14 @@ class TiledMap:
             return False
         self.tower_map[x][y] = tower
         self.reset_valid_tower_tiles()
-        
+
+    def get_tower(self, x, y):
+        if (x < 0 or x >= len(self.tower_map) or y < 0 or y >= len(self.tower_map[0])):
+            return None
+        elif self.tower_map[x][y] == None:
+            return None
+        return self.tower_map[x][y]
+
     def upgrade_tower(self, x, y):
         if (x < 0 or x >= len(self.tower_map) or y < 0 or y >= len(self.tower_map[0])):
             return False
@@ -73,15 +80,10 @@ class TiledMap:
             return False
         elif self.tower_map[x][y] == None:
             return False
-        tower = self.tower_map[x][y]
-        tower_name = tower.name
-        tower_stage = tower.stage
-        tower.on_remove()
-        tower.kill()
         self.tower_map[x][y] = None
         self.change_node(x, y, 0)
         self.reset_valid_tower_tiles()
-        return (tower_name, tower_stage)
+        return True
 
     def get_map(self):
         return self.map
