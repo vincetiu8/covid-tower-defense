@@ -295,46 +295,48 @@ class Game(Display):
                 self.new_enemy_box.show_new_enemy(start.enemy_type)
 
     def draw(self):
-        self.fill((0, 0, 0))
+        temp_surf = pg.Surface((1280, 720))
 
-        self.blit(self.camera.apply_image(self.map_img), self.camera.apply_rect(self.map_rect))
+        temp_surf.blit(self.map_img, self.map_rect)
 
-        self.blit(self.camera.apply_image(self.path_surf), self.camera.apply_tuple((0, 0)))
+        temp_surf.blit(self.path_surf, (0, 0))
 
-        self.blit(self.camera.apply_image(self.tower_bases_surf),
-                     self.camera.apply_rect(self.tower_bases_surf.get_rect()))
+        temp_surf.blit(self.tower_bases_surf, self.tower_bases_surf.get_rect())
 
         for tower in self.towers:
             if tower.area_of_effect or not tower.rotating:
                 continue
             rotated_image = pg.transform.rotate(tower.gun_image, math.degrees(tower.rotation))
             new_rect = rotated_image.get_rect(center=tower.rect.center)
-            self.blit(self.camera.apply_image(rotated_image), self.camera.apply_rect(new_rect))
+            temp_surf.blit(rotated_image, new_rect)
 
         for enemy in self.enemies:
             if enemy.image_size > 0:
-                self.blit(self.camera.apply_image(enemy.image), self.camera.apply_rect(enemy.rect))
+                temp_surf.blit(enemy.image, enemy.rect)
             hp_surf = enemy.get_hp_surf()
             if hp_surf != None:
-                self.blit(self.camera.apply_image(hp_surf), self.camera.apply_rect(hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - 15))))
+                temp_surf.blit(hp_surf, hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - 15)))
 
         for projectile in self.projectiles:
-            self.blit(self.camera.apply_image(projectile.image), self.camera.apply_rect(projectile.rect))
+            temp_surf.blit(projectile.image, projectile.rect)
         
         self.draw_aoe_sprites(self)
-        self.blit(self.camera.apply_image(self.aoe_surf), self.camera.apply_tuple((0, 0)))
+        temp_surf.blit(self.aoe_surf, (0, 0))
 
         for explosion in self.explosions:
-            self.blit(self.camera.apply_image(explosion.get_surf()), self.camera.apply_tuple((explosion.x, explosion.y)))
+            temp_surf.blit(explosion.get_surf(), (explosion.x, explosion.y))
 
         if self.current_tower != None:
-            self.draw_tower_preview()
+            self.draw_tower_preview(temp_surf)
 
         if self.ui.tower != None and not self.ui.tower.area_of_effect:
             tower_range_img = pg.Surface((self.ui.tower.true_range * 2, self.ui.tower.true_range * 2)).convert_alpha()
             tower_range_img.fill(BLANK)
             pg.draw.circle(tower_range_img, HALF_WHITE, (self.ui.tower.true_range, self.ui.tower.true_range), self.ui.tower.true_range)
-            self.blit(self.camera.apply_image(tower_range_img), self.camera.apply_rect(tower_range_img.get_rect(center=self.ui.tower.rect.center)))
+            temp_surf.blit(tower_range_img, tower_range_img.get_rect(center=self.ui.tower.rect.center))
+
+        self.fill(BLACK)
+        self.blit(self.camera.apply_image(temp_surf), self.camera.apply_tuple((0, 0)))
 
         self.ui_pos = [self.get_size()[0] - self.ui.offset, self.ui.offset]
         if self.ui.active:
@@ -444,7 +446,7 @@ class Game(Display):
                 s.fill(AURA_COLORS[tower.aura_color])
                 self.aoe_surf.blit(s, tower.aoe_sprite.rect, special_flags=pg.BLEND_RGBA_MAX)
 
-    def draw_tower_preview(self):
+    def draw_tower_preview(self, temp_surf):
         towerxy = (
             round_to_tilesize(self.mouse_pos[0], self.map.tilesize), round_to_tilesize(self.mouse_pos[1], self.map.tilesize))
         tower_tile = (
@@ -469,7 +471,6 @@ class Game(Display):
                 tower_img.fill(HALF_WHITE, None, pg.BLEND_RGBA_MULT)
             elif validity == -1:
                 result = True
-                
                 if self.node_is_in_path[tower_tile[0]][tower_tile[1]]:
                     self.map.change_node(tower_tile[0], tower_tile[1], 1)
                     self.pathfinder.clear_nodes(self.map.get_map())
@@ -497,8 +498,8 @@ class Game(Display):
 
             tower_pos = tower_img.get_rect(topleft = towerxy)
             tower_range_pos = tower_range_img.get_rect(center=tower_pos.center)
-            self.blit(self.camera.apply_image(tower_range_img), self.camera.apply_rect(tower_range_pos))
-            self.blit(self.camera.apply_image(tower_img), self.camera.apply_rect(tower_pos))
+            temp_surf.blit(tower_range_img, tower_range_pos)
+            temp_surf.blit(tower_img, tower_pos)
 
     def get_lives(self):
         return self.lives
