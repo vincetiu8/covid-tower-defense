@@ -157,7 +157,6 @@ class Game(Display):
                 for y in range(tile_from_xcoords(start.height, self.map.tilesize)):
                     self.map.set_valid_tower_tile(tile_from_xcoords(start.x, self.map.tilesize) + x, tile_from_xcoords(start.y, self.map.tilesize) + y, 0)
 
-        self.ui = UI(self, 10)
         self.pathfinder = Pathfinder(
             arteries = arteries,
             artery_entrances = artery_entrances,
@@ -179,6 +178,7 @@ class Game(Display):
         self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
         self.textbox = Textbox(self)
+        self.ui = UI(self, 10)
         self.prepare_next_text()
         self.draw_tower_bases_wrapper()
         self.make_stripped_path_wrapper()
@@ -287,6 +287,8 @@ class Game(Display):
     def start_next_wave(self):
         self.in_a_wave = True
         self.ui.set_next_wave_btn(False)
+        self.ui.generate_header()
+        self.ui.generate_next_wave_wrapper()
 
         for start in self.starts:
             start.enable_spawning()
@@ -557,6 +559,7 @@ class Game(Display):
             self.protein += round(
                 TOWER_DATA[tower.name]["stages"][stage]["upgrade_cost"] * (1 + self.difficulty * 0.25) / 2)
         BUY_SFX.play()
+        self.ui.generate_header()
         self.ui.deselect_tower()
 
     def upgrade_tower(self, tower):
@@ -568,7 +571,8 @@ class Game(Display):
             tower.upgrade()
             self.draw_tower_bases(self)
             BUY_SFX.play()
-            self.ui.get_ui()
+            self.ui.generate_header()
+            self.ui.generate_body_wrapper()
         else:
             WRONG_SELECTION_SFX.play()
 
@@ -614,7 +618,7 @@ class Game(Display):
                             self.ui.tower.targeting_option += 1
                             if self.ui.tower.targeting_option == len(TARGET_OPTIONS):
                                 self.ui.tower.targeting_option = 0
-                            self.ui.ui = self.ui.get_ui()
+                            self.ui.generate_body_wrapper()
                         return -1
 
                     elif result > -1:
@@ -672,6 +676,9 @@ class Game(Display):
                     self.current_tower = None
 
                 BUY_SFX.play()
+                self.ui.generate_header()
+                self.ui.generate_body_wrapper()
+
                 self.make_stripped_path_wrapper()
                 self.draw_tower_bases_wrapper()
                 for enemy in self.enemies:
