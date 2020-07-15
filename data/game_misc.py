@@ -22,6 +22,7 @@ class UI:
 
         self.size = HEART_IMG.get_size()[0]
         self.font = pg.font.Font(FONT, self.size * 2)
+        self.font2 = pg.font.Font(FONT, self.size)
         self.width = 0
 
         self.generate_header()
@@ -45,11 +46,12 @@ class UI:
 
     def update(self):
         if self.wave != self.game.wave:
+            self.wave = self.game.wave
             self.generate_header()
             self.generate_next_wave_wrapper()
 
-        if not self.game.in_a_wave and self.wave != 0:
-            self.generate_next_wave()
+        if not self.game.in_a_wave:
+            self.generate_next_wave_wrapper()
 
     def select_tower(self, x, y):
         tower = self.game.map.get_tower(x, y)
@@ -113,10 +115,18 @@ class UI:
                 self.body.blit(tower_img, self.tower_rects[i])
                 temp_rect = self.tower_rects[i].copy()
                 temp_rect.x += self.tower_size + self.offset
+                
                 self.body.blit(PROTEIN_IMG, temp_rect)
+                
                 cost_text = self.font.render(str(round(TOWER_DATA[tower]["stages"][0]["upgrade_cost"] * (1 + self.game.difficulty * 0.25))), 1, WHITE)
-                temp_rect.y += HEART_IMG.get_size()[0]
+                temp_rect.y += self.size
                 self.body.blit(cost_text, temp_rect)
+                
+                key_text = self.font2.render(str(i + 1), 1, WHITE)
+                temp_rect.x += PROTEIN_IMG.get_rect().w + self.offset * 2.5
+                pg.draw.rect(self.body, WHITE, pg.rect.Rect(temp_rect.x, temp_rect.y, self.size, self.size), 3)
+                temp_rect.x += round(self.offset * 1.25)
+                self.body.blit(key_text, temp_rect)
 
         else:
             tower_dat = TOWER_DATA[self.tower.name]
@@ -160,14 +170,14 @@ class UI:
     def generate_next_wave(self):
         self.next_wave.fill(DARK_GREY)
         text = "Next Wave"
-        if self.game.wave < 0:
+        if self.game.wave == 0:
             text = "Start Wave"
 
         next_wave_button, self.next_wave_rect = self.make_button(text, self.next_wave_btn_enabled)
         self.next_wave_rect.top = self.offset
         self.next_wave.blit(next_wave_button, self.next_wave_rect)
 
-        if self.game.wave > 0 and WAVE_DELAY * 1000 - self.game.time_passed > 1:
+        if not self.game.in_a_wave and self.game.wave > 0 and WAVE_DELAY * 1000 - self.game.time_passed > 1:
             timer_width = (self.width - MENU_OFFSET * 2) * (WAVE_DELAY * 1000 - self.game.time_passed) // (WAVE_DELAY * 1000)
             pg.draw.rect(self.next_wave, GREEN, pg.Rect(self.offset, 0, timer_width, self.offset))
 

@@ -42,6 +42,13 @@ class Game(Display):
         self.game_done_event = pg.event.Event(pg.USEREVENT)
         
         self.ui_pos = None
+        self.key_map = {
+            pg.K_1: 0,
+            pg.K_2: 1,
+            pg.K_3: 2,
+            pg.K_4: 3,
+            pg.K_5: 4
+        }
 
     def load_data(self):
         self.map_img = self.map.make_map()
@@ -246,10 +253,10 @@ class Game(Display):
     def prepare_next_text(self):
         # Wave has text --> text (and the next wave) don't appear until previous wave is all dead
         # Wave has no text --> next wave starts counting down immediately after previous wave is done spawning
-        if not SAVE_DATA["skip_text"] and len(self.level_data["texts"][self.difficulty][self.wave + 1]) > 0:
+        if not SAVE_DATA["skip_text"] and self.level_data["texts"][self.difficulty].get(str(self.wave + 1)) != None:
             if len(self.enemies) == 0:
                 self.text = True
-                self.texts = self.level_data["texts"][self.difficulty][self.wave + 1].copy()
+                self.texts = self.level_data["texts"][self.difficulty][str(self.wave + 1)].copy()
                 self.ui.set_next_wave_btn(False)
                 self.textbox.set_text(self.texts[0])
                 self.textbox.finish_text()
@@ -262,7 +269,6 @@ class Game(Display):
 
     def prepare_next_wave(self):
         self.wave += 1
-
         while self.wave < skip_to_wave: # TODO: Remove this dev option
             for i in self.level_data["waves"][self.difficulty][self.wave]:
                 self.protein += i["enemy_count"] * ENEMY_DATA[i["enemy_type"]]["protein"]
@@ -274,6 +280,7 @@ class Game(Display):
 
         self.in_a_wave = False
         self.ui.set_next_wave_btn(True)
+        self.ui.generate_next_wave_wrapper()
         self.time_passed = 0
 
         self.starts.clear()
@@ -575,6 +582,18 @@ class Game(Display):
             self.ui.generate_body_wrapper()
         else:
             WRONG_SELECTION_SFX.play()
+            
+    def select_tower(self, index):
+        if self.protein < round(TOWER_DATA[self.available_towers[index]]["stages"][0]["upgrade_cost"] * (1 + self.difficulty * 0.25)):
+            WRONG_SELECTION_SFX.play()
+            self.current_tower = None
+        else:
+            BTN_2_SFX.play()
+            
+            if self.current_tower == self.available_towers[index]:
+                self.current_tower = None
+            else:
+                self.current_tower = self.available_towers[index]
 
     def event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -622,12 +641,7 @@ class Game(Display):
                         return -1
 
                     elif result > -1:
-                        if self.protein < round(TOWER_DATA[self.available_towers[result]]["stages"][0]["upgrade_cost"] * (1 + self.difficulty * 0.25)):
-                            WRONG_SELECTION_SFX.play()
-                            self.current_tower = None
-                        else:
-                            BTN_2_SFX.play()
-                            self.current_tower = self.available_towers[result]
+                        self.select_tower(result)
                         return -1
 
                     elif result == -1:
@@ -701,9 +715,19 @@ class Game(Display):
             elif event.button == 5:
                 self.camera.zoom(-ZOOM_AMT_GAME)
 
-        elif (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
-            pg.mixer.music.pause()
-            return "pause"
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                pg.mixer.music.pause()
+                return "pause"
+            elif self.key_map.get(event.key) != None:
+                tower_ind = self.key_map[event.key]
+                
+                if tower_ind < len(self.available_towers):
+                    self.select_tower(tower_ind)
+                else:
+                    WRONG_SELECTION_SFX.play()
+                    
+                return -1
 
         elif event.type == pg.MOUSEMOTION:
             self.mouse_pos = self.camera.correct_mouse(event.pos)

@@ -27,7 +27,7 @@
         },
         "shield_recharge_delay": {
             "type": "float",
-            "min": 0.05,
+            "min": 0,
             "max": 10,
             "increment": 0.05,
             "dp": 2,

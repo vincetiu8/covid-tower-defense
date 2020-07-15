@@ -197,7 +197,8 @@ with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
     ENEMY_DATA = json.load(data_file)
     for enemy in ENEMY_DATA:
         ENEMY_DATA[enemy]["image"] = pg.image.load(path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
-        ENEMY_DATA[enemy]["death_sound"] = pg.mixer.Sound(path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy)))
+
+ENEMY_DEATH_SOUND = pg.mixer.Sound(path.join(AUDIO_FOLDER, "enemy_death.wav"))
 
 # load tower data
 with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
@@ -247,8 +248,7 @@ def update_sfx_vol():
             if TOWER_DATA[tower]["stages"][stage].get("shoot_sound"):
                 TOWER_DATA[tower]["stages"][stage]["shoot_sound"].set_volume(vol)
             
-    for enemy in ENEMY_DATA:
-        ENEMY_DATA[enemy]["death_sound"].set_volume(vol)
+    ENEMY_DEATH_SOUND.set_volume(vol)
 
 def update_music_vol():
     vol = SAVE_DATA["music_vol"]
@@ -302,7 +302,7 @@ HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "hear
 # load fonts path
 FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
 
-WAVE_DELAY = 999999 # TODO: Change this dev feature back.
+WAVE_DELAY = 5 # TODO: Change this dev feature back.
 EXPLOSION_TIME = 0.25
 REFUND_AMOUNT = 0.5
 

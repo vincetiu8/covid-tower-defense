@@ -4,45 +4,23 @@
     "body_part": 3,
     "protein_goal": [1100, 10, 10],
     "texts": [
-        [
-            [
-                "Uh oh, this body part looks a lot trickier than the previous ones we've seen.",
-                "You're going to have to rout the viruses coming in from both lungs!",
-                "Luckily, we've received reports that the viruses will only be coming in from the left lung for now.",
-                "Good luck and stay sharp!"
-            ],
-            [],
-            [
-                "Our scouts have reported viruses preparing to enter the right lung after this next wave.",
-                "Be prepared!"
-            ],
-            [],
-            [],
-            [],
-            [
-                "Now the enemy seems to be pouring in from both lungs at once. Do your best to stop them!"
-            ],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            []
-        ],
-        [
-            []
-        ],
-        [
-            []
-        ]
+        {
+            "0":    [
+                        "Uh oh, this body part looks a lot trickier than the previous ones we've seen.",
+                        "You're going to have to rout the viruses coming in from both lungs!",
+                        "Luckily, we've received reports that the viruses will only be coming in from the left lung for now.",
+                        "Good luck and stay sharp!"
+                    ],
+            "2":    [
+                        "Our scouts have reported viruses preparing to enter the right lung after this next wave.",
+                        "Be prepared!"
+                    ],
+            "6":    [
+                        "Now the enemy seems to be pouring in from both lungs at once. Do your best to stop them!"
+                    ]
+        },
+        {},
+        {}
     ],
     "waves": [
         [
