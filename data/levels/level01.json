@@ -4,49 +4,26 @@
     "body_part": 1,
     "protein_goal": [2000, 10, 10],
     "texts": [
-        [
-            [
-                "Now that you've gotten the basics down, let's test your skills in another body part.",
-                "The enemies will be a bit tougher than before. Good luck!"
-            ],
-            [],
-            [],
-            [],
-            [],
-            [
-                "Watch out! This next wave has lots of polio viruses.",
-                "They can fly over towers and ignore your defenses. Take them out quick!"
-            ],
-            [],
-            [],
-            [],
-            [],
-            [
-                "Beware! The infamous Coronavirus is about to make its appearance.",
-                "It may be slow, but its high health allows it to run through your defenses unscathed."
-            ],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [
-                "Congratulations on completing your second mission!",
-                "You're ready to command the cells in the other parts of the body."
-            ]
-        ],
-        [
-            [],
-            []
-        ],
-        [
-            [],
-            []
-        ]
+        {
+            "0":    [
+                        "Now that you've gotten the basics down, let's test your skills in another body part.",
+                        "The enemies will be a bit tougher than before. Good luck!"
+                    ],
+            "5":    [
+                        "Watch out! This next wave has lots of polio viruses.",
+                        "They can fly over towers and ignore your defenses. Take them out quick!"
+                    ],
+            "10":   [
+                        "Beware! The infamous Coronavirus is about to make its appearance.",
+                        "It may be slow, but its high health allows it to run through your defenses unscathed."
+                    ],
+            "20":   [
+                        "Congratulations on completing your second mission!",
+                        "You're ready to command the cells in the other parts of the body."
+                    ]
+        },
+        {},
+        {}
     ],
     "waves": [
         [
