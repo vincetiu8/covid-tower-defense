@@ -80,6 +80,7 @@ class UI:
     def get_ui(self):
         size = HEART_IMG.get_size()[0]
         font = pg.font.Font(FONT, size * 2)
+        font2 = pg.font.Font(FONT, size)
         
         # Draws waves, lives, protein text
         waves_text = font.render("Wave {}/{}".format(min(self.wave + 1, self.max_wave), self.max_wave), 1, WHITE)
@@ -107,13 +108,22 @@ class UI:
                 tower_img = pg.transform.scale(TOWER_DATA[tower]["stages"][0]["image"], self.tower_rects[i].size)
                 if (self.game.protein < round(TOWER_DATA[tower]["stages"][0]["upgrade_cost"] * (1 + self.game.difficulty * 0.25))):
                     tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
+                    
                 ui.blit(tower_img, self.tower_rects[i])
                 temp_rect = self.tower_rects[i].copy()
                 temp_rect.x += self.tower_size + self.offset
+                
                 ui.blit(PROTEIN_IMG, temp_rect)
+                
                 cost_text = font.render(str(round(TOWER_DATA[tower]["stages"][0]["upgrade_cost"] * (1 + self.game.difficulty * 0.25))), 1, WHITE)
                 temp_rect.y += size
                 ui.blit(cost_text, temp_rect)
+                
+                key_text = font2.render(str(i + 1), 1, WHITE)
+                temp_rect.x += PROTEIN_IMG.get_rect().w + self.offset * 2.5
+                pg.draw.rect(ui, WHITE, pg.rect.Rect(temp_rect.x, temp_rect.y, size , size), 3)
+                temp_rect.x += self.offset
+                ui.blit(key_text, temp_rect)
 
         else:
             tower_dat = TOWER_DATA[self.tower.name]
