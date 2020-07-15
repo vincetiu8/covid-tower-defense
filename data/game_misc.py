@@ -167,7 +167,7 @@ class UI:
         self.next_wave_rect.top = self.offset
         self.next_wave.blit(next_wave_button, self.next_wave_rect)
 
-        if self.game.wave > 0:
+        if self.game.wave > 0 and WAVE_DELAY * 1000 - self.game.time_passed > 1:
             timer_width = (self.width - MENU_OFFSET * 2) * (WAVE_DELAY * 1000 - self.game.time_passed) // (WAVE_DELAY * 1000)
             pg.draw.rect(self.next_wave, GREEN, pg.Rect(self.offset, 0, timer_width, self.offset))
 

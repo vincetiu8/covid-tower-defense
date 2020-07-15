@@ -302,7 +302,7 @@ HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "hear
 # load fonts path
 FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
 
-WAVE_DELAY = 15 # TODO: Change this dev feature back.
+WAVE_DELAY = 999999 # TODO: Change this dev feature back.
 EXPLOSION_TIME = 0.25
 REFUND_AMOUNT = 0.5
 
