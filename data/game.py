@@ -29,7 +29,7 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
-skip_to_wave = 0   # TODO: Remove this dev option
+skip_to_wave = 9   # TODO: Remove this dev option
                     # Change this to change which wave you start on. You'll get all the protein from the previous waves.
                     # Indexing starts at 0 and the wave this is set to is inclusive.
                     # i.e. if the value is set to 15, the game will start at wave 16 (when counting from 1).
@@ -243,7 +243,6 @@ class Game(Display):
                     elif len(self.enemies) == 0:
                         pg.event.post(self.game_done_event)
 
-
     def current_wave_done(self):
         for start in self.starts:
             if not start.is_done_spawning():
@@ -304,7 +303,7 @@ class Game(Display):
                 self.new_enemy_box.show_new_enemy(start.enemy_type)
 
     def draw(self):
-        temp_surf = pg.Surface((1280, 720))
+        temp_surf = pg.Surface((self.map_rect.w, self.map_rect.h))
 
         temp_surf.blit(self.map_img, self.map_rect)
 
