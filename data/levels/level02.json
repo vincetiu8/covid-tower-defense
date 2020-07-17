@@ -2,7 +2,7 @@
     "description": ["This map features multiple exit routes. Intelligence reports recommend deploying shieldbreaking cells as well.", "", ""],
     "ratings": [0, 1, 1],
     "body_part": 2,
-    "protein_goal": [1000, 10, 10],
+    "protein_goal": [1800, 10, 10],
     "texts": [
         {
             "0":    [
@@ -75,9 +75,9 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 30,
+                    "enemy_count": 5,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.5
+                    "spawn_rate": 1.2
                 }
             ],
             [
@@ -123,18 +123,18 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 30,
+                    "enemy_count": 6,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.4
+                    "spawn_rate": 1
                 }
             ],
             [
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 60,
+                    "enemy_count": 10,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.25
+                    "spawn_rate": 0.8
                 }
             ],
             [
@@ -148,9 +148,9 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 40,
+                    "enemy_count": 7,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.4
+                    "spawn_rate": 1
                 },
                 {
                     "start": 0,
@@ -228,9 +228,9 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 30,
+                    "enemy_count": 8,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.15
+                    "spawn_rate": 0.5
                 }
             ],
             [
@@ -322,16 +322,16 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 40,
-                    "spawn_delay": 4,
-                    "spawn_rate": 0.25
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.8
                 },
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 40,
-                    "spawn_delay": 17,
-                    "spawn_rate": 0.05
+                    "enemy_count": 7,
+                    "spawn_delay": 15,
+                    "spawn_rate": 0.1
                 }
             ]
         ],
