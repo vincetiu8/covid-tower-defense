@@ -2,7 +2,7 @@
     "description": ["The second mission of the game. Expect a step up from the tutorial, but nothing too daunting.", "", ""],
     "ratings": [0, 1, 1],
     "body_part": 1,
-    "protein_goal": [2000, 10, 10],
+    "protein_goal": [3000, 10, 10],
     "texts": [
         {
             "0":    [
@@ -92,7 +92,7 @@
                     "enemy_type": "polio",
                     "enemy_count": 40,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.4
+                    "spawn_rate": 0.3
                 }
             ],
             [
@@ -163,24 +163,24 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 40,
+                    "enemy_count": 7,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.35
+                    "spawn_rate": 1.5
                 }
             ],
             [
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 40,
+                    "enemy_count": 10,
+                    "spawn_delay": 3,
+                    "spawn_rate": 1.2
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 100,
                     "spawn_delay": 5,
-                    "spawn_rate": 0.25
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "common_cold",
-                    "enemy_count": 100,
-                    "spawn_delay": 3,
                     "spawn_rate": 0.1
                 }
             ],
@@ -188,7 +188,7 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 50,
+                    "enemy_count": 5,
                     "spawn_delay": 3,
                     "spawn_rate": 0.2
                 },
@@ -198,15 +198,22 @@
                     "enemy_count": 100,
                     "spawn_delay": 3,
                     "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "coronavirus",
+                    "enemy_count": 5,
+                    "spawn_delay": 13,
+                    "spawn_rate": 0.2
                 }
             ],
             [
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 50,
+                    "enemy_count": 10,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.2
+                    "spawn_rate": 0.8
                 },
                 {
                     "start": 0,
@@ -234,18 +241,18 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 60,
+                    "enemy_count": 10,
                     "spawn_delay": 10,
-                    "spawn_rate": 0.05
+                    "spawn_rate": 0.1
                 }
             ],
             [
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 60,
+                    "enemy_count": 10,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.2
+                    "spawn_rate": 0.8
                 },
                 {
                     "start": 0,
@@ -259,9 +266,9 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 60,
+                    "enemy_count": 10,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.2
+                    "spawn_rate": 1
                 },
                 {
                     "start": 0,
@@ -291,9 +298,9 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 50,
+                    "enemy_count": 10,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.2
+                    "spawn_rate": 0.5
                 },
                 {
                     "start": 0,
@@ -312,8 +319,8 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 30,
-                    "spawn_delay": 15,
+                    "enemy_count": 5,
+                    "spawn_delay": 13,
                     "spawn_rate": 0.1
                 }
             ],
@@ -321,9 +328,9 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 60,
+                    "enemy_count": 12,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.2
+                    "spawn_rate": 1
                 },
                 {
                     "start": 0,
@@ -342,9 +349,9 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 40,
+                    "enemy_count": 12,
                     "spawn_delay": 24,
-                    "spawn_rate": 0.2
+                    "spawn_rate": 1
                 },
                 {
                     "start": 0,

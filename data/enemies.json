@@ -12,8 +12,8 @@
     "coronavirus": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 1000,
-        "protein": 10,
+        "hp": 750,
+        "protein": 9,
         "shield": false,
         "mutate": false,
         "speed": 80,

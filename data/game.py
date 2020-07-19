@@ -243,7 +243,6 @@ class Game(Display):
                     elif len(self.enemies) == 0:
                         pg.event.post(self.game_done_event)
 
-
     def current_wave_done(self):
         for start in self.starts:
             if not start.is_done_spawning():
@@ -304,7 +303,7 @@ class Game(Display):
                 self.new_enemy_box.show_new_enemy(start.enemy_type)
 
     def draw(self):
-        temp_surf = pg.Surface((1280, 720))
+        temp_surf = pg.Surface((self.map_rect.w, self.map_rect.h))
 
         temp_surf.blit(self.map_img, self.map_rect)
 

@@ -183,6 +183,7 @@ class Enemy(pg.sprite.Sprite):
 
         if (len(self.path) == 0):
             self.game.lives = max(self.game.lives - 1, 0)
+            self.game.ui.generate_header_wrapper()
             self.game.protein += self.dropped_protein   # TODO: Remove this dev feature
                                                         # (enemies shouldn't drop protein if they reach the goal)
             

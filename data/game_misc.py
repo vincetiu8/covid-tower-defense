@@ -84,11 +84,11 @@ class UI:
     def generate_header(self):
         # Draws waves, lives, protein text
         waves_text = self.font.render("Wave {}/{}".format(min(self.wave + 1, self.max_wave), self.max_wave), 1, WHITE)
-
         width = max(waves_text.get_width() + self.offset * 2, 225)
         if width != self.width:
             self.width = width
             self.regen_surfs()
+            self.generate_body()
 
         self.header.fill(DARK_GREY)
         self.header.blit(waves_text, waves_text.get_rect(midtop=(self.width / 2, 0)))
