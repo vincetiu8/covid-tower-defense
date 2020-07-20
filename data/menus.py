@@ -312,14 +312,18 @@ class StartMenu(GridDisplay):
 class Menu(Display):
     def __init__(self):
         super().__init__()
+<<<<<<< Updated upstream
         self.camera = Camera(SCREEN_WIDTH * 0.8, SCREEN_HEIGHT * 0.8, SCREEN_WIDTH, SCREEN_HEIGHT)
+=======
+        self.camera = Camera(SAVE_DATA["width"] * 0.8, SAVE_DATA["height"] * 0.8, SCREEN_WIDTH, SCREEN_HEIGHT, 1.5)
+>>>>>>> Stashed changes
         
         self.base_zoom = self.camera.get_zoom()
         self.zoom_step = -1
         self.body_images = []
         self.body_image = self.camera.apply_image(BODY_IMG)
         
-        self.body_coords = (-250, 300)
+        self.body_coords = (-150, 400)
         
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
         self.level_button_rect_2 = LEVEL_BUTTON_IMG_2.get_rect()
@@ -328,15 +332,15 @@ class Menu(Display):
         self.level_buttons = []
         self.init_levels()
 
-        self.tower_preview_button = pg.Rect((800, 200), self.level_button_rect.size)
-        self.enemy_preview_button = pg.Rect((800, 600), self.level_button_rect.size)
-        self.upgrades_menu_button = pg.Rect((800, 1000), self.level_button_rect.size)
-        self.tower_edit_button = pg.Rect((1200, 200), self.level_button_rect.size)
-        self.enemy_edit_button = pg.Rect((1200, 600), self.level_button_rect.size)
-        self.level_edit_button = pg.Rect((1200, 1000), self.level_button_rect.size)
-        self.options_button = pg.Rect((870, -100), OPTIONS_IMGS[0].get_size())
-        self.plus_button = pg.Rect((600, 150), self.small_level_button_size)
-        self.minus_button = pg.Rect((-130, 150), self.small_level_button_size)
+        self.tower_preview_button = pg.Rect((850, 300), self.level_button_rect.size)
+        self.enemy_preview_button = pg.Rect((850, 670), self.level_button_rect.size)
+        self.upgrades_menu_button = pg.Rect((850, 1040), self.level_button_rect.size)
+        self.tower_edit_button = pg.Rect((1150, 300), self.level_button_rect.size)
+        self.enemy_edit_button = pg.Rect((1150, 670), self.level_button_rect.size)
+        self.level_edit_button = pg.Rect((1150, 1040), self.level_button_rect.size)
+        self.options_button = pg.Rect((850, 30), OPTIONS_IMGS[0].get_size())
+        self.plus_button = pg.Rect((650, 250), self.small_level_button_size)
+        self.minus_button = pg.Rect((0, 250), self.small_level_button_size)
         
         self.difficulty = 0
         
@@ -350,9 +354,10 @@ class Menu(Display):
             self.level_buttons.append(pg.Rect(true_coords, self.level_button_rect_2.size))
         
     def init_body_1(self): #inits half the body_images on game startup
-        for i in range(5):
+        for i in range(4):
             self.camera.zoom(ZOOM_AMT_MENU)
             self.body_images.append(self.camera.apply_image(BODY_IMG))
+        self.camera.zoom(self.base_zoom - self.camera.get_zoom())
         
     def new(self, args): #inits the other half of the body images
         self.level_infos = [[None for j in range(3)] for i in range(len(LEVEL_DATA))]
@@ -363,11 +368,6 @@ class Menu(Display):
             pg.mixer.music.stop()
             pg.mixer.music.load(MENU_MUSIC)
             pg.mixer.music.play(-1)
-        
-        if len(self.body_images) < 6: # so this will only run when first switching to menu
-            while self.camera.zoom(ZOOM_AMT_MENU) != False:
-                self.body_images.append(self.camera.apply_image(BODY_IMG))
-            self.camera.zoom(self.base_zoom - self.camera.get_zoom())
 
     def update(self):
         keys = pg.key.get_pressed()
@@ -388,13 +388,13 @@ class Menu(Display):
         
         self.blit(self.body_image, self.camera.apply_tuple(self.body_coords))
 
-        big_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w * 4)
+        big_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w * 3)
         lives_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w)
         level_text = big_font.render("Levels", 1, WHITE)
         self.blit(self.camera.apply_image(level_text), self.camera.apply_tuple((640 / 2 - level_text.get_rect().center[0], -50 - level_text.get_rect().center[1])))
         
         self.blit(self.camera.apply_image(OPTIONS_IMGS[self.hover_options]), self.camera.apply_rect(self.options_button))
-
+        
         for i, button in enumerate(self.level_buttons):
             if SAVE_DATA["latest_level_unlocked"][self.difficulty] >= i:
                 if SAVE_DATA["latest_level_completed"][self.difficulty] >= i:
@@ -408,7 +408,7 @@ class Menu(Display):
                 grey_image = LEVEL_BUTTON_IMG_2.copy()
                 grey_image.fill(DARK_GREY, special_flags=pg.BLEND_RGB_MIN)
                 self.blit(self.camera.apply_image(grey_image), self.camera.apply_rect(button))
-
+                
         if len(SAVE_DATA["seen_enemies"]) == 0:
             self.blit(self.camera.apply_image(DARK_LEVEL_BUTTON_IMG), self.camera.apply_rect(self.tower_preview_button))
         else:
@@ -486,7 +486,7 @@ class Menu(Display):
                  1] + lives_text.get_rect().height - MENU_OFFSET)))
         
         minus_plus_font = pg.font.Font(FONT, 130)
-        difficulty_font = pg.font.Font(FONT, 110)
+        difficulty_font = pg.font.Font(FONT, 100)
         
         difficulties = ["Mild", "Acute", "Severe"]
         difficulty_text = difficulty_font.render("Difficulty: {}".format(difficulties[self.difficulty]), 1, WHITE)
@@ -521,6 +521,23 @@ class Menu(Display):
                 self.blit(self.camera.apply_image(level_info), self.camera.apply_rect(level_info.get_rect(topright = self.level_buttons[self.over_level].topleft)))
                 
         return self
+    
+    def draw_body(self):
+        self.blit(self.body_image, self.camera.apply_tuple(self.body_coords))
+        for i, button in enumerate(self.level_buttons):
+            button_tuple = (button.x, button.y)
+            if SAVE_DATA["latest_level_unlocked"][self.difficulty] >= i:
+                if SAVE_DATA["latest_level_completed"][self.difficulty] >= i:
+                    green_image = LEVEL_BUTTON_IMG_2.copy().convert_alpha()
+                    green_image.fill(BLACK, special_flags = pg.BLEND_RGB_MULT)
+                    green_image.fill(GREEN, special_flags = pg.BLEND_RGB_MAX)
+                    self.blit(self.camera.apply_image(green_image), self.camera.apply_tuple(button_tuple))
+                else:
+                    self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG_2), self.camera.apply_tuple(button_tuple))
+            else:
+                grey_image = LEVEL_BUTTON_IMG_2.copy()
+                grey_image.fill(DARK_GREY, special_flags=pg.BLEND_RGB_MIN)
+                self.blit(self.camera.apply_image(grey_image), self.camera.apply_tuple(button_tuple))
 
     def update_level(self, mouse_pos):
         for i, button in enumerate(self.level_buttons):

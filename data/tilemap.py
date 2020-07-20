@@ -126,7 +126,7 @@ class TiledMap:
         self.valid_tower_tiles = [[-1 for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
 
 class Camera():
-    def __init__(self, width, height, map_width, map_height):
+    def __init__(self, width, height, map_width, map_height, max_zoom_factor = 2):
         self.width = width
         self.height = height
         self.map_width = map_width
@@ -156,7 +156,7 @@ class Camera():
         return ([round((x - self.camera.topleft[i]) / self.current_zoom) for i, x in enumerate(pos)])
 
     def zoom(self, amount):
-        if (amount > 0 and self.current_zoom >= self.minzoom * 4 or amount < 0 and self.current_zoom <= self.minzoom):
+        if (amount > 0 and self.current_zoom >= self.maxzoom or amount < 0 and self.current_zoom <= self.minzoom):
             return False
 
         center = self.correct_mouse((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
