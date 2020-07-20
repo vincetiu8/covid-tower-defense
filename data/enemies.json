@@ -137,7 +137,7 @@
     "influenza": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 25,
+        "hp": 30,
         "protein": 2,
         "shield": false,
         "mutate": false,
