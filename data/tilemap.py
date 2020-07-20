@@ -126,13 +126,14 @@ class TiledMap:
         self.valid_tower_tiles = [[-1 for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
 
 class Camera():
-    def __init__(self, width, height, map_width, map_height):
+    def __init__(self, width, height, map_width, map_height, max_zoom_factor = 2):
         self.width = width
         self.height = height
         self.map_width = map_width
         self.map_height = map_height
         self.current_zoom = min(width / map_width, height / map_height)
         self.minzoom = self.current_zoom / 2
+        self.maxzoom = self.current_zoom * max_zoom_factor
         self.camera = pg.Rect((self.width - self.map_width * (self.current_zoom + 0.05)) / 2, (self.height - self.map_height * self.current_zoom) / 2, width, height)
 
     def apply_size(self, tuple):
@@ -157,7 +158,7 @@ class Camera():
         return new_pos
 
     def zoom(self, amount):
-        if (amount > 0 and self.current_zoom >= self.minzoom * 4 or amount < 0 and self.current_zoom <= self.minzoom):
+        if (amount > 0 and self.current_zoom >= self.maxzoom or amount < 0 and self.current_zoom <= self.minzoom):
             return False
 
         center = self.correct_mouse((self.width / 2, self.height / 2))
