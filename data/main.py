@@ -88,7 +88,7 @@ class Main:
         pg.display.set_caption("FPS: {:.2f}".format(self.main_clock.get_fps()))
         
         SCREEN.fill((0, 0, 0))
-        if self.current_display is self.game:
+        if self.current_display is self.game or self.current_display is self.menu:
             surf = self.current_display.draw()
 
         else:
