@@ -92,14 +92,18 @@ MUSIC_FOLDER = path.join(AUDIO_FOLDER, "music")
 with open(path.join(GAME_FOLDER, "save.json"), "r") as data_file:
     SAVE_DATA = json.load(data_file)
 
-SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16))
+SCREEN_RATIO = SAVE_DATA["width"] / SCREEN_WIDTH
+SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["height"]))
 SCREEN_SIZES = [640, 854, 960, 1280, 1366, 1536, 1600, 1920, 2560, 3200, 3840]
 
 def toggle_fullscreen():
     if SAVE_DATA["fullscreen"]:
-        SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16), pg.FULLSCREEN)
+        SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["height"]), pg.FULLSCREEN)
+
     else:
-        SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16))
+        SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["height"]))
+
+    SCREEN_RATIO = SAVE_DATA["width"] / SCREEN_WIDTH
         
 toggle_fullscreen()
 

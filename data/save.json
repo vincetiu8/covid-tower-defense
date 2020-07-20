@@ -12,6 +12,7 @@
     "music_vol": 0.0,
     "sfx_vol": 0.0,
     "width": 1366,
+    "height": 768,
     "fullscreen": false,
     "skip_text": true,
     "max_dna": 250,
@@ -92,13 +93,7 @@
         "t_cell"
     ],
     "seen_enemies": [
-        "common_cold",
-        "hepatitis_a",
-        "polio",
-        "coronavirus",
-        "hepatitis_b",
-        "smallpox",
-        "rabies"
+        "common_cold"
     ],
     "game_attrs": {
         "lives": {

@@ -83,11 +83,13 @@ class Options(Display):
                     SAVE_DATA["fullscreen"] = self.fullscreen.is_ticked()
                     if not SAVE_DATA["fullscreen"]:
                         SAVE_DATA["width"] = self.screen_width.get_val()
+                        SAVE_DATA["height"] = self.screen_width.get_val() * 9 // 16
 
                     toggle_fullscreen()
 
                     if SAVE_DATA["fullscreen"]:
                         SAVE_DATA["width"] = pg.display.get_surface().get_width()
+                        SAVE_DATA["height"] = pg.display.get_surface().get_width() * 9 // 16
 
                     self.main.get_conversion_factor()
 

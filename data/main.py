@@ -88,7 +88,11 @@ class Main:
         pg.display.set_caption("FPS: {:.2f}".format(self.main_clock.get_fps()))
         
         SCREEN.fill((0, 0, 0))
-        surf = pg.transform.scale(self.current_display.draw(), (SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16))
+        if self.current_display is self.game:
+            surf = self.current_display.draw()
+
+        else:
+            surf = pg.transform.scale(self.current_display.draw(), (SAVE_DATA["width"], SAVE_DATA["height"]))
         SCREEN.blit(surf, (0, 0))
         
         if self.fading_out:

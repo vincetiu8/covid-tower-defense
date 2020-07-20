@@ -133,7 +133,7 @@ class Camera():
         self.map_height = map_height
         self.current_zoom = min(width / map_width, height / map_height)
         self.minzoom = self.current_zoom / 2
-        self.camera = pg.Rect((self.width - self.map_width * (self.current_zoom + 0.05)) / 2, (self.height- self.map_height * self.current_zoom) / 2, width, height)
+        self.camera = pg.Rect((self.width - self.map_width * (self.current_zoom + 0.05)) / 2, (self.height - self.map_height * self.current_zoom) / 2, width, height)
 
     def apply_size(self, tuple):
         return ([i * self.current_zoom for i in tuple])
@@ -153,13 +153,14 @@ class Camera():
         return pg.transform.scale(image, ([round(self.current_zoom * x) for x in size]))
 
     def correct_mouse(self, pos):
-        return ([round((x - self.camera.topleft[i]) / self.current_zoom) for i, x in enumerate(pos)])
+        new_pos = ([round(x - self.camera.topleft[i]) / (self.current_zoom / SCREEN_RATIO) for i, x in enumerate(pos)])
+        return new_pos
 
     def zoom(self, amount):
         if (amount > 0 and self.current_zoom >= self.minzoom * 4 or amount < 0 and self.current_zoom <= self.minzoom):
             return False
 
-        center = self.correct_mouse((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        center = self.correct_mouse((self.width / 2, self.height / 2))
         self.move(-amount * center[0], -amount * center[1])
         self.current_zoom += amount
 

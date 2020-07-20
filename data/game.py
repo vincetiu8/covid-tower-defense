@@ -36,7 +36,7 @@ skip_to_wave = 0   # TODO: Remove this dev option
 
 class Game(Display):
     def __init__(self, clock):
-        super().__init__()
+        super().__init__((SAVE_DATA["width"], SAVE_DATA["height"]))
         self.clock = clock
 
         self.game_done_event = pg.event.Event(pg.USEREVENT)
@@ -182,7 +182,7 @@ class Game(Display):
             pg.mixer.music.play(-1)
         
         self.node_is_in_path = [[]]
-        self.camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT, self.map.width, self.map.height)
+        self.camera = Camera(SAVE_DATA["width"], SAVE_DATA["height"], self.map.width, self.map.height)
         self.pathfinder.clear_nodes(self.map.get_map())
         self.textbox = Textbox(self)
         self.ui = UI(self, 10)
@@ -346,21 +346,20 @@ class Game(Display):
         self.fill(BLACK)
         self.blit(self.camera.apply_image(temp_surf), self.camera.apply_tuple((0, 0)))
 
-        self.ui_pos = [self.get_size()[0] - self.ui.offset, self.ui.offset]
+        self.ui_pos = [SAVE_DATA["width"] - self.ui.offset, self.ui.offset]
         if self.ui.active:
-            self.ui_pos[0] -= self.ui.width
             ui = self.ui.ui
-            ui_rect = ui.get_rect(topleft = self.ui_pos)
+            ui_rect = ui.get_rect(topright = self.ui_pos)
             self.blit(ui, ui_rect)
             self.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright = ui_rect.topleft))
         else:
-            self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = (SCREEN_WIDTH - MENU_OFFSET, MENU_OFFSET)))
+            self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = (SAVE_DATA["width"] - MENU_OFFSET, MENU_OFFSET)))
         
         if len(self.enemies) == 0 and self.text:
-            self.blit(self.textbox, self.textbox.get_rect(bottomleft = (MENU_OFFSET, SCREEN_HEIGHT - MENU_OFFSET + self.textbox.yoffset)))
+            self.blit(self.textbox, self.textbox.get_rect(bottomleft = (MENU_OFFSET, SAVE_DATA["height"] - MENU_OFFSET + self.textbox.yoffset)))
 
         if self.new_enemy_box.show:
-            self.blit(self.new_enemy_box.get_surf(), self.new_enemy_box.get_rect(center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)))
+            self.blit(self.new_enemy_box.get_surf(), self.new_enemy_box.get_rect(center = (SAVE_DATA["width"] / 2, SAVE_DATA["height"] / 2)))
 
         return self
 
@@ -617,7 +616,7 @@ class Game(Display):
                     return -1
 
                 elif self.ui.active:
-                    result = self.ui.event((event.pos[0] - self.ui_pos[0], event.pos[1] - self.ui_pos[1]))
+                    result = self.ui.event((event.pos[0] - self.ui.ui_offset[0], event.pos[1] - self.ui.ui_offset[1]))
                     if isinstance(result, str):
                         if result == "start_wave":
                             BTN_2_SFX.play()
