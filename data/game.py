@@ -29,7 +29,7 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
-skip_to_wave = 0   # TODO: Remove this dev option
+skip_to_wave = 16   # TODO: Remove this dev option
                     # Change this to change which wave you start on. You'll get all the protein from the previous waves.
                     # Indexing starts at 0 and the wave this is set to is inclusive.
                     # i.e. if the value is set to 15, the game will start at wave 16 (when counting from 1).
