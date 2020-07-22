@@ -36,7 +36,7 @@ skip_to_wave = 0   # TODO: Remove this dev option
 
 class Game(Display):
     def __init__(self, clock):
-        super().__init__((SAVE_DATA["width"], SAVE_DATA["height"]))
+        self.init_super()
         self.clock = clock
 
         self.game_done_event = pg.event.Event(pg.USEREVENT)
@@ -49,6 +49,9 @@ class Game(Display):
             pg.K_4: 3,
             pg.K_5: 4
         }
+
+    def init_super(self):
+        super().__init__((SAVE_DATA["width"], SAVE_DATA["height"]))
 
     def load_data(self):
         self.map_img = self.map.make_map()
@@ -738,7 +741,15 @@ class Game(Display):
             pg.mixer.music.load(LATE_SEVERE_MUSIC_LOOP)
             pg.mixer.music.play(-1)
             pg.mixer.music.set_endevent()
-        
+
+        elif event.type == pg.USEREVENT + 4: # Graphics option changed, reload screen
+            self.init_super()
+            try:
+                self.camera.__init__(SAVE_DATA["width"], SAVE_DATA["height"], self.map.width, self.map.height)
+                self.ui.get_ui()
+            except:
+                pass
+
         return -1
     
 class Start():

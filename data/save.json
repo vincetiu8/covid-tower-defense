@@ -1,6 +1,6 @@
 {
     "latest_level_unlocked": [
-        5,
+        14,
         0,
         -1
     ],
@@ -10,9 +10,9 @@
         -1
     ],
     "music_vol": 0.0,
-    "sfx_vol": 0.0,
-    "width": 960,
-    "height": 540,
+    "sfx_vol": 0.04,
+    "width": 1280,
+    "height": 720,
     "fullscreen": false,
     "skip_text": true,
     "max_dna": 250,
@@ -93,7 +93,8 @@
         "t_cell"
     ],
     "seen_enemies": [
-        "common_cold"
+        "common_cold",
+        "hepatitis_a"
     ],
     "game_attrs": {
         "lives": {

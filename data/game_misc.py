@@ -3,6 +3,7 @@ import textwrap
 
 class UI:
     def __init__(self, game, offset):
+        self.display = MainDisplay.get_instance()
         self.game = game
         self.offset = offset
         self.wave = 0
@@ -189,7 +190,7 @@ class UI:
         temp_surf.blit(self.body, self.body.get_rect(top=self.header.get_height()))
         temp_surf.blit(self.next_wave, self.next_wave.get_rect(bottom = SCREEN_HEIGHT - 2 * MENU_OFFSET))
 
-        self.ui = pg.transform.scale(temp_surf, (round(self.width * SCREEN_RATIO), round((SCREEN_HEIGHT - 2 * MENU_OFFSET) * SCREEN_RATIO)))
+        self.ui = pg.transform.scale(temp_surf, (round(self.width * self.display.screen_ratio), round((SCREEN_HEIGHT - 2 * MENU_OFFSET) * self.display.screen_ratio)))
         self.ui_offset = (SCREEN_WIDTH - MENU_OFFSET - self.width, MENU_OFFSET)
 
     def make_button(self, string, enabled):
@@ -234,13 +235,14 @@ class UI:
 
 class Textbox(pg.Surface):
     def __init__(self, game):
+        self.display = MainDisplay.get_instance()
         self.game = game
         self.enabled = False
         self.writing = False
         self.font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
         self.rect = pg.Rect(0, 0, SCREEN_WIDTH - MENU_OFFSET * 2, 0)
-        self.rect.width *= SCREEN_RATIO
-        self.rect.height *= SCREEN_RATIO
+        self.rect.width *= self.display.screen_ratio
+        self.rect.height *= self.display.screen_ratio
         self.set_text("")
         self.yoffset = 0
         self.draw()
@@ -283,7 +285,7 @@ class Textbox(pg.Surface):
             texts.append(rendered_text)
             height += MENU_TEXT_SIZE * 2
 
-        self.rect.height = (height + MENU_OFFSET) * SCREEN_RATIO
+        self.rect.height = (height + MENU_OFFSET) * self.display.screen_ratio
         temp_img = pg.transform.scale(LEVEL_BUTTON_IMG, (SCREEN_WIDTH - 2 * MENU_OFFSET, height + MENU_OFFSET))
 
         height = MENU_OFFSET
@@ -342,12 +344,13 @@ class Explosion(pg.sprite.Sprite):
 
 class NewEnemyBox(pg.Surface):
     def __init__(self):
+        self.display = MainDisplay.get_instance()
         self.enabled = False
         self.show = False
         self.enemy = None
         self.opacity = 0
         self.rect_size = (SCREEN_WIDTH - MENU_OFFSET * 18, SCREEN_HEIGHT - MENU_OFFSET * 18)
-        self.real_rect_size = (round(self.rect_size[0] * SCREEN_RATIO), round(self.rect_size[1] * SCREEN_RATIO))
+        self.real_rect_size = (round(self.rect_size[0] * self.display.screen_ratio), round(self.rect_size[1] * self.display.screen_ratio))
         super().__init__(self.real_rect_size)
 
     def get_surf(self):

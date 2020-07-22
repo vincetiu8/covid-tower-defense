@@ -9,6 +9,8 @@ import pygame as pg
 # USEREVENT --> game over event in Game()
 # USEREVENT + 1 --> timer event in DevUI()
 # USEREVENT + 2 --> fade out done event in Pause()
+# USEREVENT + 3 --> skip the intro part of the late severe song when looping
+# USEREVENT + 4 --> screen size changed
 
 def resource_path(relative_path):
     try:
@@ -92,20 +94,33 @@ MUSIC_FOLDER = path.join(AUDIO_FOLDER, "music")
 with open(path.join(GAME_FOLDER, "save.json"), "r") as data_file:
     SAVE_DATA = json.load(data_file)
 
-SCREEN_RATIO = SAVE_DATA["width"] / SCREEN_WIDTH
-SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["height"]))
 SCREEN_SIZES = [640, 854, 960, 1280, 1366, 1536, 1600, 1920, 2560, 3200, 3840]
 
-def toggle_fullscreen():
-    if SAVE_DATA["fullscreen"]:
-        SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["height"]), pg.FULLSCREEN)
+class MainDisplay:
+    __instance = None
 
-    else:
-        SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["height"]))
+    def __init__(self):
+        if MainDisplay.__instance != None:
+            raise Exception("This class is a singleton!")
+        else:
+            MainDisplay.__instance = self
 
-    SCREEN_RATIO = SAVE_DATA["width"] / SCREEN_WIDTH
-        
-toggle_fullscreen()
+        self.toggle_fullscreen()
+
+    @staticmethod
+    def get_instance():
+        if MainDisplay.__instance == None:
+            MainDisplay()
+        return MainDisplay.__instance
+
+    def toggle_fullscreen(self):
+        if SAVE_DATA["fullscreen"]:
+            self.display = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["height"]), pg.FULLSCREEN)
+
+        else:
+            self.display = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["height"]))
+
+        self.screen_ratio = SAVE_DATA["width"] / SCREEN_WIDTH
 
 # Menu Constant
 BODY_PARTS = { # All of these are relative to the body
