@@ -62,8 +62,8 @@
         "protein": 3,
         "shield": true,
         "shield_hp": 15,
-        "shield_recharge_delay": 0,
-        "shield_recharge_rate": 0.1,
+        "shield_recharge_delay": 0.25,
+        "shield_recharge_rate": 0.2,
         "mutate": false,
         "speed": 140,
         "description": "A slightly faster than normal virus with a shield to pair."

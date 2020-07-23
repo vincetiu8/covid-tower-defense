@@ -383,9 +383,18 @@
                 {
                     "start": 0,
                     "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.3
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
                     "enemy_count": 15,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.5
+                    "spawn_rate": 0.3
                 }
             ],
             [
@@ -394,27 +403,74 @@
                     "enemy_type": "common_cold",
                     "enemy_count": 10,
                     "spawn_delay": 3,
-                    "spawn_rate": 0.5
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "polio",
-                    "enemy_count": 10,
-                    "spawn_delay": 3,
-                    "spawn_rate": 0.5
+                    "spawn_rate": 0.2
                 }
             ],
             [
                 {
                     "start": 0,
                     "enemy_type": "common_cold",
-                    "enemy_count": 20,
+                    "enemy_count": 12,
                     "spawn_delay": 3,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 12,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 2.5,
                     "spawn_rate": 0.15
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.3
                 },
                 {
                     "start": 0,
                     "enemy_type": "polio",
+                    "enemy_count": 10,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.3
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
                     "enemy_count": 20,
                     "spawn_delay": 3,
                     "spawn_rate": 0.15
@@ -427,6 +483,184 @@
                     "enemy_count": 25,
                     "spawn_delay": 3,
                     "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 40,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 25,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.05
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 18,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.25
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 18,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 25,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.25
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 25,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 25,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 25,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.15
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 35,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.15
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 35,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.15
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 40,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 30,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "west_nile_virus",
+                    "enemy_count": 5,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.5
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 20,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 25,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 25,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.075
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 20,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.075
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 20,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.075
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 25,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 25,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
                 },
                 {
                     "start": 0,
@@ -434,6 +668,36 @@
                     "enemy_count": 25,
                     "spawn_delay": 3,
                     "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 20,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 20,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "west_nile_virus",
+                    "enemy_count": 5,
+                    "spawn_delay": 10,
+                    "spawn_rate": 0.5
                 }
             ]
         ],

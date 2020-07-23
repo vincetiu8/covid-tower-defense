@@ -214,7 +214,6 @@ class LevelData:
         return LevelData.__instance
 
     def reload_levels(self):
-        print("reloadin")
         self.level_data = []
         for file in self.level_list:
             with open(path.join(LEVELS_FOLDER, file)) as data_file:

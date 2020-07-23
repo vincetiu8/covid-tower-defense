@@ -104,7 +104,9 @@
         "hepatitis_b",
         "smallpox",
         "rabies",
-        "mrsa"
+        "mrsa",
+        "west_nile_virus",
+        "hantavirus"
     ],
     "game_attrs": {
         "lives": {

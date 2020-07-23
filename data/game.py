@@ -29,7 +29,7 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
-skip_to_wave = 19    # TODO: Remove this dev option
+skip_to_wave = 22    # TODO: Remove this dev option
                     # Change this to change which wave you start on. You'll get all the protein from the previous waves.
                     # Indexing starts at 0 and the wave this is set to is inclusive.
                     # i.e. if the value is set to 15, the game will start at wave 16 (when counting from 1).
@@ -55,7 +55,6 @@ class Game(Display):
         self.map_rect = self.map_img.get_rect()
 
     def load_level_data(self):
-        print("eyo")
         self.level_data = LevelData.get_instance().level_data[self.level] # TODO: Remove this dev option
         self.max_wave = len(self.level_data["waves"][self.difficulty])
         
