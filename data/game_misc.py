@@ -45,11 +45,6 @@ class UI:
         self.next_wave_btn_changed = True
 
     def update(self):
-        if self.wave != self.game.wave:
-            self.wave = self.game.wave
-            self.generate_header()
-            self.generate_next_wave_wrapper()
-
         if not self.game.in_a_wave:
             self.generate_next_wave_wrapper()
 
