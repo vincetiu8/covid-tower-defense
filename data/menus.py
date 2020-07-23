@@ -311,8 +311,8 @@ class StartMenu(GridDisplay):
 
 class Menu(Display):
     def __init__(self):
-        super().__init__()
-        self.camera = Camera(SAVE_DATA["width"] * 0.8, SAVE_DATA["height"] * 0.8, SCREEN_WIDTH, SCREEN_HEIGHT, 1.5)
+        super().__init__((SAVE_DATA["width"], SAVE_DATA["height"]))
+        self.camera = Camera(SAVE_DATA["width"] * 0.8, SAVE_DATA["height"] * 0.8, SAVE_DATA["width"], SAVE_DATA["height"], 1.5)
         
         self.base_zoom = self.camera.get_zoom()
         self.zoom_step = -1
