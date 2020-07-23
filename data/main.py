@@ -70,6 +70,8 @@ class Main:
         self.fade_out_speed = [10, 40]
         self.fade_in_speed = [30, 50]
         self.fade_ind = 0
+        
+        self.game_surf = None
 
     def run(self):
         self.main_clock.tick(FPS)
@@ -86,9 +88,11 @@ class Main:
         pg.display.set_caption("FPS: {:.2f}".format(self.main_clock.get_fps()))
         
         self.display.display.fill((0, 0, 0))
+        if self.current_display is self.game_over or self.current_display is self.pause:
+            self.display.display.blit(self.game_surf, (0, 0))
+        
         if self.current_display is self.game or self.current_display is self.menu:
             surf = self.current_display.draw()
-
         else:
             surf = pg.transform.scale(self.current_display.draw(), (SAVE_DATA["width"], SAVE_DATA["height"]))
         self.display.display.blit(surf, (0, 0))
@@ -147,9 +151,11 @@ class Main:
                     elif self.result == "options":
                         self.args.extend([self.display_keys_reverse[self.current_display]])
                     elif self.result == "game_over":
+                        self.game_surf = self.game.draw()
                         self.args.extend([self.game.draw(), self.current_display == self.options,
                                      self.game.get_lives() == 0, self.game.get_cause_of_death(), (self.game.level, self.game.difficulty, self.game.protein)])
                     elif self.result == "pause":
+                        self.game_surf = self.game.draw()
                         self.args.extend([self.game.draw(), self.current_display == self.options])
                     elif self.result == "menu":
                         self.args.append(self.current_display in self.display_keys_reverse)
