@@ -284,7 +284,7 @@ class StartMenu(GridDisplay):
             self.blit(text, (final_x, final_y))
 
     def draw(self):
-        self.game_stop_surf.fill(BLACK)
+        self.fill(BLACK)
         if self.fading_out:
             self.alpha = max(0, self.alpha - self.alpha_speed)
             if self.alpha == 0:
@@ -311,7 +311,7 @@ class StartMenu(GridDisplay):
 
 class Menu(Display):
     def __init__(self):
-        super().__init__((SAVE_DATA["width"], SAVE_DATA["height"]))
+        self.init_super()
         self.camera = Camera(SAVE_DATA["width"] * 0.8, SAVE_DATA["height"] * 0.8, SAVE_DATA["width"], SAVE_DATA["height"], 1.5)
         
         self.base_zoom = self.camera.get_zoom()
@@ -341,6 +341,9 @@ class Menu(Display):
         self.difficulty = 0
         
         self.init_body_1()
+        
+    def init_super(self):
+        super().__init__((SAVE_DATA["width"], SAVE_DATA["height"]))
         
     def init_levels(self):
         for i, level in enumerate(LEVEL_DATA):
@@ -613,6 +616,13 @@ class Menu(Display):
                 self.hover_options = True
             else:
                 self.hover_options = False
+                
+        elif event.type == pg.USEREVENT + 4: # Graphics option changed, reload screen
+            self.init_super()
+            try:
+                self.camera.__init__(SAVE_DATA["width"], SAVE_DATA["height"], self.map.width, self.map.height)
+            except:
+                pass
 
         return -1
 
