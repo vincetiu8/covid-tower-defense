@@ -311,32 +311,32 @@ class StartMenu(GridDisplay):
 
 class Menu(Display):
     def __init__(self):
-        super().__init__()
-        self.camera = Camera(SCREEN_WIDTH * 0.8, SCREEN_HEIGHT * 0.8, SCREEN_WIDTH, SCREEN_HEIGHT)
+        super().__init__((SAVE_DATA["width"], SAVE_DATA["height"]))
+        self.camera = Camera(SAVE_DATA["width"] * 0.8, SAVE_DATA["height"] * 0.8, SAVE_DATA["width"], SAVE_DATA["height"], 1.5)
         
         self.base_zoom = self.camera.get_zoom()
         self.zoom_step = -1
         self.body_images = []
         self.body_image = self.camera.apply_image(BODY_IMG)
         
-        self.body_coords = (-250, 300)
+        self.body_coords = (-150, 400)
         
         self.level_button_rect = LEVEL_BUTTON_IMG.get_rect()
         self.level_button_rect_2 = LEVEL_BUTTON_IMG_2.get_rect()
-        self.small_level_button_size = (int(self.level_button_rect.size[0] * 0.7), int(self.level_button_rect.size[1] * 0.7))
+        self.small_level_button_size = (int(self.level_button_rect.size[0] * 0.6), int(self.level_button_rect.size[1] * 0.6))
         self.small_level_button_img = pg.transform.scale(LEVEL_BUTTON_IMG, self.small_level_button_size)
         self.level_buttons = []
         self.init_levels()
 
-        self.tower_preview_button = pg.Rect((800, 200), self.level_button_rect.size)
-        self.enemy_preview_button = pg.Rect((800, 600), self.level_button_rect.size)
-        self.upgrades_menu_button = pg.Rect((800, 1000), self.level_button_rect.size)
-        self.tower_edit_button = pg.Rect((1200, 200), self.level_button_rect.size)
-        self.enemy_edit_button = pg.Rect((1200, 600), self.level_button_rect.size)
-        self.level_edit_button = pg.Rect((1200, 1000), self.level_button_rect.size)
-        self.options_button = pg.Rect((870, -100), OPTIONS_IMGS[0].get_size())
-        self.plus_button = pg.Rect((600, 150), self.small_level_button_size)
-        self.minus_button = pg.Rect((-130, 150), self.small_level_button_size)
+        self.tower_preview_button = pg.Rect((850, 300), self.level_button_rect.size)
+        self.enemy_preview_button = pg.Rect((850, 670), self.level_button_rect.size)
+        self.upgrades_menu_button = pg.Rect((850, 1040), self.level_button_rect.size)
+        self.tower_edit_button = pg.Rect((1150, 300), self.level_button_rect.size)
+        self.enemy_edit_button = pg.Rect((1150, 670), self.level_button_rect.size)
+        self.level_edit_button = pg.Rect((1150, 1040), self.level_button_rect.size)
+        self.options_button = pg.Rect((840, 30), OPTIONS_IMGS[0].get_size())
+        self.plus_button = pg.Rect((650, 250), self.small_level_button_size)
+        self.minus_button = pg.Rect((0, 250), self.small_level_button_size)
         
         self.difficulty = 0
         
@@ -350,9 +350,10 @@ class Menu(Display):
             self.level_buttons.append(pg.Rect(true_coords, self.level_button_rect_2.size))
         
     def init_body_1(self): #inits half the body_images on game startup
-        for i in range(5):
+        for i in range(4):
             self.camera.zoom(ZOOM_AMT_MENU)
             self.body_images.append(self.camera.apply_image(BODY_IMG))
+        self.camera.zoom(self.base_zoom - self.camera.get_zoom())
         
     def new(self, args): #inits the other half of the body images
         self.level_infos = [[None for j in range(3)] for i in range(len(LEVEL_DATA))]
@@ -363,11 +364,6 @@ class Menu(Display):
             pg.mixer.music.stop()
             pg.mixer.music.load(MENU_MUSIC)
             pg.mixer.music.play(-1)
-        
-        if len(self.body_images) < 6: # so this will only run when first switching to menu
-            while self.camera.zoom(ZOOM_AMT_MENU) != False:
-                self.body_images.append(self.camera.apply_image(BODY_IMG))
-            self.camera.zoom(self.base_zoom - self.camera.get_zoom())
 
     def update(self):
         keys = pg.key.get_pressed()
@@ -384,131 +380,138 @@ class Menu(Display):
             self.camera.move(0, -25)
 
     def draw(self):
-        self.fill((0, 0, 0))
-        
-        self.blit(self.body_image, self.camera.apply_tuple(self.body_coords))
+        temp_surf = pg.Surface((1350, 1350)) # set surface width to 1100 when removing the edit buttons
 
-        big_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w * 4)
+        big_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w * 3)
         lives_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w)
         level_text = big_font.render("Levels", 1, WHITE)
-        self.blit(self.camera.apply_image(level_text), self.camera.apply_tuple((640 / 2 - level_text.get_rect().center[0], -50 - level_text.get_rect().center[1])))
+        temp_surf.blit(level_text, (20, -100))
         
-        self.blit(self.camera.apply_image(OPTIONS_IMGS[self.hover_options]), self.camera.apply_rect(self.options_button))
+        temp_surf.blit(OPTIONS_IMGS[self.hover_options], self.options_button)
 
+        if len(SAVE_DATA["seen_enemies"]) == 0:
+            temp_surf.blit(DARK_LEVEL_BUTTON_IMG, self.tower_preview_button)
+        else:
+            temp_surf.blit(LEVEL_BUTTON_IMG, self.tower_preview_button)
+
+        lives_text = lives_font.render("Tower", 1, WHITE)
+        temp_surf.blit(lives_text,
+                        (self.tower_preview_button.center[0] - lives_text.get_rect().center[0],
+                        self.tower_preview_button.center[1] - lives_text.get_rect().center[
+                        1] - lives_text.get_rect().height + MENU_OFFSET))
+        lives_text = lives_font.render("Preview", 1, WHITE)
+        temp_surf.blit(lives_text,
+                       (self.tower_preview_button.center[0] - lives_text.get_rect().center[0],
+                        self.tower_preview_button.center[1] - lives_text.get_rect().center[
+                        1] + lives_text.get_rect().height - MENU_OFFSET))
+
+        if len(SAVE_DATA["seen_enemies"]) == 0:
+            temp_surf.blit(DARK_LEVEL_BUTTON_IMG, self.enemy_preview_button)
+        else:
+            temp_surf.blit(LEVEL_BUTTON_IMG, self.enemy_preview_button)
+            
+        lives_text = lives_font.render("Enemy", 1, WHITE)
+        temp_surf.blit(lives_text,
+                       (self.enemy_preview_button.center[0] - lives_text.get_rect().center[0],
+                        self.enemy_preview_button.center[1] - lives_text.get_rect().center[
+                        1] - lives_text.get_rect().height + MENU_OFFSET))
+        lives_text = lives_font.render("Preview", 1, WHITE)
+        temp_surf.blit(lives_text,
+                       (self.enemy_preview_button.center[0] - lives_text.get_rect().center[0],
+                        self.enemy_preview_button.center[1] - lives_text.get_rect().center[
+                        1] + lives_text.get_rect().height - MENU_OFFSET))
+
+        temp_surf.blit(LEVEL_BUTTON_IMG, self.upgrades_menu_button)
+        lives_text = lives_font.render("Upgrades", 1, WHITE)
+        temp_surf.blit(lives_text,
+            (self.upgrades_menu_button.center[0] - lives_text.get_rect().center[0],
+             self.upgrades_menu_button.center[1] - lives_text.get_rect().center[
+                 1] - lives_text.get_rect().height + MENU_OFFSET))
+        lives_text = lives_font.render("Menu", 1, WHITE)
+        temp_surf.blit(lives_text,
+            (self.upgrades_menu_button.center[0] - lives_text.get_rect().center[0],
+             self.upgrades_menu_button.center[1] - lives_text.get_rect().center[
+                 1] + lives_text.get_rect().height - MENU_OFFSET))
+
+        temp_surf.blit(LEVEL_BUTTON_IMG, self.tower_edit_button)
+        lives_text = lives_font.render("Tower", 1, WHITE)
+        temp_surf.blit(lives_text,
+            (self.tower_edit_button.center[0] - lives_text.get_rect().center[0], self.tower_edit_button.center[1] - lives_text.get_rect().center[1] - lives_text.get_rect().height + MENU_OFFSET))
+        lives_text = lives_font.render("Edit", 1, WHITE)
+        temp_surf.blit(lives_text,
+            (self.tower_edit_button.center[0] - lives_text.get_rect().center[0], self.tower_edit_button.center[1] - lives_text.get_rect().center[1] + lives_text.get_rect().height - MENU_OFFSET))
+
+        temp_surf.blit(LEVEL_BUTTON_IMG, self.enemy_edit_button)
+        lives_text = lives_font.render("Enemy", 1, WHITE)
+        temp_surf.blit(lives_text,
+            (self.enemy_edit_button.center[0] - lives_text.get_rect().center[0],
+             self.enemy_edit_button.center[1] - lives_text.get_rect().center[
+                 1] - lives_text.get_rect().height + MENU_OFFSET))
+        lives_text = lives_font.render("Edit", 1, WHITE)
+        temp_surf.blit(lives_text,
+            (self.enemy_edit_button.center[0] - lives_text.get_rect().center[0],
+             self.enemy_edit_button.center[1] - lives_text.get_rect().center[
+                 1] + lives_text.get_rect().height - MENU_OFFSET))
+
+        temp_surf.blit(LEVEL_BUTTON_IMG, self.level_edit_button)
+        lives_text = lives_font.render("Level", 1, WHITE)
+        temp_surf.blit(lives_text,
+            (self.level_edit_button.center[0] - lives_text.get_rect().center[0],
+             self.level_edit_button.center[1] - lives_text.get_rect().center[
+                 1] - lives_text.get_rect().height + MENU_OFFSET))
+        lives_text = lives_font.render("Edit", 1, WHITE)
+        temp_surf.blit(lives_text,
+            (self.level_edit_button.center[0] - lives_text.get_rect().center[0],
+             self.level_edit_button.center[1] - lives_text.get_rect().center[
+                 1] + lives_text.get_rect().height - MENU_OFFSET))
+        
+        minus_plus_font = pg.font.Font(FONT, 110)
+        difficulty_font = pg.font.Font(FONT, 100)
+        
+        difficulties = ["Mild", "Acute", "Severe"]
+        difficulty_text = difficulty_font.render("Difficulty: {}".format(difficulties[self.difficulty]), 1, WHITE)
+        difficulty_x = (self.minus_button.topleft[0] + self.plus_button.topright[0] - difficulty_text.get_width()) // 2
+        temp_surf.blit(difficulty_text, (difficulty_x, self.minus_button.y - 10))
+        
+        if self.difficulty > 0:
+            minus_btn = self.small_level_button_img.copy()
+            minus_text = minus_plus_font.render("-", 1, WHITE)
+            minus_btn.blit(minus_text, minus_text.get_rect(center = minus_btn.get_rect().center))
+            temp_surf.blit(minus_btn, self.minus_button)
+
+        if self.difficulty < 2:
+            plus_btn = self.small_level_button_img.copy()
+            plus_text = minus_plus_font.render("+", 1, WHITE)
+            plus_btn.blit(plus_text, plus_text.get_rect(center = plus_btn.get_rect().center))
+
+            if SAVE_DATA["latest_level_unlocked"][self.difficulty + 1] == -1:
+                plus_btn.fill(LIGHT_GREY, None, pg.BLEND_RGB_MULT)
+                
+            temp_surf.blit(plus_btn, self.plus_button)
+
+        self.fill(BLACK)
+        self.blit(self.camera.apply_image(temp_surf), self.camera.apply_tuple((0, 0)))
+        self.draw_body()
+        
+        return self
+    
+    def draw_body(self):
+        self.blit(self.body_image, self.camera.apply_tuple(self.body_coords))
         for i, button in enumerate(self.level_buttons):
+            button_tuple = (button.x, button.y)
             if SAVE_DATA["latest_level_unlocked"][self.difficulty] >= i:
                 if SAVE_DATA["latest_level_completed"][self.difficulty] >= i:
                     green_image = LEVEL_BUTTON_IMG_2.copy().convert_alpha()
                     green_image.fill(BLACK, special_flags = pg.BLEND_RGB_MULT)
                     green_image.fill(GREEN, special_flags = pg.BLEND_RGB_MAX)
-                    self.blit(self.camera.apply_image(green_image), self.camera.apply_rect(button))
+                    self.blit(self.camera.apply_image(green_image), self.camera.apply_tuple(button_tuple))
                 else:
-                    self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG_2), self.camera.apply_rect(button))
+                    self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG_2), self.camera.apply_tuple(button_tuple))
             else:
                 grey_image = LEVEL_BUTTON_IMG_2.copy()
                 grey_image.fill(DARK_GREY, special_flags=pg.BLEND_RGB_MIN)
-                self.blit(self.camera.apply_image(grey_image), self.camera.apply_rect(button))
-
-        if len(SAVE_DATA["seen_enemies"]) == 0:
-            self.blit(self.camera.apply_image(DARK_LEVEL_BUTTON_IMG), self.camera.apply_rect(self.tower_preview_button))
-        else:
-            self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.tower_preview_button))
-
-        lives_text = lives_font.render("Tower", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.tower_preview_button.center[0] - lives_text.get_rect().center[0],
-             self.tower_preview_button.center[1] - lives_text.get_rect().center[
-                 1] - lives_text.get_rect().height + MENU_OFFSET)))
-        lives_text = lives_font.render("Preview", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.tower_preview_button.center[0] - lives_text.get_rect().center[0],
-             self.tower_preview_button.center[1] - lives_text.get_rect().center[
-                 1] + lives_text.get_rect().height - MENU_OFFSET)))
-
-        if len(SAVE_DATA["seen_enemies"]) == 0:
-            self.blit(self.camera.apply_image(DARK_LEVEL_BUTTON_IMG), self.camera.apply_rect(self.enemy_preview_button))
-        else:
-            self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.enemy_preview_button))
-            
-        lives_text = lives_font.render("Enemy", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.enemy_preview_button.center[0] - lives_text.get_rect().center[0],
-             self.enemy_preview_button.center[1] - lives_text.get_rect().center[
-                 1] - lives_text.get_rect().height + MENU_OFFSET)))
-        lives_text = lives_font.render("Preview", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.enemy_preview_button.center[0] - lives_text.get_rect().center[0],
-             self.enemy_preview_button.center[1] - lives_text.get_rect().center[
-                 1] + lives_text.get_rect().height - MENU_OFFSET)))
-
-        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.upgrades_menu_button))
-        lives_text = lives_font.render("Upgrades", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.upgrades_menu_button.center[0] - lives_text.get_rect().center[0],
-             self.upgrades_menu_button.center[1] - lives_text.get_rect().center[
-                 1] - lives_text.get_rect().height + MENU_OFFSET)))
-        lives_text = lives_font.render("Menu", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.upgrades_menu_button.center[0] - lives_text.get_rect().center[0],
-             self.upgrades_menu_button.center[1] - lives_text.get_rect().center[
-                 1] + lives_text.get_rect().height - MENU_OFFSET)))
-
-        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.tower_edit_button))
-        lives_text = lives_font.render("Tower", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.tower_edit_button.center[0] - lives_text.get_rect().center[0], self.tower_edit_button.center[1] - lives_text.get_rect().center[1] - lives_text.get_rect().height + MENU_OFFSET)))
-        lives_text = lives_font.render("Edit", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.tower_edit_button.center[0] - lives_text.get_rect().center[0], self.tower_edit_button.center[1] - lives_text.get_rect().center[1] + lives_text.get_rect().height - MENU_OFFSET)))
-
-        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.enemy_edit_button))
-        lives_text = lives_font.render("Enemy", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.enemy_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.enemy_edit_button.center[1] - lives_text.get_rect().center[
-                 1] - lives_text.get_rect().height + MENU_OFFSET)))
-        lives_text = lives_font.render("Edit", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.enemy_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.enemy_edit_button.center[1] - lives_text.get_rect().center[
-                 1] + lives_text.get_rect().height - MENU_OFFSET)))
-
-        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.level_edit_button))
-        lives_text = lives_font.render("Level", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.level_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.level_edit_button.center[1] - lives_text.get_rect().center[
-                 1] - lives_text.get_rect().height + MENU_OFFSET)))
-        lives_text = lives_font.render("Edit", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
-            (self.level_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.level_edit_button.center[1] - lives_text.get_rect().center[
-                 1] + lives_text.get_rect().height - MENU_OFFSET)))
+                self.blit(self.camera.apply_image(grey_image), self.camera.apply_tuple(button_tuple))
         
-        minus_plus_font = pg.font.Font(FONT, 130)
-        difficulty_font = pg.font.Font(FONT, 110)
-        
-        difficulties = ["Mild", "Acute", "Severe"]
-        difficulty_text = difficulty_font.render("Difficulty: {}".format(difficulties[self.difficulty]), 1, WHITE)
-        difficulty_x = (self.minus_button.topleft[0] + self.plus_button.topright[0] - difficulty_text.get_width()) // 2
-        self.blit(self.camera.apply_image(difficulty_text), self.camera.apply_tuple((difficulty_x, self.minus_button.y - 10)))
-        
-        if self.difficulty > 0:
-            minus_btn = self.camera.apply_image(self.small_level_button_img)
-            minus_text = self.camera.apply_image(minus_plus_font.render("-", 1, WHITE))
-            minus_btn.blit(minus_text, minus_text.get_rect(center = minus_btn.get_rect().center))
-            self.blit(minus_btn, self.camera.apply_rect(self.minus_button))
-
-        if self.difficulty < 2:
-            plus_btn = self.camera.apply_image(self.small_level_button_img)
-            plus_text = self.camera.apply_image(minus_plus_font.render("+", 1, WHITE))
-            plus_btn.blit(plus_text, plus_text.get_rect(center = plus_btn.get_rect().center))
-            
-            if SAVE_DATA["latest_level_unlocked"][self.difficulty + 1] == -1:
-                plus_btn.fill(LIGHT_GREY, None, pg.BLEND_RGB_MULT)
-                
-            self.blit(plus_btn, self.camera.apply_rect(self.plus_button))
-
         if self.over_level != -1:
             if self.level_infos[self.over_level][self.difficulty] == None:
                 new_level_info = LevelInfo(self.over_level, self.difficulty)
@@ -518,9 +521,7 @@ class Menu(Display):
             if self.level_buttons[self.over_level].centerx < self.get_width() / 2:
                 self.blit(self.camera.apply_image(level_info), self.camera.apply_tuple(self.level_buttons[self.over_level].topright))
             else:
-                self.blit(self.camera.apply_image(level_info), self.camera.apply_rect(level_info.get_rect(topright = self.level_buttons[self.over_level].topleft)))
-                
-        return self
+                self.blit(self.camera.apply_image(level_info), self.camera.apply_tuple(level_info.get_rect(topright = self.level_buttons[self.over_level].topleft)))
 
     def update_level(self, mouse_pos):
         for i, button in enumerate(self.level_buttons):

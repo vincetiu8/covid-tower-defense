@@ -4,6 +4,7 @@ from data.display import *
 class Options(Display):
     def __init__(self):
         super().__init__()
+        self.display = MainDisplay.get_instance()
         self.fullscreen = TickBoxOption("Fullscreen", SAVE_DATA["fullscreen"])
         self.music_vol = SliderOption("Music Vol", min_val = 0, max_val = 1,
                                       slider_pos = (SLIDER_BAR_WIDTH - SLIDER_WIDTH) * SAVE_DATA["music_vol"])
@@ -31,11 +32,12 @@ class Options(Display):
         self.apply_button.blit(apply_text, apply_text.get_rect(center = self.apply_button_rect.center))
 
         self.prev_display = None
-        
+
+        self.apply_graphics_event = pg.event.Event(pg.USEREVENT + 4)
+
     def new(self, args):
         self.hover_back = False
         self.prev_display = args[0]
-        self.main = args[1]
         
     def draw(self):
         self.fill(BLACK)
@@ -83,13 +85,15 @@ class Options(Display):
                     SAVE_DATA["fullscreen"] = self.fullscreen.is_ticked()
                     if not SAVE_DATA["fullscreen"]:
                         SAVE_DATA["width"] = self.screen_width.get_val()
+                        SAVE_DATA["height"] = self.screen_width.get_val() * 9 // 16
 
-                    toggle_fullscreen()
+                    MainDisplay.get_instance().toggle_fullscreen()
 
                     if SAVE_DATA["fullscreen"]:
                         SAVE_DATA["width"] = pg.display.get_surface().get_width()
+                        SAVE_DATA["height"] = pg.display.get_surface().get_width() * 9 // 16
 
-                    self.main.get_conversion_factor()
+                    pg.event.post(self.apply_graphics_event)
 
                 if self.hover_back:
                     BTN_SFX.play()

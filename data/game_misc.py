@@ -3,6 +3,7 @@ import textwrap
 
 class UI:
     def __init__(self, game, offset):
+        self.display = MainDisplay.get_instance()
         self.game = game
         self.offset = offset
         self.wave = 0
@@ -181,12 +182,16 @@ class UI:
             timer_width = (self.width - MENU_OFFSET * 2) * (WAVE_DELAY * 1000 - self.game.time_passed) // (WAVE_DELAY * 1000)
             pg.draw.rect(self.next_wave, GREEN, pg.Rect(self.offset, 0, timer_width, self.offset))
 
-        self.next_wave_rect.bottom = self.ui.get_height() - self.offset - self.header.get_height()
+        self.next_wave_rect.bottom = SCREEN_HEIGHT - self.offset * 3 - self.header.get_height()
 
     def get_ui(self):
-        self.ui.blit(self.header, (0, 0))
-        self.ui.blit(self.body, self.body.get_rect(top=self.header.get_height()))
-        self.ui.blit(self.next_wave, self.next_wave.get_rect(bottom = self.ui.get_height()))
+        temp_surf = pg.Surface((self.width, SCREEN_HEIGHT - 2 * MENU_OFFSET))
+        temp_surf.blit(self.header, (0, 0))
+        temp_surf.blit(self.body, self.body.get_rect(top=self.header.get_height()))
+        temp_surf.blit(self.next_wave, self.next_wave.get_rect(bottom = SCREEN_HEIGHT - 2 * MENU_OFFSET))
+
+        self.ui = pg.transform.scale(temp_surf, (round(self.width * self.display.screen_ratio), round((SCREEN_HEIGHT - 2 * MENU_OFFSET) * self.display.screen_ratio)))
+        self.ui_offset = (SCREEN_WIDTH - MENU_OFFSET - self.width, MENU_OFFSET)
 
     def make_button(self, string, enabled):
         font = pg.font.Font(FONT, int(HEART_IMG.get_size()[0] * 1.3))
@@ -230,10 +235,14 @@ class UI:
 
 class Textbox(pg.Surface):
     def __init__(self, game):
+        self.display = MainDisplay.get_instance()
         self.game = game
         self.enabled = False
         self.writing = False
+        self.font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
         self.rect = pg.Rect(0, 0, SCREEN_WIDTH - MENU_OFFSET * 2, 0)
+        self.rect.width *= self.display.screen_ratio
+        self.rect.height *= self.display.screen_ratio
         self.set_text("")
         self.yoffset = 0
         self.draw()
@@ -268,7 +277,6 @@ class Textbox(pg.Surface):
 
     def draw(self):
         height = MENU_OFFSET
-        self.font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
         text = textwrap.fill(self.current_text, 57)  # No idea how to really calculate this.
         text = text.split("\n")
         texts = []
@@ -277,14 +285,16 @@ class Textbox(pg.Surface):
             texts.append(rendered_text)
             height += MENU_TEXT_SIZE * 2
 
-        self.rect.height = height + MENU_OFFSET
-        super().__init__((self.rect.width, self.rect.height))
-        temp_img = pg.transform.scale(LEVEL_BUTTON_IMG, (self.rect.width, self.rect.height))
-        self.blit(temp_img, (0, 0))
+        self.rect.height = (height + MENU_OFFSET) * self.display.screen_ratio
+        temp_img = pg.transform.scale(LEVEL_BUTTON_IMG, (SCREEN_WIDTH - 2 * MENU_OFFSET, height + MENU_OFFSET))
+
         height = MENU_OFFSET
         for text in texts:
-            self.blit(text, (MENU_OFFSET, height))
+            temp_img.blit(text, (MENU_OFFSET, height))
             height += MENU_TEXT_SIZE * 2
+
+        super().__init__((self.rect.width, self.rect.height))
+        self.blit(pg.transform.scale(temp_img, (self.rect.width, self.rect.height)), (0, 0))
 
     def set_text(self, text):
         self.text = text
@@ -334,12 +344,14 @@ class Explosion(pg.sprite.Sprite):
 
 class NewEnemyBox(pg.Surface):
     def __init__(self):
+        self.display = MainDisplay.get_instance()
         self.enabled = False
         self.show = False
         self.enemy = None
         self.opacity = 0
-        self.rect = pg.Rect(MENU_OFFSET * 9, MENU_OFFSET * 9, SCREEN_WIDTH - MENU_OFFSET * 18, SCREEN_HEIGHT - MENU_OFFSET * 18)
-        super().__init__(self.rect.size)
+        self.rect_size = (SCREEN_WIDTH - MENU_OFFSET * 18, SCREEN_HEIGHT - MENU_OFFSET * 18)
+        self.real_rect_size = (round(self.rect_size[0] * self.display.screen_ratio), round(self.rect_size[1] * self.display.screen_ratio))
+        super().__init__(self.real_rect_size)
 
     def get_surf(self):
         self.convert_alpha()
@@ -347,15 +359,16 @@ class NewEnemyBox(pg.Surface):
         return self
 
     def draw(self):
+        temp_surf = pg.Surface(self.rect_size)
         enemy_dat = ENEMY_DATA[self.enemy]
-        self.blit(pg.transform.scale(LEVEL_BUTTON_IMG, self.rect.size), (0, 0))
+        temp_surf.blit(pg.transform.scale(LEVEL_BUTTON_IMG, self.rect_size), (0, 0))
 
         big_font = pg.font.Font(FONT, MENU_TEXT_SIZE * 4)
         title = big_font.render("A NEW ENEMY APPEARS!", 1, WHITE)
-        self.blit(title, title.get_rect(center = (self.rect.width / 2, MENU_OFFSET * 7)))
+        temp_surf.blit(title, title.get_rect(center = (self.rect_size[0] / 2, MENU_OFFSET * 7)))
 
         enemy_image = pg.transform.scale(enemy_dat["image"], (300, 300))
-        self.blit(enemy_image, enemy_image.get_rect(bottomleft = (MENU_OFFSET * 2, self.rect.height - MENU_OFFSET * 6)))
+        temp_surf.blit(enemy_image, enemy_image.get_rect(bottomleft = (MENU_OFFSET * 2, self.rect_size[1] - MENU_OFFSET * 6)))
 
         texts = []
         texts.append([("Name: " + self.enemy.replace("_", " ").title(), WHITE)])
@@ -386,9 +399,11 @@ class NewEnemyBox(pg.Surface):
             width = enemy_image.get_width() + MENU_OFFSET * 4
             for text, color in line:
                 text_img = font.render(text, 1, color)
-                self.blit(text_img, text_img.get_rect(topleft = (width, height)))
+                temp_surf.blit(text_img, text_img.get_rect(topleft = (width, height)))
                 width += text_img.get_width()
             height += text_img.get_height() + MENU_OFFSET
+
+        self.blit(pg.transform.scale(temp_surf, self.real_rect_size), (0, 0))
 
     def show_new_enemy(self, enemy):
         self.enemy = enemy
