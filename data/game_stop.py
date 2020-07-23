@@ -149,10 +149,13 @@ class GameStop(GridDisplay):
         self.game_stop_surf.blit(BACK_BTN_IMGS[self.lost][self.hover_back], self.back_rect)
     
     def event(self, event):
+        global LEVEL_DATA
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.restart_rect.collidepoint(event.pos):
                     BTN_SFX.play()
+                    LevelData.get_instance().reload_levels() # TODO: Remove this dev option
+                                                            # This reloads levels from levels.json each time the game is restarted
                     return "game"
                 elif self.back_rect.collidepoint(event.pos):
                     BTN_SFX.play()
