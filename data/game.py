@@ -29,7 +29,7 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
-skip_to_wave = 22    # TODO: Remove this dev option
+skip_to_wave = 0    # TODO: Remove this dev option
                     # Change this to change which wave you start on. You'll get all the protein from the previous waves.
                     # Indexing starts at 0 and the wave this is set to is inclusive.
                     # i.e. if the value is set to 15, the game will start at wave 16 (when counting from 1).
@@ -276,6 +276,7 @@ class Game(Display):
                 self.protein += i["enemy_count"] * ENEMY_DATA[i["enemy_type"]]["protein"]
 
             self.wave += 1
+            self.ui.wave = self.wave
 
         if self.wave == self.max_wave:
             return
@@ -332,7 +333,7 @@ class Game(Display):
         for projectile in self.projectiles:
             temp_surf.blit(projectile.image, projectile.rect)
         
-        self.draw_aoe_sprites(self)
+        self.draw_aoe_sprites(temp_surf)
         temp_surf.blit(self.aoe_surf, (0, 0))
 
         for explosion in self.explosions:

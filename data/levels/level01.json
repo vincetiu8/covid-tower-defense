@@ -695,9 +695,291 @@
                 {
                     "start": 0,
                     "enemy_type": "west_nile_virus",
+                    "enemy_count": 1,
+                    "spawn_delay": 10,
+                    "spawn_rate": 0.5
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.075
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 20,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.075
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 20,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.075
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 25,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.075
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 25,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.075
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 25,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.075
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 30,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.075
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 30,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.075
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 30,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.075
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.05
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 20,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.05
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 20,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.05
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "marburg_virus",
+                    "enemy_count": 1,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.05
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 50,
+                    "spawn_delay": 12,
+                    "spawn_rate": 0.05
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 50,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.05
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 25,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.05
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 50,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.04
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 25,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.04
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "west_nile_virus",
                     "enemy_count": 5,
                     "spawn_delay": 10,
                     "spawn_rate": 0.5
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 25,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.05
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 25,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.05
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "west_nile_virus",
+                    "enemy_count": 7,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.5
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "marburg_virus",
+                    "enemy_count": 1,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.05
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 10,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.025
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 10,
+                    "spawn_delay": 10,
+                    "spawn_rate": 0.025
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 10,
+                    "spawn_delay": 15,
+                    "spawn_rate": 0.025
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 100,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.025
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "west_nile_virus",
+                    "enemy_count": 15,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "west_nile_virus",
+                    "enemy_count": 10,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 25,
+                    "spawn_delay": 7.5,
+                    "spawn_rate": 0.025
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 25,
+                    "spawn_delay": 10,
+                    "spawn_rate": 0.025
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 50,
+                    "spawn_delay": 2.5,
+                    "spawn_rate": 0.025
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "west_nile_virus",
+                    "enemy_count": 5,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "west_nile_virus",
+                    "enemy_count": 5,
+                    "spawn_delay": 10,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "west_nile_virus",
+                    "enemy_count": 5,
+                    "spawn_delay": 15,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "marburg_virus",
+                    "enemy_count": 3,
+                    "spawn_delay": 10,
+                    "spawn_rate": 1
                 }
             ]
         ],

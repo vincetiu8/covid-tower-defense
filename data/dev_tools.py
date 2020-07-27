@@ -135,6 +135,7 @@ class DevClass(Game):
         for x, list in enumerate(self.map.get_tower_map()):
             for y, tower in enumerate(list):
                 if tower != None:
+                    tower.kill()
                     self.map.remove_tower(x, y)
                     temp_tower = Tower(self, tower.rect.x, tower.rect.y, self.tower_names[self.current_tower])
                     temp_tower.stage = self.current_stage
@@ -778,6 +779,7 @@ class LevelEditMenu(DevClass):
                 LEVEL_DATA[self.level]["waves"][self.wave][self.sub_wave][attr] = self.enemy_types[ATTR_DATA["sub_wave"][attr]["default"]]
             else:
                 LEVEL_DATA[self.level]["waves"][self.wave][self.sub_wave][attr] = ATTR_DATA["sub_wave"][attr]["default"]
+
 class DevUI():
     def __init__(self, save=False):
         self.save = save
@@ -793,6 +795,25 @@ class DevUI():
             "increment": 1,
             "dp": 0
         }, 1, disabled=False))
+
+    # From game ui, just pass here since these sections aren't in the dev UI
+    def generate_header(self):
+        pass
+
+    def generate_body(self):
+        pass
+
+    def generate_next_wave(self):
+        pass
+
+    def generate_header_wrapper(self):
+        pass
+
+    def generate_body_wrapper(self):
+        pass
+
+    def generate_next_wave_wrapper(self):
+        pass
 
     def new_attr(self, attribute):
         self.attributes.append(attribute)
