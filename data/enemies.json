@@ -52,7 +52,7 @@
         "shield_recharge_delay": 0.5,
         "shield_recharge_rate": 0.075,
         "mutate": false,
-        "speed": 120,
+        "speed": 100,
         "description": "It's hard to put down this beast!"
     },
     "hantavirus": {
@@ -230,7 +230,7 @@
         "explode_on_death": false,
         "flying": true,
         "hp": 50,
-        "protein": 6,
+        "protein": 7,
         "shield": true,
         "shield_hp": 15,
         "shield_recharge_delay": 1,
@@ -251,15 +251,15 @@
     },
     "zika_virus": {
         "explode_on_death": false,
-        "flying": true,
+        "flying": false,
         "hp": 75,
-        "protein": 7,
+        "protein": 5,
         "shield": true,
         "shield_hp": 15,
         "shield_recharge_delay": 0,
         "shield_recharge_rate": 0.2,
         "mutate": false,
-        "speed": 250,
+        "speed": 110,
         "description": "Yet another enemy you can thank the mosquito for."
     }
 }
