@@ -1185,6 +1185,7 @@ class Attribute():
                     surf_list.append(minus_button)
                     self.minus_button_rect = minus_button.get_rect()
 
+                print(self.name)
                 cur_val_text = font.render(str(self.current_value), 1, WHITE)
                 surf_list.append(cur_val_text)
 

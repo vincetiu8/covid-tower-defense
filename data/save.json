@@ -91,11 +91,18 @@
     ],
     "owned_towers": [
         "t_cell",
-        "mast_cell"
+        "mast_cell",
+        "nk_cell",
+        "dead_cell",
+        "mitochondria",
+        "monocyte"
     ],
     "seen_enemies": [
         "common_cold",
-        "hepatitis_a"
+        "hepatitis_a",
+        "polio",
+        "coronavirus",
+        "smallpox"
     ],
     "game_attrs": {
         "lives": {

@@ -101,7 +101,7 @@
         "unlock_cost": {
             "type": "float",
             "min": 0,
-            "max": 250,
+            "max": 500,
             "increment": 10,
             "dp": -1,
             "default": 50
@@ -226,7 +226,7 @@
         "rotating": {
             "type": "bool",
             "default": true,
-            "ignore_if_false": ["rotation_speed"]
+            "ignore_if_false": ["rotation_speed", "rotation_directions"]
         },
         "rotation_speed": {
             "type": "float",
@@ -235,6 +235,14 @@
             "increment": 1,
             "dp": 0,
             "default": 180
+        },
+        "rotation_directions": {
+            "type": "float",
+            "min": 0,
+            "max": 360,
+            "increment": 1,
+            "dp": 0,
+            "default": 0
         },
         "tracking": {
             "type": "bool",

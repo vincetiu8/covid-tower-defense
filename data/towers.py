@@ -36,6 +36,7 @@ class Projectile(pg.sprite.Sprite):
         self.direction = args[9]
         pg.transform.rotate(self.image, args[9])
         self.shield_damage = args[11]
+        self.strikethrough = args[12]
         self.time_passed = 0
         self.carry = 0
         self.end = args[6] * 1000
@@ -64,7 +65,8 @@ class Projectile(pg.sprite.Sprite):
                 self.tower.kills += 1
             if self.slow_speed != 1:
                 hits[0].slow(self.slow_speed, self.slow_duration)
-            self.kill()
+            if not self.strikethrough:
+                self.kill()
 
 class TrackingProjectile(Projectile):
     def __init__(self, args):
@@ -147,7 +149,9 @@ class ExplodingProjectile(Projectile):
                     self.tower.kills += 1
                 if self.slow_speed != 1:
                     hit.slow(self.slow_speed, self.slow_duration)
-            self.kill()
+
+            if not self.strikethrough:
+                self.kill()
 
 class TrackingExplodingProjectile(TrackingProjectile, ExplodingProjectile):
     def __init__(self, args):
@@ -181,6 +185,11 @@ class Tower(Obstacle):
 
     def load_tower_data(self):
         data = TOWER_DATA[self.name]["stages"][self.stage]
+        if "lives" in data:
+            self.lives = data["lives"]
+        else:
+            self.lives = 1
+
         self.range = data["range"]
         self.true_range = self.range
         self.base_image = data["base_image"]
@@ -199,6 +208,8 @@ class Tower(Obstacle):
 
             if self.aoe_buff:
                 aoe_buff_types = ["damage", "range"]
+                if data["aoe_buff_type"] == -1:
+                    self.aoe_buff_type = None
                 self.aoe_buff_type = aoe_buff_types[data["aoe_buff_type"]]
                 self.aoe_buff_amount = data["aoe_buff_amount"]
                 load_attack_attrs = False
@@ -214,9 +225,11 @@ class Tower(Obstacle):
             self.tracking = data["tracking"]
             self.bullet_image = data["bullet_image"]
             self.directions = data["directions"]
+            self.strikethrough = data["strikethrough"]
             if self.rotating:
                 self.gun_image = data["gun_image"]
                 self.rotation_speed = data["rotation_speed"]
+                self.rotation_directions = data["rotation_directions"]
 
             self.explode_on_impact = data["explode_on_impact"]
             if self.explode_on_impact:
@@ -244,7 +257,7 @@ class Tower(Obstacle):
             self.upgrade_cost = data["upgrade_cost"]
 
     def on_remove(self):
-        if self.area_of_effect and self.aoe_buff:
+        if self.area_of_effect and self.aoe_buff and self.aoe_buff_type is not None:
             hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.towers, False)
             if (hits):
                 for hit in hits:
@@ -295,7 +308,13 @@ class Tower(Obstacle):
                             if (temp_y - self.rect.centery > 0):
                                 angle += math.pi
 
-                        self.rotation = angle
+                        if self.rotation_directions == 0:
+                            self.rotation = angle
+
+                        else:
+                            increment = math.pi * 2 / self.rotation_directions
+                            self.rotation = round(angle / increment) * increment
+
 
                     rotation = self.rotation
                     increment = math.pi * 2 / self.directions
@@ -303,17 +322,17 @@ class Tower(Obstacle):
                         if self.tracking:
                             if self.explode_on_impact:
                                 TrackingExplodingProjectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
-                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.rotation_speed, self.true_range, self.current_enemy, self.explosion_radius, self.explosion_color])
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.strikethrough, self.rotation_speed, self.true_range, self.current_enemy, self.explosion_radius, self.explosion_color])
                             else:
                                 TrackingProjectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
-                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.rotation_speed, self.true_range, self.current_enemy])
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.strikethrough, self.rotation_speed, self.true_range, self.current_enemy])
 
                         else:
                             if self.explode_on_impact:
                                 ExplodingProjectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed,
-                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.rotation_speed, self.true_range, self.current_enemy, self.explosion_radius, self.explosion_color])
+                                       self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.strikethrough, self.rotation_speed, self.true_range, self.current_enemy, self.explosion_radius, self.explosion_color])
                             else:
-                                Projectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage])
+                                Projectile([self.game, self, self.rect.centerx, self.rect.centery, self.bullet_image, self.bullet_speed, self.bullet_lifetime, self.slow_speed, self.slow_duration, rotation, self.true_damage, self.true_shield_damage, self.strikethrough])
 
                         rotation += increment
 
@@ -359,7 +378,7 @@ class Tower(Obstacle):
         self.game.protein -= self.upgrade_cost
         self.stage += 1
         self.buffs = []
-        if self.area_of_effect and self.aoe_buff:
+        if self.area_of_effect and self.aoe_buff and self.aoe_buff_type is not None:
             hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.towers, False)
             if (hits):
                 for hit in hits:
@@ -369,7 +388,7 @@ class Tower(Obstacle):
 
         self.load_tower_data()
 
-        if self.area_of_effect and self.aoe_buff:
+        if self.area_of_effect and self.aoe_buff and self.aoe_buff_type is not None:
             hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.towers, False)
             if (hits):
                 for hit in hits:

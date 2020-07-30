@@ -5,7 +5,6 @@
         "stages": [
             {
                 "area_of_effect": false,
-                "at": 2,
                 "attack_speed": 0.3,
                 "bullet_lifetime": 0.3,
                 "bullet_speed": 1000,
@@ -19,7 +18,9 @@
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 10,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "rotation_directions": 0,
+                "strikethrough": false
             },
             {
                 "area_of_effect": false,
@@ -36,7 +37,9 @@
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 8,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "rotation_directions": 0,
+                "strikethrough": false
             },
             {
                 "area_of_effect": false,
@@ -53,7 +56,9 @@
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 12,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "rotation_directions": 0,
+                "strikethrough": false
             }
         ]
     },
@@ -76,7 +81,8 @@
                 "slow_speed": 1,
                 "tracking": false,
                 "upgrade_cost": 15,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "strikethrough": false
             },
             {
                 "area_of_effect": false,
@@ -92,7 +98,8 @@
                 "slow_speed": 1,
                 "tracking": false,
                 "upgrade_cost": 8,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "strikethrough": false
             },
             {
                 "area_of_effect": false,
@@ -109,7 +116,9 @@
                 "slow_speed": 1,
                 "tracking": false,
                 "upgrade_cost": 9,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "rotation_directions": 0,
+                "strikethrough": false
             }
         ]
     },
@@ -132,7 +141,9 @@
                 "slow_speed": 0.6,
                 "tracking": true,
                 "upgrade_cost": 9,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "rotation_directions": 0,
+                "strikethrough": false
             },
             {
                 "area_of_effect": false,
@@ -149,7 +160,9 @@
                 "slow_speed": 0.5,
                 "tracking": true,
                 "upgrade_cost": 7,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "rotation_directions": 0,
+                "strikethrough": false
             },
             {
                 "area_of_effect": false,
@@ -166,7 +179,9 @@
                 "slow_speed": 0.4,
                 "tracking": true,
                 "upgrade_cost": 13,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "rotation_directions": 0,
+                "strikethrough": false
             }
         ]
     },
@@ -190,7 +205,9 @@
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 16,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "rotation_directions": 0,
+                "strikethrough": false
             },
             {
                 "area_of_effect": false,
@@ -208,7 +225,9 @@
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 14,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "rotation_directions": 0,
+                "strikethrough": false
             },
             {
                 "area_of_effect": false,
@@ -226,7 +245,9 @@
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 36,
-                "explode_on_impact": false
+                "explode_on_impact": false,
+                "rotation_directions": 0,
+                "strikethrough": false
             }
         ]
     },
@@ -293,7 +314,9 @@
                 "tracking": true,
                 "explode_on_impact": true,
                 "explosion_radius": 50,
-                "explosion_color": 2
+                "explosion_color": 2,
+                "rotation_directions": 0,
+                "strikethrough": false
             },
             {
                 "damage": 7,
@@ -312,7 +335,9 @@
                 "tracking": true,
                 "explode_on_impact": true,
                 "explosion_radius": 75,
-                "explosion_color": 2
+                "explosion_color": 2,
+                "rotation_directions": 0,
+                "strikethrough": false
             },
             {
                 "damage": 12,
@@ -331,7 +356,9 @@
                 "tracking": true,
                 "explode_on_impact": true,
                 "explosion_radius": 100,
-                "explosion_color": 2
+                "explosion_color": 2,
+                "rotation_directions": 0,
+                "strikethrough": false
             }
         ]
     },
@@ -386,70 +413,28 @@
         "stages": [
             {
                 "aoe_buff": true,
-                "damage": 3,
-                "different_shield_damage": false,
-                "shield_damage": 3,
                 "area_of_effect": true,
                 "aura_color": 3,
-                "attack_speed": 0.5,
-                "bullet_speed": 1000,
-                "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
                 "range": 125,
                 "upgrade_cost": 20,
-                "directions": 1,
-                "rotating": true,
-                "rotation_speed": 180,
-                "tracking": true,
-                "explode_on_impact": false,
-                "explosion_radius": 250,
                 "aoe_buff_type": 0,
                 "aoe_buff_amount": 1
             },
             {
                 "aoe_buff": true,
-                "damage": 3,
-                "different_shield_damage": false,
-                "shield_damage": 3,
                 "area_of_effect": true,
                 "aura_color": 3,
-                "attack_speed": 0.5,
-                "bullet_speed": 1000,
-                "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
                 "range": 125,
                 "upgrade_cost": 15,
-                "directions": 1,
-                "rotating": true,
-                "rotation_speed": 180,
-                "tracking": true,
-                "explode_on_impact": false,
-                "explosion_radius": 250,
                 "aoe_buff_type": 0,
                 "aoe_buff_amount": 3
             },
             {
                 "aoe_buff": true,
-                "damage": 3,
-                "different_shield_damage": false,
-                "shield_damage": 3,
                 "area_of_effect": true,
                 "aura_color": 3,
-                "attack_speed": 0.5,
-                "bullet_speed": 1000,
-                "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
                 "range": 200,
                 "upgrade_cost": 15,
-                "directions": 1,
-                "rotating": true,
-                "rotation_speed": 180,
-                "tracking": true,
-                "explode_on_impact": false,
-                "explosion_radius": 250,
                 "aoe_buff_type": 0,
                 "aoe_buff_amount": 3
             }
@@ -465,22 +450,8 @@
                 "aoe_buff": true,
                 "aoe_buff_type": 1,
                 "aoe_buff_amount": 25,
-                "damage": 3,
-                "different_shield_damage": false,
-                "shield_damage": 3,
-                "attack_speed": 0.5,
-                "bullet_speed": 1000,
-                "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
                 "range": 125,
-                "upgrade_cost": 15,
-                "directions": 1,
-                "rotating": true,
-                "rotation_speed": 180,
-                "tracking": true,
-                "explode_on_impact": false,
-                "explosion_radius": 250
+                "upgrade_cost": 15
             },
             {
                 "area_of_effect": true,
@@ -488,22 +459,8 @@
                 "aoe_buff": true,
                 "aoe_buff_type": 1,
                 "aoe_buff_amount": 50,
-                "damage": 3,
-                "different_shield_damage": false,
-                "shield_damage": 3,
-                "attack_speed": 0.5,
-                "bullet_speed": 1000,
-                "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
                 "range": 125,
-                "upgrade_cost": 10,
-                "directions": 1,
-                "rotating": true,
-                "rotation_speed": 180,
-                "tracking": true,
-                "explode_on_impact": false,
-                "explosion_radius": 250
+                "upgrade_cost": 10
             },
             {
                 "area_of_effect": true,
@@ -511,22 +468,107 @@
                 "aoe_buff": true,
                 "aoe_buff_type": 1,
                 "aoe_buff_amount": 50,
-                "damage": 3,
-                "different_shield_damage": false,
-                "shield_damage": 3,
-                "attack_speed": 0.5,
-                "bullet_speed": 1000,
-                "bullet_lifetime": 0.5,
-                "slow_speed": 1,
-                "slow_duration": 0,
                 "range": 200,
-                "upgrade_cost": 10,
+                "upgrade_cost": 10
+            }
+        ]
+    },
+    "nk_cell": {
+        "description": "This cell's bullets strike through enemies, hitting multiple at once!",
+        "unlock_cost": 420,
+        "stages": [
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.4,
+                "bullet_lifetime": 0.5,
+                "bullet_speed": 500,
+                "damage": 5,
+                "different_shield_damage": false,
                 "directions": 1,
+                "range": 250,
                 "rotating": true,
-                "rotation_speed": 180,
-                "tracking": true,
+                "rotation_directions": 4,
+                "rotation_speed": 360,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": false,
+                "upgrade_cost": 20,
                 "explode_on_impact": false,
-                "explosion_radius": 250
+                "strikethrough": true
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.25,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 1250,
+                "damage": 3,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 300,
+                "rotating": true,
+                "rotation_directions": 4,
+                "rotation_speed": 360,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": false,
+                "upgrade_cost": 26,
+                "explode_on_impact": false,
+                "strikethrough": true
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.2,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 1500,
+                "damage": 4,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 350,
+                "rotating": true,
+                "rotation_directions": 4,
+                "rotation_speed": 360,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": false,
+                "upgrade_cost": 34,
+                "explode_on_impact": false,
+                "strikethrough": true
+            }
+        ]
+    },
+    "dead_cell": {
+        "description": "A cell who valiantly died in battle. Still used as quite an effective wall.",
+        "unlock_cost": 420,
+        "stages": [
+            {
+                "aoe_buff": true,
+                "area_of_effect": true,
+                "aura_color": 0,
+                "range": 0,
+                "upgrade_cost": 5,
+                "aoe_buff_type": -1,
+                "aoe_buff_amount": 0,
+                "lives": 1
+            },
+            {
+                "aoe_buff": true,
+                "area_of_effect": true,
+                "aura_color": 0,
+                "range": 0,
+                "upgrade_cost": 7,
+                "aoe_buff_type": -1,
+                "aoe_buff_amount": 0,
+                "lives": 2
+            },
+            {
+                "aoe_buff": true,
+                "area_of_effect": true,
+                "aura_color": 0,
+                "range": 0,
+                "upgrade_cost": 10,
+                "aoe_buff_type": -1,
+                "aoe_buff_amount": 0,
+                "lives": 3
             }
         ]
     }

@@ -38,6 +38,8 @@ Assets used:
 
 - http://soundbible.com/1669-Robot-Blip-2.html
 
+- https://soundbible.com/1769-Laser-Gun.html
+
 **MUSIC**
 
 - Wyver9 - Beat'em up Level (8-bit) https://www.newgrounds.com/audio/listen/643418 (Music for menu)
