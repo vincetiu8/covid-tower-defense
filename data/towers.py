@@ -185,11 +185,8 @@ class Tower(Obstacle):
 
     def load_tower_data(self):
         data = TOWER_DATA[self.name]["stages"][self.stage]
-        if "lives" in data:
-            self.lives = data["lives"]
-        else:
-            self.lives = 1
 
+        self.lives = data["lives"] if "lives" in data else 1
         self.range = data["range"]
         self.true_range = self.range
         self.base_image = data["base_image"]
@@ -208,9 +205,7 @@ class Tower(Obstacle):
 
             if self.aoe_buff:
                 aoe_buff_types = ["damage", "range"]
-                if data["aoe_buff_type"] == -1:
-                    self.aoe_buff_type = None
-                self.aoe_buff_type = aoe_buff_types[data["aoe_buff_type"]]
+                self.aoe_buff_type = aoe_buff_types[data["aoe_buff_type"]] if "aoe_buff_type" != -1 else None
                 self.aoe_buff_amount = data["aoe_buff_amount"]
                 load_attack_attrs = False
         else:
@@ -228,8 +223,8 @@ class Tower(Obstacle):
             self.strikethrough = data["strikethrough"]
             if self.rotating:
                 self.gun_image = data["gun_image"]
-                self.rotation_speed = data["rotation_speed"]
-                self.rotation_directions = data["rotation_directions"]
+                self.rotation_speed = data["rotation_speed"] if "rotation_speed" in data else 360
+                self.rotation_directions = data["rotation_directions"]if "rotation_directions" in data else 0
 
             self.explode_on_impact = data["explode_on_impact"]
             if self.explode_on_impact:

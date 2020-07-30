@@ -12,14 +12,12 @@
                 "different_shield_damage": false,
                 "directions": 1,
                 "range": 200,
-                "rotating": true,
-                "rotation_speed": 360,
+                "rotating": true, 
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 10,
-                "explode_on_impact": false,
-                "rotation_directions": 0,
+                "explode_on_impact": false, 
                 "strikethrough": false
             },
             {
@@ -31,14 +29,12 @@
                 "different_shield_damage": false,
                 "directions": 1,
                 "range": 220,
-                "rotating": true,
-                "rotation_speed": 360,
+                "rotating": true, 
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 8,
-                "explode_on_impact": false,
-                "rotation_directions": 0,
+                "explode_on_impact": false, 
                 "strikethrough": false
             },
             {
@@ -50,14 +46,12 @@
                 "different_shield_damage": false,
                 "directions": 1,
                 "range": 250,
-                "rotating": true,
-                "rotation_speed": 360,
+                "rotating": true, 
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 12,
-                "explode_on_impact": false,
-                "rotation_directions": 0,
+                "explode_on_impact": false, 
                 "strikethrough": false
             }
         ]
@@ -116,8 +110,7 @@
                 "slow_speed": 1,
                 "tracking": false,
                 "upgrade_cost": 9,
-                "explode_on_impact": false,
-                "rotation_directions": 0,
+                "explode_on_impact": false, 
                 "strikethrough": false
             }
         ]
@@ -135,14 +128,12 @@
                 "different_shield_damage": false,
                 "directions": 1,
                 "range": 150,
-                "rotating": true,
-                "rotation_speed": 360,
+                "rotating": true, 
                 "slow_duration": 3,
                 "slow_speed": 0.6,
                 "tracking": true,
                 "upgrade_cost": 9,
-                "explode_on_impact": false,
-                "rotation_directions": 0,
+                "explode_on_impact": false, 
                 "strikethrough": false
             },
             {
@@ -154,14 +145,12 @@
                 "different_shield_damage": false,
                 "directions": 1,
                 "range": 150,
-                "rotating": true,
-                "rotation_speed": 360,
+                "rotating": true, 
                 "slow_duration": 4.0,
                 "slow_speed": 0.5,
                 "tracking": true,
                 "upgrade_cost": 7,
-                "explode_on_impact": false,
-                "rotation_directions": 0,
+                "explode_on_impact": false, 
                 "strikethrough": false
             },
             {
@@ -173,14 +162,12 @@
                 "different_shield_damage": false,
                 "directions": 1,
                 "range": 200,
-                "rotating": true,
-                "rotation_speed": 360,
+                "rotating": true, 
                 "slow_duration": 5,
                 "slow_speed": 0.4,
                 "tracking": true,
                 "upgrade_cost": 13,
-                "explode_on_impact": false,
-                "rotation_directions": 0,
+                "explode_on_impact": false, 
                 "strikethrough": false
             }
         ]
@@ -198,15 +185,13 @@
                 "different_shield_damage": true,
                 "directions": 1,
                 "range": 250,
-                "rotating": true,
-                "rotation_speed": 360,
+                "rotating": true, 
                 "shield_damage": 8,
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 16,
-                "explode_on_impact": false,
-                "rotation_directions": 0,
+                "explode_on_impact": false, 
                 "strikethrough": false
             },
             {
@@ -218,15 +203,13 @@
                 "different_shield_damage": true,
                 "directions": 1,
                 "range": 275,
-                "rotating": true,
-                "rotation_speed": 360,
+                "rotating": true, 
                 "shield_damage": 12,
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 14,
-                "explode_on_impact": false,
-                "rotation_directions": 0,
+                "explode_on_impact": false, 
                 "strikethrough": false
             },
             {
@@ -238,15 +221,13 @@
                 "different_shield_damage": true,
                 "directions": 1,
                 "range": 300,
-                "rotating": true,
-                "rotation_speed": 360,
+                "rotating": true, 
                 "shield_damage": 20,
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": true,
                 "upgrade_cost": 36,
-                "explode_on_impact": false,
-                "rotation_directions": 0,
+                "explode_on_impact": false, 
                 "strikethrough": false
             }
         ]
@@ -314,8 +295,7 @@
                 "tracking": true,
                 "explode_on_impact": true,
                 "explosion_radius": 50,
-                "explosion_color": 2,
-                "rotation_directions": 0,
+                "explosion_color": 2, 
                 "strikethrough": false
             },
             {
@@ -335,8 +315,7 @@
                 "tracking": true,
                 "explode_on_impact": true,
                 "explosion_radius": 75,
-                "explosion_color": 2,
-                "rotation_directions": 0,
+                "explosion_color": 2, 
                 "strikethrough": false
             },
             {
@@ -356,8 +335,7 @@
                 "tracking": true,
                 "explode_on_impact": true,
                 "explosion_radius": 100,
-                "explosion_color": 2,
-                "rotation_directions": 0,
+                "explosion_color": 2, 
                 "strikethrough": false
             }
         ]
@@ -487,8 +465,7 @@
                 "directions": 1,
                 "range": 250,
                 "rotating": true,
-                "rotation_directions": 4,
-                "rotation_speed": 360,
+                "rotation_directions": 4, 
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": false,
@@ -506,8 +483,7 @@
                 "directions": 1,
                 "range": 300,
                 "rotating": true,
-                "rotation_directions": 4,
-                "rotation_speed": 360,
+                "rotation_directions": 4, 
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": false,
@@ -525,8 +501,7 @@
                 "directions": 1,
                 "range": 350,
                 "rotating": true,
-                "rotation_directions": 4,
-                "rotation_speed": 360,
+                "rotation_directions": 4, 
                 "slow_duration": 0,
                 "slow_speed": 1,
                 "tracking": false,
