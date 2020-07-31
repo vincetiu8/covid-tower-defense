@@ -28,13 +28,12 @@ class Projectile(pg.sprite.Sprite):
         self.rect.centerx = args[2]
         self.rect.centery = args[3]
         self.raw_image = args[4]
-        self.image = self.raw_image.copy()
         self.speed = args[5]
         self.slow_speed = args[7]
         self.slow_duration = args[8]
         self.damage = args[10]
         self.direction = args[9]
-        pg.transform.rotate(self.image, args[9])
+        self.image = pg.transform.rotate(self.raw_image, math.degrees(args[9]))
         self.shield_damage = args[11]
         self.strikethrough = args[12]
         self.time_passed = 0
@@ -257,7 +256,7 @@ class Tower(Obstacle):
             hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.towers, False)
             if (hits):
                 for hit in hits:
-                    if self == hit:
+                    if self == hit or (hit.area_of_effect and hit.aoe_buff):
                         continue
                     hit.debuff(self, self.aoe_buff_type, self.aoe_buff_amount)
 
@@ -268,7 +267,7 @@ class Tower(Obstacle):
                     hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.towers, False)
                     if (hits):
                         for hit in hits:
-                            if self == hit or self in hit.buffs:
+                            if self == hit or self in hit.buffs or (hit.area_of_effect and hit.aoe_buff):
                                 continue
                             hit.buff(self, self.aoe_buff_type, self.aoe_buff_amount)
                     return
@@ -352,27 +351,25 @@ class Tower(Obstacle):
 
     def buff(self, buff_tower, buff_type, amount):
         self.buffs.append(buff_tower)
-        if not self.aoe_buff:
-            if buff_type == "range":
-                self.true_range += amount
-            elif buff_type == "damage":
-                self.true_damage += amount
-                if self.different_shield_damage:
-                    self.true_shield_damage += amount
-            elif buff_type == "attack_speed":
-                self.true_attack_speed *= amount
+        if buff_type == "range":
+            self.true_range += amount
+        elif buff_type == "damage":
+            self.true_damage += amount
+            if self.different_shield_damage:
+                self.true_shield_damage += amount
+        elif buff_type == "attack_speed":
+            self.true_attack_speed *= amount
 
     def debuff(self, buff_tower, buff_type, amount):
         self.buffs.remove(buff_tower)
-        if not self.aoe_buff:
-            if buff_type == "range":
-                self.true_range -= amount
-            elif buff_type == "damage":
-                self.true_damage -= amount
-                if self.different_shield_damage:
-                    self.true_shield_damage -= amount
-            elif buff_type == "attack_speed":
-                self.true_attack_speed /= amount
+        if buff_type == "range":
+            self.true_range -= amount
+        elif buff_type == "damage":
+            self.true_damage -= amount
+            if self.different_shield_damage:
+                self.true_shield_damage -= amount
+        elif buff_type == "attack_speed":
+            self.true_attack_speed /= amount
 
     def upgrade(self):
         self.game.protein -= self.upgrade_cost
@@ -382,7 +379,7 @@ class Tower(Obstacle):
             hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.towers, False)
             if (hits):
                 for hit in hits:
-                    if self == hit:
+                    if self == hit or (hit.area_of_effect and hit.aoe_buff):
                         continue
                     hit.debuff(self, self.aoe_buff_type, self.aoe_buff_amount)
 
@@ -392,7 +389,7 @@ class Tower(Obstacle):
             hits = pg.sprite.spritecollide(self.aoe_sprite, self.game.towers, False)
             if (hits):
                 for hit in hits:
-                    if self == hit or self in hit.buffs:
+                    if self == hit or self in hit.buffs or (hit.area_of_effect and hit.aoe_buff):
                         continue
                     hit.buff(self, self.aoe_buff_type, self.aoe_buff_amount)
 

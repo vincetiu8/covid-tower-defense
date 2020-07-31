@@ -579,5 +579,65 @@
                 "upgrade_cost": 30
             }
         ]
+    },
+    "basophil": {
+        "description": "These cells fire in 4 directions and have huge range! They can't track enemies, though.",
+        "unlock_cost": 15,
+        "stages": [
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.4,
+                "bullet_lifetime": 0.5,
+                "bullet_speed": 500,
+                "damage": 1,
+                "different_shield_damage": false,
+                "directions": 6,
+                "range": 200,
+                "rotating": true,
+                "rotation_speed": 10,
+                "slow_duration": 0.25,
+                "slow_speed": 0.95,
+                "tracking": true,
+                "upgrade_cost": 25,
+                "explode_on_impact": false,
+                "strikethrough": false
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.35,
+                "bullet_lifetime": 0.5,
+                "bullet_speed": 600,
+                "damage": 2,
+                "different_shield_damage": false,
+                "directions": 6,
+                "range": 250,
+                "rotating": true,
+                "rotation_speed": 15,
+                "slow_duration": 0.375,
+                "slow_speed": 0.9,
+                "tracking": false,
+                "upgrade_cost": 35,
+                "explode_on_impact": false,
+                "strikethrough": false
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.3,
+                "bullet_lifetime": 0.5,
+                "bullet_speed": 750,
+                "damage": 3,
+                "different_shield_damage": false,
+                "directions": 6,
+                "range": 300,
+                "rotating": true,
+                "rotation_speed": 20,
+                "slow_duration": 0.5,
+                "slow_speed": 0.85,
+                "tracking": false,
+                "upgrade_cost": 48,
+                "explode_on_impact": false,
+                "strikethrough": false
+            }
+        ]
     }
 }

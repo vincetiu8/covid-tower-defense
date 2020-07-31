@@ -40,6 +40,8 @@ Assets used:
 
 - https://soundbible.com/1769-Laser-Gun.html
 
+- http://soundbible.com/512-Squishy-2.html
+
 **MUSIC**
 
 - Wyver9 - Beat'em up Level (8-bit) https://www.newgrounds.com/audio/listen/643418 (Music for menu)
