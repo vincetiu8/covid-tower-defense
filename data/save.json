@@ -97,7 +97,8 @@
         "mitochondria",
         "monocyte",
         "memory_cell",
-        "basophil"
+        "basophil",
+        "macrophage"
     ],
     "seen_enemies": [
         "common_cold",

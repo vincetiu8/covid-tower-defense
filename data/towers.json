@@ -581,7 +581,7 @@
         ]
     },
     "basophil": {
-        "description": "These cells fire in 4 directions and have huge range! They can't track enemies, though.",
+        "description": "This cell fires its tracking bullets in 6 directions!",
         "unlock_cost": 15,
         "stages": [
             {
@@ -636,6 +636,75 @@
                 "tracking": false,
                 "upgrade_cost": 48,
                 "explode_on_impact": false,
+                "strikethrough": false
+            }
+        ]
+    },
+    "macrophage": {
+        "description": "This cell sure slows enemies down and does a bit of damage too! Not very effective against shields, though.",
+        "unlock_cost": 15,
+        "stages": [
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.7,
+                "bullet_lifetime": 0.5,
+                "bullet_speed": 750,
+                "damage": 1,
+                "different_shield_damage": true,
+                "shield_damage": 0,
+                "directions": 1,
+                "range": 250,
+                "rotating": true,
+                "rotation_speed": 20,
+                "slow_duration": 1,
+                "slow_speed": 0.8,
+                "tracking": true,
+                "upgrade_cost": 30,
+                "explode_on_impact": true,
+                "explosion_radius": 25,
+                "explosion_color": 2,
+                "strikethrough": false
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.45,
+                "bullet_lifetime": 0.5,
+                "bullet_speed": 1000,
+                "damage": 2,
+                "different_shield_damage": true,
+                "shield_damage": 0,
+                "directions": 1,
+                "range": 300,
+                "rotating": true,
+                "rotation_speed": 20,
+                "slow_duration": 1.25,
+                "slow_speed": 0.75,
+                "tracking": true,
+                "upgrade_cost": 34,
+                "explode_on_impact": true,
+                "explosion_radius": 50,
+                "explosion_color": 2,
+                "strikethrough": false
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.4,
+                "bullet_lifetime": 0.5,
+                "bullet_speed": 1250,
+                "damage": 1,
+                "different_shield_damage": true,
+                "shield_damage": 0,
+                "directions": 1,
+                "range": 325,
+                "rotating": true,
+                "rotation_speed": 25,
+                "slow_duration": 1.5,
+                "slow_speed": 0.7,
+                "tracking": true,
+                "upgrade_cost": 40,
+                "explode_on_impact": true,
+                "explosion_radius": 75,
+                "explosion_color": 2,
                 "strikethrough": false
             }
         ]
