@@ -394,7 +394,7 @@
                 "area_of_effect": true,
                 "aura_color": 3,
                 "range": 125,
-                "upgrade_cost": 20,
+                "upgrade_cost": 14,
                 "aoe_buff_type": 0,
                 "aoe_buff_amount": 1
             },
@@ -403,7 +403,7 @@
                 "area_of_effect": true,
                 "aura_color": 3,
                 "range": 125,
-                "upgrade_cost": 15,
+                "upgrade_cost": 22,
                 "aoe_buff_type": 0,
                 "aoe_buff_amount": 3
             },
@@ -412,7 +412,7 @@
                 "area_of_effect": true,
                 "aura_color": 3,
                 "range": 200,
-                "upgrade_cost": 15,
+                "upgrade_cost": 68,
                 "aoe_buff_type": 0,
                 "aoe_buff_amount": 3
             }
@@ -429,7 +429,7 @@
                 "aoe_buff_type": 1,
                 "aoe_buff_amount": 25,
                 "range": 125,
-                "upgrade_cost": 15
+                "upgrade_cost": 20
             },
             {
                 "area_of_effect": true,
@@ -447,7 +447,7 @@
                 "aoe_buff_type": 1,
                 "aoe_buff_amount": 50,
                 "range": 200,
-                "upgrade_cost": 10
+                "upgrade_cost": 30
             }
         ]
     },
@@ -544,6 +544,39 @@
                 "aoe_buff_type": -1,
                 "aoe_buff_amount": 0,
                 "lives": 3
+            }
+        ]
+    },
+    "memory_cell": {
+        "description": "This cell helps other towers identify enemies faster, improving their fire rate!",
+        "unlock_cost": 15,
+        "stages": [
+            {
+                "area_of_effect": true,
+                "aura_color": 5,
+                "aoe_buff": true,
+                "aoe_buff_type": 2,
+                "aoe_buff_amount": 0.9,
+                "range": 125,
+                "upgrade_cost": 30
+            },
+            {
+                "area_of_effect": true,
+                "aura_color": 5,
+                "aoe_buff": true,
+                "aoe_buff_type": 2,
+                "aoe_buff_amount": 0.8,
+                "range": 125,
+                "upgrade_cost": 30
+            },
+            {
+                "area_of_effect": true,
+                "aura_color": 5,
+                "aoe_buff": true,
+                "aoe_buff_type": 2,
+                "aoe_buff_amount": 0.7,
+                "range": 125,
+                "upgrade_cost": 30
             }
         ]
     }

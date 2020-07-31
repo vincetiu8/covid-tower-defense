@@ -204,7 +204,7 @@ class Tower(Obstacle):
             self.aoe_buff = data["aoe_buff"]
 
             if self.aoe_buff:
-                aoe_buff_types = ["damage", "range"]
+                aoe_buff_types = ["damage", "range", "attack_speed"]
                 self.aoe_buff_type = aoe_buff_types[data["aoe_buff_type"]] if "aoe_buff_type" != -1 else None
                 self.aoe_buff_amount = data["aoe_buff_amount"]
                 load_attack_attrs = False
@@ -239,6 +239,7 @@ class Tower(Obstacle):
             self.different_shield_damage = data["different_shield_damage"]
             self.sound = data["shoot_sound"]
             self.attack_speed = data["attack_speed"]
+            self.true_attack_speed = self.attack_speed
 
             if self.different_shield_damage:
                 self.shield_damage = data["shield_damage"]
@@ -280,7 +281,7 @@ class Tower(Obstacle):
                         if self.slow_speed != 1:
                             hit.slow(self.slow_speed, self.slow_duration)
                     TOWER_DATA[self.name]["stages"][self.stage]["shoot_sound"].play()
-                    self.next_spawn = self.attack_speed * 1000
+                    self.next_spawn = self.true_attack_speed * 1000
                     self.time_passed = 0
 
             elif self.current_enemy is not None:
@@ -332,7 +333,7 @@ class Tower(Obstacle):
                         rotation += increment
 
                     self.sound.play()
-                    self.next_spawn = self.attack_speed * 1000
+                    self.next_spawn = self.true_attack_speed * 1000
                     self.time_passed = 0
 
         if not self.area_of_effect and \
@@ -358,6 +359,8 @@ class Tower(Obstacle):
                 self.true_damage += amount
                 if self.different_shield_damage:
                     self.true_shield_damage += amount
+            elif buff_type == "attack_speed":
+                self.true_attack_speed *= amount
 
     def debuff(self, buff_tower, buff_type, amount):
         self.buffs.remove(buff_tower)
@@ -368,6 +371,8 @@ class Tower(Obstacle):
                 self.true_damage -= amount
                 if self.different_shield_damage:
                     self.true_shield_damage -= amount
+            elif buff_type == "attack_speed":
+                self.true_attack_speed /= amount
 
     def upgrade(self):
         self.game.protein -= self.upgrade_cost
