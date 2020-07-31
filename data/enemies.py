@@ -238,10 +238,12 @@ class EnemyExplosion(Explosion):
             for tile_y in range(tile_from_coords(y - rad / 2, game.map.tilesize), tile_from_coords(y + rad / 2, game.map.tilesize) + 1):
                 tower = game.map.get_tower(tile_x, tile_y)
                 if tower != None:
-                    hit = True
-                    game.map.remove_tower(tile_x, tile_y)
-                    tower.on_remove()
-                    tower.kill()
+                    tower.lives -= 1
+                    if tower.lives <= 0:
+                        hit = True
+                        game.map.remove_tower(tile_x, tile_y)
+                        tower.on_remove()
+                        tower.kill()
         
         if hit:
             game.pathfinder.clear_nodes(game.map.get_map())

@@ -135,6 +135,7 @@ class DevClass(Game):
         for x, list in enumerate(self.map.get_tower_map()):
             for y, tower in enumerate(list):
                 if tower != None:
+                    tower.kill()
                     self.map.remove_tower(x, y)
                     temp_tower = Tower(self, tower.rect.x, tower.rect.y, self.tower_names[self.current_tower])
                     temp_tower.stage = self.current_stage
@@ -277,9 +278,16 @@ class TowerPreviewMenu(DevClass):
                 elif "ignore_if_false" in ATTR_DATA["stage"][attr] and not \
                 TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr]:
                     ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_false"])
-            self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr],
-                                       TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
-                                           self.current_stage][attr]))
+
+            if attr in TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
+                                           self.current_stage]:
+                attr_val = TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
+                                           self.current_stage][attr]
+
+            else:
+                attr_val = ATTR_DATA["stage"][attr]["default"]
+
+            self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr], attr_val))
 
         self.reload_enemies()
         self.reload_towers()
@@ -794,6 +802,25 @@ class DevUI():
             "dp": 0
         }, 1, disabled=False))
 
+    # Empty calls so game doesn't err out
+    def generate_header_wrapper(self):
+        pass
+
+    def generate_body_wrapper(self):
+        pass
+
+    def generate_next_wave_wrapper(self):
+        pass
+
+    def generate_header(self):
+        pass
+
+    def generate_body(self):
+        pass
+
+    def generate_next_wave(self):
+        pass
+
     def new_attr(self, attribute):
         self.attributes.append(attribute)
 
@@ -1184,6 +1211,7 @@ class Attribute():
                     minus_button.blit(minus_text, minus_text.get_rect(center = minus_button.get_rect().center))
                     surf_list.append(minus_button)
                     self.minus_button_rect = minus_button.get_rect()
+
 
                 cur_val_text = font.render(str(self.current_value), 1, WHITE)
                 surf_list.append(cur_val_text)

@@ -9,17 +9,17 @@
         0,
         -1
     ],
-    "music_vol": 0.0,
-    "sfx_vol": 0.04,
+    "music_vol": 1.0,
+    "sfx_vol": 0.0,
     "width": 1280,
     "height": 720,
     "fullscreen": false,
     "skip_text": true,
-    "max_dna": 250,
+    "max_dna": 260,
     "used_dna": 190,
     "highscores": [
         [
-            86,
+            190,
             0,
             0
         ],
@@ -91,11 +91,23 @@
     ],
     "owned_towers": [
         "t_cell",
-        "mast_cell"
+        "mast_cell",
+        "nk_cell",
+        "dead_cell",
+        "mitochondria",
+        "monocyte",
+        "memory_cell",
+        "basophil",
+        "macrophage",
+        "b_cell",
+        "m_cell"
     ],
     "seen_enemies": [
         "common_cold",
-        "hepatitis_a"
+        "hepatitis_a",
+        "polio",
+        "coronavirus",
+        "smallpox"
     ],
     "game_attrs": {
         "lives": {
