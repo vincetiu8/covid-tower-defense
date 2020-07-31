@@ -101,7 +101,7 @@
         "unlock_cost": {
             "type": "float",
             "min": 0,
-            "max": 500,
+            "max": 1000,
             "increment": 10,
             "dp": -1,
             "default": 50
@@ -201,7 +201,7 @@
         },
         "range": {
             "type": "float",
-            "min": 25,
+            "min": 0,
             "max": 2500,
             "increment": 25,
             "dp": 0,

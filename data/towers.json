@@ -465,6 +465,7 @@
                 "directions": 1,
                 "range": 250,
                 "rotating": true,
+                "rotation_speed": 360,
                 "rotation_directions": 4, 
                 "slow_duration": 0,
                 "slow_speed": 1,
