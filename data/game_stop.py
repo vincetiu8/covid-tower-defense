@@ -144,7 +144,6 @@ class GameStop(GridDisplay):
         self.blit(BACK_BTN_IMGS[self.lost][self.hover_back], self.back_rect)
     
     def event(self, event):
-        global LEVEL_DATA
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.restart_rect.collidepoint(event.pos):
@@ -284,7 +283,7 @@ class GameOver(GameStop):
                 completed = True
                 
             if (SAVE_DATA["highscores"][level][difficulty] < LevelData.get_instance().level_data[level]["protein_goal"][difficulty]
-                and protein >= LEVEL_DATA[level]["protein_goal"][difficulty]):
+                and protein >= LevelData.get_instance().level_data[level]["protein_goal"][difficulty]):
                 SAVE_DATA["max_dna"] += DNA_ON_PROTEIN_GOAL[difficulty]
                 protein_goal = True
                 
