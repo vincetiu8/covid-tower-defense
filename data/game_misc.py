@@ -24,6 +24,7 @@ class UI:
         self.size = HEART_IMG.get_size()[0]
         self.font = pg.font.Font(FONT, self.size * 2)
         self.font2 = pg.font.Font(FONT, self.size)
+        self.font3 = pg.font.Font(FONT, int(HEART_IMG.get_size()[0] * 1.3))
         self.width = 0
 
         self.generate_header()
@@ -125,32 +126,43 @@ class UI:
                 self.body.blit(key_text, temp_rect)
 
         else:
-            tower_dat = TOWER_DATA[self.tower.name]
-            tower_img = pg.transform.scale(tower_dat["stages"][self.tower.stage]["image"], (self.width - MENU_OFFSET * 2, self.width - MENU_OFFSET * 2))
+            tower_img = pg.transform.scale(TOWER_DATA[self.tower.name]["stages"][0]["image"], (self.width - MENU_OFFSET * 2, self.width - MENU_OFFSET * 2))
             self.body.blit(tower_img, self.tower_rects[0])
 
-            font = pg.font.Font(FONT, int(HEART_IMG.get_size()[0] * 1.3))
-            text = font.render("Damage: " + str(tower_dat["stages"][self.tower.stage]["damage"]), 1, WHITE)
-            self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height()))
+            if self.tower.area_of_effect and self.tower.aoe_buff and self.tower.aoe_buff_type is not None:
+                text = self.font3.render("Buff: " + str(self.tower.aoe_buff_type.title()), 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height())),
+                text = self.font3.render("Amount: " + str(self.tower.aoe_buff_amount), 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height()))
 
-            text = font.render("Speed: " + str(tower_dat["stages"][self.tower.stage]["attack_speed"]) + "s", 1, WHITE)
-            self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height()))
+            else:
+                text = self.font3.render("Damage: " + str(self.tower.damage), 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height()))
+                if self.tower.true_damage != self.tower.damage:
+                    buff_text = self.font3.render("+" + str(self.tower.true_damage - self.tower.damage), 1, GREEN)
+                    self.body.blit(buff_text, (MENU_OFFSET + text.get_width(), self.tower_rects[0].top + tower_img.get_height()))
 
-            text = font.render("Hits: " + str(self.tower.hits), 1, WHITE)
-            self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height() * 2))
+                text = self.font3.render("Speed: " + str(self.tower.attack_speed) + "s", 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height()))
+                if self.tower.true_attack_speed != self.tower.attack_speed:
+                    buff_text = self.font3.render(str(round(self.tower.true_attack_speed - self.tower.attack_speed, 2)), 1, GREEN)
+                    self.body.blit(buff_text, (MENU_OFFSET + text.get_width(), self.tower_rects[0].top + tower_img.get_height() + text.get_height()))
 
-            text = font.render("Kills: " + str(self.tower.kills), 1, WHITE)
-            self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height() * 3))
+                text = self.font3.render("Hits: " + str(self.tower.hits), 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height() * 2))
+
+                text = self.font3.render("Kills: " + str(self.tower.kills), 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height() * 3))
 
             refund = 0
             for stage in range(self.tower.stage + 1):
-                refund += round(tower_dat["stages"][stage]["upgrade_cost"] * (1 + self.game.difficulty * 0.25) / 2)
+                refund += round(TOWER_DATA[self.tower.name]["stages"][stage]["upgrade_cost"] * (1 + self.game.difficulty * 0.25) / 2)
             sell_button, self.sell_rect = self.make_button("Sell: " + str(refund), True)
             self.sell_rect.bottom = self.body.get_height()
             self.body.blit(sell_button, self.sell_rect)
 
             if self.tower.stage < 2:
-                upgrade_cost = round(tower_dat["stages"][self.tower.stage + 1]["upgrade_cost"] * (1 + self.game.difficulty * 0.25))
+                upgrade_cost = round(self.tower.upgrade_cost * (1 + self.game.difficulty * 0.25))
                 upgrade_button, self.upgrade_rect = self.make_button("Upgrade: " + str(upgrade_cost), self.game.protein >= upgrade_cost)
                 self.upgrade_rect.bottom = self.sell_rect.bottom - self.sell_rect.height - self.offset
                 self.body.blit(upgrade_button, self.upgrade_rect)

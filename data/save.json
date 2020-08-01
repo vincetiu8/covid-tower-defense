@@ -19,7 +19,7 @@
     "used_dna": 0,
     "highscores": [
         [
-            86,
+            190,
             0,
             0
         ],
@@ -91,13 +91,16 @@
     ],
     "owned_towers": [
         "t_cell",
-        "m_cell",
-        "b_cell",
         "mast_cell",
-        "plasma_cell",
-        "neutrophil",
-        "goblet_cell",
-        "killer_cell"
+        "nk_cell",
+        "dead_cell",
+        "mitochondria",
+        "monocyte",
+        "memory_cell",
+        "basophil",
+        "macrophage",
+        "b_cell",
+        "m_cell"
     ],
     "seen_enemies": [
         "common_cold",
@@ -112,6 +115,7 @@
         "hantavirus",
         "marburg_virus",
         "yellow_fever"
+        "smallpox"
     ],
     "game_attrs": {
         "lives": {

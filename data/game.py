@@ -345,7 +345,10 @@ class Game(Display):
         if self.ui.tower != None and not self.ui.tower.area_of_effect:
             tower_range_img = pg.Surface((self.ui.tower.true_range * 2, self.ui.tower.true_range * 2)).convert_alpha()
             tower_range_img.fill(BLANK)
-            pg.draw.circle(tower_range_img, HALF_WHITE, (self.ui.tower.true_range, self.ui.tower.true_range), self.ui.tower.true_range)
+            if self.ui.tower.true_range != self.ui.tower.range:
+                pg.draw.circle(tower_range_img, HALF_GREEN, (self.ui.tower.true_range, self.ui.tower.true_range),
+                               self.ui.tower.true_range)
+            pg.draw.circle(tower_range_img, HALF_WHITE, (self.ui.tower.true_range, self.ui.tower.true_range), self.ui.tower.range)
             temp_surf.blit(tower_range_img, tower_range_img.get_rect(center=self.ui.tower.rect.center))
 
         self.fill(BLACK)

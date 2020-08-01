@@ -278,9 +278,16 @@ class TowerPreviewMenu(DevClass):
                 elif "ignore_if_false" in ATTR_DATA["stage"][attr] and not \
                 TOWER_DATA[self.tower_names[self.current_tower]]["stages"][self.current_stage][attr]:
                     ignore.extend(ATTR_DATA["stage"][attr]["ignore_if_false"])
-            self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr],
-                                       TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
-                                           self.current_stage][attr]))
+
+            if attr in TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
+                                           self.current_stage]:
+                attr_val = TOWER_DATA[self.tower_names[self.current_tower]]["stages"][
+                                           self.current_stage][attr]
+
+            else:
+                attr_val = ATTR_DATA["stage"][attr]["default"]
+
+            self.ui.new_attr(Attribute(attr, ATTR_DATA["stage"][attr], attr_val))
 
         self.reload_enemies()
         self.reload_towers()
@@ -1205,6 +1212,7 @@ class Attribute():
                     minus_button.blit(minus_text, minus_text.get_rect(center = minus_button.get_rect().center))
                     surf_list.append(minus_button)
                     self.minus_button_rect = minus_button.get_rect()
+
 
                 cur_val_text = font.render(str(self.current_value), 1, WHITE)
                 surf_list.append(cur_val_text)
