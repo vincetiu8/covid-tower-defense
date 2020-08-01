@@ -709,5 +709,63 @@
                 "strikethrough": false
             }
         ]
+    },
+    "killer_cell": {
+        "description": "A modified t-cell built solely for mowing through hp.",
+        "unlock_cost": 0,
+        "stages": [
+            {
+                "area_of_effect": false,
+                "at": 2,
+                "attack_speed": 0.3,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 1000,
+                "damage": 10,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 150,
+                "rotating": true,
+                "rotation_speed": 90,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 50,
+                "explode_on_impact": false
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.2,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 1250,
+                "damage": 15,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 175,
+                "rotating": true,
+                "rotation_speed": 105,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 62,
+                "explode_on_impact": false
+            },
+            {
+                "area_of_effect": false,
+                "attack_speed": 0.15,
+                "bullet_lifetime": 0.3,
+                "bullet_speed": 1500,
+                "damage": 20,
+                "different_shield_damage": false,
+                "directions": 1,
+                "range": 200,
+                "rotating": true,
+                "rotation_speed": 120,
+                "slow_duration": 0,
+                "slow_speed": 1,
+                "tracking": true,
+                "upgrade_cost": 88,
+                "explode_on_impact": false
+            }
+        ]
     }
 }

@@ -194,23 +194,58 @@ ACUTE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "643430_Fast-Level-8-bit.ogg"), pat
 SEVERE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "525911_Chaos.ogg"), path.join(MUSIC_FOLDER, "367084_8_bit_Boss_Battle_4.ogg")]
 LATE_SEVERE_MUSIC_LOOP = path.join(MUSIC_FOLDER, "367084_8_bit_Boss_Battle_4_loop.ogg")
 
-# init level data
-LEVEL_DATA = []
-level_list = listdir(LEVELS_FOLDER)
-level_list.sort()
+# # init level data
+# LEVEL_DATA = []
+# level_list = listdir(LEVELS_FOLDER)
+# level_list.sort()
+#
+# for file in level_list:
+#     with open(path.join(LEVELS_FOLDER, file)) as data_file:
+#         level = json.load(data_file)
+#         enemies = [[] for i in range(3)]
+#         for i, stage in enumerate(level["waves"]):
+#             for wave in stage:
+#                 for sub_wave in wave:
+#                     enemy = sub_wave["enemy_type"]
+#                     if enemy not in enemies[i]:
+#                         enemies[i].append(enemy)
+#         level["enemies"] = enemies
+#         LEVEL_DATA.append(level)
 
-for file in level_list:
-    with open(path.join(LEVELS_FOLDER, file)) as data_file:
-        level = json.load(data_file)
-        enemies = [[] for i in range(3)]
-        for i, stage in enumerate(level["waves"]):
-            for wave in stage:
-                for sub_wave in wave:
-                    enemy = sub_wave["enemy_type"]
-                    if enemy not in enemies[i]:
-                        enemies[i].append(enemy)
-        level["enemies"] = enemies
-        LEVEL_DATA.append(level)
+class LevelData:
+    __instance = None
+
+    def __init__(self):
+        if LevelData.__instance != None:
+            raise Exception("This class is a singleton!")
+        else:
+            LevelData.__instance = self
+        # init level data
+        self.level_list = listdir(LEVELS_FOLDER)
+        self.level_list.sort()
+        self.reload_levels()
+
+    @staticmethod
+    def get_instance():
+        """ Static access method. """
+        if LevelData.__instance == None:
+            LevelData()
+        return LevelData.__instance
+
+    def reload_levels(self):
+        self.level_data = []
+        for file in self.level_list:
+            with open(path.join(LEVELS_FOLDER, file)) as data_file:
+                level = json.load(data_file)
+                enemies = [[] for _ in range(3)]
+                for i, stage in enumerate(level["waves"]):
+                    for wave in stage:
+                        for sub_wave in wave:
+                            enemy = sub_wave["enemy_type"]
+                            if enemy not in enemies[i]:
+                                enemies[i].append(enemy)
+                level["enemies"] = enemies
+                self.level_data.append(level)
 
 with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
     ENEMY_DATA = json.load(data_file)
@@ -321,7 +356,7 @@ HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "hear
 # load fonts path
 FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
 
-WAVE_DELAY = 10 # TODO: Change this dev feature back.
+WAVE_DELAY = 99999 # TODO: Change this dev feature back.
 EXPLOSION_TIME = 0.25
 REFUND_AMOUNT = 0.5
 

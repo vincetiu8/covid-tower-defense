@@ -312,6 +312,7 @@ class StartMenu(GridDisplay):
 class Menu(Display):
     def __init__(self):
         self.init_super()
+        self.level_data = LevelData.get_instance() # TODO: Remove this dev feature
         self.camera = Camera(SAVE_DATA["width"] * 0.8, SAVE_DATA["height"] * 0.8, SAVE_DATA["width"], SAVE_DATA["height"], 1.5)
         
         self.base_zoom = self.camera.get_zoom()
@@ -344,9 +345,9 @@ class Menu(Display):
         
     def init_super(self):
         super().__init__((SAVE_DATA["width"], SAVE_DATA["height"]))
-        
+
     def init_levels(self):
-        for i, level in enumerate(LEVEL_DATA):
+        for i, level in enumerate(self.level_data.level_data):
             temp_coords = BODY_PARTS[list(BODY_PARTS)[level["body_part"]]]
             true_coords = (temp_coords[0] + self.body_coords[0] - self.level_button_rect_2.w // 2,
                            temp_coords[1] + self.body_coords[1] - self.level_button_rect_2.h // 2)
@@ -357,9 +358,9 @@ class Menu(Display):
             self.camera.zoom(ZOOM_AMT_MENU)
             self.body_images.append(self.camera.apply_image(BODY_IMG))
         self.camera.zoom(self.base_zoom - self.camera.get_zoom())
-        
+
     def new(self, args): #inits the other half of the body images
-        self.level_infos = [[None for j in range(3)] for i in range(len(LEVEL_DATA))]
+        self.level_infos = [[None for j in range(3)] for i in range(len(self.level_data.level_data))]
         self.over_level = -1
         self.hover_options = False
         
@@ -495,9 +496,9 @@ class Menu(Display):
         self.fill(BLACK)
         self.blit(self.camera.apply_image(temp_surf), self.camera.apply_tuple((0, 0)))
         self.draw_body()
-        
+
         return self
-    
+
     def draw_body(self):
         self.blit(self.body_image, self.camera.apply_tuple(self.body_coords))
         for i, button in enumerate(self.level_buttons):
@@ -514,7 +515,7 @@ class Menu(Display):
                 grey_image = LEVEL_BUTTON_IMG_2.copy()
                 grey_image.fill(DARK_GREY, special_flags=pg.BLEND_RGB_MIN)
                 self.blit(self.camera.apply_image(grey_image), self.camera.apply_tuple(button_tuple))
-        
+
         if self.over_level != -1:
             if self.level_infos[self.over_level][self.difficulty] == None:
                 new_level_info = LevelInfo(self.over_level, self.difficulty)
@@ -616,7 +617,7 @@ class Menu(Display):
                 self.hover_options = True
             else:
                 self.hover_options = False
-                
+
         elif event.type == pg.USEREVENT + 4: # Graphics option changed, reload screen
             self.init_super()
             try:
@@ -650,6 +651,7 @@ class TowerMenu(Display):
 class TowerSelectMenu(TowerMenu):
     def __init__(self):
         super().__init__()
+        self.level_data_c = LevelData.get_instance()
         self.start_btn = self.make_btn("Start")
         self.back_btn = self.make_btn("Back")
         self.start_btn_rect = pg.Rect(SCREEN_WIDTH - BTN_X_MARGIN - self.start_btn.get_width(),
@@ -664,8 +666,8 @@ class TowerSelectMenu(TowerMenu):
         
     def new(self, args):
         # args[0] = level
-        self.level_data = LEVEL_DATA[args[0]]
-        map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(list(BODY_PARTS)[LEVEL_DATA[args[0]]["body_part"]])))
+        self.level_data = self.level_data_c.level_data[args[0]]
+        map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(list(BODY_PARTS)[self.level_data["body_part"]])))
         self.map_img = None
         self.draw_map(map)
 
@@ -999,7 +1001,7 @@ class LevelInfo(HoverInfo):
         self.difficulty = difficulty
         self.level = level
         if self.unlocked:
-            self.level_data = LEVEL_DATA[level]
+            self.level_data = LevelData.get_instance().level_data[level] # TODO: Remove this dev feature
             super().__init__(list(BODY_PARTS)[self.level_data["body_part"]].replace('_', ' ').title(),
                              self.level_data["description"][self.difficulty])
         else:
@@ -1037,7 +1039,7 @@ class LevelInfo(HoverInfo):
             high_score_text = self.info_font.render("Highest Protein Count: {}".format(SAVE_DATA["highscores"][self.level][self.difficulty]), 1, WHITE)
             self.add_text(high_score_text)
             
-            protein_goal_text = self.info_font.render("Protein Count Goal: {}".format(LEVEL_DATA[self.level]["protein_goal"][self.difficulty]), 1, WHITE)
+            protein_goal_text = self.info_font.render("Protein Count Goal: {}".format(LevelData.get_instance().level_data[self.level]["protein_goal"][self.difficulty]), 1, WHITE)
             self.add_text(protein_goal_text)
         
 class TowerInfo(HoverInfo):

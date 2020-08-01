@@ -786,6 +786,7 @@ class LevelEditMenu(DevClass):
                 LEVEL_DATA[self.level]["waves"][self.wave][self.sub_wave][attr] = self.enemy_types[ATTR_DATA["sub_wave"][attr]["default"]]
             else:
                 LEVEL_DATA[self.level]["waves"][self.wave][self.sub_wave][attr] = ATTR_DATA["sub_wave"][attr]["default"]
+
 class DevUI():
     def __init__(self, save=False):
         self.save = save
@@ -802,16 +803,7 @@ class DevUI():
             "dp": 0
         }, 1, disabled=False))
 
-    # Empty calls so game doesn't err out
-    def generate_header_wrapper(self):
-        pass
-
-    def generate_body_wrapper(self):
-        pass
-
-    def generate_next_wave_wrapper(self):
-        pass
-
+    # From game ui, just pass here since these sections aren't in the dev UI
     def generate_header(self):
         pass
 
@@ -819,6 +811,15 @@ class DevUI():
         pass
 
     def generate_next_wave(self):
+        pass
+
+    def generate_header_wrapper(self):
+        pass
+
+    def generate_body_wrapper(self):
+        pass
+
+    def generate_next_wave_wrapper(self):
         pass
 
     def new_attr(self, attribute):

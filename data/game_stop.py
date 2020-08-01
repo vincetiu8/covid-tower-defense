@@ -148,6 +148,8 @@ class GameStop(GridDisplay):
             if event.button == 1:
                 if self.restart_rect.collidepoint(event.pos):
                     BTN_SFX.play()
+                    LevelData.get_instance().reload_levels() # TODO: Remove this dev option
+                                                            # This reloads levels from levels.json each time the game is restarted
                     return "game"
                 elif self.back_rect.collidepoint(event.pos):
                     BTN_SFX.play()
@@ -280,8 +282,8 @@ class GameOver(GameStop):
                 SAVE_DATA["max_dna"] += DNA_ON_COMPLETION[difficulty]
                 completed = True
                 
-            if (SAVE_DATA["highscores"][level][difficulty] < LEVEL_DATA[level]["protein_goal"][difficulty]
-                and protein >= LEVEL_DATA[level]["protein_goal"][difficulty]):
+            if (SAVE_DATA["highscores"][level][difficulty] < LevelData.get_instance().level_data[level]["protein_goal"][difficulty]
+                and protein >= LevelData.get_instance().level_data[level]["protein_goal"][difficulty]):
                 SAVE_DATA["max_dna"] += DNA_ON_PROTEIN_GOAL[difficulty]
                 protein_goal = True
                 

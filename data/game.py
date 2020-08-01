@@ -29,7 +29,7 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
-skip_to_wave = 0   # TODO: Remove this dev option
+skip_to_wave = 0    # TODO: Remove this dev option
                     # Change this to change which wave you start on. You'll get all the protein from the previous waves.
                     # Indexing starts at 0 and the wave this is set to is inclusive.
                     # i.e. if the value is set to 15, the game will start at wave 16 (when counting from 1).
@@ -58,7 +58,7 @@ class Game(Display):
         self.map_rect = self.map_img.get_rect()
 
     def load_level_data(self):
-        self.level_data = LEVEL_DATA[self.level]
+        self.level_data = LevelData.get_instance().level_data[self.level] # TODO: Remove this dev option
         self.max_wave = len(self.level_data["waves"][self.difficulty])
         
     def new(self, args):
@@ -72,10 +72,10 @@ class Game(Display):
             pg.mixer.music.unpause()
     
     def new_game(self):
-        self.map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(list(BODY_PARTS)[LEVEL_DATA[self.level]["body_part"]])))
-        self.load_data()
         self.load_level_data()
-        
+        self.map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(list(BODY_PARTS)[self.level_data["body_part"]]))) # TODO: Remove this dev option
+        self.load_data()
+
         # initialize all variables and do all the setup for a new game
         self.new_enemy_box = NewEnemyBox()
         self.obstacles = pg.sprite.Group()
@@ -276,6 +276,7 @@ class Game(Display):
                 self.protein += i["enemy_count"] * ENEMY_DATA[i["enemy_type"]]["protein"]
 
             self.wave += 1
+            self.ui.wave = self.wave
 
         if self.wave == self.max_wave:
             return
@@ -296,6 +297,7 @@ class Game(Display):
     def start_next_wave(self):
         self.in_a_wave = True
         self.ui.set_next_wave_btn(False)
+        self.ui.wave = self.wave
         self.ui.generate_header()
         self.ui.generate_next_wave_wrapper()
 
@@ -331,7 +333,7 @@ class Game(Display):
         for projectile in self.projectiles:
             temp_surf.blit(projectile.image, projectile.rect)
         
-        self.draw_aoe_sprites(self)
+        self.draw_aoe_sprites(temp_surf)
         temp_surf.blit(self.aoe_surf, (0, 0))
 
         for explosion in self.explosions:

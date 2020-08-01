@@ -38,6 +38,8 @@ Assets used:
 
 - http://soundbible.com/1669-Robot-Blip-2.html
 
+- http://soundbible.com/1095-Large-Truck-Chains.html
+
 - https://soundbible.com/1769-Laser-Gun.html
 
 - http://soundbible.com/512-Squishy-2.html
