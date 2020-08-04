@@ -1,8 +1,8 @@
 {
     "description": ["Many arteries and veins line this body part, which viruses can use to theri advantage.", "", ""],
-    "ratings": [0, 1, 1],
+    "ratings": [1, 1, 1],
     "body_part": 4,
-    "protein_goal": [100, 10, 10],
+    "protein_goal": [800, 10, 10],
     "texts": [
         {
             "0": [
