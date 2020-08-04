@@ -15,7 +15,7 @@
     "height": 768,
     "fullscreen": false,
     "skip_text": true,
-    "max_dna": 320,
+    "max_dna": 330,
     "used_dna": 0,
     "highscores": [
         [
@@ -39,7 +39,7 @@
             0
         ],
         [
-            0,
+            778,
             0,
             0
         ],
