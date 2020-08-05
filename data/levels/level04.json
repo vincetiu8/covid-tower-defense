@@ -1,10 +1,21 @@
 {
-    "description": ["", "", ""],
-    "ratings": [0, 1, 1],
+    "description": ["Many arteries and veins line this body part, which viruses can use to their advantage.", "", ""],
+    "ratings": [1, 1, 1],
     "body_part": 4,
-    "protein_goal": [100, 10, 10],
+    "protein_goal": [800, 10, 10],
     "texts": [
-        {},
+        {
+            "0": [
+                    "There are a couple of arteries and veins lining up the stomach",
+                    "Enemies can go in through one end and pop out the other end, completely bypassing your defenses.", 
+                    "Make sure to block them!"
+                ],
+            "5": [
+                    "Take care! Hepatitis B viruses are about to enter.",
+                    "They may not be dangerous now, but you really don't want them to stick around for long...",
+                    "...or they could mutate into something more dangerous."
+                ]
+        },
         {},
         {}
     ],
@@ -14,9 +25,9 @@
                 {
                     "start": 0,
                     "enemy_type": "common_cold",
-                    "enemy_count": 10,
+                    "enemy_count": 20,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.5
+                    "spawn_rate": 0.35
                 }
             ],
             [
@@ -32,6 +43,22 @@
                 {
                     "start": 0,
                     "enemy_type": "common_cold",
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.3
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.6
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
                     "enemy_count": 20,
                     "spawn_delay": 2,
                     "spawn_rate": 0.5
@@ -40,48 +67,32 @@
                     "start": 0,
                     "enemy_type": "hepatitis_a",
                     "enemy_count": 5,
-                    "spawn_delay": 2,
-                    "spawn_rate": 1
-                }
-            ],
-            [
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 5,
-                    "spawn_delay": 2,
-                    "spawn_rate": 0.5
-                },
-                {
-                    "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 10,
                     "spawn_delay": 5,
-                    "spawn_rate": 1
+                    "spawn_rate": 0.1
                 }
             ],
             [
                 {
                     "start": 0,
                     "enemy_type": "hepatitis_b",
-                    "enemy_count": 10,
+                    "enemy_count": 20,
                     "spawn_delay": 2,
-                    "spawn_rate": 1
+                    "spawn_rate": 0.4
                 }
             ],
             [
                 {
                     "start": 0,
                     "enemy_type": "hepatitis_b",
-                    "enemy_count": 15,
+                    "enemy_count": 20,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.8
+                    "spawn_rate": 0.3
                 },
                 {
                     "start": 0,
                     "enemy_type": "hepatitis_b",
                     "enemy_count": 10,
-                    "spawn_delay": 20,
+                    "spawn_delay": 8,
                     "spawn_rate": 0.1
                 }
             ],
@@ -89,9 +100,9 @@
                 {
                     "start": 0,
                     "enemy_type": "polio",
-                    "enemy_count": 10,
+                    "enemy_count": 30,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.5
+                    "spawn_rate": 0.15
                 }
             ],
             [
@@ -100,13 +111,13 @@
                     "enemy_type": "hepatitis_a",
                     "enemy_count": 20,
                     "spawn_delay": 2,
-                    "spawn_rate": 1
+                    "spawn_rate": 0.3
                 },
                 {
                     "start": 0,
                     "enemy_type": "polio",
-                    "enemy_count": 10,
-                    "spawn_delay": 10,
+                    "enemy_count": 40,
+                    "spawn_delay": 6,
                     "spawn_rate": 0.1
                 }
             ],
@@ -114,15 +125,15 @@
                 {
                     "start": 0,
                     "enemy_type": "hepatitis_b",
-                    "enemy_count": 15,
+                    "enemy_count": 30,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.5
+                    "spawn_rate": 0.25
                 },
                 {
                     "start": 0,
                     "enemy_type": "polio",
-                    "enemy_count": 15,
-                    "spawn_delay": 10,
+                    "enemy_count": 40,
+                    "spawn_delay": 6,
                     "spawn_rate": 0.1
                 }
             ],
@@ -130,36 +141,36 @@
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 10,
+                    "enemy_count": 8,
                     "spawn_delay": 2,
-                    "spawn_rate": 10
+                    "spawn_rate": 1.5
                 },
                 {
                     "start": 0,
                     "enemy_type": "polio",
-                    "enemy_count": 10,
-                    "spawn_delay": 10,
+                    "enemy_count": 15,
+                    "spawn_delay": 3,
                     "spawn_rate": 0.05
                 },
                 {
                     "start": 0,
                     "enemy_type": "polio",
-                    "enemy_count": 10,
-                    "spawn_delay": 20,
+                    "enemy_count": 15,
+                    "spawn_delay": 6,
                     "spawn_rate": 0.05
                 },
                 {
                     "start": 0,
                     "enemy_type": "polio",
-                    "enemy_count": 10,
-                    "spawn_delay": 30,
+                    "enemy_count": 15,
+                    "spawn_delay": 9,
                     "spawn_rate": 0.05
                 },
                 {
                     "start": 0,
                     "enemy_type": "polio",
-                    "enemy_count": 10,
-                    "spawn_delay": 40,
+                    "enemy_count": 15,
+                    "spawn_delay": 12,
                     "spawn_rate": 0.05
                 }
             ],
@@ -169,53 +180,87 @@
                     "enemy_type": "hepatitis_a",
                     "enemy_count": 15,
                     "spawn_delay": 2,
-                    "spawn_rate": 1
+                    "spawn_rate": 0.1
                 },
                 {
                     "start": 0,
                     "enemy_type": "hepatitis_b",
-                    "enemy_count": 10,
-                    "spawn_delay": 10,
-                    "spawn_rate": 1
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
                 },
                 {
                     "start": 0,
                     "enemy_type": "hepatitis_a",
                     "enemy_count": 15,
-                    "spawn_delay": 20,
-                    "spawn_rate": 0.3
+                    "spawn_delay": 6,
+                    "spawn_rate": 0.1
                 },
                 {
                     "start": 0,
                     "enemy_type": "hepatitis_b",
                     "enemy_count": 15,
-                    "spawn_delay": 30,
-                    "spawn_rate": 0.3
+                    "spawn_delay": 6,
+                    "spawn_rate": 0.1
                 }
             ],
             [
                 {
                     "start": 0,
-                    "enemy_type": "hantavirus",
-                    "enemy_count": 10,
+                    "enemy_type": "hepatitis_b",
+                    "enemy_count": 60,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.5
+                    "spawn_rate": 0.1
                 }
             ],
             [
                 {
                     "start": 0,
-                    "enemy_type": "hantavirus",
-                    "enemy_count": 15,
-                    "spawn_delay": 10,
-                    "spawn_rate": 0.5
+                    "enemy_type": "hepatitis_b",
+                    "enemy_count": 40,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
                 },
                 {
                     "start": 0,
                     "enemy_type": "coronavirus",
-                    "enemy_count": 10,
+                    "enemy_count": 8,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.5
+                    "spawn_rate": 1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "coronavirus",
+                    "enemy_count": 12,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.7
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 30,
+                    "spawn_delay": 7,
+                    "spawn_rate": 0.3
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "coronavirus",
+                    "enemy_count": 7,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.9
                 }
             ],
             [
@@ -223,17 +268,77 @@
                     "start": 0,
                     "enemy_type": "hantavirus",
                     "enemy_count": 25,
-                    "spawn_delay": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 25,
+                    "spawn_delay": 5,
                     "spawn_rate": 0
                 }
             ],
             [
                 {
                     "start": 0,
-                    "enemy_type": "hepatitis_a",
-                    "enemy_count": 25,
+                    "enemy_type": "coronavirus",
+                    "enemy_count": 8,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.8
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 40,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 70,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 40,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "coronavirus",
+                    "enemy_count": 16,
+                    "spawn_delay": 2,
+                    "spawn_rate": 1.5
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hantavirus",
+                    "enemy_count": 35,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 70,
                     "spawn_delay": 10,
-                    "spawn_rate": 0.5
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_b",
+                    "enemy_count": 25,
+                    "spawn_delay": 18,
+                    "spawn_rate": 0.3
                 }
             ]
         ],
