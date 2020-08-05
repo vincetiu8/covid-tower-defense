@@ -1,18 +1,18 @@
 {
     "latest_level_unlocked": [
-        11,
-        2,
-        11
+        14,
+        14,
+        14
     ],
     "latest_level_completed": [
-        4,
-        1,
-        -1
+        14,
+        14,
+        14
     ],
     "music_vol": 0.0,
     "sfx_vol": 0.0,
-    "width": 1366,
-    "height": 768,
+    "width": 1280,
+    "height": 720,
     "fullscreen": false,
     "skip_text": true,
     "max_dna": 330,
@@ -25,12 +25,12 @@
         ],
         [
             0,
-            9999999999999999999999999998433,
+            0,
             0
         ],
         [
             0,
-            0,
+            98,
             0
         ],
         [
@@ -100,22 +100,18 @@
         "basophil",
         "macrophage",
         "b_cell",
-        "m_cell"
+        "m_cell",
+        "killer_cell",
+        "plasma_cell",
+        "neutrophil"
     ],
     "seen_enemies": [
         "common_cold",
         "hepatitis_a",
         "polio",
         "coronavirus",
-        "hepatitis_b",
         "smallpox",
-        "rabies",
-        "mrsa",
-        "west_nile_virus",
-        "hantavirus",
-        "marburg_virus",
-        "yellow_fever",
-        "smallpox"
+        "japanese_encephalitis"
     ],
     "game_attrs": {
         "lives": {
@@ -130,7 +126,7 @@
             "value": 50,
             "increment": 5,
             "max_value": 70,
-            "upgrade_cost": 70,
+            "upgrade_cost": 110,
             "cost_increment": 20,
             "description": "The amount of protein you start with on each level."
         },

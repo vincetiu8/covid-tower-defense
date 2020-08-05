@@ -29,7 +29,7 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
-skip_to_wave = 0    # TODO: Remove this dev option
+skip_to_wave = 38    # TODO: Remove this dev option
                     # Change this to change which wave you start on. You'll get all the protein from the previous waves.
                     # Indexing starts at 0 and the wave this is set to is inclusive.
                     # i.e. if the value is set to 15, the game will start at wave 16 (when counting from 1).
@@ -380,14 +380,14 @@ class Game(Display):
 
         done = []
         for start in self.starts:
-            if start.start in done:
+            if [start.start, ENEMY_DATA[start.enemy_type]["flying"]] in done:
                 continue
-            done.append(start.start)
+            done.append([start.start, ENEMY_DATA[start.enemy_type]["flying"]])
             xpos = tile_from_xcoords(start.rect.x, self.map.tilesize)
             ypos = tile_from_xcoords(start.rect.y, self.map.tilesize)
+            flying = done[-1][1]
             for x in range(tile_from_xcoords(start.rect.w, self.map.tilesize)):
                 for y in range(tile_from_xcoords(start.rect.h, self.map.tilesize)):
-                    flying = ENEMY_DATA[start.enemy_type]["flying"]
                     path = self.pathfinder.astar(((xpos + x, ypos + y), 0), self.goals, flying)
 
                     self.stripped_path = []
