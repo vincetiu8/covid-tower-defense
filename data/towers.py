@@ -361,7 +361,11 @@ class Tower(Obstacle):
             self.true_attack_speed *= amount
 
     def debuff(self, buff_tower, buff_type, amount):
-        self.buffs.remove(buff_tower)
+        try: # have to put this in try-except loop in case buff_tower still isn't in self.buffs
+            self.buffs.remove(buff_tower)
+        except:
+            return False
+        
         if buff_type == "range":
             self.true_range -= amount
         elif buff_type == "damage":

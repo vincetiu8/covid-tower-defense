@@ -15,7 +15,7 @@
     "height": 720,
     "fullscreen": false,
     "skip_text": true,
-    "max_dna": 330,
+    "max_dna": 340,
     "used_dna": 0,
     "highscores": [
         [
@@ -54,7 +54,7 @@
             0
         ],
         [
-            0,
+            2178,
             0,
             0
         ],
@@ -111,7 +111,10 @@
         "polio",
         "coronavirus",
         "smallpox",
-        "japanese_encephalitis"
+        "japanese_encephalitis",
+        "zika_virus",
+        "hepatitis_c",
+        "dengue"
     ],
     "game_attrs": {
         "lives": {
