@@ -140,7 +140,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 8,
                     "spawn_delay": 2,
                     "spawn_rate": 1.5
@@ -223,7 +223,7 @@
                 },
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 8,
                     "spawn_delay": 2,
                     "spawn_rate": 1
@@ -232,7 +232,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 12,
                     "spawn_delay": 2,
                     "spawn_rate": 0.7
@@ -257,7 +257,7 @@
                 },
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 7,
                     "spawn_delay": 2,
                     "spawn_rate": 0.9
@@ -282,7 +282,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 8,
                     "spawn_delay": 2,
                     "spawn_rate": 0.8
@@ -314,7 +314,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 16,
                     "spawn_delay": 2,
                     "spawn_rate": 1.5
