@@ -19,8 +19,9 @@
         "shield_recharge_delay": 0.25,
         "shield_recharge_rate": 0.05,
         "mutate": true,
-        "mutation_type": 8,
-        "mutation_time": 5.0,
+        "mutation_type": "anthrax",
+        "mutation_time": 10,
+        "mutation_number": 6,
         "speed": 75,
         "description": "Destroy these spores before they let the bacteria out!"
     },
@@ -44,7 +45,7 @@
         "speed": 75,
         "description": "Be careful! This bacteria often comes in large swarms."
     },
-    "rubella": {
+    "common_cold": {
         "explode_on_death": false,
         "flying": false,
         "hp": 10,
@@ -57,12 +58,12 @@
     "coronavirus": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 750,
-        "protein": 9,
+        "hp": 5000,
+        "protein": 13,
         "shield": false,
         "mutate": false,
-        "speed": 80,
-        "description": "This devil may be slow, but its high health makes it a force to be reckoned with."
+        "speed": 50,
+        "description": "If you see this, start running."
     },
     "dengue": {
         "explode_on_death": false,
@@ -148,8 +149,9 @@
         "mutate": true,
         "speed": 100,
         "description": "A bit thinner than their purple cousin but coming with a shield, too. Don't leave them alive for too long...",
-        "mutation_type": 8,
-        "mutation_time": 5.0
+        "mutation_type": "hepatitis_d",
+        "mutation_time": 5.0,
+        "mutation_number": 1
     },
     "hepatitis_c": {
         "explode_on_death": false,
@@ -314,6 +316,16 @@
         "speed": 100,
         "description": "Danger! This virus explodes when it dies, destroying any nearby towers!"
     },
+    "rubella": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 750,
+        "protein": 9,
+        "shield": false,
+        "mutate": false,
+        "speed": 80,
+        "description": "This devil may be slow, but its high health makes it a force to be reckoned with."
+    },
     "sars": {
         "explode_on_death": false,
         "flying": false,
@@ -404,7 +416,10 @@
         "hp": 5,
         "protein": 1,
         "shield": false,
-        "mutate": false,
+        "mutate": true,
+        "mutation_type": "yellow_fever",
+        "mutation_time": 5.0,
+        "mutation_number": 1,
         "speed": 275,
         "description": "Name says it all."
     },

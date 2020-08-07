@@ -6,6 +6,7 @@ import math
 
 class Enemy(pg.sprite.Sprite):
     def __init__(self, game, x, y, name):
+        self.game = game
         self.groups = game.enemies
         super().__init__(self.groups)
         
@@ -36,7 +37,7 @@ class Enemy(pg.sprite.Sprite):
             prev_scale = self.image_size / self.raw_image.get_size()[0]
         except:
             prev_scale = 1 # if it's a new enemy (not from mutation), leave image_size as is
-            
+
         data = ENEMY_DATA[self.name]
         wave_difficulty = 1 + self.game.wave * 0.1
         game_difficulty = self.game.difficulty * 0.5 + 0.5
@@ -62,6 +63,7 @@ class Enemy(pg.sprite.Sprite):
         if self.mutate:
             self.mutation_type = data["mutation_type"]
             self.mutation_time = data["mutation_time"]
+            self.mutation_number = data["mutation_number"]
         
         self.image_size = int(self.raw_image.get_size()[0] * prev_scale)
         self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
@@ -84,10 +86,12 @@ class Enemy(pg.sprite.Sprite):
         if self.slowed and self.slow_end <= 0:
             self.reset_speed()
             
-        if self.mutate: # TODO: Change this code
+        if self.mutate:
             if self.total_time_passed >= self.mutation_time:
-                self.name = list(ENEMY_DATA)[self.mutation_type]
+                self.name = self.mutation_type
                 self.load_attributes(self.rect.x, self.rect.y)
+                for _ in range(self.mutation_number - 1):
+                    self.game.enemies.add(Enemy(self.game, self.rect.x, self.rect.y, self.name))
 
         if (self.maximising < 0 and self.image.get_width() > 0 or self.maximising > 0 and self.image.get_width() < self.rect.w):
             self.image_size = max(0, min(self.image_size + self.maximising, self.rect.w))
