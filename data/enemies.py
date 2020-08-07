@@ -84,7 +84,7 @@ class Enemy(pg.sprite.Sprite):
         if self.slowed and self.slow_end <= 0:
             self.reset_speed()
             
-        if self.mutate:
+        if self.mutate: # TODO: Change this code
             if self.total_time_passed >= self.mutation_time:
                 self.name = list(ENEMY_DATA)[self.mutation_type]
                 self.load_attributes(self.rect.x, self.rect.y)
