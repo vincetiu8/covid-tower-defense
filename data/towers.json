@@ -616,7 +616,7 @@
                 "rotation_speed": 15,
                 "slow_duration": 0.375,
                 "slow_speed": 0.9,
-                "tracking": false,
+                "tracking": true,
                 "upgrade_cost": 35,
                 "explode_on_impact": false,
                 "strikethrough": false
@@ -634,7 +634,7 @@
                 "rotation_speed": 20,
                 "slow_duration": 0.5,
                 "slow_speed": 0.85,
-                "tracking": false,
+                "tracking": true,
                 "upgrade_cost": 48,
                 "explode_on_impact": false,
                 "strikethrough": false
