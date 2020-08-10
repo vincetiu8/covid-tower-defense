@@ -54,7 +54,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="4" name="obstacles">
+ <objectgroup id="4" name="obstacles" visible="0">
   <object id="97" name="wall" x="0" y="0" width="42" height="546"/>
   <object id="98" name="wall" x="840" y="0" width="42" height="546"/>
   <object id="99" name="wall" x="42" y="0" width="798" height="42"/>
