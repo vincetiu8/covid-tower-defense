@@ -85,7 +85,7 @@
         },
         "protein": {
             "type": "float",
-            "min": 1,
+            "min": 0,
             "max": 10000,
             "increment": 1,
             "dp": 0,

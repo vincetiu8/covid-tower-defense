@@ -467,16 +467,28 @@ class EnemyPreviewMenu(DevClass):
                 continue
             if ATTR_DATA["enemy"][attr]["type"] == "bool" and "ignore_if_true" in ATTR_DATA["enemy"][
                 attr] or "ignore_if_false" in ATTR_DATA["enemy"][attr]:
+                self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
+                                           ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
+
                 if "ignore_if_true" in ATTR_DATA["enemy"][attr] and \
                         ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]:
                     ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_true"])
                 elif "ignore_if_false" in ATTR_DATA["enemy"][attr] and not \
                 ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]:
                     ignore.extend(ATTR_DATA["enemy"][attr]["ignore_if_false"])
-            if attr == "mutation_type":
-                ATTR_DATA["enemy"][attr]["values"] = self.enemy_names
-            self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
+
+            else:
+                if attr == "mutation_type":
+                    ATTR_DATA["enemy"][attr]["values"] = self.enemy_names
+
+                try:
+                    self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
                                                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr]))
+                except:
+                    self.ui.new_attr(
+                        Attribute(attr, ATTR_DATA["enemy"][attr], ATTR_DATA["enemy"][attr]["default"]))
+                    ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = ATTR_DATA["enemy"][attr]["default"]
+
 
         self.reload_enemies()
         self.reload_towers()
@@ -497,7 +509,14 @@ class EnemyPreviewMenu(DevClass):
             else:
                 if ATTR_DATA["enemy"][attr]["type"] == "bool" and ((attrs[attr] and not ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] and "ignore_if_false" in ATTR_DATA["enemy"][attr]) or (not attrs[attr] and ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] and "ignore_if_true" in ATTR_DATA["enemy"][attr])):
                     reload = True
-                ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = attrs[attr]
+
+                try:
+                    self.ui.new_attr(Attribute(attr, ATTR_DATA["enemy"][attr],
+                                               ENEMY_DATA[self.enemy_names[self.current_enemy]][attr], disabled=False))
+                except:
+                    self.ui.new_attr(
+                        Attribute(attr, ATTR_DATA["enemy"][attr], ATTR_DATA["enemy"][attr]["default"], disabled=False))
+                    ENEMY_DATA[self.enemy_names[self.current_enemy]][attr] = ATTR_DATA["enemy"][attr]["default"]
 
         if reload:
             self.current_enemy = attrs["enemy_name"]
@@ -608,184 +627,6 @@ class EnemyEditMenu(EnemyPreviewMenu):
         ENEMY_DATA[self.new_enemy_name]["death_sound"] = pg.mixer.Sound(path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy)))
         self.enemy_names = list(ENEMY_DATA.keys())
         self.current_enemy = self.enemy_names.index(self.new_enemy_name)
-
-class LevelEditMenu(DevClass):
-    def __init__(self, clock):
-        super().__init__(clock)
-        self.level = 0
-        self.wave = 0
-        self.sub_wave = 0
-        self.enemy_types = list(ENEMY_DATA.keys())
-
-    def reload_level(self):
-        super().reload_level(list(BODY_PARTS)[LEVEL_DATA[self.level]["body_part"]])
-        super().load_data()
-        super().new()
-        self.reload_enemies()
-        self.make_stripped_path_wrapper()
-
-    def new(self, args):
-        self.tower_names = list(TOWER_DATA.keys())
-        # initialize all variables and do all the setup for a new game
-        self.reload_level()
-        self.load_ui()
-
-    def load_ui(self):
-        DevClass.load_ui(self, True)
-
-        self.ui.new_attr(Attribute("level",
-                                   {"type": "float",
-                                    "min": 0,
-                                    "max": len(LEVEL_DATA),
-                                    "increment": 1,
-                                    "dp": 0
-                                    }, self.level, disabled=False))
-        for attr in ATTR_DATA["level"]:
-            self.ui.new_attr(Attribute(attr, ATTR_DATA["level"][attr],
-                                       LEVEL_DATA[self.level][attr], disabled=False))
-
-        self.ui.new_attr(Attribute("wave",
-                                   {"type": "float",
-                                    "min": 0,
-                                    "max": len(LEVEL_DATA[self.level]["waves"]),
-                                    "increment": 1,
-                                    "dp": 0
-                                    }, self.wave, disabled=False))
-        self.ui.new_attr(Attribute("sub_wave",
-                                    {"type": "float",
-                                     "min": 0,
-                                     "max": len(LEVEL_DATA[self.level]["waves"][self.wave]),
-                                     "increment": 1,
-                                     "dp": 0
-                                     }, self.sub_wave, disabled=False))
-
-        for attr in ATTR_DATA["sub_wave"]:
-            temp_dat = ATTR_DATA["sub_wave"][attr].copy()
-            temp_val = LEVEL_DATA[self.level]["waves"][self.wave][self.sub_wave][attr]
-            if attr == "start":
-                temp_dat["max"] = len(self.start_data) - 1
-            elif attr == "enemy_type":
-                temp_dat["values"] = self.enemy_types
-                temp_val = self.enemy_types.index(temp_val)
-            self.ui.new_attr(Attribute(attr, temp_dat, temp_val, disabled=False))
-
-        self.reload_enemies()
-        self.reload_towers()
-        self.get_attr_surf()
-
-    def reload_enemies(self):
-        for enemy in self.enemies:
-            enemy.kill()
-
-        self.starts = []
-        self.enemies = pg.sprite.Group()
-        for s in LEVEL_DATA[self.level]["waves"][self.wave]:
-            self.starts.append(Start(self, s["start"], s["enemy_type"], s["enemy_count"], s["spawn_delay"], s["spawn_rate"]))
-            self.starts[-1].enable_spawning()
-
-    def update(self):
-        super().update()
-        if self.current_wave_done() and len(self.enemies) == 0:
-            self.reload_enemies()
-
-    def reload_attrs(self):
-        attrs = self.ui.get_attrs()
-        load = False
-        create_level = False
-        create_wave = False
-        create_sub_wave = False
-        for attr in attrs:
-            if attr == "level":
-                if self.level != attrs[attr]:
-                    if attrs[attr] == len(LEVEL_DATA):
-                        create_level = True
-                    attrs["wave"] = 0
-                    attrs["sub_wave"] = 0
-                    load = True
-            elif attr == "wave":
-                if self.wave != attrs[attr]:
-                    if attrs[attr] == len(LEVEL_DATA[self.level]["waves"]):
-                        create_wave = True
-                    attrs["sub_wave"] = 0
-                    load = True
-            elif attr == "sub_wave":
-                if self.sub_wave != attrs[attr]:
-                    if attrs[attr] == len(LEVEL_DATA[self.level]["waves"][self.wave]):
-                        create_sub_wave = True
-                    load = True
-            elif attr in ATTR_DATA["level"]:
-                LEVEL_DATA[self.level][attr] = attrs[attr]
-            else:
-                if attr == "enemy_type":
-                    attrs[attr] = self.enemy_types[attrs[attr]]
-                LEVEL_DATA[self.level]["waves"][self.wave][self.sub_wave][attr] = attrs[attr]
-        if create_level:
-            self.level = attrs["level"]
-            self.create_new_level()
-            self.load_ui()
-
-        elif create_wave:
-            self.wave = attrs["wave"]
-            self.create_new_wave()
-            self.load_ui()
-
-        elif create_sub_wave:
-            self.sub_wave = attrs["sub_wave"]
-            self.create_new_sub_wave()
-            self.load_ui()
-
-        elif load:
-            self.level = attrs["level"]
-            self.wave = attrs["wave"]
-            self.sub_wave = attrs["sub_wave"]
-            self.reload_level()
-            self.load_ui()
-
-        else:
-            self.reload_towers()
-            self.reload_enemies()
-            self.get_attr_surf()
-
-    def event(self, event):
-        result = super().event(event)
-        if isinstance(result, str):
-            if result == "menu":
-                return result
-            elif result == "scroll_position":
-                self.get_attr_surf()
-            elif result == "new_tower_name":
-                self.create_new_tower()
-                self.load_ui()
-            else:
-                self.reload_attrs()
-                self.load_ui()
-
-        elif result == -2:
-            self.reload_attrs()
-
-        return -1
-
-    def create_new_level(self):
-        LEVEL_DATA.append({})
-        self.wave = 0
-        for attr in ATTR_DATA["level"]:
-            LEVEL_DATA[self.level][attr] = ATTR_DATA["level"][attr]["default"]
-        LEVEL_DATA[self.level]["waves"] = []
-        self.create_new_wave()
-        self.reload_level()
-
-    def create_new_wave(self):
-        LEVEL_DATA[self.level]["waves"].append([])
-        self.sub_wave = 0
-        self.create_new_sub_wave()
-
-    def create_new_sub_wave(self):
-        LEVEL_DATA[self.level]["waves"][self.wave].append({})
-        for attr in ATTR_DATA["sub_wave"]:
-            if attr == "enemy_type":
-                LEVEL_DATA[self.level]["waves"][self.wave][self.sub_wave][attr] = self.enemy_types[ATTR_DATA["sub_wave"][attr]["default"]]
-            else:
-                LEVEL_DATA[self.level]["waves"][self.wave][self.sub_wave][attr] = ATTR_DATA["sub_wave"][attr]["default"]
 
 class DevUI():
     def __init__(self, save=False):
@@ -954,20 +795,6 @@ class DevUI():
                 offset = (event.pos[0] - w, event.pos[1] - MENU_OFFSET)
                 if self.save and self.save_button_rect.collidepoint(offset):
                     BTN_2_SFX.play()
-                    for i, level in enumerate(LEVEL_DATA):
-                        if "enemies" in level:
-                            level.pop("enemies")
-                        with open(path.join(LEVELS_FOLDER, "level{}.json".format(i)), 'w') as out_file:
-                            json.dump(level, out_file, indent=4)
-                    for level in LEVEL_DATA:
-                        enemies = []
-                        for difficulty in level["waves"]:
-                            for wave in difficulty:
-                                for sub_wave in wave:
-                                    enemy = sub_wave["enemy_type"]
-                                    if enemy not in enemies:
-                                        enemies.append(enemy)
-                        level["enemies"] = enemies
                     for enemy in ENEMY_DATA:
                         if "image" in ENEMY_DATA[enemy]:
                             ENEMY_DATA[enemy].pop("image")
