@@ -114,7 +114,8 @@
         "japanese_encephalitis",
         "zika_virus",
         "hepatitis_c",
-        "dengue"
+        "dengue",
+        "chickenpox"
     ],
     "game_attrs": {
         "lives": {

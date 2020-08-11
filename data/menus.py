@@ -334,7 +334,6 @@ class Menu(Display):
         self.upgrades_menu_button = pg.Rect((850, 1040), self.level_button_rect.size)
         self.tower_edit_button = pg.Rect((1150, 300), self.level_button_rect.size)
         self.enemy_edit_button = pg.Rect((1150, 670), self.level_button_rect.size)
-        self.level_edit_button = pg.Rect((1150, 1040), self.level_button_rect.size)
         self.options_button = pg.Rect((840, 30), OPTIONS_IMGS[0].get_size())
         self.plus_button = pg.Rect((650, 250), self.small_level_button_size)
         self.minus_button = pg.Rect((0, 250), self.small_level_button_size)
@@ -456,18 +455,6 @@ class Menu(Display):
             (self.enemy_edit_button.center[0] - lives_text.get_rect().center[0],
              self.enemy_edit_button.center[1] - lives_text.get_rect().center[
                  1] + lives_text.get_rect().height - MENU_OFFSET))
-
-        temp_surf.blit(LEVEL_BUTTON_IMG, self.level_edit_button)
-        lives_text = lives_font.render("Level", 1, WHITE)
-        temp_surf.blit(lives_text,
-            (self.level_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.level_edit_button.center[1] - lives_text.get_rect().center[
-                 1] - lives_text.get_rect().height + MENU_OFFSET))
-        lives_text = lives_font.render("Edit", 1, WHITE)
-        temp_surf.blit(lives_text,
-            (self.level_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.level_edit_button.center[1] - lives_text.get_rect().center[
-                 1] + lives_text.get_rect().height - MENU_OFFSET))
         
         minus_plus_font = pg.font.Font(FONT, 110)
         difficulty_font = pg.font.Font(FONT, 100)
@@ -576,9 +563,6 @@ class Menu(Display):
                 elif self.enemy_edit_button.collidepoint(mouse_pos):
                     BTN_SFX.play()
                     return "enemy_edit"
-                elif self.level_edit_button.collidepoint(mouse_pos):
-                    BTN_SFX.play()
-                    return "level_edit"
                 elif self.options_button.collidepoint(mouse_pos):
                     BTN_SFX.play()
                     return "options"
