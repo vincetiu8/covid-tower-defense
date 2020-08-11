@@ -1,4 +1,50 @@
 {
+    "anthrax": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 125,
+        "protein": 6,
+        "shield": false,
+        "mutate": false,
+        "speed": 120,
+        "description": "Don't let these bacteria out of their spores!"
+    },
+    "anthrax_spores": {
+        "explode_on_death": false,
+        "flying": true,
+        "hp": 10,
+        "protein": 4,
+        "shield": true,
+        "shield_hp": 50,
+        "shield_recharge_delay": 0.25,
+        "shield_recharge_rate": 0.05,
+        "mutate": true,
+        "mutation_type": "anthrax",
+        "mutation_time": 10,
+        "mutation_number": 6,
+        "speed": 75,
+        "description": "Destroy these spores before they let the bacteria out!"
+    },
+    "chickenpox": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 5,
+        "protein": 0,
+        "shield": false,
+        "mutate": false,
+        "speed": 250,
+        "description": "This virus doesn't drop any protein, but you still have to kill it."
+    },
+    "cholera": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 200,
+        "protein": 6,
+        "shield": false,
+        "mutate": false,
+        "speed": 75,
+        "description": "Be careful! This bacteria often comes in large swarms."
+    },
     "common_cold": {
         "explode_on_death": false,
         "flying": false,
@@ -12,12 +58,12 @@
     "coronavirus": {
         "explode_on_death": false,
         "flying": false,
-        "hp": 750,
-        "protein": 9,
+        "hp": 5000,
+        "protein": 13,
         "shield": false,
         "mutate": false,
-        "speed": 80,
-        "description": "This devil may be slow, but its high health makes it a force to be reckoned with."
+        "speed": 50,
+        "description": "If you see this, start running."
     },
     "dengue": {
         "explode_on_death": false,
@@ -55,6 +101,19 @@
         "speed": 100,
         "description": "It's hard to put down this beast!"
     },
+    "epstein-barr": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 75,
+        "protein": 8,
+        "shield": true,
+        "shield_hp": 100,
+        "shield_recharge_delay": 1,
+        "shield_recharge_rate": 0.1,
+        "mutate": false,
+        "speed": 200,
+        "description": "A more deadly version of herpes. Fun!"
+    },
     "hantavirus": {
         "explode_on_death": false,
         "flying": false,
@@ -90,8 +149,9 @@
         "mutate": true,
         "speed": 100,
         "description": "A bit thinner than their purple cousin but coming with a shield, too. Don't leave them alive for too long...",
-        "mutation_type": 8,
-        "mutation_time": 5.0
+        "mutation_type": "hepatitis_d",
+        "mutation_time": 5.0,
+        "mutation_number": 1
     },
     "hepatitis_c": {
         "explode_on_death": false,
@@ -134,6 +194,19 @@
         "speed": 80,
         "description": "HIV is not only difficult to kill, but it also destroys nearby towers on death. Stay sharp!"
     },
+    "herpes": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 50,
+        "protein": 7,
+        "shield": true,
+        "shield_hp": 200,
+        "shield_recharge_delay": 1,
+        "shield_recharge_rate": 0.1,
+        "mutate": false,
+        "speed": 95,
+        "description": "This one has a large shield to soak up all your bullets."
+    },
     "influenza": {
         "explode_on_death": false,
         "flying": false,
@@ -154,6 +227,17 @@
         "speed": 225,
         "description": "A variant of the mosquito-borne viruses. It shares the speed and flight of its family!"
     },
+    "malaria": {
+        "explode_on_death": true,
+        "explode_radius": 50,
+        "flying": true,
+        "hp": 10,
+        "protein": 2,
+        "shield": false,
+        "mutate": false,
+        "speed": 130,
+        "description": "Not a lot of hp or speed but it explodes!"
+    },
     "marburg_virus": {
         "explode_on_death": false,
         "flying": false,
@@ -166,6 +250,39 @@
         "mutate": false,
         "speed": 130,
         "description": "Nothing special here. Just a tanky virus with a massive shield."
+    },
+    "measles": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 80,
+        "protein": 3,
+        "shield": true,
+        "shield_hp": 10,
+        "shield_recharge_delay": 0.5,
+        "shield_recharge_rate": 0.05,
+        "mutate": false,
+        "speed": 50,
+        "description": "Don't let this virus fly too far along!"
+    },
+    "meningitis": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 200,
+        "protein": 6,
+        "shield": false,
+        "mutate": false,
+        "speed": 80,
+        "description": "Just an average deadly virus. Nothing to see here!"
+    },
+    "mers": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 2250,
+        "protein": 12,
+        "shield": false,
+        "mutate": false,
+        "speed": 80,
+        "description": "This one's just like its coronavirus cousins: lots of health and coming for you!"
     },
     "mrsa": {
         "explode_on_death": false,
@@ -199,6 +316,39 @@
         "speed": 100,
         "description": "Danger! This virus explodes when it dies, destroying any nearby towers!"
     },
+    "rubella": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 750,
+        "protein": 9,
+        "shield": false,
+        "mutate": false,
+        "speed": 80,
+        "description": "This devil may be slow, but its high health makes it a force to be reckoned with."
+    },
+    "sars": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 1500,
+        "protein": 12,
+        "shield": true,
+        "shield_hp": 1000,
+        "shield_recharge_delay": 1,
+        "shield_recharge_rate": 0.05,
+        "mutate": false,
+        "speed": 50,
+        "description": "It's a large virus, with a shield!"
+    },
+    "shingles": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 5,
+        "protein": 0,
+        "shield": false,
+        "mutate": false,
+        "speed": 300,
+        "description": "No protein for you from this one."
+    },
     "smallpox": {
         "explode_on_death": false,
         "flying": false,
@@ -211,6 +361,27 @@
         "mutate": false,
         "speed": 120,
         "description": "This virus would be weak if not for its regenerating shield."
+    },
+    "syphilis": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 20,
+        "protein": 2,
+        "shield": false,
+        "mutate": false,
+        "speed": 175,
+        "description": "This bacteria sure can be a pain in the butt!"
+    },
+    "tetanus": {
+        "explode_on_death": true,
+        "explode_radius": 150,
+        "flying": false,
+        "hp": 140,
+        "protein": 8,
+        "shield": false,
+        "mutate": false,
+        "speed": 100,
+        "description": "Watch out for the large explosion from this bacteria!"
     },
     "tuberculosis": {
         "explode_on_death": true,
@@ -245,7 +416,10 @@
         "hp": 5,
         "protein": 1,
         "shield": false,
-        "mutate": false,
+        "mutate": true,
+        "mutation_type": "yellow_fever",
+        "mutation_time": 5.0,
+        "mutation_number": 1,
         "speed": 275,
         "description": "Name says it all."
     },

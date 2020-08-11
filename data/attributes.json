@@ -56,13 +56,8 @@
         },
         "mutate": {
             "type": "bool",
-            "ignore_if_false": ["mutation_type", "mutation_time"],
+            "ignore_if_false": ["mutation_time", "mutation_number"],
             "default": false
-        },
-        "mutation_type": {
-            "type": "select",
-            "values": [],
-            "default": 0
         },
         "mutation_time": {
             "type": "float",
@@ -70,6 +65,14 @@
             "max": 100,
             "increment": 0.5,
             "dp": 1,
+            "default": 1
+        },
+        "mutation_number": {
+            "type": "float",
+            "min": 1,
+            "max": 100,
+            "increment": 1,
+            "dp": 0,
             "default": 1
         },
         "speed": {
@@ -82,7 +85,7 @@
         },
         "protein": {
             "type": "float",
-            "min": 1,
+            "min": 0,
             "max": 10000,
             "increment": 1,
             "dp": 0,

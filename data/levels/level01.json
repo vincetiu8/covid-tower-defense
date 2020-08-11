@@ -14,7 +14,7 @@
                         "They can fly over towers and ignore your defenses. Take them out quick!"
                     ],
             "10":   [
-                        "Beware! The infamous Coronavirus is about to make its appearance.",
+                        "Beware! The infamous Rubella virus is about to make its appearance.",
                         "It may be slow, but its high health allows it to run through your defenses unscathed."
                     ],
             "20":   [
@@ -162,7 +162,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 7,
                     "spawn_delay": 3,
                     "spawn_rate": 1.5
@@ -171,7 +171,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 10,
                     "spawn_delay": 3,
                     "spawn_rate": 1.2
@@ -187,7 +187,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 5,
                     "spawn_delay": 3,
                     "spawn_rate": 0.2
@@ -201,7 +201,7 @@
                 },
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 5,
                     "spawn_delay": 13,
                     "spawn_rate": 0.2
@@ -210,7 +210,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 10,
                     "spawn_delay": 3,
                     "spawn_rate": 0.8
@@ -240,7 +240,7 @@
                 },
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 10,
                     "spawn_delay": 10,
                     "spawn_rate": 0.1
@@ -249,7 +249,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 10,
                     "spawn_delay": 3,
                     "spawn_rate": 0.8
@@ -265,7 +265,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 10,
                     "spawn_delay": 3,
                     "spawn_rate": 1
@@ -297,7 +297,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 10,
                     "spawn_delay": 3,
                     "spawn_rate": 0.5
@@ -318,7 +318,7 @@
                 },
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 5,
                     "spawn_delay": 13,
                     "spawn_rate": 0.1
@@ -327,7 +327,7 @@
             [
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 12,
                     "spawn_delay": 3,
                     "spawn_rate": 1
@@ -348,7 +348,7 @@
                 },
                 {
                     "start": 0,
-                    "enemy_type": "coronavirus",
+                    "enemy_type": "rubella",
                     "enemy_count": 12,
                     "spawn_delay": 24,
                     "spawn_rate": 1
