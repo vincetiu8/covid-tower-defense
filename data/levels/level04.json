@@ -460,7 +460,7 @@
                     "enemy_type": "hepatitis_b",
                     "enemy_count": 12,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.3
+                    "spawn_rate": 0.35
                 }
             ],
             [
@@ -517,7 +517,7 @@
                 {
                     "start": 0,
                     "enemy_type": "hepatitis_b",
-                    "enemy_count": 15,
+                    "enemy_count": 10,
                     "spawn_delay": 2,
                     "spawn_rate": 0.25
                 }
@@ -567,7 +567,7 @@
                 {
                     "start": 0,
                     "enemy_type": "cholera",
-                    "enemy_count": 4,
+                    "enemy_count": 5,
                     "spawn_delay": 2,
                     "spawn_rate": 0.5
                 }
@@ -633,7 +633,7 @@
                 {
                     "start": 0,
                     "enemy_type": "cholera",
-                    "enemy_count": 10,
+                    "enemy_count": 8,
                     "spawn_delay": 2,
                     "spawn_rate": 1.5
                 },
@@ -707,7 +707,7 @@
                     "enemy_type": "polio",
                     "enemy_count": 20,
                     "spawn_delay": 20,
-                    "spawn_rate": 0.1
+                    "spawn_rate": 0.12
                 }
             ],
             [
@@ -725,14 +725,14 @@
                     "enemy_type": "polio",
                     "enemy_count": 30,
                     "spawn_delay": 2,
-                    "spawn_rate": 0.15
+                    "spawn_rate": 0.1
                 }
             ],
             [
                 {
                     "start": 0,
                     "enemy_type": "cholera",
-                    "enemy_count": 15,
+                    "enemy_count": 10,
                     "spawn_delay": 2,
                     "spawn_rate": 0.2
                 }
@@ -744,6 +744,173 @@
                     "enemy_count": 30,
                     "spawn_delay": 2,
                     "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "e_coli",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.05
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "e_coli",
+                    "enemy_count": 25,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.05
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "e_coli",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "e_coli",
+                    "enemy_count": 40,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "e_coli",
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "cholera",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 40,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.05
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_b",
+                    "enemy_count": 40,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.05
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "e_coli",
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 50,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.025
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.01
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "cholera",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "e_coli",
+                    "enemy_count": 5,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "e_coli",
+                    "enemy_count": 10,
+                    "spawn_delay": 10,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "e_coli",
+                    "enemy_count": 15,
+                    "spawn_delay": 15,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "e_coli",
+                    "enemy_count": 20,
+                    "spawn_delay": 20,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "e_coli",
+                    "enemy_count": 25,
+                    "spawn_delay": 25,
+                    "spawn_rate": 0.1
                 }
             ]
         ],

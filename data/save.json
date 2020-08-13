@@ -118,7 +118,8 @@
         "dengue",
         "chickenpox",
         "hepatitis_b",
-        "cholera"
+        "cholera",
+        "e_coli"
     ],
     "game_attrs": {
         "lives": {
