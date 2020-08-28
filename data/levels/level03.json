@@ -489,10 +489,606 @@
             [
                 {
                     "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.35
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.3
+                },
+                {
+                    "start": 0,
                     "enemy_type": "hepatitis_a",
-                    "enemy_count": 50,
-                    "spawn_delay": 1,
+                    "enemy_count": 1,
+                    "spawn_delay": 4    ,
+                    "spawn_rate": 0.8
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 8,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.75
+                }
+            ],
+            [
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.6
+                }
+            ],
+            [
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.45
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.45
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 2,
+                    "spawn_delay": 2,
+                    "spawn_rate": 1
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 2,
+                    "spawn_delay": 2,
+                    "spawn_rate": 1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 2,
+                    "spawn_delay": 2,
+                    "spawn_rate": 1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
                     "spawn_rate": 0.5
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 3,
+                    "spawn_delay": 2,
+                    "spawn_rate": 1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.5
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 4,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.8
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.3
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.25
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.5
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 12,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 14,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.35
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.35
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.35
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "polio",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 5,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.15
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.3
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 12,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 18,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.25
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 25,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 25,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 25,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 25,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "rubella",
+                    "enemy_count": 1,
+                    "spawn_delay": 2,
+                    "spawn_rate": 1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 25,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 25,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 10,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.5
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 3,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.5
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "polio",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.4
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 5,
+                    "spawn_delay": 4,
+                    "spawn_rate": 0.2
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 5,
+                    "spawn_delay": 4,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 15,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.5
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "polio",
+                    "enemy_count": 15,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.5
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.5
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.5
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 30,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "rubella",
+                    "enemy_count": 1,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.25
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 25,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 25,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 35,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "common_cold",
+                    "enemy_count": 35,
+                    "spawn_delay": 5,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "hepatitis_a",
+                    "enemy_count": 15,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.5
+                },
+                {
+                    "start": 0,
+                    "enemy_type": "polio",
+                    "enemy_count": 10,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.1
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "smallpox",
+                    "enemy_count": 30,
+                    "spawn_delay": 3,
+                    "spawn_rate": 0.2
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "pertussis",
+                    "enemy_count": 20,
+                    "spawn_delay": 2,
+                    "spawn_rate": 0.1
+                }
+            ],
+            [
+                {
+                    "start": 0,
+                    "enemy_type": "rubella",
+                    "enemy_count": 2,
+                    "spawn_delay": 2,
+                    "spawn_rate": 15
+                },
+                {
+                    "start": 1,
+                    "enemy_type": "rubella",
+                    "enemy_count": 2,
+                    "spawn_delay": 2,
+                    "spawn_rate": 15
                 }
             ]
         ],

@@ -15,7 +15,7 @@
     "height": 768,
     "fullscreen": false,
     "skip_text": true,
-    "max_dna": 355,
+    "max_dna": 370,
     "used_dna": 0,
     "highscores": [
         [
@@ -35,7 +35,7 @@
         ],
         [
             0,
-            0,
+            88,
             0
         ],
         [
@@ -119,7 +119,9 @@
         "chickenpox",
         "hepatitis_b",
         "cholera",
-        "e_coli"
+        "e_coli",
+        "rubella",
+        "pertussis"
     ],
     "game_attrs": {
         "lives": {
