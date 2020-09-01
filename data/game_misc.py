@@ -36,12 +36,18 @@ class UI:
     def set_active(self, bool):
         self.active = bool
         if bool:
-            self.rect = RIGHT_ARROW_IMG.get_rect(
-                topright=(self.game.get_size()[0] - self.width - self.offset, self.offset))
+            self.rect = RIGHT_ARROW_IMG.get_rect(topright=(self.game.get_size()[0] - self.ui.get_width() - self.offset, self.offset))
 
         else:
             self.rect = LEFT_ARROW_IMG.get_rect(topright=(self.game.get_size()[0] - self.offset, self.offset))
-            
+
+        display = MainDisplay.get_instance()
+        self.adjusted_rect = self.rect.copy()
+        self.adjusted_rect.x /= display.screen_ratio
+        self.adjusted_rect.y /= display.screen_ratio
+        self.adjusted_rect.w /= display.screen_ratio
+        self.adjusted_rect.h /= display.screen_ratio
+
     def set_next_wave_btn(self, state):
         self.next_wave_btn_enabled = state
         self.next_wave_btn_changed = True

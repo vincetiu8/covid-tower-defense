@@ -29,7 +29,7 @@ def collide_with_walls(sprite, group, dir):
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
 
-skip_to_wave = 39   # TODO: Remove this dev option
+skip_to_wave = 0   # TODO: Remove this dev option
                     # Change this to change which wave you start on. You'll get all the protein from the previous waves.
                     # Indexing starts at 0 and the wave this is set to is inclusive.
                     # i.e. if the value is set to 15, the game will start at wave 16 (when counting from 1).
@@ -359,9 +359,9 @@ class Game(Display):
             ui = self.ui.ui
             ui_rect = ui.get_rect(topright = self.ui_pos)
             self.blit(ui, ui_rect)
-            self.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright = ui_rect.topleft))
+            self.blit(RIGHT_ARROW_IMG, self.ui.rect)
         else:
-            self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = (SAVE_DATA["width"] - MENU_OFFSET, MENU_OFFSET)))
+            self.blit(LEFT_ARROW_IMG, self.ui.rect)
         
         if len(self.enemies) == 0 and self.text:
             self.blit(self.textbox, self.textbox.get_rect(bottomleft = (MENU_OFFSET, SAVE_DATA["height"] - MENU_OFFSET + self.textbox.yoffset)))
@@ -619,7 +619,7 @@ class Game(Display):
                         self.textbox.set_text(self.texts[0])
                     return -1
 
-                if self.ui.rect.collidepoint(event.pos):
+                if self.ui.adjusted_rect.collidepoint((event.pos[0], event.pos[1])):
                     self.ui.set_active(not self.ui.active)
                     return -1
 
