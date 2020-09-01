@@ -107,20 +107,6 @@
         "goblet_cell"
     ],
     "seen_enemies": [
-        "common_cold",
-        "hepatitis_a",
-        "polio",
-        "coronavirus",
-        "smallpox",
-        "japanese_encephalitis",
-        "zika_virus",
-        "hepatitis_c",
-        "dengue",
-        "chickenpox",
-        "hepatitis_b",
-        "cholera",
-        "e_coli",
-        "rubella",
         "pertussis"
     ],
     "game_attrs": {

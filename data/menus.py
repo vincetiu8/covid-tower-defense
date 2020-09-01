@@ -1009,14 +1009,16 @@ class LevelInfo(HoverInfo):
             ))
             enemy_surf.fill(DARK_GREY)
             for i, enemy in enumerate(self.level_data["enemies"][self.difficulty]):
-                enemy_image = pg.transform.scale(ENEMY_DATA[enemy]["image"], (MENU_TEXT_SIZE, MENU_TEXT_SIZE)).convert_alpha()
+                temp_img = ENEMY_DATA[enemy]["image"]
+                enemy_image = pg.transform.scale(temp_img, (MENU_TEXT_SIZE, MENU_TEXT_SIZE * temp_img.get_height() // temp_img.get_width())).convert_alpha()
+                print(enemy_image.get_size())
                 if enemy not in SAVE_DATA["seen_enemies"]:
                     enemy_image.fill(DARK_GREY, special_flags=pg.BLEND_RGBA_MULT)
                     font = pg.font.Font(FONT, MENU_TEXT_SIZE)
                     question_mark = font.render("?", 1, WHITE)
                     enemy_image.blit(question_mark, question_mark.get_rect(center=enemy_image.get_rect().center))
                 enemy_surf.blit(enemy_image, (i % MAX_ENEMIES_IN_ROW * (MENU_TEXT_SIZE + MENU_OFFSET),
-                                              i // MAX_ENEMIES_IN_ROW * (MENU_TEXT_SIZE + MENU_OFFSET)))
+                                              i // MAX_ENEMIES_IN_ROW * (MENU_TEXT_SIZE + MENU_OFFSET) + (MENU_TEXT_SIZE - enemy_image.get_height()) // 2))
 
             self.add_text(enemy_surf)
             
