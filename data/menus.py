@@ -550,12 +550,6 @@ class Menu(Display):
                 elif self.upgrades_menu_button.collidepoint((mouse_pos)):
                     BTN_SFX.play()
                     return "upgrades_menu"
-                elif self.tower_edit_button.collidepoint(mouse_pos):
-                    BTN_SFX.play()
-                    return "tower_edit"
-                elif self.enemy_edit_button.collidepoint(mouse_pos):
-                    BTN_SFX.play()
-                    return "enemy_edit"
                 elif self.purchase_menu_button.collidepoint((mouse_pos)):
                     BTN_SFX.play()
                     return "purchase_menu"
@@ -1287,14 +1281,19 @@ class PurchaseMenu(TowerMenu):
         self.confirm_menu = ActionMenu("Are you sure you want to make this purchase?", "Yes", "No")
         self.confirm_menu_surf = self.confirm_menu.draw()
         self.confirm_menu_rect = self.confirm_menu_surf.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        self.dna_text = self.get_dna_text()
         self.confirming = False
 
     def new(self, args):
         pass
 
+    def get_dna_text(self):
+        return self.text_font.render("DNA: " + str(SAVE_DATA["max_dna"] - SAVE_DATA["used_dna"]), 1, WHITE)
+
     def draw(self):
         self.fill(BLACK)
         self.blit(self.title, ((SCREEN_WIDTH - self.title.get_width()) // 2, MENU_OFFSET))
+        self.blit(self.dna_text, (MENU_OFFSET * 2, MENU_OFFSET))
         self.blit(self.done_btn, self.done_btn_rect)
 
         for i, surf in enumerate(self.packets):
@@ -1337,6 +1336,7 @@ class PurchaseMenu(TowerMenu):
                 result = self.confirm_menu.event((event.pos[0] - self.confirm_menu_rect.x, event.pos[1] - self.confirm_menu_rect.y))
                 if result == 1:
                     SAVE_DATA["max_dna"] += 50 * 5 ** self.over_packet
+                    self.dna_text = self.get_dna_text()
 
                 elif result == -1:
                     return -1

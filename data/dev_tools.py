@@ -21,7 +21,6 @@ class DevClass(Game):
 
     def reload_level(self, map):
         self.map = TiledMap(path.join(MAP_FOLDER, "{}.tmx".format(map)))
-        print(map)
         super().load_data()
 
     def new(self):
@@ -180,7 +179,7 @@ class DevClass(Game):
             surface.blit(enemy.image, enemy.rect)
             hp_surf = enemy.get_hp_surf()
             if hp_surf != None:
-                total_hp_surf.blit(hp_surf, hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - enemy.image_size // 2 - 10)))
+                total_hp_surf.blit(hp_surf, hp_surf.get_rect(center=(enemy.rect.center[0], enemy.rect.center[1] - enemy.image_size[1] // 2 - 10)))
         surface.blit(total_hp_surf, (0, 0))
 
         for tower in self.towers:
