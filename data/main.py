@@ -7,7 +7,7 @@ from data.tilemap import *
 from data.towers import *
 from data.game_stop import Pause, GameOver
 from data.menus import *
-from data.dev_tools import TowerEditMenu, EnemyEditMenu, TowerPreviewMenu, EnemyPreviewMenu
+from data.dev_tools import TowerPreviewMenu, EnemyPreviewMenu
 from data.options import Options
 from data.settings import SAVE_DATA
 
@@ -31,8 +31,6 @@ class Main:
         self.tower_preview = TowerPreviewMenu(self.clock)
         self.enemy_preview = EnemyPreviewMenu(self.clock)
         self.upgrades_menu = UpgradesMenu()
-        self.tower_edit = TowerEditMenu(self.clock)
-        self.enemy_edit = EnemyEditMenu(self.clock)
         self.purchase_menu = PurchaseMenu()
         self.tower_select = TowerSelectMenu()
         self.options = Options()
@@ -46,8 +44,6 @@ class Main:
             "tower_preview":    self.tower_preview,
             "enemy_preview":    self.enemy_preview,
             "upgrades_menu":    self.upgrades_menu,
-            "tower_edit":       self.tower_edit,
-            "enemy_edit":       self.enemy_edit,
             "purchase_menu":    self.purchase_menu,
             "tower_select":     self.tower_select,
             "options":          self.options

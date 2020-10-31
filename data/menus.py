@@ -331,8 +331,8 @@ class Menu(Display):
 
         self.tower_preview_button = pg.Rect((850, 300), self.level_button_rect.size)
         self.enemy_preview_button = pg.Rect((850, 670), self.level_button_rect.size)
-        self.upgrades_menu_button = pg.Rect((850, 1040), self.level_button_rect.size)
-        self.purchase_menu_button = pg.Rect((850, 1410), self.level_button_rect.size)
+        self.upgrades_menu_button = pg.Rect((1200, 300), self.level_button_rect.size)
+        self.purchase_menu_button = pg.Rect((1200, 670), self.level_button_rect.size)
         self.tower_edit_button = pg.Rect((1150, 300), self.level_button_rect.size)
         self.enemy_edit_button = pg.Rect((1150, 670), self.level_button_rect.size)
         self.options_button = pg.Rect((840, 30), OPTIONS_IMGS[0].get_size())
@@ -384,7 +384,7 @@ class Menu(Display):
             self.camera.move(0, -25)
 
     def draw(self):
-        temp_surf = pg.Surface((1350, 1350)) # set surface width to 1100 when removing the edit buttons
+        temp_surf = pg.Surface((1600, 1100)) # set surface width to 1100 when removing the edit buttons
 
         big_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w * 3)
         lives_font = pg.font.Font(FONT, LEVEL_BUTTON_IMG.get_rect().w)
@@ -437,37 +437,17 @@ class Menu(Display):
              self.upgrades_menu_button.center[1] - lives_text.get_rect().center[
                  1] + lives_text.get_rect().height - MENU_OFFSET))
 
-        temp_surf.blit(LEVEL_BUTTON_IMG, self.tower_edit_button)
-        lives_text = lives_font.render("Tower", 1, WHITE)
-        temp_surf.blit(lives_text,
-            (self.tower_edit_button.center[0] - lives_text.get_rect().center[0], self.tower_edit_button.center[1] - lives_text.get_rect().center[1] - lives_text.get_rect().height + MENU_OFFSET))
-        lives_text = lives_font.render("Edit", 1, WHITE)
-        temp_surf.blit(lives_text,
-            (self.tower_edit_button.center[0] - lives_text.get_rect().center[0], self.tower_edit_button.center[1] - lives_text.get_rect().center[1] + lives_text.get_rect().height - MENU_OFFSET))
-
-        temp_surf.blit(LEVEL_BUTTON_IMG, self.enemy_edit_button)
-        lives_text = lives_font.render("Enemy", 1, WHITE)
-        temp_surf.blit(lives_text,
-            (self.enemy_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.enemy_edit_button.center[1] - lives_text.get_rect().center[
-                 1] - lives_text.get_rect().height + MENU_OFFSET))
-        lives_text = lives_font.render("Edit", 1, WHITE)
-        temp_surf.blit(lives_text,
-            (self.enemy_edit_button.center[0] - lives_text.get_rect().center[0],
-             self.enemy_edit_button.center[1] - lives_text.get_rect().center[
-                 1] + lives_text.get_rect().height - MENU_OFFSET))
-
-        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.purchase_menu_button))
+        temp_surf.blit(LEVEL_BUTTON_IMG, self.purchase_menu_button)
         lives_text = lives_font.render("Purchase", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
+        temp_surf.blit(lives_text,
             (self.purchase_menu_button.center[0] - lives_text.get_rect().center[0],
              self.purchase_menu_button.center[1] - lives_text.get_rect().center[
-                 1] - lives_text.get_rect().height + MENU_OFFSET)))
+                 1] - lives_text.get_rect().height + MENU_OFFSET))
         lives_text = lives_font.render("Menu", 1, WHITE)
-        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
+        temp_surf.blit(lives_text,
             (self.purchase_menu_button.center[0] - lives_text.get_rect().center[0],
              self.purchase_menu_button.center[1] - lives_text.get_rect().center[
-                 1] + lives_text.get_rect().height - MENU_OFFSET)))
+                 1] + lives_text.get_rect().height - MENU_OFFSET))
 
         minus_plus_font = pg.font.Font(FONT, 110)
         difficulty_font = pg.font.Font(FONT, 100)
