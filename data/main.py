@@ -29,6 +29,7 @@ class Main:
         self.tower_preview = TowerPreviewMenu(self.clock)
         self.enemy_preview = EnemyPreviewMenu(self.clock)
         self.upgrades_menu = UpgradesMenu()
+        self.purchase_menu = PurchaseMenu()
         self.tower_select = TowerSelectMenu()
         self.options = Options()
         
@@ -41,6 +42,7 @@ class Main:
             "tower_preview":    self.tower_preview,
             "enemy_preview":    self.enemy_preview,
             "upgrades_menu":    self.upgrades_menu,
+            "purchase_menu":    self.purchase_menu,
             "tower_select":     self.tower_select,
             "options":          self.options
         }

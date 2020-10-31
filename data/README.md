@@ -14,6 +14,14 @@ Assets used:
 
 - Body image art: https://depositphotos.com/51450531/stock-illustration-human-body-anatomy-brain-lungs.html
 
+- Chest Art: https://www.clipartkey.com/mpngs/m/304-3041779_chest-treasurechest-treasure-pirate-empty-empty-treasure-chest.png
+
+- Bundle Art: https://png.pngtree.com/png-clipart/20190921/original/pngtree-green-sachet-cartoon-illustration-png-image_4719606.jpg
+
+- Sachet Art: https://thumbs.dreamstime.com/z/ketchup-sachet-21111246.jpg
+
+- Truck Art: https://thumbs.dreamstime.com/z/fast-delivery-truck-open-trunk-full-boxes-cartoon-vector-illustration-82999461.jpg
+
 **SFX**
 
 - http://soundbible.com/1997-Cha-Ching-Register.html

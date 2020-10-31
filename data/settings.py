@@ -173,6 +173,13 @@ PROTEIN_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "protein.png"))
 LEFT_ARROW_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "left.png"))
 RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_IMG_FOLDER, "left.png")).copy(), 180)
 
+PURCHASE_IMAGES = [
+    pg.image.load(path.join(MENU_IMG_FOLDER, "packet.png")),
+    pg.image.load(path.join(MENU_IMG_FOLDER, "bundle.png")),
+    pg.image.load(path.join(MENU_IMG_FOLDER, "chest.png")),
+    pg.image.load(path.join(MENU_IMG_FOLDER, "van.png")),
+]
+
 # Initializing the mixer in the settings file lol but rn i don't see a better way.
 # SFX
 HEART_BEEP_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "heart_beep.wav"))

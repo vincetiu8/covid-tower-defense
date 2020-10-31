@@ -331,6 +331,7 @@ class Menu(Display):
         self.tower_preview_button = pg.Rect((800, 200), self.level_button_rect.size)
         self.enemy_preview_button = pg.Rect((800, 600), self.level_button_rect.size)
         self.upgrades_menu_button = pg.Rect((800, 1000), self.level_button_rect.size)
+        self.purchase_menu_button = pg.Rect((800, 1400), self.level_button_rect.size)
         self.options_button = pg.Rect((870, -100), OPTIONS_IMGS[0].get_size())
         self.plus_button = pg.Rect((600, 150), self.small_level_button_size)
         self.minus_button = pg.Rect((-130, 150), self.small_level_button_size)
@@ -449,6 +450,18 @@ class Menu(Display):
             (self.upgrades_menu_button.center[0] - lives_text.get_rect().center[0],
              self.upgrades_menu_button.center[1] - lives_text.get_rect().center[
                  1] + lives_text.get_rect().height - MENU_OFFSET)))
+
+        self.blit(self.camera.apply_image(LEVEL_BUTTON_IMG), self.camera.apply_rect(self.purchase_menu_button))
+        lives_text = lives_font.render("Purchase", 1, WHITE)
+        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
+            (self.purchase_menu_button.center[0] - lives_text.get_rect().center[0],
+             self.purchase_menu_button.center[1] - lives_text.get_rect().center[
+                 1] - lives_text.get_rect().height + MENU_OFFSET)))
+        lives_text = lives_font.render("Menu", 1, WHITE)
+        self.blit(self.camera.apply_image(lives_text), self.camera.apply_tuple(
+            (self.purchase_menu_button.center[0] - lives_text.get_rect().center[0],
+             self.purchase_menu_button.center[1] - lives_text.get_rect().center[
+                 1] + lives_text.get_rect().height - MENU_OFFSET)))
         
         minus_plus_font = pg.font.Font(FONT, 130)
         difficulty_font = pg.font.Font(FONT, 110)
@@ -530,6 +543,9 @@ class Menu(Display):
                 elif self.upgrades_menu_button.collidepoint((mouse_pos)):
                     BTN_SFX.play()
                     return "upgrades_menu"
+                elif self.purchase_menu_button.collidepoint((mouse_pos)):
+                    BTN_SFX.play()
+                    return "purchase_menu"
                 elif self.options_button.collidepoint(mouse_pos):
                     BTN_SFX.play()
                     return "options"
@@ -1219,6 +1235,104 @@ class UpgradesMenu(TowerMenu):
                     return -1
 
             self.over_upgrade = -1
+
+        return -1
+
+class PurchaseMenu(TowerMenu):
+    def __init__(self):
+        super().__init__()
+        self.packet_width = SCREEN_WIDTH // 4 - MENU_OFFSET * 2
+        self.packet_height = SCREEN_HEIGHT - MENU_OFFSET * 15
+
+        self.title_font = pg.font.Font(FONT, 120)
+        self.text_font = pg.font.Font(FONT, 50)
+        self.title = self.title_font.render("Purchase DNA", 1, WHITE)
+
+        self.packet_texts = [
+            ("Packet of DNA", "50 DNA", "$1"),
+            ("Bundle of DNA", "250 DNA", "$4"),
+            ("Chest of DNA", "1250 DNA", "$16"),
+            ("Van of DNA", "6250 DNA", "$64"),
+        ]
+        self.packets = [self.draw_dna_packet(x) for x in range(4)]
+        self.over_packet = -1
+
+        self.done_btn = self.make_btn("Done")
+        self.done_btn_rect = pg.Rect(SCREEN_WIDTH - self.done_btn.get_width() - MENU_OFFSET, MENU_OFFSET, self.done_btn.get_width(), self.done_btn.get_height())
+
+        self.confirm_menu = ActionMenu("Are you sure you want to make this purchase?", "Yes", "No")
+        self.confirm_menu_surf = self.confirm_menu.draw()
+        self.confirm_menu_rect = self.confirm_menu_surf.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        self.confirming = False
+
+    def new(self, args):
+        pass
+
+    def draw(self):
+        self.fill(BLACK)
+        self.blit(self.title, ((SCREEN_WIDTH - self.title.get_width()) // 2, MENU_OFFSET))
+        self.blit(self.done_btn, self.done_btn_rect)
+
+        for i, surf in enumerate(self.packets):
+            if self.over_packet == i:
+                self.blit(surf[1], surf[2])
+            else:
+                self.blit(surf[0], surf[2])
+
+        if self.confirming:
+            self.blit(self.confirm_menu_surf, self.confirm_menu_rect)
+
+        return self
+
+    def draw_dna_packet(self, image):
+        normal_surf = pg.Surface((self.packet_width, self.packet_height))
+        normal_surf.fill(DARK_GREY)
+        highlighted_surf = pg.Surface((self.packet_width, self.packet_height))
+        highlighted_surf.fill(LIGHT_GREY)
+
+        temp_image = PURCHASE_IMAGES[image]
+        new_width = self.packet_width - MENU_OFFSET * 4
+        resized_image = pg.transform.scale(temp_image, (new_width, new_width * temp_image.get_height() // temp_image.get_width()))
+        temp_surf = pg.Surface((self.packet_width - 2 * MENU_OFFSET, self.packet_height - 2 * MENU_OFFSET))
+        temp_surf.blit(resized_image, (MENU_OFFSET, MENU_OFFSET))
+        y = temp_surf.get_height()
+        for text in self.packet_texts[image][::-1]:
+            rendered_text = self.text_font.render(text, 1, WHITE)
+            y -= MENU_OFFSET + rendered_text.get_height()
+            temp_surf.blit(rendered_text, (MENU_OFFSET, y))
+
+        normal_surf.blit(temp_surf, (MENU_OFFSET, MENU_OFFSET))
+        highlighted_surf.blit(temp_surf, (MENU_OFFSET, MENU_OFFSET))
+        rect = normal_surf.get_rect()
+        rect.topleft = MENU_OFFSET * (1 + image * 2) + self.packet_width * image, MENU_OFFSET * 14
+        return normal_surf, highlighted_surf, rect
+
+    def event(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if self.confirming:
+                result = self.confirm_menu.event((event.pos[0] - self.confirm_menu_rect.x, event.pos[1] - self.confirm_menu_rect.y))
+                if result == 1:
+                    SAVE_DATA["max_dna"] += 50 * 5 ** self.over_packet
+
+                elif result == -1:
+                    return -1
+                self.confirming = False
+
+            elif self.over_packet != -1:
+                BTN_2_SFX.play()
+                self.confirming = True
+
+            elif self.done_btn_rect.collidepoint(event.pos):
+                return "menu"
+
+        elif event.type == pg.MOUSEMOTION:
+            if not self.confirming:
+                for i, packet in enumerate(self.packets):
+                    if packet[2].collidepoint(event.pos):
+                        self.over_packet = i
+                        break
+                else:
+                    self.over_packet = -1
 
         return -1
 
