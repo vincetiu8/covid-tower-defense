@@ -359,9 +359,9 @@ class Game(Display):
             ui = self.ui.ui
             ui_rect = ui.get_rect(topright = self.ui_pos)
             self.blit(ui, ui_rect)
-            self.blit(RIGHT_ARROW_IMG, RIGHT_ARROW_IMG.get_rect(topright = ui_rect.topleft))
+            self.blit(RIGHT_ARROW_IMG, self.ui.rect)
         else:
-            self.blit(LEFT_ARROW_IMG, LEFT_ARROW_IMG.get_rect(topright = (SAVE_DATA["width"] - MENU_OFFSET, MENU_OFFSET)))
+            self.blit(LEFT_ARROW_IMG, self.ui.rect)
         
         if len(self.enemies) == 0 and self.text:
             self.blit(self.textbox, self.textbox.get_rect(bottomleft = (MENU_OFFSET, SAVE_DATA["height"] - MENU_OFFSET + self.textbox.yoffset)))
@@ -616,7 +616,7 @@ class Game(Display):
                         self.textbox.set_text(self.texts[0])
                     return -1
 
-                if self.ui.rect.collidepoint(event.pos):
+                if self.ui.adjusted_rect.collidepoint((event.pos[0], event.pos[1])):
                     self.ui.set_active(not self.ui.active)
                     return -1
 

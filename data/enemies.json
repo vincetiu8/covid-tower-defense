@@ -304,6 +304,19 @@
         "speed": 110,
         "description": "The polio virus is weak, but it can fly over cells and go straight to the goal."
     },
+    "pertussis": {
+        "explode_on_death": false,
+        "flying": false,
+        "hp": 5,
+        "protein": 2,
+        "shield": true,
+        "shield_hp": 30,
+        "shield_recharge_delay": 1,
+        "shield_recharge_rate": 0.1,
+        "mutate": false,
+        "speed": 100,
+        "description": "Pertussis isn't very strong, but it causes a mild cough."
+    },
     "rabies": {
         "explode_on_death": true,
         "explode_radius": 100,
