@@ -36,12 +36,18 @@ class UI:
     def set_active(self, bool):
         self.active = bool
         if bool:
-            self.rect = RIGHT_ARROW_IMG.get_rect(
-                topright=(self.game.get_size()[0] - self.width - self.offset, self.offset))
+            self.rect = RIGHT_ARROW_IMG.get_rect(topright=(self.game.get_size()[0] - self.ui.get_width() - self.offset, self.offset))
 
         else:
             self.rect = LEFT_ARROW_IMG.get_rect(topright=(self.game.get_size()[0] - self.offset, self.offset))
-            
+
+        display = MainDisplay.get_instance()
+        self.adjusted_rect = self.rect.copy()
+        self.adjusted_rect.x /= display.screen_ratio
+        self.adjusted_rect.y /= display.screen_ratio
+        self.adjusted_rect.w /= display.screen_ratio
+        self.adjusted_rect.h /= display.screen_ratio
+
     def set_next_wave_btn(self, state):
         self.next_wave_btn_enabled = state
         self.next_wave_btn_changed = True
@@ -374,8 +380,9 @@ class NewEnemyBox(pg.Surface):
         title = big_font.render("A NEW ENEMY APPEARS!", 1, WHITE)
         temp_surf.blit(title, title.get_rect(center = (self.rect_size[0] / 2, MENU_OFFSET * 7)))
 
-        enemy_image = pg.transform.scale(enemy_dat["image"], (300, 300))
-        temp_surf.blit(enemy_image, enemy_image.get_rect(bottomleft = (MENU_OFFSET * 2, self.rect_size[1] - MENU_OFFSET * 6)))
+        temp_img = enemy_dat["image"]
+        enemy_image = pg.transform.scale(temp_img, (300, 300 * temp_img.get_height() // temp_img.get_width()))
+        temp_surf.blit(enemy_image, enemy_image.get_rect(bottomleft = (MENU_OFFSET * 2, self.rect_size[1] - MENU_OFFSET * 6 - (300 - enemy_image.get_height()) // 2)))
 
         texts = []
         texts.append([("Name: " + self.enemy.replace("_", " ").title(), WHITE)])
