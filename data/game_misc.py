@@ -3,6 +3,7 @@ import textwrap
 
 class UI:
     def __init__(self, game, offset):
+        self.display = MainDisplay.get_instance()
         self.game = game
         self.offset = offset
         self.wave = 0
@@ -15,149 +16,195 @@ class UI:
         self.active = True
         
         self.tower_size = round(9 * offset)
-        self.tower_rects = [pg.Rect(self.offset, self.offset * 5 + HEART_IMG.get_size()[0] * 2 + i * (self.offset + self.tower_size), self.tower_size, self.tower_size) for i, tower in enumerate(self.game.available_towers)]
+        self.tower_rects = [pg.Rect(self.offset, i * (self.offset + self.tower_size), self.tower_size, self.tower_size) for i, tower in enumerate(self.game.available_towers)]
         
         self.next_wave_rect = None
         self.tower = None
-        
-        self.ui = self.get_ui()
+
+        self.size = HEART_IMG.get_size()[0]
+        self.font = pg.font.Font(FONT, self.size * 2)
+        self.font2 = pg.font.Font(FONT, self.size)
+        self.font3 = pg.font.Font(FONT, int(HEART_IMG.get_size()[0] * 1.3))
+        self.width = 0
+
+        self.generate_header()
+        self.generate_body()
+        self.generate_next_wave_wrapper()
+
         self.set_active(self.active)
 
     def set_active(self, bool):
         self.active = bool
         if bool:
-            self.rect = RIGHT_ARROW_IMG.get_rect(
-                topright=(self.game.get_size()[0] - self.width - self.offset, self.offset))
+            self.rect = RIGHT_ARROW_IMG.get_rect(topright=(self.game.get_size()[0] - self.ui.get_width() - self.offset, self.offset))
 
         else:
             self.rect = LEFT_ARROW_IMG.get_rect(topright=(self.game.get_size()[0] - self.offset, self.offset))
-            
+
+        display = MainDisplay.get_instance()
+        self.adjusted_rect = self.rect.copy()
+        self.adjusted_rect.x /= display.screen_ratio
+        self.adjusted_rect.y /= display.screen_ratio
+        self.adjusted_rect.w /= display.screen_ratio
+        self.adjusted_rect.h /= display.screen_ratio
+
     def set_next_wave_btn(self, state):
         self.next_wave_btn_enabled = state
         self.next_wave_btn_changed = True
 
     def update(self):
-        ret = True
-        if self.lives != self.game.lives:
-            self.lives = self.game.lives
-            ret = False
-
-        if self.protein != self.game.protein:
-            self.protein = self.game.protein
-            ret = False
-
-        if self.next_wave_btn_changed:
-            self.next_wave_btn_changed = False
-            ret = False
-
-        if self.game.in_a_wave:
-            if self.wave != self.game.wave:
-                self.wave = self.game.wave
-                ret = False
-
-        else:
-            ret = False
-
-        if ret:
-            return
-
-        self.ui = self.get_ui()
-
-        if not self.game.in_a_wave and self.game.wave > 0:
-            self.update_timer()
+        if not self.game.in_a_wave:
+            self.generate_next_wave_wrapper()
 
     def select_tower(self, x, y):
-        try:
-            self.tower = self.game.map.get_tower_map()[x][y]
-            self.ui = self.get_ui()
-        except:
-            pass
+        tower = self.game.map.get_tower(x, y)
+        if tower is not self.tower:
+            self.tower = tower
+            self.generate_body_wrapper()
 
     def deselect_tower(self):
         self.tower = None
-        self.ui = self.get_ui()
+        self.generate_body_wrapper()
 
-    def get_ui(self):
-        size = HEART_IMG.get_size()[0]
-        font = pg.font.Font(FONT, size * 2)
-        
+    def regen_surfs(self):
+        self.ui = pg.Surface((self.width, SCREEN_HEIGHT - self.offset * 2))
+        self.header = pg.Surface((self.width, self.offset * 7 + self.size))
+        self.body = pg.Surface((self.width, self.ui.get_height() - self.offset * 13 - self.size))
+        self.next_wave = pg.Surface((self.width, self.offset * 6))
+
+    def generate_header_wrapper(self):
+        self.generate_header()
+        self.get_ui()
+
+    def generate_body_wrapper(self):
+        self.generate_body()
+        self.get_ui()
+
+    def generate_next_wave_wrapper(self):
+        self.generate_next_wave()
+        self.get_ui()
+
+    def generate_header(self):
         # Draws waves, lives, protein text
-        waves_text = font.render("Wave {}/{}".format(min(self.wave + 1, self.max_wave), self.max_wave), 1, WHITE)
+        waves_text = self.font.render("Wave {}/{}".format(min(self.wave + 1, self.max_wave), self.max_wave), 1, WHITE)
+        width = max(waves_text.get_width() + self.offset * 2, 225)
+        if width != self.width:
+            self.width = width
+            self.regen_surfs()
+            self.generate_body()
 
-        self.width = max(waves_text.get_width() + self.offset * 2, 225)
-        ui = pg.Surface((self.width, self.game.get_size()[1] - 2 * self.offset))
-        ui.fill(DARK_GREY)
-
-        ui.blit(waves_text, waves_text.get_rect(midtop=(self.width / 2, self.offset)))
-        ui.blit(HEART_IMG, (self.offset, self.offset * 4 + size))
-        lives_text = font.render(str(self.game.lives), 1, WHITE)
+        self.header.fill(DARK_GREY)
+        self.header.blit(waves_text, waves_text.get_rect(midtop=(self.width / 2, 0)))
+        self.header.blit(HEART_IMG, (self.offset, self.offset * 3 + self.size))
+        lives_text = self.font.render(str(self.game.lives), 1, WHITE)
         lives_text = pg.transform.scale(lives_text,
-                                        (round(lives_text.get_size()[0] * size / lives_text.get_size()[1]), size))
-        ui.blit(lives_text, (self.offset * 2 + size, self.offset * 4 + size))
+                                        (round(lives_text.get_size()[0] * self.size / lives_text.get_size()[1]), self.size))
+        self.header.blit(lives_text, (self.offset * 2 + self.size, self.offset * 3 + self.size))
 
-        ui.blit(PROTEIN_IMG, (self.offset * 3 + size + lives_text.get_width(), self.offset * 4 + size))
-        protein_text = font.render(str(self.game.protein), 1, WHITE)
+        self.header.blit(PROTEIN_IMG, (self.offset * 3 + self.size + lives_text.get_width(), self.offset * 3 + self.size))
+        protein_text = self.font.render(str(self.game.protein), 1, WHITE)
         protein_text = pg.transform.scale(protein_text,
-                                          (round(protein_text.get_size()[0] * size / protein_text.get_size()[1]), size))
-        ui.blit(protein_text, (self.offset * 4 + size * 2 + lives_text.get_width(), self.offset * 4 + size))
+                                          (round(protein_text.get_size()[0] * self.size / protein_text.get_size()[1]), self.size))
+        self.header.blit(protein_text, (self.offset * 4 + self.size * 2 + lives_text.get_width(), self.offset * 3 + self.size))
 
-        if self.tower == None:
+    def generate_body(self):
+        self.body.fill(DARK_GREY)
+        if self.tower is None:
             # Draws towers
             for i, tower in enumerate(self.game.available_towers):
                 tower_img = pg.transform.scale(TOWER_DATA[tower]["stages"][0]["image"], self.tower_rects[i].size)
                 if (self.game.protein < round(TOWER_DATA[tower]["stages"][0]["upgrade_cost"] * (1 + self.game.difficulty * 0.25))):
                     tower_img.fill(HALF_RED, None, pg.BLEND_RGBA_MULT)
-                ui.blit(tower_img, self.tower_rects[i])
+                self.body.blit(tower_img, self.tower_rects[i])
                 temp_rect = self.tower_rects[i].copy()
                 temp_rect.x += self.tower_size + self.offset
-                ui.blit(PROTEIN_IMG, temp_rect)
-                cost_text = font.render(str(round(TOWER_DATA[tower]["stages"][0]["upgrade_cost"] * (1 + self.game.difficulty * 0.25))), 1, WHITE)
-                temp_rect.y += size
-                ui.blit(cost_text, temp_rect)
+                
+                self.body.blit(PROTEIN_IMG, temp_rect)
+                
+                cost_text = self.font.render(str(round(TOWER_DATA[tower]["stages"][0]["upgrade_cost"] * (1 + self.game.difficulty * 0.25))), 1, WHITE)
+                temp_rect.y += self.size
+                self.body.blit(cost_text, temp_rect)
+                
+                key_text = self.font2.render(str(i + 1), 1, WHITE)
+                temp_rect.x += PROTEIN_IMG.get_rect().w + self.offset * 2.5
+                pg.draw.rect(self.body, WHITE, pg.rect.Rect(temp_rect.x, temp_rect.y, self.size, self.size), 3)
+                temp_rect.x += round(self.offset * 1.25)
+                self.body.blit(key_text, temp_rect)
 
         else:
-            tower_dat = TOWER_DATA[self.tower.name]
-            tower_img = pg.transform.scale(tower_dat["stages"][self.tower.stage]["image"], (self.width - MENU_OFFSET * 2, self.width - MENU_OFFSET * 2))
-            ui.blit(tower_img, self.tower_rects[0])
+            tower_img = pg.transform.scale(TOWER_DATA[self.tower.name]["stages"][0]["image"], (self.width - MENU_OFFSET * 2, self.width - MENU_OFFSET * 2))
+            self.body.blit(tower_img, self.tower_rects[0])
 
-            font = pg.font.Font(FONT, int(HEART_IMG.get_size()[0] * 1.3))
-            text = font.render("Damage: " + str(tower_dat["stages"][self.tower.stage]["damage"]), 1, WHITE)
-            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height()))
+            if self.tower.area_of_effect and self.tower.aoe_buff and self.tower.aoe_buff_type is not None:
+                text = self.font3.render("Buff: " + str(self.tower.aoe_buff_type.title()), 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height())),
+                text = self.font3.render("Amount: " + str(self.tower.aoe_buff_amount), 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height()))
 
-            text = font.render("Speed: " + str(tower_dat["stages"][self.tower.stage]["attack_speed"]) + "s", 1, WHITE)
-            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height()))
+            else:
+                text = self.font3.render("Damage: " + str(self.tower.damage), 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height()))
+                if self.tower.true_damage != self.tower.damage:
+                    buff_text = self.font3.render("+" + str(self.tower.true_damage - self.tower.damage), 1, GREEN)
+                    self.body.blit(buff_text, (MENU_OFFSET + text.get_width(), self.tower_rects[0].top + tower_img.get_height()))
 
-            text = font.render("Hits: " + str(self.tower.hits), 1, WHITE)
-            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height() * 2))
+                text = self.font3.render("Speed: " + str(self.tower.attack_speed) + "s", 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height()))
+                if self.tower.true_attack_speed != self.tower.attack_speed:
+                    buff_text = self.font3.render(str(round(self.tower.true_attack_speed - self.tower.attack_speed, 2)), 1, GREEN)
+                    self.body.blit(buff_text, (MENU_OFFSET + text.get_width(), self.tower_rects[0].top + tower_img.get_height() + text.get_height()))
 
-            text = font.render("Kills: " + str(self.tower.kills), 1, WHITE)
-            ui.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height() * 3))
+                text = self.font3.render("Hits: " + str(self.tower.hits), 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height() * 2))
+
+                text = self.font3.render("Kills: " + str(self.tower.kills), 1, WHITE)
+                self.body.blit(text, (MENU_OFFSET, self.tower_rects[0].top + tower_img.get_height() + text.get_height() * 3))
 
             refund = 0
             for stage in range(self.tower.stage + 1):
-                refund += round(tower_dat["stages"][stage]["upgrade_cost"] * (1 + self.game.difficulty * 0.25) / 2)
+                refund += round(TOWER_DATA[self.tower.name]["stages"][stage]["upgrade_cost"] * (1 + self.game.difficulty * 0.25) / 2)
             sell_button, self.sell_rect = self.make_button("Sell: " + str(refund), True)
-            self.sell_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 4 - self.sell_rect.height
-            ui.blit(sell_button, self.sell_rect)
+            self.sell_rect.bottom = self.body.get_height()
+            self.body.blit(sell_button, self.sell_rect)
 
             if self.tower.stage < 2:
-                upgrade_cost = round(tower_dat["stages"][self.tower.stage + 1]["upgrade_cost"] * (1 + self.game.difficulty * 0.25))
+                upgrade_cost = round(self.tower.upgrade_cost * (1 + self.game.difficulty * 0.25))
                 upgrade_button, self.upgrade_rect = self.make_button("Upgrade: " + str(upgrade_cost), self.game.protein >= upgrade_cost)
-                self.upgrade_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 5 - self.sell_rect.height * 2
-                ui.blit(upgrade_button, self.upgrade_rect)
+                self.upgrade_rect.bottom = self.sell_rect.bottom - self.sell_rect.height - self.offset
+                self.body.blit(upgrade_button, self.upgrade_rect)
 
-            target_button, self.target_rect = self.make_button("Target: " + TARGET_OPTIONS[self.tower.targeting_option], True)
-            self.target_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 6 - self.sell_rect.height * 3
-            ui.blit(target_button, self.target_rect)
-        
+            if not self.tower.area_of_effect:
+                target_button, self.target_rect = self.make_button("Target: " + TARGET_OPTIONS[self.tower.targeting_option], True)
+                if self.tower.stage == 2:
+                    self.target_rect.bottom = self.sell_rect.bottom - self.sell_rect.height - self.offset
+                else:
+                    self.target_rect.bottom = self.upgrade_rect.bottom - self.upgrade_rect.height - self.offset
+                self.body.blit(target_button, self.target_rect)
+
+    def generate_next_wave(self):
+        self.next_wave.fill(DARK_GREY)
         text = "Next Wave"
         if self.game.wave == 0:
             text = "Start Wave"
 
         next_wave_button, self.next_wave_rect = self.make_button(text, self.next_wave_btn_enabled)
-        self.next_wave_rect.bottom = SCREEN_HEIGHT - MENU_OFFSET * 3
-        ui.blit(next_wave_button, self.next_wave_rect)
-        return ui
+        self.next_wave_rect.top = self.offset
+        self.next_wave.blit(next_wave_button, self.next_wave_rect)
+
+        if not self.game.in_a_wave and self.game.wave > 0 and WAVE_DELAY * 1000 - self.game.time_passed > 1:
+            timer_width = (self.width - MENU_OFFSET * 2) * (WAVE_DELAY * 1000 - self.game.time_passed) // (WAVE_DELAY * 1000)
+            pg.draw.rect(self.next_wave, GREEN, pg.Rect(self.offset, 0, timer_width, self.offset))
+
+        self.next_wave_rect.bottom = SCREEN_HEIGHT - self.offset * 3 - self.header.get_height()
+
+    def get_ui(self):
+        temp_surf = pg.Surface((self.width, SCREEN_HEIGHT - 2 * MENU_OFFSET))
+        temp_surf.blit(self.header, (0, 0))
+        temp_surf.blit(self.body, self.body.get_rect(top=self.header.get_height()))
+        temp_surf.blit(self.next_wave, self.next_wave.get_rect(bottom = SCREEN_HEIGHT - 2 * MENU_OFFSET))
+
+        self.ui = pg.transform.scale(temp_surf, (round(self.width * self.display.screen_ratio), round((SCREEN_HEIGHT - 2 * MENU_OFFSET) * self.display.screen_ratio)))
+        self.ui_offset = (SCREEN_WIDTH - MENU_OFFSET - self.width, MENU_OFFSET)
 
     def make_button(self, string, enabled):
         font = pg.font.Font(FONT, int(HEART_IMG.get_size()[0] * 1.3))
@@ -174,15 +221,8 @@ class UI:
 
         return btn, rect
 
-    def update_timer(self):
-        timer_width = (self.width - MENU_OFFSET * 2) * (WAVE_DELAY * 1000 - self.game.time_passed) // (WAVE_DELAY * 1000)
-        timer_height = 8
-        pg.draw.rect(self.ui, DARK_GREY,
-                     pg.Rect(10, self.next_wave_rect.y - timer_height, self.width - 10, timer_height))
-        pg.draw.rect(self.ui, GREEN,
-                    pg.Rect(10, self.next_wave_rect.y - timer_height, timer_width, timer_height))
-
     def event(self, pos):
+        pos = (pos[0], pos[1] - self.header.get_height())
         if pos[0] < 0 or pos[0] > self.width or pos[1] < 0 or pos[1] > SCREEN_HEIGHT - MENU_OFFSET * 2:
             return -2
 
@@ -198,7 +238,7 @@ class UI:
             elif self.tower.stage < 2 and self.upgrade_rect.collidepoint(pos):
                 return "upgrade"
 
-            elif self.target_rect.collidepoint(pos):
+            elif not self.tower.area_of_effect and self.target_rect.collidepoint(pos):
                 return "target"
 
         if self.next_wave_btn_enabled and self.next_wave_rect.collidepoint(pos):
@@ -208,10 +248,14 @@ class UI:
 
 class Textbox(pg.Surface):
     def __init__(self, game):
+        self.display = MainDisplay.get_instance()
         self.game = game
         self.enabled = False
         self.writing = False
+        self.font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
         self.rect = pg.Rect(0, 0, SCREEN_WIDTH - MENU_OFFSET * 2, 0)
+        self.rect.width *= self.display.screen_ratio
+        self.rect.height *= self.display.screen_ratio
         self.set_text("")
         self.yoffset = 0
         self.draw()
@@ -246,7 +290,6 @@ class Textbox(pg.Surface):
 
     def draw(self):
         height = MENU_OFFSET
-        self.font = pg.font.Font(FONT, MENU_TEXT_SIZE * 2)
         text = textwrap.fill(self.current_text, 57)  # No idea how to really calculate this.
         text = text.split("\n")
         texts = []
@@ -255,14 +298,16 @@ class Textbox(pg.Surface):
             texts.append(rendered_text)
             height += MENU_TEXT_SIZE * 2
 
-        self.rect.height = height + MENU_OFFSET
-        super().__init__((self.rect.width, self.rect.height))
-        temp_img = pg.transform.scale(LEVEL_BUTTON_IMG, (self.rect.width, self.rect.height))
-        self.blit(temp_img, (0, 0))
+        self.rect.height = (height + MENU_OFFSET) * self.display.screen_ratio
+        temp_img = pg.transform.scale(LEVEL_BUTTON_IMG, (SCREEN_WIDTH - 2 * MENU_OFFSET, height + MENU_OFFSET))
+
         height = MENU_OFFSET
         for text in texts:
-            self.blit(text, (MENU_OFFSET, height))
+            temp_img.blit(text, (MENU_OFFSET, height))
             height += MENU_TEXT_SIZE * 2
+
+        super().__init__((self.rect.width, self.rect.height))
+        self.blit(pg.transform.scale(temp_img, (self.rect.width, self.rect.height)), (0, 0))
 
     def set_text(self, text):
         self.text = text
@@ -312,12 +357,14 @@ class Explosion(pg.sprite.Sprite):
 
 class NewEnemyBox(pg.Surface):
     def __init__(self):
+        self.display = MainDisplay.get_instance()
         self.enabled = False
         self.show = False
         self.enemy = None
         self.opacity = 0
-        self.rect = pg.Rect(MENU_OFFSET * 9, MENU_OFFSET * 9, SCREEN_WIDTH - MENU_OFFSET * 18, SCREEN_HEIGHT - MENU_OFFSET * 18)
-        super().__init__(self.rect.size)
+        self.rect_size = (SCREEN_WIDTH - MENU_OFFSET * 18, SCREEN_HEIGHT - MENU_OFFSET * 18)
+        self.real_rect_size = (round(self.rect_size[0] * self.display.screen_ratio), round(self.rect_size[1] * self.display.screen_ratio))
+        super().__init__(self.real_rect_size)
 
     def get_surf(self):
         self.convert_alpha()
@@ -325,15 +372,17 @@ class NewEnemyBox(pg.Surface):
         return self
 
     def draw(self):
+        temp_surf = pg.Surface(self.rect_size)
         enemy_dat = ENEMY_DATA[self.enemy]
-        self.blit(pg.transform.scale(LEVEL_BUTTON_IMG, self.rect.size), (0, 0))
+        temp_surf.blit(pg.transform.scale(LEVEL_BUTTON_IMG, self.rect_size), (0, 0))
 
         big_font = pg.font.Font(FONT, MENU_TEXT_SIZE * 4)
         title = big_font.render("A NEW ENEMY APPEARS!", 1, WHITE)
-        self.blit(title, title.get_rect(center = (self.rect.width / 2, MENU_OFFSET * 7)))
+        temp_surf.blit(title, title.get_rect(center = (self.rect_size[0] / 2, MENU_OFFSET * 7)))
 
-        enemy_image = pg.transform.scale(enemy_dat["image"], (300, 300))
-        self.blit(enemy_image, enemy_image.get_rect(bottomleft = (MENU_OFFSET * 2, self.rect.height - MENU_OFFSET * 6)))
+        temp_img = enemy_dat["image"]
+        enemy_image = pg.transform.scale(temp_img, (300, 300 * temp_img.get_height() // temp_img.get_width()))
+        temp_surf.blit(enemy_image, enemy_image.get_rect(bottomleft = (MENU_OFFSET * 2, self.rect_size[1] - MENU_OFFSET * 6 - (300 - enemy_image.get_height()) // 2)))
 
         texts = []
         texts.append([("Name: " + self.enemy.replace("_", " ").title(), WHITE)])
@@ -364,9 +413,11 @@ class NewEnemyBox(pg.Surface):
             width = enemy_image.get_width() + MENU_OFFSET * 4
             for text, color in line:
                 text_img = font.render(text, 1, color)
-                self.blit(text_img, text_img.get_rect(topleft = (width, height)))
+                temp_surf.blit(text_img, text_img.get_rect(topleft = (width, height)))
                 width += text_img.get_width()
             height += text_img.get_height() + MENU_OFFSET
+
+        self.blit(pg.transform.scale(temp_surf, self.real_rect_size), (0, 0))
 
     def show_new_enemy(self, enemy):
         self.enemy = enemy

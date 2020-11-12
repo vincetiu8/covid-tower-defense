@@ -6,6 +6,7 @@ import math
 
 class Enemy(pg.sprite.Sprite):
     def __init__(self, game, x, y, name):
+        self.game = game
         self.groups = game.enemies
         super().__init__(self.groups)
         
@@ -14,11 +15,11 @@ class Enemy(pg.sprite.Sprite):
         self.name = name
         
         self.direction = [1 if random.random() < 0.5 else -1, 1 if random.random() < 0.5 else -1]
-        self.carry_x = 0
-        self.carry_y = 0
         self.new_node = ((tile_from_coords(x, self.game.map.tilesize), tile_from_coords(y, self.game.map.tilesize)), 0)
         self.maximising = 0
         self.damagable = True
+
+        self.carry = [0, 0]
 
         self.slowed = False
         self.slow_end = 0
@@ -33,16 +34,16 @@ class Enemy(pg.sprite.Sprite):
         # in case of mutation and the original enemy was in an artery/vein
         # scale new enemy image appopriately
         try:
-            prev_scale = self.image_size / self.raw_image.get_size()[0]
+            prev_scale = self.image_size // self.raw_image.get_size()[0]
         except:
             prev_scale = 1 # if it's a new enemy (not from mutation), leave image_size as is
-            
+
         data = ENEMY_DATA[self.name]
         wave_difficulty = 1 + self.game.wave * 0.1
         game_difficulty = self.game.difficulty * 0.5 + 0.5
         self.hp = round(data["hp"] * wave_difficulty * game_difficulty)
         self.max_hp = self.hp
-        self.speed = data["speed"]
+        self.raw_speed = self.speed = data["speed"]
         self.dropped_protein = data["protein"]
         self.original_image = data["image"]
         self.raw_image = self.original_image
@@ -62,9 +63,11 @@ class Enemy(pg.sprite.Sprite):
         if self.mutate:
             self.mutation_type = data["mutation_type"]
             self.mutation_time = data["mutation_time"]
+            self.mutation_number = data["mutation_number"]
         
-        self.image_size = int(self.raw_image.get_size()[0] * prev_scale)
-        self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
+        self.image_size = (round(self.raw_image.get_size()[0] * prev_scale), round(self.raw_image.get_size()[1] * prev_scale))
+        self.ratio = self.image_size[1] / self.image_size[0]
+        self.image = pg.transform.scale(self.raw_image, self.image_size)
         image_size = self.raw_image.get_size()
         self.rect = pg.Rect(x, y, image_size[0], image_size[1])
 
@@ -86,15 +89,18 @@ class Enemy(pg.sprite.Sprite):
             
         if self.mutate:
             if self.total_time_passed >= self.mutation_time:
-                self.name = list(ENEMY_DATA)[self.mutation_type]
+                self.name = self.mutation_type
                 self.load_attributes(self.rect.x, self.rect.y)
+                for _ in range(self.mutation_number - 1):
+                    self.game.enemies.add(Enemy(self.game, self.rect.x, self.rect.y, self.name))
 
-        if (self.maximising < 0 and self.image.get_width() > 0 or self.maximising > 0 and self.image.get_width() < self.rect.w):
-            self.image_size = max(0, min(self.image_size + self.maximising, self.rect.w))
-            if self.image_size > 0:
-                if self.image_size == self.rect.w:
+        if (self.maximising < 0 and self.image_size[0] > 0 or self.maximising > 0 and self.image_size[0] < self.rect.w):
+            image_w = max(0, min(self.image_size[0] + self.maximising, self.rect.w))
+            self.image_size = (image_w, round(image_w * self.ratio))
+            if self.image_size[0] > 0:
+                if self.image_size[0] == self.rect.w:
                     self.maximising = 0
-                self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
+                self.image = pg.transform.scale(self.raw_image, self.image_size)
             else:
                 self.maximising = 0
 
@@ -110,15 +116,13 @@ class Enemy(pg.sprite.Sprite):
         elif (self.rect.bottom >= self.new_node_rect.bottom):
             self.direction[1] = -abs(self.direction[1])
 
-        self.carry_x += round(self.speed * passed_time * self.direction[0])
-        self.carry_y += round(self.speed * passed_time * self.direction[1])
+        move = []
+        for i, val in enumerate(self.carry):
+            self.carry[i] += self.speed * passed_time * self.direction[i]
+            move.append(round(self.carry[i]))
+            self.carry[i] -= move[-1]
 
-        if (abs(self.carry_x) >= 1):
-            self.rect.x += self.carry_x
-            self.carry_x = 0
-        if (abs(self.carry_y) >= 1):
-            self.rect.y += self.carry_y
-            self.carry_y = 0
+        self.rect.move_ip(move[0], move[1])
 
         if (self.new_node_rect.collidepoint(self.rect.topleft) and self.new_node_rect.collidepoint(self.rect.bottomright)):
             self.load_next_node()
@@ -135,8 +139,10 @@ class Enemy(pg.sprite.Sprite):
             self.hp -= dam
 
         if (self.hp <= 0):
-            ENEMY_DATA[self.name]["death_sound"].play()
+            ENEMY_DEATH_SOUND.play()
             self.game.protein += self.dropped_protein
+            self.game.ui.generate_header()
+            self.game.ui.generate_body_wrapper()
             if self.explode_on_death:
                 EnemyExplosion(self.game, self.rect.center[0], self.rect.center[1], self.explode_radius)
             self.kill()
@@ -181,6 +187,9 @@ class Enemy(pg.sprite.Sprite):
 
         if (len(self.path) == 0):
             self.game.lives = max(self.game.lives - 1, 0)
+            self.game.ui.generate_header_wrapper()
+            self.game.protein += self.dropped_protein   # TODO: Remove this dev feature
+                                                        # (enemies shouldn't drop protein if they reach the goal)
             
             if self.game.lives <= 0:
                 self.game.cause_of_death = " ".join(self.name.split("_")).title() # removes underscores, capitalizes it properly
@@ -204,36 +213,56 @@ class Enemy(pg.sprite.Sprite):
         self.new_node_rect = pg.Rect(self.new_node[0][0] * self.game.map.tilesize, self.new_node[0][1] * self.game.map.tilesize, self.game.map.tilesize, self.game.map.tilesize)
         
     def reset_speed(self):
-        self.speed = ENEMY_DATA[self.name]["speed"]
+        self.speed = self.raw_speed
         self.raw_image = self.original_image
-        self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
+        self.image = pg.transform.scale(self.raw_image, self.image_size)
         self.slowed = False
 
     def is_slowed(self):
         return self.slowed
 
     def slow(self, slow_speed, slow_duration):
-        self.speed = ENEMY_DATA[self.name]["speed"]
-        self.slowed = True
-        self.slow_end = self.clock.get_time() / 1000 + slow_duration
-        self.speed *= slow_speed
+        new_speed = self.raw_speed * slow_speed
+        if self.slowed:
+            if new_speed > self.speed:
+                return
+            elif new_speed == self.speed:
+                self.slow_end = slow_duration
+                return
 
-        image_surf = pg.Surface(self.image.get_size()).convert_alpha()
+        self.speed = new_speed
+        self.slow_end = slow_duration
+
+        if self.slowed:
+            return
+
+        self.slowed = True
+        image_surf = pg.Surface(self.image_size).convert_alpha()
         image_surf.fill((0, 0, 0, 0))
         image_surf.blit(self.original_image.convert_alpha(), (0, 0))
         image_surf.fill(HALF_GREEN, None, pg.BLEND_RGBA_MULT)
         self.raw_image = image_surf
-        self.image = pg.transform.scale(self.raw_image, (self.image_size, self.image_size))
+        self.image = pg.transform.scale(self.raw_image, self.image_size)
 
 class EnemyExplosion(Explosion):
     def __init__(self, game, x, y, rad):
+        hit = False
+        
         for tile_x in range(tile_from_coords(x - rad / 2, game.map.tilesize), tile_from_coords(x + rad / 2, game.map.tilesize) + 1):
             for tile_y in range(tile_from_coords(y - rad / 2, game.map.tilesize), tile_from_coords(y + rad / 2, game.map.tilesize) + 1):
-                game.map.remove_tower(tile_x, tile_y)
-
-        game.pathfinder.clear_nodes(game.map.get_map())
-        game.draw_tower_bases_wrapper()
-        game.make_stripped_path_wrapper()
-        for enemy in game.enemies:
-            enemy.recreate_path()
+                tower = game.map.get_tower(tile_x, tile_y)
+                if tower != None:
+                    tower.lives -= 1
+                    if tower.lives <= 0:
+                        hit = True
+                        game.map.remove_tower(tile_x, tile_y)
+                        tower.on_remove()
+                        tower.kill()
+        
+        if hit:
+            game.pathfinder.clear_nodes(game.map.get_map())
+            game.draw_tower_bases_wrapper()
+            game.make_stripped_path_wrapper()
+            for enemy in game.enemies:
+                enemy.recreate_path()
         super().__init__(game, x, y, rad)

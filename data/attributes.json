@@ -27,7 +27,7 @@
         },
         "shield_recharge_delay": {
             "type": "float",
-            "min": 0.05,
+            "min": 0,
             "max": 10,
             "increment": 0.05,
             "dp": 2,
@@ -56,13 +56,8 @@
         },
         "mutate": {
             "type": "bool",
-            "ignore_if_false": ["mutation_type", "mutation_time"],
+            "ignore_if_false": ["mutation_time", "mutation_number"],
             "default": false
-        },
-        "mutation_type": {
-            "type": "select",
-            "values": [],
-            "default": 0
         },
         "mutation_time": {
             "type": "float",
@@ -70,6 +65,14 @@
             "max": 100,
             "increment": 0.5,
             "dp": 1,
+            "default": 1
+        },
+        "mutation_number": {
+            "type": "float",
+            "min": 1,
+            "max": 100,
+            "increment": 1,
+            "dp": 0,
             "default": 1
         },
         "speed": {
@@ -82,7 +85,7 @@
         },
         "protein": {
             "type": "float",
-            "min": 1,
+            "min": 0,
             "max": 10000,
             "increment": 1,
             "dp": 0,
@@ -101,7 +104,7 @@
         "unlock_cost": {
             "type": "float",
             "min": 0,
-            "max": 250,
+            "max": 1000,
             "increment": 10,
             "dp": -1,
             "default": 50
@@ -201,7 +204,7 @@
         },
         "range": {
             "type": "float",
-            "min": 25,
+            "min": 0,
             "max": 2500,
             "increment": 25,
             "dp": 0,
@@ -226,7 +229,7 @@
         "rotating": {
             "type": "bool",
             "default": true,
-            "ignore_if_false": ["rotation_speed"]
+            "ignore_if_false": ["rotation_speed", "rotation_directions"]
         },
         "rotation_speed": {
             "type": "float",
@@ -235,6 +238,14 @@
             "increment": 1,
             "dp": 0,
             "default": 180
+        },
+        "rotation_directions": {
+            "type": "float",
+            "min": 0,
+            "max": 360,
+            "increment": 1,
+            "dp": 0,
+            "default": 0
         },
         "tracking": {
             "type": "bool",

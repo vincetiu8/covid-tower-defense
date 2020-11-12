@@ -23,7 +23,7 @@
 26,18,18,18,27,18,18,18,27,18,18,18,27,18,18,18,27,18,18,18,27,18,18,18,14
 </data>
  </layer>
- <layer id="8" name="veins" width="25" height="16" visible="0">
+ <layer id="8" name="veins" width="25" height="16">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,83,72,72,72,72,72,53,0,83,72,72,72,72,72,53,0,0,
 0,0,0,0,0,0,0,0,82,0,0,0,0,0,84,0,82,0,0,0,0,0,84,0,0,
@@ -43,7 +43,7 @@
 0,0,0,0,0,0,73,72,63,0,0,0,0,0,73,72,63,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="7" name="arteries" width="25" height="16" visible="0">
+ <layer id="7" name="arteries" width="25" height="16">
   <data encoding="csv">
 0,0,0,0,81,52,52,52,52,52,51,0,81,52,52,52,52,52,51,0,0,0,0,0,0,
 0,89,90,91,62,89,90,91,0,0,80,0,62,0,0,0,0,0,80,0,0,0,0,0,0,
@@ -63,7 +63,7 @@
 0,0,71,52,61,0,0,0,0,0,71,52,61,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="4" name="obstacles" visible="0">
+ <objectgroup id="4" name="obstacles">
   <object id="96" name="wall" x="0" y="0" width="1050" height="42"/>
   <object id="97" name="wall" x="0" y="630" width="1050" height="42"/>
   <object id="98" name="wall" x="0" y="42" width="42" height="588"/>

@@ -9,6 +9,8 @@ import pygame as pg
 # USEREVENT --> game over event in Game()
 # USEREVENT + 1 --> timer event in DevUI()
 # USEREVENT + 2 --> fade out done event in Pause()
+# USEREVENT + 3 --> skip the intro part of the late severe song when looping
+# USEREVENT + 4 --> screen size changed
 
 def resource_path(relative_path):
     try:
@@ -108,16 +110,33 @@ except:
             json.dump(SAVE_DATA, out_file, indent=4)
     
 
-SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16))
 SCREEN_SIZES = [640, 854, 960, 1280, 1366, 1536, 1600, 1920, 2560, 3200, 3840]
 
-def toggle_fullscreen():
-    if SAVE_DATA["fullscreen"]:
-        SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16), pg.FULLSCREEN)
-    else:
-        SCREEN = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["width"] * 9 // 16))
-        
-toggle_fullscreen()
+class MainDisplay:
+    __instance = None
+
+    def __init__(self):
+        if MainDisplay.__instance != None:
+            raise Exception("This class is a singleton!")
+        else:
+            MainDisplay.__instance = self
+
+        self.toggle_fullscreen()
+
+    @staticmethod
+    def get_instance():
+        if MainDisplay.__instance == None:
+            MainDisplay()
+        return MainDisplay.__instance
+
+    def toggle_fullscreen(self):
+        if SAVE_DATA["fullscreen"]:
+            self.display = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["height"]), pg.FULLSCREEN)
+
+        else:
+            self.display = pg.display.set_mode((SAVE_DATA["width"], SAVE_DATA["height"]))
+
+        self.screen_ratio = SAVE_DATA["width"] / SCREEN_WIDTH
 
 # Menu Constant
 BODY_PARTS = { # All of these are relative to the body
@@ -173,6 +192,13 @@ PROTEIN_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "protein.png"))
 LEFT_ARROW_IMG = pg.image.load(path.join(UI_IMG_FOLDER, "left.png"))
 RIGHT_ARROW_IMG = pg.transform.rotate(pg.image.load(path.join(UI_IMG_FOLDER, "left.png")).copy(), 180)
 
+PURCHASE_IMAGES = [
+    pg.image.load(path.join(MENU_IMG_FOLDER, "packet.png")),
+    pg.image.load(path.join(MENU_IMG_FOLDER, "bundle.png")),
+    pg.image.load(path.join(MENU_IMG_FOLDER, "chest.png")),
+    pg.image.load(path.join(MENU_IMG_FOLDER, "van.png")),
+]
+
 # Initializing the mixer in the settings file lol but rn i don't see a better way.
 # SFX
 HEART_BEEP_SFX = pg.mixer.Sound(path.join(GAME_STOP_AUD_FOLDER, "heart_beep.wav"))
@@ -191,29 +217,65 @@ ACUTE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "643430_Fast-Level-8-bit.ogg"), pat
 SEVERE_LEVEL_MUSIC = [path.join(MUSIC_FOLDER, "525911_Chaos.ogg"), path.join(MUSIC_FOLDER, "367084_8_bit_Boss_Battle_4.ogg")]
 LATE_SEVERE_MUSIC_LOOP = path.join(MUSIC_FOLDER, "367084_8_bit_Boss_Battle_4_loop.ogg")
 
-# init level data
-LEVEL_DATA = []
-level_list = listdir(LEVELS_FOLDER)
-level_list.sort()
+# # init level data
+# LEVEL_DATA = []
+# level_list = listdir(LEVELS_FOLDER)
+# level_list.sort()
+#
+# for file in level_list:
+#     with open(path.join(LEVELS_FOLDER, file)) as data_file:
+#         level = json.load(data_file)
+#         enemies = [[] for i in range(3)]
+#         for i, stage in enumerate(level["waves"]):
+#             for wave in stage:
+#                 for sub_wave in wave:
+#                     enemy = sub_wave["enemy_type"]
+#                     if enemy not in enemies[i]:
+#                         enemies[i].append(enemy)
+#         level["enemies"] = enemies
+#         LEVEL_DATA.append(level)
 
-for file in level_list:
-    with open(path.join(LEVELS_FOLDER, file)) as data_file:
-        level = json.load(data_file)
-        enemies = [[] for i in range(3)]
-        for i, stage in enumerate(level["waves"]):
-            for wave in stage:
-                for sub_wave in wave:
-                    enemy = sub_wave["enemy_type"]
-                    if enemy not in enemies[i]:
-                        enemies[i].append(enemy)
-        level["enemies"] = enemies
-        LEVEL_DATA.append(level)
+class LevelData:
+    __instance = None
+
+    def __init__(self):
+        if LevelData.__instance != None:
+            raise Exception("This class is a singleton!")
+        else:
+            LevelData.__instance = self
+        # init level data
+        self.level_list = listdir(LEVELS_FOLDER)
+        self.level_list.sort()
+        self.reload_levels()
+
+    @staticmethod
+    def get_instance():
+        """ Static access method. """
+        if LevelData.__instance == None:
+            LevelData()
+        return LevelData.__instance
+
+    def reload_levels(self):
+        self.level_data = []
+        for file in self.level_list:
+            with open(path.join(LEVELS_FOLDER, file)) as data_file:
+                level = json.load(data_file)
+                enemies = [[] for _ in range(3)]
+                for i, stage in enumerate(level["waves"]):
+                    for wave in stage:
+                        for sub_wave in wave:
+                            enemy = sub_wave["enemy_type"]
+                            if enemy not in enemies[i]:
+                                enemies[i].append(enemy)
+                level["enemies"] = enemies
+                self.level_data.append(level)
 
 with open(path.join(GAME_FOLDER, "enemies.json"), "r") as data_file:
     ENEMY_DATA = json.load(data_file)
     for enemy in ENEMY_DATA:
         ENEMY_DATA[enemy]["image"] = pg.image.load(path.join(ENEMIES_IMG_FOLDER, "{}.png".format(enemy)))
-        ENEMY_DATA[enemy]["death_sound"] = pg.mixer.Sound(path.join(ENEMIES_AUD_FOLDER, "{}.wav".format(enemy)))
+
+ENEMY_DEATH_SOUND = pg.mixer.Sound(path.join(AUDIO_FOLDER, "enemy_death.wav"))
 
 # load tower data
 with open(path.join(GAME_FOLDER, "towers.json"), "r") as data_file:
@@ -263,8 +325,7 @@ def update_sfx_vol():
             if TOWER_DATA[tower]["stages"][stage].get("shoot_sound"):
                 TOWER_DATA[tower]["stages"][stage]["shoot_sound"].set_volume(vol)
             
-    for enemy in ENEMY_DATA:
-        ENEMY_DATA[enemy]["death_sound"].set_volume(vol)
+    ENEMY_DEATH_SOUND.set_volume(vol)
 
 def update_music_vol():
     vol = SAVE_DATA["music_vol"]
@@ -318,7 +379,7 @@ HEART_MONITOR_FLATLINE_IMG = pg.image.load(path.join(GAME_STOP_IMG_FOLDER, "hear
 # load fonts path
 FONT = path.join(FONTS_FOLDER, "mini_pixel-7.ttf")
 
-WAVE_DELAY = 10
+WAVE_DELAY = 999# TODO: Change this dev feature back.
 EXPLOSION_TIME = 0.25
 REFUND_AMOUNT = 0.5
 

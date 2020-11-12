@@ -59,7 +59,14 @@ class TiledMap:
             return False
         self.tower_map[x][y] = tower
         self.reset_valid_tower_tiles()
-        
+
+    def get_tower(self, x, y):
+        if (x < 0 or x >= len(self.tower_map) or y < 0 or y >= len(self.tower_map[0])):
+            return None
+        elif self.tower_map[x][y] == None:
+            return None
+        return self.tower_map[x][y]
+
     def upgrade_tower(self, x, y):
         if (x < 0 or x >= len(self.tower_map) or y < 0 or y >= len(self.tower_map[0])):
             return False
@@ -73,15 +80,10 @@ class TiledMap:
             return False
         elif self.tower_map[x][y] == None:
             return False
-        tower = self.tower_map[x][y]
-        tower_name = tower.name
-        tower_stage = tower.stage
-        tower.on_remove()
-        tower.kill()
         self.tower_map[x][y] = None
         self.change_node(x, y, 0)
         self.reset_valid_tower_tiles()
-        return (tower_name, tower_stage)
+        return True
 
     def get_map(self):
         return self.map
@@ -124,14 +126,16 @@ class TiledMap:
         self.valid_tower_tiles = [[-1 for row in range(self.tmxdata.height)] for col in range(self.tmxdata.width)]
 
 class Camera():
-    def __init__(self, width, height, map_width, map_height):
+    def __init__(self, width, height, map_width, map_height, max_zoom_factor = 2):
+        self.display = MainDisplay.get_instance()
         self.width = width
         self.height = height
         self.map_width = map_width
         self.map_height = map_height
         self.current_zoom = min(width / map_width, height / map_height)
         self.minzoom = self.current_zoom / 2
-        self.camera = pg.Rect((self.width - self.map_width * (self.current_zoom + 0.05)) / 2, (self.height- self.map_height * self.current_zoom) / 2, width, height)
+        self.maxzoom = self.current_zoom * max_zoom_factor
+        self.camera = pg.Rect((self.width - self.map_width * self.current_zoom) / 2, (self.height - self.map_height * self.current_zoom) / 2, width, height)
 
     def apply_size(self, tuple):
         return ([i * self.current_zoom for i in tuple])
@@ -151,13 +155,14 @@ class Camera():
         return pg.transform.scale(image, ([round(self.current_zoom * x) for x in size]))
 
     def correct_mouse(self, pos):
-        return ([round((x - self.camera.topleft[i]) / self.current_zoom) for i, x in enumerate(pos)])
+        new_pos = ([round(x * self.display.screen_ratio - self.camera.topleft[i]) / (self.current_zoom) for i, x in enumerate(pos)])
+        return new_pos
 
     def zoom(self, amount):
-        if (amount > 0 and self.current_zoom >= self.minzoom * 4 or amount < 0 and self.current_zoom <= self.minzoom):
+        if (amount > 0 and self.current_zoom >= self.maxzoom or amount < 0 and self.current_zoom <= self.minzoom):
             return False
 
-        center = self.correct_mouse((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        center = self.correct_mouse((self.width / 2, self.height / 2))
         self.move(-amount * center[0], -amount * center[1])
         self.current_zoom += amount
 
