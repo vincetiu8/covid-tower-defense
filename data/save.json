@@ -45,7 +45,7 @@
         ],
         [
             775,
-            0,
+            50,
             0
         ],
         [
@@ -107,7 +107,6 @@
         "goblet_cell"
     ],
     "seen_enemies": [
-        "pertussis"
     ],
     "game_attrs": {
         "lives": {

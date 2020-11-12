@@ -35,12 +35,12 @@ class StartMenu(GridDisplay):
             pg.transform.scale(TOWER_DATA[tower]["stages"][stage]["base_image"], (
                     TOWER_DATA[tower]["stages"][stage]["base_image"].get_width() * 5,
                     TOWER_DATA[tower]["stages"][stage]["base_image"].get_height() * 5
-            )) for stage, tower in enumerate(["t_cell", "m_cell", "b_cell"])]
+            )) for stage, tower in enumerate(["t_cell", "m_cell", "basophil"])]
         self.raw_tower_guns = [
             pg.transform.scale(TOWER_DATA[tower]["stages"][stage]["gun_image"], (
                     TOWER_DATA[tower]["stages"][stage]["gun_image"].get_width() * 5,
                     TOWER_DATA[tower]["stages"][stage]["gun_image"].get_height() * 5
-            )) for stage, tower in enumerate(["t_cell", "m_cell", "b_cell"])]
+            )) for stage, tower in enumerate(["t_cell", "m_cell", "basophil"])]
         self.processed_tower_guns = [{}, {}, {}]
         self.tower_rot = 0
 
