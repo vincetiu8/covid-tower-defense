@@ -1,3 +1,6 @@
+Demo Video:
+https://www.youtube.com/watch?v=ZSOPGsgDa20
+
 How to create the .exe:
 1. Install pyinstaller
 2. Navigate to the download folder with `sergeant_t_cell.py`
